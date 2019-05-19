@@ -3,8 +3,13 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+// 配置
+const config = JSON.parse(document.querySelector('#admin-app').dataset.config)
+
 export default new Vuex.Store({
-  state: {},
+  state: {
+    config,
+  },
   mutations: {},
   actions: {},
 })

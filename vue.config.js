@@ -5,7 +5,8 @@ function pathResolve() {
   return path.resolve(__dirname, ...arguments)
 }
 
-const devSuffix = (process.env.NODE_ENV === 'development') ? '-dev' : ''
+const inDev = process.env.NODE_ENV === 'development'
+const devSuffix = inDev ? '-dev' : ''
 
 module.exports = {
   outputDir: pathResolve(`./public/lz-admin${devSuffix}`),

@@ -11,8 +11,12 @@ import '@/styles/app.scss'
 
 Vue.config.productionTip = false
 
-new Vue({
+const app = new Vue({
   router,
   store,
   render: (h) => h(App),
 }).$mount('#admin-app')
+
+if (process.env.NODE_ENV === 'development') {
+  window.app = app
+}

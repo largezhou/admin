@@ -8,7 +8,7 @@
   <title>{{ config('app.name') }}</title>
 </head>
 <body>
-<div id="admin-app"></div>
+<div id="admin-app" data-config="{{ json_encode(config('app')) }}"></div>
 @if(app()->environment('dev'))
   <script src="http://localhost:35729/livereload.js"></script>
 @endif
