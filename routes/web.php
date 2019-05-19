@@ -10,7 +10,3 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('admin/{path?}', function () {
-    return view('admin'.(app()->environment('dev') ? '-dev' : ''));
-})->where('path', '.*');
