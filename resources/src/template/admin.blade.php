@@ -8,7 +8,6 @@
   <title>{{ config('app.name') }}</title>
 </head>
 <body>
-<h1>ADMIN</h1>
 <div id="admin-app"></div>
 </body>
 </html>

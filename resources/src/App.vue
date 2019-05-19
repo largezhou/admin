@@ -1,19 +1,15 @@
 <template>
   <div id="admin-app">
-    <p>
-      If iView is successfully added to this project, you'll see an
-      <code v-text="'<Button>'"></code>
-      below
-    </p>
-    <i-button type="primary">Button</i-button>
-    <router-link to="about">About</router-link>
+    <router-link to="login">Login</router-link>
+    <br/>
+    <router-link to="/">Index</router-link>
     <router-view/>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'app',
+  name: 'App',
 }
 </script>
 
