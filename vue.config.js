@@ -1,4 +1,5 @@
 const path = require('path')
+const LiveReloadPlugin = require('webpack-livereload-plugin')
 
 function pathResolve() {
   return path.resolve(__dirname, ...arguments)
@@ -17,6 +18,11 @@ module.exports = {
         '@': pathResolve('./resources/src'),
       },
     },
+    plugins: [
+      new LiveReloadPlugin({
+        delay: 500,
+      }),
+    ],
   },
   chainWebpack(config) {
     config

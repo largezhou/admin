@@ -9,5 +9,8 @@
 </head>
 <body>
 <div id="admin-app"></div>
+@if(app()->environment('dev'))
+  <script src="http://localhost:35729/livereload.js"></script>
+@endif
 </body>
 </html>
