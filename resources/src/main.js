@@ -7,6 +7,8 @@ import '@/router/permission'
 import store from '@/store'
 import '@/plugins/iview.js'
 
+import '@/styles/app.scss'
+
 Vue.config.productionTip = false
 
 new Vue({

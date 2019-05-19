@@ -1,5 +1,5 @@
 import Vue from 'vue'
 import iView from 'iview'
-import '../iview-variables.less'
+import '@/styles/iview-variables.less'
 
 Vue.use(iView)
