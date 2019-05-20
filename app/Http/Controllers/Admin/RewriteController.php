@@ -8,6 +8,6 @@ class RewriteController extends Controller
 {
     public function __invoke()
     {
-        return view('admin'.(app()->environment('dev') ? '-dev' : ''));
+        return view('admin'.(app()->environment('testing', 'local') ? '-dev' : ''));
     }
 }
