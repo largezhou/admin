@@ -16,4 +16,16 @@ trait RestfulResponse
     {
         return response($data, 201, $headers);
     }
+
+    /**
+     * 返回 204 无内容 响应
+     *
+     * @param array $headers
+     *
+     * @return \Illuminate\Http\Response|\Illuminate\Contracts\Routing\ResponseFactory
+     */
+    protected function noContent(array $headers = [])
+    {
+        return response(null, 204, $headers);
+    }
 }

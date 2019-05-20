@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
+use App\Http\Controllers\Controller;
 use App\Traits\RestfulResponse;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class LoginController extends \App\Http\Controllers\Auth\LoginController
+class LoginController extends Controller
 {
+    use AuthenticatesUsers;
     use RestfulResponse;
 
     public function username()
@@ -32,5 +35,11 @@ class LoginController extends \App\Http\Controllers\Auth\LoginController
     protected function attemptLogin(Request $request)
     {
         return $this->guard()->attempt($this->credentials($request));
+    }
+
+    public function logout()
+    {
+        $this->guard()->logout();
+        return $this->noContent();
     }
 }

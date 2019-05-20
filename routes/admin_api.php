@@ -4,9 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:admin_api')
     ->group(function () {
-        Route::get('/index', function () {
-            return 'index';
-        })->name('index');
+        Route::post('/auth/logout', 'Auth\LoginController@logout')->name('logout');
     });
 
 Route::post('/auth/login', 'Auth\LoginController@login')->name('login');
