@@ -9,7 +9,7 @@
 </head>
 <body>
 <div id="admin-app" data-config="{{ json_encode(config('app')) }}"></div>
-@if(app()->environment('dev'))
+@if(app()->environment('local'))
   <script src="http://localhost:35729/livereload.js"></script>
 @endif
 </body>

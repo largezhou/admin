@@ -22,6 +22,7 @@ module.exports = {
     'eqeqeq': ['warn'],
     'no-eval': ['warn'],
     'vue/require-component-is': 'never',
+    'vue/no-parsing-error': [2, { 'x-invalid-end-tag': false }],
   },
   parserOptions: {
     parser: 'babel-eslint',
