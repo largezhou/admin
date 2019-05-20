@@ -8,7 +8,13 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
+    /**
+     * @var AdminUser
+     */
     protected $user;
+    /**
+     * @var string
+     */
     protected $token;
 
     protected function login(AdminUser $user = null)
