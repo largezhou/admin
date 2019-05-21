@@ -1,8 +1,10 @@
 import router from './index'
 import { getToken } from '@/libs/token'
 import store from '@/store'
+import { LoadingBar } from 'iview'
 
 router.beforeEach(async (to, from, next) => {
+  LoadingBar.start()
   if (getToken()) {
     if (to.name === 'login') {
       next('/')
@@ -10,7 +12,12 @@ router.beforeEach(async (to, from, next) => {
       if (store.getters.loggedIn) {
         next()
       } else {
-        await store.dispatch('getUser')
+        try {
+          await store.dispatch('getUser')
+        } catch (e) {
+          LoadingBar.error()
+          return next(false)
+        }
         next()
       }
     }
@@ -24,4 +31,5 @@ router.beforeEach(async (to, from, next) => {
   } else {
     next()
   }
+  LoadingBar.finish()
 })
