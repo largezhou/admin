@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import utils from '@/libs/utils'
+import { handleValidateErrors } from '@/libs/utils'
 
 export default {
   name: 'LoginForm',
@@ -44,7 +44,7 @@ export default {
         this.$Message.success('登录成功')
         this.$router.push(this.$route.query.redirect || { name: 'index' })
       } catch (e) {
-        this.formErrors = utils.handleValidateErrors(e)
+        this.formErrors = handleValidateErrors(e)
       }
     },
   },

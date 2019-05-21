@@ -1,11 +1,9 @@
-const utils = {}
-export default utils
-
 /**
  * 把 laravel 返回的错误消息，处理成只有一条
+ *
  * @param e axios 请求抛出的异常
  */
-utils.handleValidateErrors = (e) => {
+export const handleValidateErrors = (e) => {
   const res = e.response
   let errors = {}
   if (res && res.status === 422) {
