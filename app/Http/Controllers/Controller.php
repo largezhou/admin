@@ -18,6 +18,6 @@ class Controller extends BaseController
      */
     protected function guard()
     {
-        return auth('admin_api');
+        return auth('admin-api');
     }
 }

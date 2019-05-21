@@ -18,7 +18,7 @@ class LoginController extends Controller
 
     public function guard()
     {
-        return Auth::guard('admin_api');
+        return Auth::guard('admin-api');
     }
 
     protected function sendLoginResponse(Request $request)

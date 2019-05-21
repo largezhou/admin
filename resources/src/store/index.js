@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { getToken, removeToken, setToken } from '@/libs/token'
 import { login, logout } from '@/api/auth'
-import { getUser } from '@/api/admin_user'
+import { getUser } from '@/api/admin-user'
 
 Vue.use(Vuex)
 

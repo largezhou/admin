@@ -41,8 +41,8 @@ class Kernel extends HttpKernel
             'bindings',
         ],
 
-        'admin_api' => [
-            'force_json',
+        'admin-api' => [
+            'force-json',
             'bindings',
         ],
     ];
@@ -63,7 +63,7 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'force_json' => \App\Http\Middleware\ForceJson::class,
+        'force-json' => \App\Http\Middleware\ForceJson::class,
     ];
     /**
      * The priority-sorted list of middleware.

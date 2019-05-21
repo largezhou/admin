@@ -29,7 +29,7 @@ class LoginControllerTest extends TestCase
             'username' => 'admin',
             'password' => '000000',
         ]);
-        $auth = auth('admin_api');
+        $auth = auth('admin-api');
         $res->assertStatus(201)
             ->assertJson([
                 'token' => $auth->getToken()->get(),
