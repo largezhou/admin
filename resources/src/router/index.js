@@ -1,28 +1,51 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Index from '@/views/Index'
-import Login from '@/views/Login'
+import routes from '@/router/routes'
+import { LoadingBar } from 'iview'
+import { getToken } from '@/libs/token'
+import store from '@/store'
 
 Vue.use(Router)
 
-const login = {
-  path: '/login',
-  name: 'login',
-  component: Login,
-}
-
-export default new Router({
+const router = new Router({
   mode: 'history',
   base: 'admin',
-  routes: [
-    login,
-    {
-      path: '/',
-      name: 'index',
-      meta: {
-        auth: true,
-      },
-      component: Index,
-    },
-  ],
+  routes,
 })
+
+router.beforeEach(async (to, from, next) => {
+  LoadingBar.start()
+  if (getToken()) {
+    if (to.name === 'login') {
+      next('/')
+    } else {
+      if (store.getters.loggedIn) {
+        next()
+      } else {
+        try {
+          await store.dispatch('getUser')
+        } catch (e) {
+          LoadingBar.error()
+          return next(false)
+        }
+        next()
+      }
+    }
+  } else if (to.matched.some(r => (r.meta && r.meta.auth))) {
+    next({
+      name: 'login',
+      query: {
+        redirect: to.path,
+      },
+    })
+  } else {
+    next()
+  }
+})
+
+router.afterEach(() => {
+  LoadingBar.finish()
+  window.scrollTo(0, 0)
+})
+
+export default router
