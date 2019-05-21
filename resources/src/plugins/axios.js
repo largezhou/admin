@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { getToken } from '@/libs/token'
 import { Message } from 'iview'
+import store from '@/store'
 
 let config = {
   baseURL: '/admin-api',
@@ -32,8 +33,8 @@ _axios.interceptors.response.use(
           Message.error('请求的网址不存在')
           break
         case 401:
-          // store.dispatch('frontendLogout')
-          Message.error('登录已失效')
+          store.dispatch('feLogout')
+          Message.error('登录已过期，请重新登录')
           break
         case 400:
           const { message: msg } = res.data

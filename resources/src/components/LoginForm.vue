@@ -25,8 +25,6 @@
 </template>
 
 <script>
-import { login } from '@/api/auth'
-import { setToken } from '@/libs/token'
 import utils from '@/libs/utils'
 
 export default {
@@ -42,9 +40,7 @@ export default {
     async onSubmit() {
       this.formErrors = {}
       try {
-        const { data: { token } } = await login(this.form)
-        setToken(token)
-        this.$store.commit('SET_TOKEN', token)
+        await this.$store.dispatch('login', this.form)
         this.$Message.success('登录成功')
         this.$router.push(this.$route.query.redirect || { name: 'index' })
       } catch (e) {

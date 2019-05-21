@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { getToken, setToken } from '@/libs/token'
-import { login } from '@/api/auth'
+import { getToken, removeToken, setToken } from '@/libs/token'
+import { login, logout } from '@/api/auth'
 
 Vue.use(Vuex)
 
@@ -24,6 +24,14 @@ export default new Vuex.Store({
       const token = 'bearer ' + data.token
       setToken(token)
       commit('SET_TOKEN', token)
+    },
+    async logout({ dispatch }) {
+      await logout()
+      dispatch('feLogout')
+    },
+    feLogout({ commit }) {
+      removeToken()
+      commit('SET_TOKEN', '')
     },
   },
 })

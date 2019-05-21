@@ -6,14 +6,20 @@
 </template>
 
 <script>
-import { removeToken } from '@/libs/token'
-
 export default {
   name: 'Index',
   methods: {
-    logout() {
-      removeToken()
-      this.$router.push('login')
+    async logout() {
+      try {
+        await this.$store.dispatch('logout')
+        this.$Message.success('已安全退出')
+        this.$router.push({ name: 'login' })
+      } catch (e) {
+        const res = e.response
+        if (res && res.status === 401) {
+          this.$router.push({ name: 'login' })
+        }
+      }
     },
   },
 }
