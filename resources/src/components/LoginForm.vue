@@ -25,8 +25,6 @@
 </template>
 
 <script>
-import { setToken } from '@/libs/token'
-
 export default {
   name: 'LoginForm',
   data: () => ({
@@ -36,9 +34,9 @@ export default {
     },
   }),
   methods: {
-    onSubmit() {
-      setToken('token')
-      this.$router.push('/')
+    async onSubmit() {
+      await this.$store.dispatch('login', this.form)
+      this.$Message.success('登录咯')
     },
   },
 }
