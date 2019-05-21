@@ -4,7 +4,7 @@ module.exports = {
     node: true,
   },
   'extends': [
-    'plugin:vue/essential',
+    'plugin:vue/strongly-recommended',
     '@vue/standard',
   ],
   rules: {
@@ -22,7 +22,28 @@ module.exports = {
     'eqeqeq': ['warn'],
     'no-eval': ['warn'],
     'vue/require-component-is': 'never',
-    'vue/no-parsing-error': [2, { 'x-invalid-end-tag': false }],
+    'vue/no-parsing-error': [
+      2,
+      {
+        'x-invalid-end-tag': false,
+      },
+    ],
+    'vue/max-attributes-per-line': [
+      'error', {
+        'singleline': 3,
+        'multiline': {
+          'max': 1,
+          'allowFirstLine': false,
+        },
+      },
+    ],
+    'vue/html-closing-bracket-spacing': [
+      'error',
+      {
+        'selfClosingTag': 'never',
+      },
+    ],
+    'vue/singleline-html-element-content-newline': 'off',
   },
   parserOptions: {
     parser: 'babel-eslint',

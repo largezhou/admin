@@ -14,11 +14,6 @@ module.exports = {
   lintOnSave: false,
   configureWebpack: {
     entry: pathResolve('./resources/src/main.js'),
-    resolve: {
-      alias: {
-        '@': pathResolve('./resources/src'),
-      },
-    },
     plugins: [
       new LiveReloadPlugin({
         delay: 500,
@@ -37,5 +32,11 @@ module.exports = {
       })
 
     config.plugins.delete('copy')
+
+    config
+      .resolve
+      .alias
+      .set('@', pathResolve('./resources/src'))
+      .set('@c', pathResolve('./resources/src/components'))
   },
 }

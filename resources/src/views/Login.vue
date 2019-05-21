@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import LoginForm from '@/components/LoginForm'
+import LoginForm from '@c/LoginForm'
 import { mapState } from 'vuex'
 
 export default {

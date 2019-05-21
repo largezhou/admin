@@ -5,18 +5,18 @@
     @keydown.enter.native="onSubmit"
   >
     <FormItem prop="username" :error="formErrors.username">
-      <Input v-model="form.username" placeholder="请输入用户名">
+      <i-input v-model="form.username" placeholder="请输入用户名">
         <span slot="prepend">
           <Icon :size="16" type="ios-person"/>
         </span>
-      </Input>
+      </i-input>
     </FormItem>
     <FormItem prop="password" :error="formErrors.password">
-      <Input type="password" v-model="form.password" placeholder="请输入密码">
+      <i-input type="password" v-model="form.password" placeholder="请输入密码">
         <span slot="prepend">
           <Icon :size="14" type="md-lock"/>
         </span>
-      </Input>
+      </i-input>
     </FormItem>
     <FormItem>
       <Button @click="onSubmit" type="primary" long>登录</Button>
