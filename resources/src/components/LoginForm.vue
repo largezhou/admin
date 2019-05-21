@@ -4,14 +4,14 @@
     :model="form"
     @keydown.enter.native="onSubmit"
   >
-    <FormItem prop="username">
+    <FormItem prop="username" :error="formErrors.username">
       <Input v-model="form.username" placeholder="请输入用户名">
         <span slot="prepend">
           <Icon :size="16" type="ios-person"/>
         </span>
       </Input>
     </FormItem>
-    <FormItem prop="password">
+    <FormItem prop="password" :error="formErrors.password">
       <Input type="password" v-model="form.password" placeholder="请输入密码">
         <span slot="prepend">
           <Icon :size="14" type="md-lock"/>
@@ -25,6 +25,10 @@
 </template>
 
 <script>
+import { login } from '@/api/auth'
+import { setToken } from '@/libs/token'
+import utils from '@/libs/utils'
+
 export default {
   name: 'LoginForm',
   data: () => ({
@@ -32,11 +36,20 @@ export default {
       username: '',
       password: '',
     },
+    formErrors: {},
   }),
   methods: {
     async onSubmit() {
-      await this.$store.dispatch('login', this.form)
-      this.$Message.success('登录咯')
+      this.formErrors = {}
+      try {
+        const { data: { token } } = await login(this.form)
+        setToken(token)
+        this.$store.commit('SET_TOKEN', token)
+        this.$Message.success('登录成功')
+        this.$router.push(this.$route.query.redirect || { name: 'index' })
+      } catch (e) {
+        this.formErrors = utils.handleValidateErrors(e)
+      }
     },
   },
 }

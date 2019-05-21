@@ -9,7 +9,12 @@ router.beforeEach((to, from, next) => {
       next()
     }
   } else if (to.matched.some(r => (r.meta && r.meta.auth))) {
-    next({ name: 'login' })
+    next({
+      name: 'login',
+      query: {
+        redirect: to.path,
+      },
+    })
   } else {
     next()
   }

@@ -18,6 +18,7 @@ export default new Router({
     login,
     {
       path: '/',
+      name: 'index',
       meta: {
         auth: true,
       },

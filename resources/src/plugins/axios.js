@@ -24,7 +24,6 @@ _axios.interceptors.response.use(
     return res
   },
   (err) => {
-    log('err in axios response', { err })
     const res = err.response
 
     if (res) {
@@ -40,11 +39,14 @@ _axios.interceptors.response.use(
           const { message: msg } = res.data
           msg && Message.error(msg)
           break
+        case 500:
+          Message.error('服务器异常')
+          break
         default:
-          Message.error(`服务器错误 (code: ${res.status})`)
+        // null
       }
     } else {
-      Message.error('请求失败')
+      Message.error('网络异常')
     }
     return Promise.reject(err)
   },
