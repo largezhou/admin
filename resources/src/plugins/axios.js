@@ -34,7 +34,7 @@ _axios.interceptors.response.use(
           break
         case 401:
           store.dispatch('feLogout')
-          Message.error('登录已过期，请重新登录')
+          Message.error('登录已失效，请重新登录')
           break
         case 400:
           const { message: msg } = res.data

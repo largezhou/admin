@@ -20,6 +20,7 @@
     "iview": "^3.0.1",
     "less": "^2.7.3",
     "less-loader": "^4.0.6",
+    "lodash": "^4.17.11",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.1.0",
     "vue": "^2.6.10",
