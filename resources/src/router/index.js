@@ -10,7 +10,7 @@ Vue.use(Router)
 
 const router = new Router({
   mode: 'history',
-  base: 'admin',
+  base: process.env.NODE_ENV === 'development' ? 'admin-dev' : 'admin',
   routes,
 })
 

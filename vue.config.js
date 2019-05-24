@@ -6,18 +6,16 @@ function pathResolve() {
 }
 
 const inDev = process.env.NODE_ENV === 'development'
-const devSuffix = inDev ? '-dev' : ''
+const adminFolder = `admin${inDev ? '-dev' : ''}`
 
 module.exports = {
-  outputDir: pathResolve(`./public/lz-admin${devSuffix}`),
-  publicPath: `/lz-admin${devSuffix}`,
+  outputDir: pathResolve('./public/', adminFolder),
+  publicPath: '/' + adminFolder,
   lintOnSave: false,
   configureWebpack: {
     entry: pathResolve('./resources/src/main.js'),
     plugins: [
-      new LiveReloadPlugin({
-        delay: 500,
-      }),
+      new LiveReloadPlugin(),
     ],
   },
   chainWebpack(config) {
@@ -25,8 +23,8 @@ module.exports = {
       .plugin('html')
       .tap((args) => {
         const o = args[0]
-        o.template = pathResolve('./resources/src/template/admin.blade.php')
-        o.filename = pathResolve(`./resources/views/admin${devSuffix}.blade.php`)
+        o.template = pathResolve('./resources/src/template/index.html')
+        o.filename = pathResolve(`./public/${adminFolder}/index.html`)
 
         return args
       })

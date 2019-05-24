@@ -6,12 +6,8 @@ import { getUser } from '@/api/admin-user'
 
 Vue.use(Vuex)
 
-// 配置
-const config = JSON.parse(document.querySelector('#admin-app').dataset.config)
-
 export default new Vuex.Store({
   state: {
-    config,
     token: getToken(),
     user: null,
   },

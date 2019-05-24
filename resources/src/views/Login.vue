@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <div class="login-wrap">
-      <Card icon="md-log-in" :title="`${config.name}后台管理系统`">
+      <Card icon="md-log-in" title="后台">
         <div class="form-con">
           <LoginForm/>
         </div>
@@ -12,17 +12,11 @@
 
 <script>
 import LoginForm from '@c/LoginForm'
-import { mapState } from 'vuex'
 
 export default {
   name: 'Login',
   components: {
     LoginForm,
-  },
-  computed: {
-    ...mapState({
-      config: (state) => state.config,
-    }),
   },
 }
 </script>

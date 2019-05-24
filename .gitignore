@@ -13,5 +13,4 @@ yarn-error.log
 .phpstorm.meta.php
 _ide_helper.php
 _ide_helper_models.php
-public/lz-admin-dev
-resources/views/admin-dev.blade.php
+public/admin-dev

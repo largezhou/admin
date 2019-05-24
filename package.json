@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "dev": "vue-cli-service build --mode development",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "watch": "vue-cli-service build --mode development --watch"
