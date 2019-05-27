@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Admin;
+namespace Tests\Admin\Feature;
 
 use App\Http\Resources\AdminUserResource;
 use Tests\TestCase;
