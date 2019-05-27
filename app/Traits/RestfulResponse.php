@@ -37,7 +37,7 @@ trait RestfulResponse
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function ok($data, array $headers = [])
+    protected function ok($data = null, array $headers = [])
     {
         return response()->json($data, 200, $headers);
     }
