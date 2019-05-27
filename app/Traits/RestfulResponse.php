@@ -10,11 +10,11 @@ trait RestfulResponse
      * @param null|string|array $data
      * @param array             $headers
      *
-     * @return \Illuminate\Http\Response|\Illuminate\Contracts\Routing\ResponseFactory
+     * @return \Illuminate\Http\JsonResponse
      */
     protected function created($data = null, array $headers = [])
     {
-        return response($data, 201, $headers);
+        return response()->json($data, 201, $headers);
     }
 
     /**
@@ -22,10 +22,23 @@ trait RestfulResponse
      *
      * @param array $headers
      *
-     * @return \Illuminate\Http\Response|\Illuminate\Contracts\Routing\ResponseFactory
+     * @return \Illuminate\Http\JsonResponse
      */
     protected function noContent(array $headers = [])
     {
-        return response(null, 204, $headers);
+        return response()->json(null, 204, $headers);
+    }
+
+    /**
+     * 返回 200 OK 响应
+     *
+     * @param mixed $data
+     * @param array $headers
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function ok($data, array $headers = [])
+    {
+        return response()->json($data, 200, $headers);
     }
 }

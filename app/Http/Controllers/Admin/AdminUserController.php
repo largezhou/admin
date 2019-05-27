@@ -11,6 +11,6 @@ class AdminUserController extends Controller
     public function user()
     {
         $user = $this->guard()->user();
-        return AdminUserResource::make($user);
+        return $this->ok(AdminUserResource::make($user));
     }
 }
