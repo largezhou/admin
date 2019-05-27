@@ -3,7 +3,7 @@
 /* @var $factory \Illuminate\Database\Eloquent\Factory */
 
 use Faker\Generator as Faker;
-use App\Models\AdminUser;
+use App\Models\Admin\AdminUser;
 
 $factory->define(AdminUser::class, function (Faker $faker) {
     static $pw;

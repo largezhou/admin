@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use App\Models\AdminUser;
+use App\Models\Admin\AdminUser;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
