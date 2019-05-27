@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import routes from '@/router/routes'
+import routes, { menuRoutes, anyRoute } from '@/router/routes'
 import { LoadingBar } from 'iview'
 import { getToken } from '@/libs/token'
 import store from '@/store'
@@ -13,6 +13,9 @@ const router = new Router({
   base: process.env.NODE_ENV === 'development' ? 'admin-dev' : 'admin',
   routes,
 })
+
+router.addRoutes(menuRoutes)
+router.addRoutes([anyRoute])
 
 const loginRoute = to => ({
   name: 'login',
@@ -38,8 +41,8 @@ router.beforeEach(async (to, from, next) => {
           if (dontNeedAuth(to)) { // 如果去的页面不需要登录，则通过
             next()
           } else { // 否则跳转到登录页
-            LoadingBar.error()
-            next(next(loginRoute(to)))
+            LoadingBar.finish()
+            next(loginRoute(to))
           }
         }
         next() // 获取用户信息成功，通过
@@ -50,7 +53,9 @@ router.beforeEach(async (to, from, next) => {
   } else { // 否则跳转到登录页
     next(loginRoute(to))
   }
-  // 某些情况下，不会执行 afterEach 导致进度条不能结束
+})
+
+router.afterEach(() => {
   LoadingBar.finish()
 })
 

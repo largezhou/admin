@@ -8,5 +8,8 @@
 </head>
 <body>
 <div id="admin-app"/>
+<% if (process.env.NODE_ENV == 'development') { %>
+<%= '<script src="http://localhost:35729/livereload.js"></script>' %>
+<% } %>
 </body>
 </html>
