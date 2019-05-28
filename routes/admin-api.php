@@ -7,6 +7,7 @@ Route::middleware('auth:admin-api')
         Route::post('/auth/logout', 'Auth\LoginController@logout')->name('logout');
 
         Route::get('/user', 'AdminUserController@user')->name('user');
+        Route::resource('/menus', 'AdminMenuController');
     });
 
 Route::post('/auth/login', 'Auth\LoginController@login')->name('login');

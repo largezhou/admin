@@ -4,9 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Resources\AdminUserResource;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
-class AdminUserController extends Controller
+class AdminUserController extends AdminBaseController
 {
     public function user()
     {

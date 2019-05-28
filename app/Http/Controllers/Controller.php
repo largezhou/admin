@@ -12,12 +12,4 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
     use RestfulResponse;
-
-    /**
-     * @return \Illuminate\Contracts\Auth\Guard
-     */
-    protected function guard()
-    {
-        return auth('admin-api');
-    }
 }
