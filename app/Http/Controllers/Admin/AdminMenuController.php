@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\Admin\AdminMenuRequest;
+use App\Http\Resources\AdminMenuResource;
 use App\Models\Admin\AdminMenu;
 use Illuminate\Http\Request;
 
@@ -21,5 +22,10 @@ class AdminMenuController extends AdminBaseController
         $menu->update($inputs);
 
         return $this->ok();
+    }
+
+    public function edit(AdminMenu $menu)
+    {
+        return AdminMenuResource::make($menu);
     }
 }

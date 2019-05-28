@@ -2,6 +2,7 @@
 
 namespace Tests\Admin\Feature;
 
+use App\Http\Resources\AdminMenuResource;
 use App\Models\Admin\AdminMenu;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -25,6 +26,11 @@ class AdminMenuControllerTest extends TestCase
     protected function putUpdate($id, $data = [])
     {
         return $this->put(route('admin.menus.update', $id), $data);
+    }
+
+    protected function getEdit($id)
+    {
+        return $this->get(route('admin.menus.edit', $id));
     }
 
     public function testCreate()
@@ -139,5 +145,15 @@ class AdminMenuControllerTest extends TestCase
         $res->assertStatus(200);
 
         $this->assertDatabaseHas('admin_menus', ['id' => 1] + $inputs);
+    }
+
+    public function testEdit()
+    {
+        $this->getEdit(999)->assertStatus(404);
+
+        $menu = factory(AdminMenu::class)->create()->toArray();
+        $res = $this->getEdit(1);
+        $res->assertStatus(200)
+            ->assertJsonFragment($menu);
     }
 }
