@@ -114,7 +114,9 @@ class AdminMenuControllerTest extends TestCase
         $res = $this->putUpdate(1, [
             'parent_id' => 1,
         ]);
-        $res->assertJsonValidationErrors(['parent_id']);
+        $res->assertJsonValidationErrors(['parent_id'])
+            // 更新时，只会验证有的字段
+            ->assertJsonMissingValidationErrors(['title']);
         $res = $this->putUpdate(1, [
             'parent_id' => 2,
         ]);
