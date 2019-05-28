@@ -14,4 +14,12 @@ class AdminMenuController extends AdminBaseController
         $model::create($inserts);
         return $this->created();
     }
+
+    public function update(AdminMenuRequest $request, AdminMenu $menu)
+    {
+        $inputs = $request->validated();
+        $menu->update($inputs);
+
+        return $this->ok();
+    }
 }

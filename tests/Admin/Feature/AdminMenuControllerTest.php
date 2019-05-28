@@ -22,6 +22,11 @@ class AdminMenuControllerTest extends TestCase
         return $this->post(route('admin.menus.store'), $data);
     }
 
+    protected function putUpdate($id, $data = [])
+    {
+        return $this->put(route('admin.menus.update', $id), $data);
+    }
+
     public function testCreate()
     {
         $res = $this->get(route('admin.menus.create'));
@@ -80,5 +85,33 @@ class AdminMenuControllerTest extends TestCase
                 'parent_id' => 1,
             ])
         );
+    }
+
+    public function testUpdateValidation()
+    {
+        // 与 store 唯一不同的是，parent_id 不能是自己
+        factory(AdminMenu::class)->create();
+        $res = $this->putUpdate(1, [
+            'parent_id' => 1,
+        ]);
+        $res->assertJsonValidationErrors(['parent_id']);
+    }
+
+    public function testUpdate()
+    {
+        $this->putUpdate(999)->assertStatus(404);
+        factory(AdminMenu::class, 2)->create();
+
+        $inputs = [
+            'parent_id' => 2,
+            'title' => 'new title',
+            'icon' => 'new icon',
+            'uri' => 'new/uri',
+            'order' => 99,
+        ];
+        $res = $this->putUpdate(1, $inputs);
+        $res->assertStatus(200);
+
+        $this->assertDatabaseHas('admin_menus', ['id' => 1] + $inputs);
     }
 }
