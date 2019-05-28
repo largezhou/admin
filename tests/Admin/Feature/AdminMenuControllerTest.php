@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class AdminMenuControllerTest extends TestCase
 {
     use RefreshDatabase;
+    use WithFaker;
 
     protected function setUp(): void
     {
@@ -31,6 +32,11 @@ class AdminMenuControllerTest extends TestCase
     protected function getEdit($id)
     {
         return $this->get(route('admin.menus.edit', $id));
+    }
+
+    protected function getIndex()
+    {
+        return $this->get(route('admin.menus.index'));
     }
 
     public function testCreate()
@@ -155,5 +161,49 @@ class AdminMenuControllerTest extends TestCase
         $res = $this->getEdit(1);
         $res->assertStatus(200)
             ->assertJsonFragment($menu);
+    }
+
+    public function testIndex()
+    {
+        $this->createdNestedMenus();
+
+        // 手动查出 3 级嵌套菜单
+        $menu = AdminMenu::find(1);
+        // assertJsonFragment 中，会对键进行排序，被处理后的数据，与原始数据顺序不对
+        // 所有这里查的数据，对不对 order 排序，都不影响断言，，，
+        $children = AdminMenu::where('parent_id', $menu->id)->get()->each(function ($i) {
+            $children = AdminMenu::where('parent_id', $i->id)->get()->toArray();
+            if (!empty($children)) {
+                $i->children = $children;
+            }
+        })->toArray();
+        if (!empty($children)) {
+            $menu->children = $children;
+        }
+        $menu = $menu->toArray();
+
+        $res = $this->getIndex();
+        $res->assertStatus(200)
+            ->assertJsonFragment($menu);
+    }
+
+    protected function createdNestedMenus()
+    {
+        $menus = factory(AdminMenu::class, 9)->make([
+            'created_at' => now(),
+            'updated_at' => now(),
+        ])->toArray();
+        // 三级嵌套菜单
+        foreach ($menus as $i => &$menu) {
+            if ($i < 3) {
+                $parentId = 0;
+            } else {
+                $parentId = $i - 2;
+            }
+            $menu['parent_id'] = $parentId;
+        }
+        unset($menu);
+
+        AdminMenu::insert($menus);
     }
 }

@@ -28,4 +28,9 @@ class AdminMenuController extends AdminBaseController
     {
         return AdminMenuResource::make($menu);
     }
+
+    public function index()
+    {
+        return $this->ok(AdminMenu::buildNestedArray());
+    }
 }
