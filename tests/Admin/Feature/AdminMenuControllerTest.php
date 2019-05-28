@@ -41,25 +41,45 @@ class AdminMenuControllerTest extends TestCase
             'title' => '',
             'order' => 15.1,
         ]);
-        $res->assertJsonValidationErrors(['title', 'order'])
-            ->assertJsonMissingValidationErrors(['icon', 'uri', 'parent_id']);
+        $res->assertJsonValidationErrors(['title', 'order']);
+        $res = $this->postStore([
+            'title' => 'title',
+            'order' => 15,
+        ]);
+        $res->assertJsonMissingValidationErrors(['title', 'order']);
 
-        // max 50
+        // max
         $res = $this->postStore([
             'title' => str_repeat('a', 51),
             'icon' => str_repeat('a', 51),
             'uri' => str_repeat('a', 51),
+            'order' => 10000,
         ]);
-        $res->assertJsonValidationErrors(['icon', 'uri', 'title']);
+        $res->assertJsonValidationErrors(['icon', 'uri', 'title', 'order']);
+        $res = $this->postStore([
+            'title' => str_repeat('a', 3),
+            'icon' => str_repeat('a', 3),
+            'uri' => str_repeat('a', 3),
+            'order' => 999,
+        ]);
+        $res->assertJsonMissingValidationErrors(['icon', 'uri', 'title', 'order']);
+
+        // order min
+        $res = $this->postStore([
+            'order' => -10000,
+        ]);
+        $res->assertJsonValidationErrors(['order']);
+        $res = $this->postStore([
+            'order' => 0,
+        ]);
+        $res->assertJsonMissingValidationErrors(['order']);
 
         factory(AdminMenu::class)->create();
-        // parent_id fail
+        // parent_id exists
         $res = $this->postStore([
-            'parent_id' => 2,
+            'parent_id' => 999,
         ]);
         $res->assertJsonValidationErrors('parent_id');
-
-        // parent_id pass
         $res = $this->postStore([
             'parent_id' => 1,
         ]);
@@ -90,11 +110,15 @@ class AdminMenuControllerTest extends TestCase
     public function testUpdateValidation()
     {
         // 与 store 唯一不同的是，parent_id 不能是自己
-        factory(AdminMenu::class)->create();
+        factory(AdminMenu::class, 2)->create();
         $res = $this->putUpdate(1, [
             'parent_id' => 1,
         ]);
         $res->assertJsonValidationErrors(['parent_id']);
+        $res = $this->putUpdate(1, [
+            'parent_id' => 2,
+        ]);
+        $res->assertJsonMissingValidationErrors(['parent_id']);
     }
 
     public function testUpdate()

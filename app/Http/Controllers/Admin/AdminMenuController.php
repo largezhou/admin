@@ -10,8 +10,8 @@ class AdminMenuController extends AdminBaseController
 {
     public function store(AdminMenuRequest $request, AdminMenu $model)
     {
-        $inserts = $request->validated();
-        $model::create($inserts);
+        $inputs = $request->validated();
+        $model::create($inputs);
         return $this->created();
     }
 

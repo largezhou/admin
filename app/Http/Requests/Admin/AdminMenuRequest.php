@@ -25,7 +25,7 @@ class AdminMenuRequest extends FormRequest
             'title' => 'required|max:50',
             'icon' => 'max:50',
             'uri' => 'max:50',
-            'order' => 'integer',
+            'order' => 'integer|between:-9999,9999',
         ]);
 
         return $rules;
