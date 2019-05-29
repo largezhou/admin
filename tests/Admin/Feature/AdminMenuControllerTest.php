@@ -58,11 +58,6 @@ class AdminMenuControllerTest extends TestCase
             'order' => 15.1,
         ]);
         $res->assertJsonValidationErrors(['title', 'order']);
-        $res = $this->postStore([
-            'title' => 'title',
-            'order' => 15,
-        ]);
-        $res->assertJsonMissingValidationErrors(['title', 'order']);
 
         // max
         $res = $this->postStore([
@@ -72,23 +67,12 @@ class AdminMenuControllerTest extends TestCase
             'order' => 10000,
         ]);
         $res->assertJsonValidationErrors(['icon', 'uri', 'title', 'order']);
-        $res = $this->postStore([
-            'title' => str_repeat('a', 3),
-            'icon' => str_repeat('a', 3),
-            'uri' => str_repeat('a', 3),
-            'order' => 999,
-        ]);
-        $res->assertJsonMissingValidationErrors(['icon', 'uri', 'title', 'order']);
 
         // order min
         $res = $this->postStore([
             'order' => -10000,
         ]);
         $res->assertJsonValidationErrors(['order']);
-        $res = $this->postStore([
-            'order' => 0,
-        ]);
-        $res->assertJsonMissingValidationErrors(['order']);
 
         factory(AdminMenu::class)->create();
         // parent_id exists
@@ -96,10 +80,6 @@ class AdminMenuControllerTest extends TestCase
             'parent_id' => 999,
         ]);
         $res->assertJsonValidationErrors('parent_id');
-        $res = $this->postStore([
-            'parent_id' => 1,
-        ]);
-        $res->assertJsonMissingValidationErrors('parent_id');
     }
 
     public function testStore()
