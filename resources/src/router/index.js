@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import routes, { menuRoutes, anyRoute } from '@/router/routes'
+import routes from '@/router/routes'
 import { LoadingBar } from 'iview'
 import { getToken } from '@/libs/token'
 import store from '@/store'
@@ -12,9 +12,6 @@ const router = new Router({
   base: process.env.NODE_ENV === 'development' ? 'admin-dev' : 'admin',
   routes,
 })
-
-router.addRoutes(menuRoutes)
-router.addRoutes([anyRoute])
 
 const loginRoute = to => ({
   name: 'login',
@@ -36,10 +33,20 @@ router.beforeEach(async (to, from, next) => {
     } else { // 否则应该获取用户信息和菜单
       const requests = []
       try {
-        !store.getters.loggedIn && requests.push(store.dispatch('getUser'))
-        !store.state.menus.loaded && requests.push(store.dispatch('getMenus'))
+        const loggedIn = store.getters.loggedIn
+        const menusLoaded = store.state.menus.loaded
+
+        !loggedIn && requests.push(store.dispatch('getUser'))
+        !menusLoaded && requests.push(store.dispatch('getMenus'))
         await getNeededData(requests)
-        next()
+
+        // 如果之前没有菜单，则获取玩菜单后，要重新定位到要去的路由
+        // 因为路由配置已经变了
+        if (!menusLoaded) {
+          next(to)
+        } else {
+          next()
+        }
       } catch ({ response: res }) {
         if (res && res.status === 401) {
           next(loginRoute(to))

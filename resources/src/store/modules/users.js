@@ -1,4 +1,4 @@
-import { getToken, setToken } from '@/libs/token'
+import { getToken, removeToken, setToken } from '@/libs/token'
 import { login, logout } from '@/api/auth'
 import { getUser } from '@/api/admin-user'
 
@@ -35,6 +35,7 @@ export default {
       dispatch('feLogout')
     },
     clearAuth({ commit }) {
+      removeToken()
       commit('SET_TOKEN', '')
       commit('SET_USER', null)
     },

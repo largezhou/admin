@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import { menus } from '@/router/routes'
 import SideMenuItem from '@/layouts/Main/components/SideMenuItem'
 
 export default {
@@ -26,7 +25,9 @@ export default {
     SideMenuItem,
   },
   computed: {
-    menus: () => menus,
+    menus() {
+      return this.$store.state.menus.menus
+    },
     openNames() {
       return this.$route.matched.filter(i => i.name).map(i => i.name)
     },

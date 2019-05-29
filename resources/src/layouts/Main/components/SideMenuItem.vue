@@ -20,7 +20,7 @@
     v-else
     :key="menu.id"
     :name="makeRouteName(menu.id)"
-    :to="menu.uri || ''"
+    :to="makePath(menu.uri)"
   >
     <Icon :type="icon(menu)"/>
     {{ menu.title }}
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { makeRouteName } from '@/router/routes'
+import { makeRouteName, startSlash } from '@/libs/utils'
 
 export default {
   name: 'SideMenuItem',
@@ -42,7 +42,8 @@ export default {
     icon(menu) {
       return menu.icon || 'md-menu'
     },
-    makeRouteName: unique => makeRouteName(unique),
+    makeRouteName,
+    makePath: path => path ? startSlash(path) : '',
   },
 }
 </script>

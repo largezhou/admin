@@ -29,7 +29,6 @@
 <script>
 
 import SideMenu from '@/layouts/Main/components/SideMenu'
-import { homeName, homeRoute } from '@/router/routes'
 
 export default {
   name: 'Main',
@@ -37,16 +36,19 @@ export default {
     SideMenu,
   },
   computed: {
+    homeName() {
+      return this.$store.getters.homeName
+    },
+    homeRoute() {
+      return this.$store.state.menus.homeRoute
+    },
     breadCrumb() {
       const m = this.$route.matched.filter(i => i.name)
-      if (this.$route.name !== homeName) {
-        m.unshift(homeRoute)
+      if (this.$route.name !== this.homeName) {
+        m.unshift(this.homeRoute)
       }
       return m
     },
-  },
-  created() {
-    log('main created')
   },
 }
 </script>
