@@ -2,7 +2,6 @@
 
 namespace Tests\Admin\Feature;
 
-use App\Http\Resources\AdminMenuResource;
 use App\Models\Admin\AdminMenu;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -37,6 +36,11 @@ class AdminMenuControllerTest extends TestCase
     protected function getIndex()
     {
         return $this->get(route('admin.menus.index'));
+    }
+
+    protected function destroy($id)
+    {
+        return $this->delete(route('admin.menus.destroy', $id));
     }
 
     public function testCreate()
@@ -168,6 +172,21 @@ class AdminMenuControllerTest extends TestCase
         app(\AdminMenusTableSeeder::class)->run();
         // 手动查出 3 级嵌套菜单
         $menu = AdminMenu::find(1);
+        $this->setMenusChildren($menu);
+        $menu = $menu->toArray();
+
+        $res = $this->getIndex();
+        $res->assertStatus(200)
+            ->assertJsonFragment($menu);
+    }
+
+    /**
+     * 查出菜单的子菜单，最多 2 级
+     *
+     * @param AdminMenu $menu
+     */
+    protected function setMenusChildren(AdminMenu $menu)
+    {
         // assertJsonFragment 中，会对键进行排序，被处理后的数据，与原始数据顺序不对
         // 所有这里查的数据，对不对 order 排序，都不影响断言，，，
         $children = AdminMenu::where('parent_id', $menu->id)->get()->each(function ($i) {
@@ -179,10 +198,22 @@ class AdminMenuControllerTest extends TestCase
         if (!empty($children)) {
             $menu->children = $children;
         }
-        $menu = $menu->toArray();
+    }
 
-        $res = $this->getIndex();
-        $res->assertStatus(200)
-            ->assertJsonFragment($menu);
+    public function testDestroy()
+    {
+        $this->delete(999)->assertStatus(404);
+
+        app(\AdminMenusTableSeeder::class)->run();
+        $menu = AdminMenu::first();
+        $this->setMenusChildren($menu);
+
+        $this->destroy($menu->id)->assertStatus(204);
+
+        // 子菜单全部删除
+        $this->assertDatabaseMissing('admin_menus', ['id' => $menu->id]);
+        // hack 一下，无妨，，，
+        $this->assertDatabaseMissing('admin_menus', ['id' => $menu['children'][0]['id']]);
+        $this->assertDatabaseMissing('admin_menus', ['id' => $menu['children'][0]['children'][0]['id']]);
     }
 }

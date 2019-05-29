@@ -3,7 +3,7 @@
 namespace App\Models\Admin;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class AdminMenu extends Model
 {
@@ -12,6 +12,15 @@ class AdminMenu extends Model
         'order' => 'integer',
     ];
     protected $fillable = ['parent_id', 'order', 'title', 'icon', 'uri'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleted(function () {
+
+        });
+    }
 
     /**
      * 把菜单构建成嵌套的数组结构
@@ -41,5 +50,22 @@ class AdminMenu extends Model
         }
 
         return $branch;
+    }
+
+    public function children()
+    {
+        return $this->hasMany(AdminMenu::class, 'parent_id');
+    }
+
+    public function delete()
+    {
+        DB::beginTransaction();
+
+        $res = parent::delete();
+        $this->children->each->delete();
+
+        DB::commit();
+
+        return $res;
     }
 }

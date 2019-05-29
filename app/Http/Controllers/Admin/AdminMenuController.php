@@ -33,4 +33,10 @@ class AdminMenuController extends AdminBaseController
     {
         return $this->ok(AdminMenu::buildNestedArray());
     }
+
+    public function destroy(AdminMenu $menu)
+    {
+        $menu->delete();
+        return $this->noContent();
+    }
 }
