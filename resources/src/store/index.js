@@ -1,48 +1,21 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { getToken, removeToken, setToken } from '@/libs/token'
-import { login, logout } from '@/api/auth'
-import { getUser } from '@/api/admin-user'
+
+import users from './modules/users'
+import menus from './modules/menus'
+import { removeToken } from '@/libs/token'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  state: {
-    token: getToken(),
-    user: null,
-  },
-  getters: {
-    loggedIn(state) {
-      return !!state.user
-    },
-  },
-  mutations: {
-    SET_TOKEN(state, token) {
-      state.token = token
-    },
-    SET_USER(state, user) {
-      state.user = user
-    },
+  modules: {
+    users,
+    menus,
   },
   actions: {
-    async login({ commit }, payload) {
-      const { data } = await login(payload)
-      const token = 'bearer ' + data.token
-      setToken(token)
-      commit('SET_TOKEN', token)
-    },
-    async logout({ dispatch }) {
-      await logout()
-      dispatch('feLogout')
-    },
-    feLogout({ commit }) {
+    feLogout({ dispatch }) {
       removeToken()
-      commit('SET_TOKEN', '')
-      commit('SET_USER', null)
-    },
-    async getUser({ commit }) {
-      const { data } = await getUser()
-      commit('SET_USER', data)
+      dispatch('clearAuth')
     },
   },
 })

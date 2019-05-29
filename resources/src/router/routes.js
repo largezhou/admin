@@ -122,9 +122,6 @@ export default [
   {
     path: '/login',
     name: 'login',
-    meta: {
-      noAuth: true,
-    },
     component: () => import('@/views/Login'),
   },
 ]
