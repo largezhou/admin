@@ -3,7 +3,8 @@ import ContentView from '@/layouts/ContentView'
 import ParentView from '@/layouts/ParentView'
 import './imports'
 
-export const homeName = 1
+export const makeRouteName = unique => `route-${unique}`
+export const homeName = makeRouteName(1)
 export const menus = [
   {
     id: 1,
@@ -68,7 +69,7 @@ const buildRoutesFromMenus = (menus, level = 0) => {
   menus.forEach(i => {
     let r = {
       path: i.uri || '',
-      name: i.id,
+      name: makeRouteName(i.id),
       meta: {
         title: i.title,
         cache: i.cache,

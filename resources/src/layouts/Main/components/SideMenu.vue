@@ -9,7 +9,6 @@
       <template v-for="menu of menus">
         <SideMenuItem
           :key="menu.id"
-          :name="menu.id"
           :menu="menu"
         />
       </template>
@@ -37,7 +36,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-
-</style>

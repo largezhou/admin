@@ -2,7 +2,7 @@
   <Submenu
     v-if="hasChildren(menu)"
     :key="menu.id"
-    :name="menu.id"
+    :name="makeRouteName(menu.id)"
   >
     <template slot="title">
       <Icon :type="icon(menu)"/>
@@ -12,7 +12,6 @@
       <SideMenuItem
         v-for="sub of menu.children"
         :key="sub.id"
-        :name="sub.id"
         :menu="sub"
       />
     </template>
@@ -20,7 +19,7 @@
   <MenuItem
     v-else
     :key="menu.id"
-    :name="menu.id"
+    :name="makeRouteName(menu.id)"
     :to="menu.uri || ''"
   >
     <Icon :type="icon(menu)"/>
@@ -29,11 +28,12 @@
 </template>
 
 <script>
+import { makeRouteName } from '@/router/routes'
+
 export default {
   name: 'SideMenuItem',
   props: {
     menu: Object,
-    name: [String, Number],
   },
   methods: {
     hasChildren(menu) {
@@ -42,10 +42,7 @@ export default {
     icon(menu) {
       return menu.icon || 'md-menu'
     },
+    makeRouteName: unique => makeRouteName(unique),
   },
 }
 </script>
-
-<style scoped>
-
-</style>
