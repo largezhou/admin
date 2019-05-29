@@ -165,8 +165,7 @@ class AdminMenuControllerTest extends TestCase
 
     public function testIndex()
     {
-        $this->createdNestedMenus();
-
+        app(\AdminMenusTableSeeder::class)->run();
         // 手动查出 3 级嵌套菜单
         $menu = AdminMenu::find(1);
         // assertJsonFragment 中，会对键进行排序，被处理后的数据，与原始数据顺序不对
@@ -185,25 +184,5 @@ class AdminMenuControllerTest extends TestCase
         $res = $this->getIndex();
         $res->assertStatus(200)
             ->assertJsonFragment($menu);
-    }
-
-    protected function createdNestedMenus()
-    {
-        $menus = factory(AdminMenu::class, 9)->make([
-            'created_at' => now(),
-            'updated_at' => now(),
-        ])->toArray();
-        // 三级嵌套菜单
-        foreach ($menus as $i => &$menu) {
-            if ($i < 3) {
-                $parentId = 0;
-            } else {
-                $parentId = $i - 2;
-            }
-            $menu['parent_id'] = $parentId;
-        }
-        unset($menu);
-
-        AdminMenu::insert($menus);
     }
 }
