@@ -12,6 +12,6 @@ $factory->define(AdminMenu::class, function (Faker $faker) {
         'order' => $faker->numberBetween(0, 100),
         'title' => '菜单'.$faker->unique()->name,
         'icon' => $faker->randomElement($icons),
-        'uri' => implode('/', $faker->words($faker->numberBetween(2, 4))),
+        'uri' => '/'.implode('/', $faker->words($faker->numberBetween(2, 4))),
     ];
 });

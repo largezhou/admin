@@ -17,8 +17,10 @@ class AdminMenu extends Model
     {
         parent::boot();
 
-        static::deleted(function () {
-
+        static::saving(function (AdminMenu $model) {
+            if ($model->isDirty('uri')) {
+                $model->uri = '/'.ltrim($model->uri, '/');
+            }
         });
     }
 

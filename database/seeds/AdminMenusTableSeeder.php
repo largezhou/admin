@@ -8,6 +8,12 @@ class AdminMenusTableSeeder extends Seeder
     public function run()
     {
         AdminMenu::truncate();
+        // 暂时弄一个写死的首页，方便前端显示
+        factory(AdminMenu::class)->create([
+            'uri' => '/index',
+            'title' => '首页',
+            'order' => 0,
+        ]);
         $menus = factory(AdminMenu::class, 9)->make([
             'created_at' => now(),
             'updated_at' => now(),
@@ -17,7 +23,7 @@ class AdminMenusTableSeeder extends Seeder
             if ($i < 3) {
                 $parentId = 0;
             } else {
-                $parentId = $i - 2;
+                $parentId = $i - 1;
             }
             $menu['parent_id'] = $parentId;
         }

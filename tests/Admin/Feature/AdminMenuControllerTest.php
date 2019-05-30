@@ -87,6 +87,7 @@ class AdminMenuControllerTest extends TestCase
         factory(AdminMenu::class)->create();
         $inputs = factory(AdminMenu::class)->make([
             'parent_id' => 1,
+            'uri' => 'no/start/slash',
         ])->toArray();
         $inputs['created_at'] = (string) now()->addDay();
 
@@ -99,6 +100,7 @@ class AdminMenuControllerTest extends TestCase
                 'created_at' => (string) now(),
                 'id' => 2,
                 'parent_id' => 1,
+                'uri' => '/'.$inputs['uri'],
             ])
         );
     }
@@ -134,6 +136,7 @@ class AdminMenuControllerTest extends TestCase
         $res = $this->putUpdate(1, $inputs);
         $res->assertStatus(200);
 
+        $inputs['uri'] = '/'.$inputs['uri'];
         $this->assertDatabaseHas('admin_menus', ['id' => 1] + $inputs);
     }
 

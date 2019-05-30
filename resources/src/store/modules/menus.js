@@ -32,7 +32,8 @@ export default {
       commit('SET_MENUS', data)
       commit('SET_LOADED', true)
 
-      const { routes, homeRoute } = buildRoutesFromMenus(data, makeRouteName(10))
+      // 暂时写死 1 为首页
+      const { routes, homeRoute } = buildRoutesFromMenus(data, makeRouteName(1))
       router.addRoutes(routes)
       router.addRoutes([anyRoute])
       commit('SET_HOME_ROUTE', homeRoute)
