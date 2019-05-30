@@ -1,7 +1,7 @@
 import _trimStart from 'lodash/trimStart'
 import ParentView from '@/layouts/ParentView'
-import ContentView from '@/layouts/ContentView'
 import Main from '@/layouts/Main/index'
+import ContentView from '@/layouts/ContentView'
 
 /**
  * 把 laravel 返回的错误消息，处理成只有一条

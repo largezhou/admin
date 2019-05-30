@@ -1,6 +1,5 @@
 import Main from '@/layouts/Main/index'
 import ContentView from '@/layouts/ContentView'
-import './imports'
 
 export const anyRoute = {
   path: '/',

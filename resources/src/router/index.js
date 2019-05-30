@@ -43,7 +43,7 @@ router.beforeEach(async (to, from, next) => {
         // 如果之前没有菜单，则获取玩菜单后，要重新定位到要去的路由
         // 因为路由配置已经变了
         if (!menusLoaded) {
-          next(to)
+          router.replace(to)
         } else {
           next()
         }

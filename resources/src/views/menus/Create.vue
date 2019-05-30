@@ -1,5 +1,5 @@
 <template>
-  <h1>USER CREATE</h1>
+  <h1>添加菜单</h1>
 </template>
 
 <script>
@@ -7,7 +7,3 @@ export default {
   name: 'Create',
 }
 </script>
-
-<style scoped>
-
-</style>

@@ -1,10 +1,10 @@
 <template>
-  <h1>POST INDEX</h1>
+  <h1>编辑</h1>
 </template>
 
 <script>
 export default {
-  name: 'Index',
+  name: 'Edit.vue',
 }
 </script>
 

@@ -36,5 +36,6 @@ module.exports = {
       .alias
       .set('@', pathResolve('./resources/src'))
       .set('@c', pathResolve('./resources/src/components'))
+      .set('@v', pathResolve('./resources/src/views'))
   },
 }

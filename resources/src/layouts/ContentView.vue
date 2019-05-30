@@ -1,57 +1,31 @@
 <template>
-  <component v-if="!loading && component" :is="component"/>
-  <h1 v-else>LOADING...</h1>
+  <component :is="component"/>
 </template>
 
 <script>
-import imports from '@/router/imports'
-
-const getData = () => {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(Math.random() > 0.4 ? 'user/create' : 'no')
-    }, 500)
-  })
-}
+import pages from '@v/pages'
+import _trim from 'lodash/trim'
+import Page404 from '@v/errors/Page404'
 
 export default {
   name: 'ContentView',
-  data: () => ({
-    key: '',
-    loading: true,
-  }),
   computed: {
     component() {
-      if (!this.key) {
-        return ''
+      const path = this.$route.path
+      // 尝试直接匹配
+      const key = _trim(path, '/')
+      let c = pages[key]
+      // 如果没有，则用正则匹配
+      if (!c) {
+        const keys = Object.keys(pages)
+        for (let i of keys) {
+          if ((new RegExp(`^${i}$`)).test(key)) {
+            c = pages[i]
+          }
+        }
       }
-
-      return imports[this.key] || {
-        name: 'pageNotFound',
-        render: h => h('h1', 'PAGE NOT FOUND'),
-      }
+      return c || Page404
     },
-  },
-  created() {
-    log('content view created')
-  },
-  async beforeRouteEnter(to, from, next) {
-    log('enter')
-    const key = await getData()
-    log('done')
-    next(vm => {
-      vm.key = key
-      vm.loading = false
-    })
-  },
-  beforeRouteUpdate(to, from, next) {
-    log('update')
-    log('done')
-    next()
-  },
-  beforeRouteLeave(to, from, next) {
-    this.loading = true
-    next()
   },
 }
 </script>
