@@ -4,10 +4,6 @@
 
 <script>
 export default {
-  name: 'Edit.vue',
+  name: 'Edit',
 }
 </script>
-
-<style scoped>
-
-</style>

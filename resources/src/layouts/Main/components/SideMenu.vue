@@ -26,7 +26,7 @@ export default {
   },
   computed: {
     menus() {
-      return this.$store.state.menus.menus
+      return this.$store.state.menus.menus.filter(i => i.is_menu)
     },
     openNames() {
       return this.$route.matched.filter(i => i.name).map(i => i.name)

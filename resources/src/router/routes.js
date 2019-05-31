@@ -1,13 +1,13 @@
 import Main from '@/layouts/Main/index'
-import ContentView from '@/layouts/ContentView'
+import Page404 from '@v/errors/Page404'
 
-export const anyRoute = {
+export const pageNotFoundRoute = {
   path: '/',
   component: Main,
   children: [
     {
       path: '*',
-      component: ContentView,
+      component: Page404,
     },
   ],
 }

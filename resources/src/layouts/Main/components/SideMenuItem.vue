@@ -10,7 +10,7 @@
     </template>
     <template v-if="hasChildren(menu)">
       <SideMenuItem
-        v-for="sub of menu.children"
+        v-for="sub of menu.children.filter(i => i.is_menu)"
         :key="sub.id"
         :menu="sub"
       />
@@ -35,6 +35,7 @@ export default {
   props: {
     menu: Object,
   },
+  computed: {},
   methods: {
     hasChildren(menu) {
       return Array.isArray(menu.children) && menu.children.length > 0

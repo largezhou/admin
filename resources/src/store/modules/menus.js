@@ -1,7 +1,7 @@
 import { getMenus } from '@/api/admin-menus'
 import router from '@/router'
-import { anyRoute } from '@/router/routes'
-import { buildRoutesFromMenus, makeRouteName } from '@/libs/utils'
+import { pageNotFoundRoute } from '@/router/routes'
+import { buildRoutes, makeRouteName } from '@/libs/utils'
 import _get from 'lodash/get'
 
 export default {
@@ -33,9 +33,9 @@ export default {
       commit('SET_LOADED', true)
 
       // 暂时写死 1 为首页
-      const { routes, homeRoute } = buildRoutesFromMenus(data, makeRouteName(1))
+      const { routes, homeRoute } = buildRoutes(data, makeRouteName(1))
       router.addRoutes(routes)
-      router.addRoutes([anyRoute])
+      router.addRoutes([pageNotFoundRoute])
       commit('SET_HOME_ROUTE', homeRoute)
     },
     clearAuth({ commit }) {
