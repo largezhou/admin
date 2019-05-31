@@ -43,12 +43,6 @@ class AdminMenuControllerTest extends TestCase
         return $this->delete(route('admin.menus.destroy', $id));
     }
 
-    public function testCreate()
-    {
-        $res = $this->get(route('admin.menus.create'));
-        $res->assertStatus(200);
-    }
-
     public function testStoreValidation()
     {
         // title required

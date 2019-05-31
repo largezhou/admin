@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\Resource;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,10 +25,5 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Resource::withoutWrapping();
-
-        JsonResponse::macro('withComponent', function ($name) {
-            $this->vueComponent = $name;
-            return $this;
-        });
     }
 }
