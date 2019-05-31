@@ -53,11 +53,14 @@ class AdminMenuControllerTest extends TestCase
     {
         // title required
         // order integer
+        // cache is_menu boolean
         $res = $this->postStore([
             'title' => '',
             'order' => 15.1,
+            'cache' => 'not bool',
+            'is_menu' => 'not bool',
         ]);
-        $res->assertJsonValidationErrors(['title', 'order']);
+        $res->assertJsonValidationErrors(['title', 'order', 'cache', 'is_menu']);
 
         // max
         $res = $this->postStore([
@@ -154,8 +157,7 @@ class AdminMenuControllerTest extends TestCase
     {
         app(\AdminMenusTableSeeder::class)->run();
         // 手动查出 3 级嵌套菜单
-        $menu = AdminMenu::find(1);
-        $this->setMenusChildren($menu);
+        $menu = AdminMenu::with(['children', 'children.children'])->find(2);
         $menu = $menu->toArray();
 
         $res = $this->getIndex();
@@ -163,33 +165,12 @@ class AdminMenuControllerTest extends TestCase
             ->assertJsonFragment($menu);
     }
 
-    /**
-     * 查出菜单的子菜单，最多 2 级
-     *
-     * @param AdminMenu $menu
-     */
-    protected function setMenusChildren(AdminMenu $menu)
-    {
-        // assertJsonFragment 中，会对键进行排序，被处理后的数据，与原始数据顺序不对
-        // 所有这里查的数据，对不对 order 排序，都不影响断言，，，
-        $children = AdminMenu::where('parent_id', $menu->id)->get()->each(function ($i) {
-            $children = AdminMenu::where('parent_id', $i->id)->get()->toArray();
-            if (!empty($children)) {
-                $i->children = $children;
-            }
-        })->toArray();
-        if (!empty($children)) {
-            $menu->children = $children;
-        }
-    }
-
     public function testDestroy()
     {
         $this->delete(999)->assertStatus(404);
 
         app(\AdminMenusTableSeeder::class)->run();
-        $menu = AdminMenu::first();
-        $this->setMenusChildren($menu);
+        $menu = AdminMenu::with(['children', 'children.children'])->find(2);
 
         $this->destroy($menu->id)->assertStatus(204);
 

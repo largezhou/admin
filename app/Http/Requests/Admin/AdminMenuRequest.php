@@ -15,6 +15,8 @@ class AdminMenuRequest extends FormRequest
             'icon' => 'max:50',
             'uri' => 'max:50',
             'order' => 'integer|between:-9999,9999',
+            'cache' => 'boolean',
+            'is_menu' => 'boolean',
         ];
         $parentIdExists = Rule::exists('admin_menus', 'id');
 

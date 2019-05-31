@@ -13,5 +13,7 @@ $factory->define(AdminMenu::class, function (Faker $faker) {
         'title' => '菜单'.$faker->unique()->name,
         'icon' => $faker->randomElement($icons),
         'uri' => '/'.implode('/', $faker->words($faker->numberBetween(2, 4))),
+        'cache' => $faker->randomElement([0, 1]),
+        'is_menu' => $faker->randomElement([0, 1]),
     ];
 });

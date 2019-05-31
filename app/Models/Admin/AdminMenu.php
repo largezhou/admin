@@ -10,8 +10,10 @@ class AdminMenu extends Model
     protected $casts = [
         'parent_id' => 'integer',
         'order' => 'integer',
+        'cache' => 'integer',
+        'is_menu' => 'integer',
     ];
-    protected $fillable = ['parent_id', 'order', 'title', 'icon', 'uri'];
+    protected $fillable = ['parent_id', 'order', 'title', 'icon', 'uri', 'cache', 'is_menu'];
 
     protected static function boot()
     {

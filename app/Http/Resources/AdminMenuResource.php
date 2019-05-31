@@ -19,6 +19,8 @@ class AdminMenuResource extends JsonResource
             'icon' => $model->icon,
             'uri' => $model->uri,
             'order' => $model->order,
+            'cache' => $model->cache,
+            'is_menu' => $model->is_menu,
             'created_at' => (string) $model->created_at,
             'updated_at' => (string) $model->updated_at,
         ];
