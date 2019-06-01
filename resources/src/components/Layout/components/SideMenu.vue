@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import SideMenuItem from '@/layouts/Main/components/SideMenuItem'
+import SideMenuItem from './SideMenuItem'
 
 export default {
   name: 'SideMenu',

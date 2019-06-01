@@ -28,10 +28,10 @@
 </template>
 <script>
 
-import SideMenu from '@/layouts/Main/components/SideMenu'
+import SideMenu from './components/SideMenu'
 
 export default {
-  name: 'Main',
+  name: 'Layout',
   components: {
     SideMenu,
   },

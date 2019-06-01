@@ -1,7 +1,6 @@
 import _trim from 'lodash/trim'
-import _uniqueId from 'lodash/uniqueId'
-import ParentView from '@/layouts/ParentView'
-import Main from '@/layouts/Main/index'
+import ParentView from '@c/ParentView'
+import Layout from '@c/Layout'
 import pages from '@v/pages'
 import Page404 from '@v/errors/Page404'
 
@@ -64,11 +63,11 @@ export const buildRoutes = (menus, homeName, level = 0) => {
         homeRoute = r
       }
 
-      // 顶级的路由，用 Main 组件包裹
+      // 顶级的路由，用 Layout 组件包裹
       if (level === 0) {
         r = {
           path: '/',
-          component: Main,
+          component: Layout,
           children: [r],
         }
         if (homeName) {

@@ -1,9 +1,9 @@
-import Main from '@/layouts/Main/index'
+import Layout from '@c/Layout'
 import Page404 from '@v/errors/Page404'
 
 export const pageNotFoundRoute = {
   path: '/',
-  component: Main,
+  component: Layout,
   children: [
     {
       path: '*',
