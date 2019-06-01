@@ -1,6 +1,6 @@
 <template>
   <div :test="openNames">
-    <Menu
+    <div
       theme="dark"
       width="auto"
       :open-names="openNames"
@@ -12,7 +12,7 @@
           :menu="menu"
         />
       </template>
-    </Menu>
+    </div>
   </div>
 </template>
 

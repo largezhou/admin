@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import routes from '@/router/routes'
-import { LoadingBar } from 'iview'
 import { getToken } from '@/libs/token'
 import store from '@/store'
 
@@ -25,7 +24,7 @@ const getNeededData = async requests => {
 }
 
 router.beforeEach(async (to, from, next) => {
-  LoadingBar.start()
+  log('router start')
 
   if (getToken()) { // 有 token 暂定为已登录
     if (to.name === 'login') { // 有 token，访问登录页，跳转到首页
@@ -51,7 +50,7 @@ router.beforeEach(async (to, from, next) => {
         if (res && res.status === 401) {
           next(loginRoute(to))
         } else {
-          LoadingBar.error()
+          log('router error')
           next(false)
         }
       }
@@ -64,7 +63,7 @@ router.beforeEach(async (to, from, next) => {
 })
 
 router.afterEach(() => {
-  LoadingBar.finish()
+  log('router done')
 })
 
 export default router

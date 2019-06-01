@@ -1,11 +1,11 @@
 <template>
-  <Submenu
+  <div
     v-if="hasChildren(menu)"
     :key="menu.id"
     :name="makeRouteName(menu.id)"
   >
     <template slot="title">
-      <Icon :type="icon(menu)"/>
+      <div :type="icon(menu)"/>
       {{ menu.title }}
     </template>
     <template v-if="hasChildren(menu)">
@@ -15,16 +15,16 @@
         :menu="sub"
       />
     </template>
-  </Submenu>
-  <MenuItem
+  </div>
+  <router-link
     v-else
     :key="menu.id"
     :name="makeRouteName(menu.id)"
     :to="makePath(menu.uri)"
   >
-    <Icon :type="icon(menu)"/>
+    <div :type="icon(menu)"/>
     {{ menu.title }}
-  </MenuItem>
+  </router-link>
 </template>
 
 <script>

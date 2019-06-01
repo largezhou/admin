@@ -1,29 +1,29 @@
 <template>
   <div class="layout">
-    <Sider class="sider">
+    <div class="sider">
       <SideMenu/>
-    </Sider>
-    <Layout class="content-layout">
-      <Header class="header"/>
-      <Content class="content">
-        <Breadcrumb class="bread-crumb" :test="breadCrumb">
-          <BreadcrumbItem
+    </div>
+    <div class="content-layout">
+      <header class="header"/>
+      <div class="content">
+        <div class="bread-crumb" :test="breadCrumb">
+          <div
             v-for="item of breadCrumb"
             :key="item.id"
           >
             {{ item.meta.title }}
-          </BreadcrumbItem>
-        </Breadcrumb>
-        <Card>
+          </div>
+        </div>
+        <div>
           <div style="height: 600px">
             <keep-alive v-if="$route.meta && $route.meta.cache">
               <router-view/>
             </keep-alive>
             <router-view v-else/>
           </div>
-        </Card>
-      </Content>
-    </Layout>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script>

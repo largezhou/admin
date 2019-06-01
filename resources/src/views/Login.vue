@@ -1,11 +1,12 @@
 <template>
   <div class="login">
     <div class="login-wrap">
-      <Card icon="md-log-in" title="后台">
-        <div class="form-con">
-          <LoginForm/>
-        </div>
-      </Card>
+      <el-card>
+        <template v-slot:header>
+          <span>登录牛逼商城吧</span>
+        </template>
+        <LoginForm/>
+      </el-card>
     </div>
   </div>
 </template>
@@ -28,8 +29,14 @@ export default {
 }
 
 .login-wrap {
-  width: 300px;
+  width: 350px;
   margin: auto;
   padding-top: 30vh;
+}
+
+/deep/ {
+  .el-card__header {
+    text-align: center;
+  }
 }
 </style>

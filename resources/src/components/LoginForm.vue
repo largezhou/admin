@@ -1,27 +1,25 @@
 <template>
-  <Form
-    ref="loginForm"
-    :model="form"
-    @keydown.enter.native="onSubmit"
-  >
-    <FormItem prop="username" :error="formErrors.username">
-      <i-input v-model="form.username" placeholder="请输入用户名">
-        <span slot="prepend">
-          <Icon :size="16" type="ios-person"/>
-        </span>
-      </i-input>
-    </FormItem>
-    <FormItem prop="password" :error="formErrors.password">
-      <i-input type="password" v-model="form.password" placeholder="请输入密码">
-        <span slot="prepend">
-          <Icon :size="14" type="md-lock"/>
-        </span>
-      </i-input>
-    </FormItem>
-    <FormItem>
-      <Button @click="onSubmit" type="primary" long>登录</Button>
-    </FormItem>
-  </Form>
+  <el-form :model="form" @keydown.enter.native="onSubmit">
+    <el-form-item :error="errors.username">
+      <el-input v-model="form.username" placeholder="账号">
+        <i slot="prepend" class="el-icon-user"/>
+      </el-input>
+    </el-form-item>
+    <el-form-item :error="errors.password">
+      <el-input v-model="form.password" placeholder="密码" type="password">
+        <i slot="prepend" class="el-icon-lock"/>
+      </el-input>
+    </el-form-item>
+    <el-form-item>
+      <el-button
+        class="login-btn"
+        type="primary"
+        @click="onSubmit"
+      >
+        登录
+      </el-button>
+    </el-form-item>
+  </el-form>
 </template>
 
 <script>
@@ -34,17 +32,17 @@ export default {
       username: '',
       password: '',
     },
-    formErrors: {},
+    errors: {},
   }),
   methods: {
     async onSubmit() {
-      this.formErrors = {}
+      this.errors = {}
       try {
         await this.$store.dispatch('login', this.form)
-        this.$Message.success('登录成功')
+        this.$message.success('登录成功')
         this.$router.push(this.$route.query.redirect || { name: 'index' })
       } catch (e) {
-        this.formErrors = handleValidateErrors(e)
+        this.errors = handleValidateErrors(e)
       }
     },
   },
@@ -52,9 +50,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.login-btn {
+  width: 100%;
+}
+
 /deep/ {
-  .ivu-input-group-prepend {
-    width: 32px;
+  .el-input-group__prepend {
+    padding: 0 12px;
   }
 }
 </style>
