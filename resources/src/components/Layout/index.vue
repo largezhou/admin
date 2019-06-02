@@ -1,86 +1,60 @@
 <template>
-  <div class="layout">
-    <div class="sider">
-      <SideMenu/>
-    </div>
-    <div class="content-layout">
-      <header class="header"/>
-      <div class="content">
-        <div class="bread-crumb" :test="breadCrumb">
-          <div
-            v-for="item of breadCrumb"
-            :key="item.id"
-          >
-            {{ item.meta.title }}
-          </div>
-        </div>
-        <div>
-          <div style="height: 600px">
-            <keep-alive v-if="$route.meta && $route.meta.cache">
-              <router-view/>
-            </keep-alive>
-            <router-view v-else/>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <el-container class="layout">
+    <el-aside width="auto">
+      <side-menu :collapse="collapse"/>
+    </el-aside>
+    <el-container direction="vertical">
+      <navbar/>
+      <el-main>
+        <transition name="fade-transform" mode="out-in">
+          <router-view :key="$route.name"/>
+        </transition>
+      </el-main>
+    </el-container>
+  </el-container>
 </template>
 <script>
 
 import SideMenu from './components/SideMenu'
+import Navbar from './components/Navbar'
+import { mapState } from 'vuex'
 
 export default {
   name: 'Layout',
   components: {
+    Navbar,
     SideMenu,
   },
   computed: {
-    homeName() {
-      return this.$store.getters.homeName
-    },
-    homeRoute() {
-      return this.$store.state.menus.homeRoute
-    },
-    breadCrumb() {
-      const m = this.$route.matched.filter(i => i.name)
-      if (this.$route.name !== this.homeName) {
-        m.unshift(this.homeRoute)
-      }
-      return m
-    },
+    ...mapState({
+      collapse: (state) => !state.menus.opened,
+    }),
   },
 }
 </script>
 
 <style scoped lang="scss">
 .layout {
-  background: #f5f7f9;
-  position: relative;
-  overflow: hidden;
+  height: 100%;
 }
 
-.sider {
-  position: fixed;
-  height: 100vh;
-  left: 0;
-  overflow: auto;
+.el-aside {
+  color: #333;
 }
 
-.content-layout {
-  margin-left: 200px;
+/* fade-transform */
+.fade-transform-leave-active,
+.fade-transform-enter-active {
+  transition: all .4s;
 }
 
-.header {
-  background: #fff;
-  box-shadow: 0 2px 3px 2px rgba(0, 0, 0, .1);
+.fade-transform-enter {
+  opacity: 0;
+  transform: translateX(-30px);
 }
 
-.content {
-  padding: 0 16px 16px 16px;
-}
-
-.bread-crumb {
-  margin: 16px 0;
+.fade-transform-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
 }
 </style>

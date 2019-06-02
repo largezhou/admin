@@ -1,29 +1,23 @@
 <template>
-  <div
-    v-if="hasChildren(menu)"
-    :key="menu.id"
-    :name="makeRouteName(menu.id)"
-  >
-    <template slot="title">
-      <div :type="icon(menu)"/>
-      {{ menu.title }}
+  <el-submenu v-if="hasChildren(menu)" :index="makeRouteName(menu.id)">
+    <template v-slot:title>
+      <i :class="icon(menu.icon)"/>
+      <span slot="title">{{ menu.title }}</span>
     </template>
-    <template v-if="hasChildren(menu)">
-      <SideMenuItem
-        v-for="sub of menu.children.filter(i => i.is_menu)"
-        :key="sub.id"
-        :menu="sub"
-      />
-    </template>
-  </div>
+    <side-menu-item
+      v-for="sub of menu.children.filter(i => i.is_menu)"
+      :key="sub.id"
+      :menu="sub"
+    />
+  </el-submenu>
   <router-link
     v-else
-    :key="menu.id"
-    :name="makeRouteName(menu.id)"
     :to="makePath(menu.uri)"
   >
-    <div :type="icon(menu)"/>
-    {{ menu.title }}
+    <el-menu-item :index="makeRouteName(menu.id)">
+      <i :class="icon(menu.icon)"/>
+      {{ menu.title }}
+    </el-menu-item>
   </router-link>
 </template>
 
@@ -40,11 +34,17 @@ export default {
     hasChildren(menu) {
       return Array.isArray(menu.children) && menu.children.length > 0
     },
-    icon(menu) {
-      return menu.icon || 'md-menu'
+    icon(icon) {
+      return icon || 'el-icon-setting'
     },
     makeRouteName,
     makePath: path => path ? startSlash(path) : '',
   },
 }
 </script>
+
+<style scoped lang="scss">
+a {
+  text-decoration: none;
+}
+</style>

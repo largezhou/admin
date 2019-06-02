@@ -9,6 +9,7 @@ export default {
     menus: [],
     loaded: false,
     homeRoute: null,
+    opened: true,
   },
   getters: {
     homeName(state) {
@@ -24,6 +25,9 @@ export default {
     },
     SET_HOME_ROUTE(state, route) {
       state.homeRoute = route
+    },
+    SET_OPENED(state, payload) {
+      state.opened = payload
     },
   },
   actions: {
@@ -41,6 +45,9 @@ export default {
     clearAuth({ commit }) {
       commit('SET_MENUS', [])
       commit('SET_LOADED', false)
+    },
+    toggleOpened({ commit, state }) {
+      commit('SET_OPENED', !state.opened)
     },
   },
 }
