@@ -28,8 +28,6 @@
         <template v-slot="{ row }">
           <el-switch
             v-model="row.is_menu"
-            :active-value="1"
-            :inactive-value="0"
             active-text="是"
             inactive-text="否"
           />
@@ -39,8 +37,6 @@
         <template v-slot="{ row }">
           <el-switch
             v-model="row.cache"
-            :active-value="1"
-            :inactive-value="0"
             active-text="是"
             inactive-text="否"
           />
