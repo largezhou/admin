@@ -30,6 +30,23 @@ class AdminMenuRequest extends FormRequest
                 break;
         }
 
+        if ($this->post('parent_id') == 0) {
+            $rules['parent_id'] = 'nullable';
+        }
+
         return $rules;
+    }
+
+    public function attributes()
+    {
+        return [
+            'parent_id' => '父级菜单',
+            'title' => '标题',
+            'icon' => '图标',
+            'uri' => '地址',
+            'order' => '排序',
+            'cache' => '缓存',
+            'is_menu' => '显示',
+        ];
     }
 }
