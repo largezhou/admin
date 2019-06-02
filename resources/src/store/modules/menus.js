@@ -4,12 +4,14 @@ import { pageNotFoundRoute } from '@/router/routes'
 import { buildRoutes, makeRouteName } from '@/libs/utils'
 import _get from 'lodash/get'
 
+const COLLAPSED_KEY = 'side-menu-collapsed'
+
 export default {
   state: {
     menus: [],
     loaded: false,
     homeRoute: null,
-    opened: true,
+    opened: !localStorage.getItem(COLLAPSED_KEY),
   },
   getters: {
     homeName(state) {
@@ -27,6 +29,7 @@ export default {
       state.homeRoute = route
     },
     SET_OPENED(state, payload) {
+      localStorage.setItem(COLLAPSED_KEY, payload ? '' : '1')
       state.opened = payload
     },
   },

@@ -16,7 +16,7 @@
   >
     <el-menu-item :index="makeRouteName(menu.id)">
       <i :class="icon(menu.icon)"/>
-      {{ menu.title }}
+      <span slot="title">{{ menu.title }}</span>
     </el-menu-item>
   </router-link>
 </template>
