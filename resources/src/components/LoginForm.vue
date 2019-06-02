@@ -2,12 +2,14 @@
   <el-form :model="form" @keydown.enter.native="onSubmit">
     <el-form-item :error="errors.username">
       <el-input v-model="form.username" placeholder="账号">
-        <i slot="prepend" class="el-icon-user"/>
+        <svg-icon slot="prepend" icon-class="user"/>
+        <!--<i slot="prepend" class="el-icon-user"/>-->
       </el-input>
     </el-form-item>
     <el-form-item :error="errors.password">
       <el-input v-model="form.password" placeholder="密码" type="password">
-        <i slot="prepend" class="el-icon-lock"/>
+        <svg-icon slot="prepend" icon-class="password"/>
+        <!--<i slot="prepend" class="el-icon-lock"/>-->
       </el-input>
     </el-form-item>
     <el-form-item>

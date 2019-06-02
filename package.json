@@ -6,7 +6,8 @@
     "dev": "vue-cli-service build --mode development",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "watch": "vue-cli-service build --mode development --watch"
+    "watch": "vue-cli-service build --mode development --watch",
+    "svgo": "svgo -f resources/src/icons/svg --config=resources/src/icons/svgo.yml"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.7.0",
@@ -22,6 +23,8 @@
     "lodash": "^4.17.11",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.1.0",
+    "svg-sprite-loader": "^4.1.6",
+    "svgo": "^1.2.2",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
     "vue-template-compiler": "^2.5.21",

@@ -8,6 +8,7 @@ import store from '@/store'
 import '@/styles/app.scss'
 import '@/plugins/element'
 import '@c'
+import '@/icons'
 
 Vue.config.productionTip = false
 

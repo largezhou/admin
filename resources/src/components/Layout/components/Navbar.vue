@@ -1,8 +1,13 @@
 <template>
   <el-header class="header">
-    <div class="toggle" @click="$store.dispatch('toggleOpened')">
-      <i :class="`el-icon-s-${opened ? 'fold' : 'unfold'}`"/>
-    </div>
+    <hamburger
+      class="toggle"
+      :is-active="opened"
+      @toggle="$store.dispatch('toggleOpened')"
+    />
+    <!--<div class="toggle" @click="$store.dispatch('toggleOpened')">-->
+    <!--  <i :class="`el-icon-s-${opened ? 'fold' : 'unfold'}`"/>-->
+    <!--</div>-->
     <el-breadcrumb class="breadcrumb">
       <transition-group name="breadcrumb">
         <el-breadcrumb-item
@@ -20,9 +25,13 @@
 <script>
 import { mapState } from 'vuex'
 import ParentView from '@c/ParentView'
+import Hamburger from '@c/Hamburger'
 
 export default {
   name: 'Navbar',
+  components: {
+    Hamburger,
+  },
   computed: {
     opened() {
       return this.$store.state.menus.opened
@@ -69,15 +78,16 @@ export default {
 }
 
 .toggle {
+  line-height: 54px;
   cursor: pointer;
-  padding: 0 20px;
+  /*padding: 0 20px;*/
   display: inline-block;
-  height: 100%;
+  /*height: 100%;*/
   font-size: 24px;
   float: left;
 
   &:hover {
-    color: #409EFF;
+    fill: #409EFF;
   }
 }
 
