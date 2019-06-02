@@ -15,3 +15,7 @@ export function destroyMenu(id) {
 export function updateMenu(id, data) {
   return axios.put(`menus/${id}`, data)
 }
+
+export function editMenu(id) {
+  return axios.get(`menus/${id}/edit`)
+}

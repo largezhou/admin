@@ -141,11 +141,21 @@ export const buildMenuOptions = (menus, indent = 2) => {
 }
 
 /**
- * 判断是不是链接
+ * 复制 source 的值到 target
  *
- * @param {string} path
- * @returns {Boolean}
+ * @param target
+ * @param source
+ * @param force 如果为 true, 则即使 source 中没有的键, 也会复制到 target, 即 undefined
  */
-export function isExternal(path) {
-  return /^(https?:|mailto:|tel:)/.test(path)
+export const assignExsits = (target, source, force = false) => {
+  const res = {}
+  for (let k of Object.keys(target)) {
+    if (source.hasOwnProperty(k) || force) {
+      res[k] = source[k]
+    } else {
+      res[k] = target[k]
+    }
+  }
+
+  return res
 }

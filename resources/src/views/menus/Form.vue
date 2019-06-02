@@ -55,17 +55,19 @@
         />
       </el-form-item>
       <el-form-item>
-        <loading-action type="primary" :action="onSubmit">添加</loading-action>
+        <loading-action type="primary" :action="onSubmit">{{ editMode ? '更新' : '添加' }}</loading-action>
         <el-button @click="onReset">重置</el-button>
       </el-form-item>
     </el-form>
   </el-card>
 </template>
 <script>
-import { buildMenuOptions, handleValidateErrors } from '@/libs/utils'
-import { getMenus, storeMenu } from '@/api/admin-menus'
+import { assignExsits, buildMenuOptions, handleValidateErrors } from '@/libs/utils'
+import { editMenu, getMenus, storeMenu, updateMenu } from '@/api/admin-menus'
+import { isInt } from '@/libs/validates'
 
 export default {
+  name: 'Form',
   data() {
     return {
       form: {
@@ -85,19 +87,41 @@ export default {
     menuOptions() {
       return buildMenuOptions(this.menus)
     },
+    editMode() {
+      return !!this.menuId
+    },
+    menuId() {
+      return this.$route.params.id
+    },
   },
   created() {
     this.getMenus()
+    if (this.editMode) {
+      this.getMenu()
+    }
+  },
+  async mounted() {
+    await this.$nextTick()
+    window.t = this.$refs.form.fields[1]
   },
   methods: {
     async onSubmit() {
       this.errors = {}
       try {
-        await storeMenu(this.form)
-        this.$router.push('/menus')
+        this.editMode
+          ? await this.updateMenu()
+          : await this.storeMenu()
       } catch (e) {
         this.errors = handleValidateErrors(e)
       }
+    },
+    async updateMenu() {
+      await updateMenu(this.menuId, this.form)
+      this.$router.back()
+    },
+    async storeMenu() {
+      await storeMenu(this.form)
+      this.$router.push('/menus')
     },
     onReset() {
       this.$refs.form.resetFields()
@@ -105,6 +129,21 @@ export default {
     async getMenus() {
       const { data } = await getMenus()
       this.menus = data
+      !this.editMode && (this.form.parent_id = this.queryParentId())
+    },
+    async getMenu() {
+      const { data } = await editMenu(this.menuId)
+      this.form = assignExsits(this.form, data)
+      await this.$nextTick()
+      this.$refs.form.setInitialValues()
+    },
+    queryParentId() {
+      const id = Number.parseInt(this.$route.query.parent_id)
+      if (isInt(id) && this.menuOptions.some(i => i.id === id)) {
+        return id
+      } else {
+        return 0
+      }
     },
   },
 }

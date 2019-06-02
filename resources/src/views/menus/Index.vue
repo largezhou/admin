@@ -42,11 +42,14 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="180">
+      <el-table-column label="操作" width="240">
         <template v-slot="{ row, index }">
           <el-button-group>
-            <el-button type="primary" size="small" class="link">
-              <router-link :to="editLink(row.id)">编辑</router-link>
+            <el-button size="small" class="link">
+              <router-link :to="`/menus/create?parent_id=${row.id}`">添加子菜单</router-link>
+            </el-button>
+            <el-button size="small" class="link">
+              <router-link :to="`/menus/${row.id}/edit`">编辑</router-link>
             </el-button>
             <el-button type="danger" size="small">删除</el-button>
           </el-button-group>

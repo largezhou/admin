@@ -5,9 +5,6 @@
       :is-active="opened"
       @toggle="$store.dispatch('toggleOpened')"
     />
-    <!--<div class="toggle" @click="$store.dispatch('toggleOpened')">-->
-    <!--  <i :class="`el-icon-s-${opened ? 'fold' : 'unfold'}`"/>-->
-    <!--</div>-->
     <el-breadcrumb class="breadcrumb">
       <transition-group name="breadcrumb">
         <el-breadcrumb-item
@@ -66,7 +63,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '~@/plugins/element';
+@import '~@/plugins/element/index';
 
 .header {
   line-height: 60px;
