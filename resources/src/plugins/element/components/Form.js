@@ -1,7 +1,6 @@
 import { Form } from 'element-ui'
 
 export default {
-  name: Form.name,
   extends: Form,
   methods: {
     setInitialValues() {

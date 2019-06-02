@@ -100,10 +100,6 @@ export default {
       this.getMenu()
     }
   },
-  async mounted() {
-    await this.$nextTick()
-    window.t = this.$refs.form.fields[1]
-  },
   methods: {
     async onSubmit() {
       this.errors = {}
