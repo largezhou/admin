@@ -104,3 +104,38 @@ export const makeRouteName = unique => 'routes-' + unique
 export const startSlash = path => '/' + _trim(path, '/')
 
 export const randomChars = () => Math.random().toString(36).substring(7)
+
+/**
+ * 构建菜单的 select options
+ *
+ * @param menus
+ * @param indent
+ * @returns {Array}
+ */
+export const buildMenuOptions = (menus, indent = 2) => {
+  const _build = (menus, indent) => {
+    const options = []
+    menus.forEach(i => {
+      if (!i.is_menu) {
+        return
+      }
+      options.push({
+        id: i.id,
+        text: '　'.repeat(indent) + i.title,
+        title: i.title,
+      })
+      if (hasChildren(i)) {
+        options.push(..._build(i.children, indent + 2))
+      }
+    })
+    return options
+  }
+
+  const res = _build(menus, indent)
+  res.unshift({
+    id: 0,
+    title: '一级',
+    text: '一级',
+  })
+  return res
+}

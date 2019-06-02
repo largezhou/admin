@@ -42,6 +42,10 @@ export default {
   color: #333;
 }
 
+.el-main {
+  padding: 10px;
+}
+
 /* fade-transform */
 .fade-transform-leave-active,
 .fade-transform-enter-active {

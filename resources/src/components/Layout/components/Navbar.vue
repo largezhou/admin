@@ -57,12 +57,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import '~@/plugins/element';
+
 .header {
   line-height: 60px;
   overflow: hidden;
   position: relative;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
+  box-shadow: $--box-shadow-light;
   padding-left: 0;
 }
 
