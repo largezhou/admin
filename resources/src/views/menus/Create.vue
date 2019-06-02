@@ -55,7 +55,7 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">添加</el-button>
+        <loading-action type="primary" :action="onSubmit">添加</loading-action>
         <el-button @click="onReset">重置</el-button>
       </el-form-item>
     </el-form>

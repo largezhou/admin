@@ -11,13 +11,13 @@
       </el-input>
     </el-form-item>
     <el-form-item>
-      <el-button
+      <loading-action
         class="login-btn"
         type="primary"
-        @click="onSubmit"
+        :action="onSubmit"
       >
         登录
-      </el-button>
+      </loading-action>
     </el-form-item>
   </el-form>
 </template>
