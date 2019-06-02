@@ -1,7 +1,7 @@
 <template>
   <el-card class="create">
     <template v-slot:header>
-      <span>登录牛逼商城吧</span>
+      <span>添加菜单</span>
     </template>
     <el-form ref="form" :model="form" label-width="100px">
       <el-form-item label="父级菜单" :error="errors.parent_id" prop="parent_id">

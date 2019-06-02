@@ -44,6 +44,7 @@ export default {
 
 .el-main {
   padding: 10px;
+  overflow-x: hidden;
 }
 
 /* fade-transform */

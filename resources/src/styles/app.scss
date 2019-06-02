@@ -7,3 +7,23 @@ html {
   margin: 0;
   padding: 0;
 }
+
+.el-button {
+  &.link {
+    padding: 0;
+
+    a {
+      display: inline-block;
+      text-decoration: none;
+      color: inherit;
+    }
+  }
+}
+
+.el-button--small {
+  &.link {
+    a {
+      padding: 9px 15px;
+    }
+  }
+}

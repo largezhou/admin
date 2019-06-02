@@ -3,13 +3,11 @@
     <el-form-item :error="errors.username">
       <el-input v-model="form.username" placeholder="账号">
         <svg-icon slot="prepend" icon-class="user"/>
-        <!--<i slot="prepend" class="el-icon-user"/>-->
       </el-input>
     </el-form-item>
     <el-form-item :error="errors.password">
       <el-input v-model="form.password" placeholder="密码" type="password">
         <svg-icon slot="prepend" icon-class="password"/>
-        <!--<i slot="prepend" class="el-icon-lock"/>-->
       </el-input>
     </el-form-item>
     <el-form-item>
