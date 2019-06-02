@@ -4,6 +4,11 @@ import routes from '@/router/routes'
 import { getToken } from '@/libs/token'
 import store from '@/store'
 
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+
+NProgress.configure({ showSpinner: false })
+
 Vue.use(Router)
 
 const router = new Router({
@@ -24,7 +29,7 @@ const getNeededData = async requests => {
 }
 
 router.beforeEach(async (to, from, next) => {
-  log('router start')
+  NProgress.start()
 
   if (getToken()) { // 有 token 暂定为已登录
     if (to.name === 'login') { // 有 token，访问登录页，跳转到首页
@@ -50,7 +55,7 @@ router.beforeEach(async (to, from, next) => {
         if (res && res.status === 401) {
           next(loginRoute(to))
         } else {
-          log('router error')
+          NProgress.done()
           next(false)
         }
       }
@@ -63,7 +68,7 @@ router.beforeEach(async (to, from, next) => {
 })
 
 router.afterEach(() => {
-  log('router done')
+  NProgress.done()
 })
 
 export default router
