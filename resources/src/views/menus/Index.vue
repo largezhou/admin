@@ -26,19 +26,25 @@
       </el-table-column>
       <el-table-column label="显示" width="120">
         <template v-slot="{ row }">
-          <el-switch
+          <switch-edit
+            :id="row.id"
+            field="is_menu"
             v-model="row.is_menu"
             active-text="是"
             inactive-text="否"
+            :update="updateMenu"
           />
         </template>
       </el-table-column>
       <el-table-column label="缓存" width="120">
         <template v-slot="{ row }">
-          <el-switch
+          <switch-edit
+            :id="row.id"
+            field="cache"
             v-model="row.cache"
             active-text="是"
             inactive-text="否"
+            :update="updateMenu"
           />
         </template>
       </el-table-column>
@@ -67,13 +73,15 @@
 </template>
 
 <script>
-import { destroyMenu, getMenus } from '@/api/admin-menus'
+import { destroyMenu, getMenus, updateMenu } from '@/api/admin-menus'
 import PopConfirm from '@c/PopConfirm'
 import { hasChildren } from '@/libs/utils'
+import SwitchEdit from '@c/quick-edit/SwitchEdit'
 
 export default {
   name: 'Index',
   components: {
+    SwitchEdit,
     PopConfirm,
   },
   data() {
@@ -119,6 +127,7 @@ export default {
       }
       return false
     },
+    updateMenu,
   },
 }
 </script>
