@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { getToken } from '@/libs/token'
 import store from '@/store'
+import { Message } from 'element-ui'
 
 let config = {
   baseURL: '/admin-api',
@@ -29,24 +30,24 @@ _axios.interceptors.response.use(
     if (res) {
       switch (res.status) {
         case 404:
-          alert('请求的网址不存在')
+          Message.error('请求的网址不存在')
           break
         case 401:
           store.dispatch('feLogout')
-          alert('登录已失效，请重新登录')
+          Message.error('登录已失效，请重新登录')
           break
         case 400:
           const { message: msg } = res.data
-          msg && alert(msg)
+          msg && Message.error(msg)
           break
         case 500:
-          alert('服务器异常')
+          Message.error('服务器异常')
           break
         default:
         // null
       }
     } else {
-      alert('网络异常')
+      Message.error('网络异常')
     }
     return Promise.reject(err)
   },
