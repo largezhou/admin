@@ -28,7 +28,7 @@ export default {
   },
   computed: {
     ...mapState({
-      collapse: (state) => !state.menus.opened,
+      collapse: (state) => !state.sideMenu.opened,
     }),
   },
 }

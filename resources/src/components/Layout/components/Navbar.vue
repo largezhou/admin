@@ -36,10 +36,10 @@ export default {
   },
   computed: {
     opened() {
-      return this.$store.state.menus.opened
+      return this.$store.state.sideMenu.opened
     },
     ...mapState({
-      homeRoute: (state) => state.menus.homeRoute,
+      homeRoute: (state) => state.vueRouters.homeRoute,
     }),
     homeName() {
       return this.$store.getters.homeName

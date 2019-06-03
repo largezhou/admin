@@ -12,7 +12,7 @@
   </el-submenu>
   <router-link
     v-else
-    :to="makePath(menu.uri)"
+    :to="makePath(menu.path)"
   >
     <el-menu-item :index="makeRouteName(menu.id)">
       <i :class="icon(menu.icon)"/>
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { makeRouteName, startSlash } from '@/libs/utils'
+import { hasChildren, makeRouteName, startSlash } from '@/libs/utils'
 
 export default {
   name: 'SideMenuItem',
@@ -31,9 +31,7 @@ export default {
   },
   computed: {},
   methods: {
-    hasChildren(menu) {
-      return Array.isArray(menu.children) && menu.children.length > 0
-    },
+    hasChildren,
     icon(icon) {
       return icon || 'el-icon-setting'
     },

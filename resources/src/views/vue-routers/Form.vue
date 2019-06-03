@@ -1,10 +1,10 @@
 <template>
   <el-card class="create">
     <template v-slot:header>
-      <span>添加菜单</span>
+      <span>添加路由</span>
     </template>
     <el-form ref="form" :model="form" label-width="100px">
-      <el-form-item label="父级菜单" :error="errors.parent_id" prop="parent_id">
+      <el-form-item label="父级路由" :error="errors.parent_id" prop="parent_id">
         <el-select
           v-model="form.parent_id"
           filterable
@@ -12,7 +12,7 @@
           placeholder="一级"
         >
           <el-option
-            v-for="i of menuOptions"
+            v-for="i of vueRouterOptions"
             :key="i.id"
             :label="i.title"
             :value="i.id"
@@ -29,8 +29,8 @@
       >
         <el-input v-model="form.title"/>
       </el-form-item>
-      <el-form-item label="地址" :error="errors.uri" prop="uri">
-        <el-input v-model="form.uri">
+      <el-form-item label="地址" :error="errors.path" prop="path">
+        <el-input v-model="form.path">
           <template slot="prepend">/admin/</template>
         </el-input>
       </el-form-item>
@@ -62,8 +62,8 @@
   </el-card>
 </template>
 <script>
-import { assignExsits, buildMenuOptions, handleValidateErrors } from '@/libs/utils'
-import { editMenu, getMenus, storeMenu, updateMenu } from '@/api/admin-menus'
+import { assignExsits, buildVueRouterOptions, handleValidateErrors } from '@/libs/utils'
+import { editVueRouter, getVueRouters, storeVueRouter, updateVueRouter } from '@/api/vue-routers'
 import { isInt } from '@/libs/validates'
 
 export default {
@@ -73,31 +73,31 @@ export default {
       form: {
         parent_id: 0,
         title: '',
-        uri: '',
+        path: '',
         icon: '',
         order: 0,
         cache: false,
         is_menu: false,
       },
       errors: {},
-      menus: [],
+      vueRouters: [],
     }
   },
   computed: {
-    menuOptions() {
-      return buildMenuOptions(this.menus)
+    vueRouterOptions() {
+      return buildVueRouterOptions(this.vueRouters)
     },
     editMode() {
-      return !!this.menuId
+      return !!this.vueRouterId
     },
-    menuId() {
+    vueRouterId() {
       return this.$route.params.id
     },
   },
   created() {
-    this.getMenus()
+    this.getVueRouters()
     if (this.editMode) {
-      this.getMenu()
+      this.editVueRouter()
     }
   },
   methods: {
@@ -105,37 +105,37 @@ export default {
       this.errors = {}
       try {
         this.editMode
-          ? await this.updateMenu()
-          : await this.storeMenu()
+          ? await this.updateVueRouter()
+          : await this.storeVueRouter()
       } catch (e) {
         this.errors = handleValidateErrors(e.response)
       }
     },
-    async updateMenu() {
-      await updateMenu(this.menuId, this.form)
+    async updateVueRouter() {
+      await updateVueRouter(this.vueRouterId, this.form)
       this.$router.back()
     },
-    async storeMenu() {
-      await storeMenu(this.form)
-      this.$router.push('/menus')
+    async storeVueRouter() {
+      await storeVueRouter(this.form)
+      this.$router.push('/vue-routers')
     },
     onReset() {
       this.$refs.form.resetFields()
     },
-    async getMenus() {
-      const { data } = await getMenus()
-      this.menus = data
+    async getVueRouters() {
+      const { data } = await getVueRouters()
+      this.vueRouters = data
       !this.editMode && (this.form.parent_id = this.queryParentId())
     },
-    async getMenu() {
-      const { data } = await editMenu(this.menuId)
+    async editVueRouter() {
+      const { data } = await editVueRouter(this.vueRouterId)
       this.form = assignExsits(this.form, data)
       await this.$nextTick()
       this.$refs.form.setInitialValues()
     },
     queryParentId() {
       const id = Number.parseInt(this.$route.query.parent_id)
-      if (isInt(id) && this.menuOptions.some(i => i.id === id)) {
+      if (isInt(id) && this.vueRouterOptions.some(i => i.id === id)) {
         return id
       } else {
         return 0

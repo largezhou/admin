@@ -1,6 +1,6 @@
 export default {
   'index': () => import('@v/Index'),
-  'menus/create': () => import('@v/menus/Form'),
-  'menus': () => import('@v/menus/Index'),
-  'menus/:id(\\d+)/edit': () => import('@v/menus/Form'),
+  'vue-routers/create': () => import('@v/vue-routers/Form'),
+  'vue-routers': () => import('@v/vue-routers/Index'),
+  'vue-routers/:id(\\d+)/edit': () => import('@v/vue-routers/Form'),
 }

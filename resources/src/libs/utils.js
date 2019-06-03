@@ -25,15 +25,15 @@ export const hasChildren =
   (item, childrenKey = 'children') =>
     Array.isArray(item[childrenKey]) && item[childrenKey].length > 0
 
-export const buildRoutes = (menus, homeName, level = 0) => {
+export const buildRoutes = (routers, homeName, level = 0) => {
   let homeRoute = null
-  const handle = (menus, homeName, level = 0) => {
+  const handle = (routers, homeName, level = 0) => {
     const routes = []
-    menus.forEach(i => {
-      const uriNoSlash = _trim(i.uri, '/')
+    routers.forEach(i => {
+      const pathNoSlash = _trim(i.path, '/')
 
       let r = {
-        path: i.uri ? `/${uriNoSlash}` : '',
+        path: i.path ? `/${pathNoSlash}` : '',
         name: makeRouteName(i.id),
         meta: {
           title: i.title,
@@ -55,7 +55,7 @@ export const buildRoutes = (menus, homeName, level = 0) => {
         // 如果没有 path，则随机 path 避免匹配根路径
         r.path = r.path || ('/' + randomChars())
       } else {
-        r.component = pages[uriNoSlash] || Page404
+        r.component = pages[pathNoSlash] || Page404
       }
 
       if (r.name === homeName) {
@@ -79,7 +79,7 @@ export const buildRoutes = (menus, homeName, level = 0) => {
     })
     return routes
   }
-  const routes = handle(menus, homeName, level = 0)
+  const routes = handle(routers, homeName, level = 0)
   return {
     routes,
     homeRoute,
@@ -87,9 +87,9 @@ export const buildRoutes = (menus, homeName, level = 0) => {
 }
 
 /**
- * 用后台返回的菜单 id，生成 路由名
+ * 用后台返回的路由 id，生成 路由名
  *
- * @param unique menu_id
+ * @param unique vue_router_id
  * @returns {string}
  */
 export const makeRouteName = unique => 'routes-' + unique
@@ -105,16 +105,16 @@ export const startSlash = path => '/' + _trim(path, '/')
 export const randomChars = () => Math.random().toString(36).substring(7)
 
 /**
- * 构建菜单的 select options
+ * 构建路由的 select options
  *
- * @param menus
+ * @param routers
  * @param indent
  * @returns {Array}
  */
-export const buildMenuOptions = (menus, indent = 2) => {
-  const _build = (menus, indent) => {
+export const buildVueRouterOptions = (routers, indent = 2) => {
+  const _build = (routers, indent) => {
     const options = []
-    menus.forEach(i => {
+    routers.forEach(i => {
       if (!i.is_menu) {
         return
       }
@@ -130,7 +130,7 @@ export const buildMenuOptions = (menus, indent = 2) => {
     return options
   }
 
-  const res = _build(menus, indent)
+  const res = _build(routers, indent)
   res.unshift({
     id: 0,
     title: '一级',

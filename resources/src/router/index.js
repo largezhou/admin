@@ -49,19 +49,19 @@ router.beforeEach(async (to, from, next) => {
   if (getToken()) { // 有 token 暂定为已登录
     if (to.name === 'login') { // 有 token，访问登录页，跳转到首页
       next('/')
-    } else { // 否则应该获取用户信息和菜单
+    } else { // 否则应该获取用户信息和路由配置
       const requests = []
       try {
         const loggedIn = store.getters.loggedIn
-        const menusLoaded = store.state.menus.loaded
+        const vueRoutersLoaded = store.state.vueRouters.loaded
 
         !loggedIn && requests.push(store.dispatch('getUser'))
-        !menusLoaded && requests.push(store.dispatch('getMenus'))
+        !vueRoutersLoaded && requests.push(store.dispatch('getVueRouters'))
         await getNeededData(requests)
 
-        // 如果之前没有菜单，则获取玩菜单后，要重新定位到要去的路由
+        // 如果之前没有路由配置，则获取完路由配置后，要重新定位到要去的路由
         // 因为路由配置已经变了
-        if (!menusLoaded) {
+        if (!vueRoutersLoaded) {
           router.replace(to)
         } else {
           next()

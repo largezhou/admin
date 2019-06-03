@@ -1,17 +1,14 @@
-import { getMenus } from '@/api/admin-menus'
+import { getVueRouters } from '@/api/vue-routers'
 import router from '@/router'
 import { pageNotFoundRoute } from '@/router/routes'
 import { buildRoutes, makeRouteName } from '@/libs/utils'
 import _get from 'lodash/get'
 
-const COLLAPSED_KEY = 'side-menu-collapsed'
-
 export default {
   state: {
-    menus: [],
+    vueRouters: [],
     loaded: false,
     homeRoute: null,
-    opened: !localStorage.getItem(COLLAPSED_KEY),
   },
   getters: {
     homeName(state) {
@@ -19,8 +16,8 @@ export default {
     },
   },
   mutations: {
-    SET_MENUS(state, menus) {
-      state.menus = menus
+    SET_VUE_ROUTERS(state, vueRouters) {
+      state.vueRouters = vueRouters
     },
     SET_LOADED(state, payload) {
       state.loaded = payload
@@ -28,15 +25,11 @@ export default {
     SET_HOME_ROUTE(state, route) {
       state.homeRoute = route
     },
-    SET_OPENED(state, payload) {
-      localStorage.setItem(COLLAPSED_KEY, payload ? '' : '1')
-      state.opened = payload
-    },
   },
   actions: {
-    async getMenus({ commit }) {
-      const { data } = await getMenus()
-      commit('SET_MENUS', data)
+    async getVueRouters({ commit }) {
+      const { data } = await getVueRouters()
+      commit('SET_VUE_ROUTERS', data)
       commit('SET_LOADED', true)
 
       // 暂时写死 1 为首页
@@ -46,11 +39,8 @@ export default {
       commit('SET_HOME_ROUTE', homeRoute)
     },
     clearAuth({ commit }) {
-      commit('SET_MENUS', [])
+      commit('SET_VUE_ROUTERS', [])
       commit('SET_LOADED', false)
-    },
-    toggleOpened({ commit, state }) {
-      commit('SET_OPENED', !state.opened)
     },
   },
 }

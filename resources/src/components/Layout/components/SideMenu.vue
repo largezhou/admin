@@ -30,7 +30,7 @@ export default {
   },
   computed: {
     menus() {
-      return this.$store.state.menus.menus.filter(i => i.is_menu)
+      return this.$store.state.vueRouters.vueRouters.filter(i => i.is_menu)
     },
     activeName() {
       return this.$route.name
