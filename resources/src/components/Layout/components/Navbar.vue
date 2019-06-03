@@ -80,12 +80,6 @@ export default {
   display: flex;
 }
 
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-}
-
 /* breadcrumb transition */
 .breadcrumb-enter-active,
 .breadcrumb-leave-active {

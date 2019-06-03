@@ -1,7 +1,7 @@
 <template>
-  <span class="refresh" @click="onRefresh">
+  <el-button class="refresh" @click="onRefresh">
     <i class="el-icon-refresh-right"/>
-  </span>
+  </el-button>
 </template>
 
 <script>
@@ -23,13 +23,6 @@ export default {
 
 <style scoped lang="scss">
 .refresh {
-  cursor: pointer;
-  align-items: center;
-  font-size: 20px;
-  padding: 0 20px;
-
-  &:hover {
-    color: #409EFF;
-  }
+  font-size: 20px !important;
 }
 </style>
