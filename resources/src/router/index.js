@@ -29,6 +29,21 @@ const getNeededData = async requests => {
 }
 
 router.beforeEach(async (to, from, next) => {
+  // 刷新页面, 往 query 中加入 _refresh 当前时间戳
+  // 然后立马用原页面 replace 掉
+  if (to.query._refresh !== undefined) {
+    const query = {
+      ...to.query,
+    }
+    delete query._refresh
+    next()
+    router.replace({
+      path: to.path,
+      query,
+    })
+    return
+  }
+
   NProgress.start()
 
   if (getToken()) { // 有 token 暂定为已登录

@@ -7,7 +7,8 @@
       <navbar/>
       <el-main>
         <transition name="fade-transform" mode="out-in">
-          <router-view :key="$route.name"/>
+          <template v-if="$route.query._refresh"/>
+          <router-view v-else :key="$route.name"/>
         </transition>
       </el-main>
     </el-container>

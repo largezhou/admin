@@ -2,6 +2,7 @@
   <el-header class="header">
     <navbar-items>
       <hamburger :is-active="opened" @toggle="$store.dispatch('toggleOpened')"/>
+      <refresh/>
     </navbar-items>
     <navbar-items>
       <el-breadcrumb class="breadcrumb">
@@ -24,10 +25,12 @@ import { mapState } from 'vuex'
 import ParentView from '@c/ParentView'
 import Hamburger from '@c/Hamburger'
 import NavbarItems from '@c/Layout/components/NavbarItems'
+import Refresh from '@c/Refresh'
 
 export default {
   name: 'Navbar',
   components: {
+    Refresh,
     NavbarItems,
     Hamburger,
   },
