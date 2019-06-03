@@ -5,7 +5,7 @@ namespace App\Models\Admin;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class AdminMenu extends Model
+class VueRouter extends Model
 {
     protected $casts = [
         'parent_id' => 'integer',
@@ -13,21 +13,21 @@ class AdminMenu extends Model
         'cache' => 'bool',
         'is_menu' => 'bool',
     ];
-    protected $fillable = ['parent_id', 'order', 'title', 'icon', 'uri', 'cache', 'is_menu'];
+    protected $fillable = ['parent_id', 'order', 'title', 'icon', 'path', 'cache', 'is_menu'];
 
     protected static function boot()
     {
         parent::boot();
 
-        static::saving(function (AdminMenu $model) {
-            if ($model->isDirty('uri')) {
-                $model->uri = '/'.ltrim($model->uri, '/');
+        static::saving(function (VueRouter $model) {
+            if ($model->isDirty('path')) {
+                $model->path = '/'.ltrim($model->path, '/');
             }
         });
     }
 
     /**
-     * 把菜单构建成嵌套的数组结构
+     * 把路由构建成嵌套的数组结构
      *
      * @param array $nodes
      * @param int   $parentId
@@ -58,7 +58,7 @@ class AdminMenu extends Model
 
     public function children()
     {
-        return $this->hasMany(AdminMenu::class, 'parent_id');
+        return $this->hasMany(VueRouter::class, 'parent_id');
     }
 
     public function delete()

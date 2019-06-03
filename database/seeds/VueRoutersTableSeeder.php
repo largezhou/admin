@@ -1,34 +1,34 @@
 <?php
 
-use App\Models\Admin\AdminMenu;
+use App\Models\Admin\VueRouter;
 use Illuminate\Database\Seeder;
 
-class AdminMenusTableSeeder extends Seeder
+class VueRoutersTableSeeder extends Seeder
 {
     public function run()
     {
-        AdminMenu::truncate();
+        VueRouter::truncate();
         // 暂时弄一个写死的首页，方便前端显示
-        factory(AdminMenu::class)->create([
-            'uri' => '/index',
+        factory(VueRouter::class)->create([
+            'path' => '/index',
             'title' => '首页',
             'order' => 0,
         ]);
-        $menus = factory(AdminMenu::class, 9)->make([
+        $vueRouters = factory(VueRouter::class, 9)->make([
             'created_at' => now(),
             'updated_at' => now(),
         ])->toArray();
         // 三级嵌套菜单
-        foreach ($menus as $i => &$menu) {
+        foreach ($vueRouters as $i => &$router) {
             if ($i < 3) {
                 $parentId = 0;
             } else {
                 $parentId = $i - 1;
             }
-            $menu['parent_id'] = $parentId;
+            $router['parent_id'] = $parentId;
         }
-        unset($menu);
+        unset($router);
 
-        AdminMenu::insert($menus);
+        VueRouter::insert($vueRouters);
     }
 }

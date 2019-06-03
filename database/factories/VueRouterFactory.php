@@ -2,17 +2,17 @@
 
 /* @var $factory \Illuminate\Database\Eloquent\Factory */
 
-use App\Models\Admin\AdminMenu;
+use App\Models\Admin\VueRouter;
 use Faker\Generator as Faker;
 
-$factory->define(AdminMenu::class, function (Faker $faker) {
+$factory->define(VueRouter::class, function (Faker $faker) {
     $icons = ['md-add', 'md-alarm', 'md-albums', 'md-body', 'md-card'];
     return [
         'parent_id' => 0,
         'order' => $faker->numberBetween(0, 100),
         'title' => '菜单'.$faker->unique()->name,
         'icon' => $faker->randomElement($icons),
-        'uri' => '/'.implode('/', $faker->words($faker->numberBetween(2, 4))),
+        'path' => '/'.implode('/', $faker->words($faker->numberBetween(2, 4))),
         'cache' => $faker->randomElement([0, 1]),
         'is_menu' => $faker->randomElement([0, 1]),
     ];
