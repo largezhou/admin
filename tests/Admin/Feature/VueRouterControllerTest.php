@@ -100,6 +100,15 @@ class VueRouterControllerTest extends TestCase
                 'path' => '/'.$inputs['path'],
             ])
         );
+
+        // 不传 parent_id 默认为 0
+        $inputs['parent_id'] = null;
+        $res = $this->postStore($inputs);
+        $res->assertStatus(201);
+        $this->assertDatabaseHas('vue_routers', [
+            'id' => 3,
+            'parent_id' => 0,
+        ]);
     }
 
     public function testUpdateValidation()

@@ -20,7 +20,7 @@ class VueRouter extends Model
         parent::boot();
 
         static::saving(function (VueRouter $model) {
-            if ($model->isDirty('path')) {
+            if ($model->path && $model->isDirty('path')) {
                 $model->path = '/'.ltrim($model->path, '/');
             }
         });
@@ -71,5 +71,15 @@ class VueRouter extends Model
         DB::commit();
 
         return $res;
+    }
+
+    /**
+     * parent_id 默认为 0 处理
+     *
+     * @param $value
+     */
+    public function setParentIdAttribute($value)
+    {
+        $this->attributes['parent_id'] = $value ?: 0;
     }
 }
