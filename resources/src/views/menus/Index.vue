@@ -21,7 +21,14 @@
       <el-table-column prop="uri" label="地址" min-width="200"/>
       <el-table-column label="排序" width="150">
         <template v-slot="{ row }">
-          <el-input-number v-model="row.order" :min="-9999" :max="9999"/>
+          <input-number-edit
+            :id="row.id"
+            field="order"
+            :update="updateMenu"
+            v-model="row.order"
+            :min="-9999"
+            :max="9999"
+          />
         </template>
       </el-table-column>
       <el-table-column label="显示" width="120">
@@ -77,10 +84,12 @@ import { destroyMenu, getMenus, updateMenu } from '@/api/admin-menus'
 import PopConfirm from '@c/PopConfirm'
 import { hasChildren } from '@/libs/utils'
 import SwitchEdit from '@c/quick-edit/SwitchEdit'
+import InputNumberEdit from '@c/quick-edit/InputNumberEdit'
 
 export default {
   name: 'Index',
   components: {
+    InputNumberEdit,
     SwitchEdit,
     PopConfirm,
   },

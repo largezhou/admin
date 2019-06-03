@@ -159,3 +159,17 @@ export const assignExsits = (target, source, force = false) => {
 
   return res
 }
+
+/**
+ * 获取 422 响应中的第一条错误消息
+ *
+ * @param res
+ * @returns {*}
+ */
+export const getFirstError = (res) => {
+  if (res.status === 422) {
+    return Object.values(res.data.errors)[0][0]
+  } else {
+    return ''
+  }
+}
