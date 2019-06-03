@@ -1,21 +1,21 @@
 <template>
   <el-header class="header">
-    <hamburger
-      class="toggle"
-      :is-active="opened"
-      @toggle="$store.dispatch('toggleOpened')"
-    />
-    <el-breadcrumb class="breadcrumb">
-      <transition-group name="breadcrumb">
-        <el-breadcrumb-item
-          v-for="i of breadCrumb"
-          :key="i.name"
-          :to="breadLink(i)"
-        >
-          {{ i.meta.title }}
-        </el-breadcrumb-item>
-      </transition-group>
-    </el-breadcrumb>
+    <navbar-items>
+      <hamburger :is-active="opened" @toggle="$store.dispatch('toggleOpened')"/>
+    </navbar-items>
+    <navbar-items>
+      <el-breadcrumb class="breadcrumb">
+        <transition-group name="breadcrumb">
+          <el-breadcrumb-item
+            v-for="i of breadCrumb"
+            :key="i.name"
+            :to="breadLink(i)"
+          >
+            {{ i.meta.title }}
+          </el-breadcrumb-item>
+        </transition-group>
+      </el-breadcrumb>
+    </navbar-items>
   </el-header>
 </template>
 
@@ -23,10 +23,12 @@
 import { mapState } from 'vuex'
 import ParentView from '@c/ParentView'
 import Hamburger from '@c/Hamburger'
+import NavbarItems from '@c/Layout/components/NavbarItems'
 
 export default {
   name: 'Navbar',
   components: {
+    NavbarItems,
     Hamburger,
   },
   computed: {
@@ -72,28 +74,13 @@ export default {
   background: #fff;
   box-shadow: $--box-shadow-light;
   padding-left: 0;
-}
-
-.toggle {
-  line-height: 54px;
-  cursor: pointer;
-  /*padding: 0 20px;*/
-  display: inline-block;
-  /*height: 100%;*/
-  font-size: 24px;
-  float: left;
-
-  &:hover {
-    fill: #409EFF;
-  }
+  display: flex;
 }
 
 .breadcrumb {
-  float: left;
-  display: inline-block;
-  font-size: 14px;
-  line-height: 60px;
-  margin-left: 8px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
 }
 
 /* breadcrumb transition */
