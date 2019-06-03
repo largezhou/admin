@@ -7,10 +7,9 @@ import Page404 from '@v/errors/Page404'
 /**
  * 把 laravel 返回的错误消息，处理成只有一条
  *
- * @param e axios 请求抛出的异常
+ * @param res 响应
  */
-export const handleValidateErrors = (e) => {
-  const res = e.response
+export const handleValidateErrors = (res) => {
   let errors = {}
   if (res && res.status === 422) {
     ({ errors } = res.data)
@@ -163,7 +162,7 @@ export const assignExsits = (target, source, force = false) => {
 /**
  * 获取 422 响应中的第一条错误消息
  *
- * @param res
+ * @param res 响应
  * @returns {*}
  */
 export const getFirstError = (res) => {

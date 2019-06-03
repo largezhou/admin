@@ -42,7 +42,7 @@ export default {
         this.$message.success('登录成功')
         this.$router.push(this.$route.query.redirect || { name: 'index' })
       } catch (e) {
-        this.errors = handleValidateErrors(e)
+        this.errors = handleValidateErrors(e.response)
       }
     },
   },

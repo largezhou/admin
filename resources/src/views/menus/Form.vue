@@ -108,7 +108,7 @@ export default {
           ? await this.updateMenu()
           : await this.storeMenu()
       } catch (e) {
-        this.errors = handleValidateErrors(e)
+        this.errors = handleValidateErrors(e.response)
       }
     },
     async updateMenu() {
