@@ -54,11 +54,8 @@ class AdminPermissionControllerTest extends TestCase
 
         $this->assertStore($model);
 
-        // http_method 为空
+        // http_method 和 http_path 为空
         $model['http_method'] = null;
-        $this->assertStore($model);
-
-        // http_path 为空
         $model['http_path'] = null;
         $this->assertStore($model);
     }
