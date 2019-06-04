@@ -6,11 +6,14 @@ use App\Models\Admin\VueRouter;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Traits\RequestActions;
 
 class VueRouterControllerTest extends TestCase
 {
     use RefreshDatabase;
     use WithFaker;
+    use RequestActions;
+    protected $routePrefix = 'admin';
 
     protected function setUp(): void
     {
@@ -18,37 +21,12 @@ class VueRouterControllerTest extends TestCase
         $this->login();
     }
 
-    protected function postStore($data = [])
-    {
-        return $this->post(route('admin.vue-routers.store'), $data);
-    }
-
-    protected function putUpdate($id, $data = [])
-    {
-        return $this->put(route('admin.vue-routers.update', $id), $data);
-    }
-
-    protected function getEdit($id)
-    {
-        return $this->get(route('admin.vue-routers.edit', $id));
-    }
-
-    protected function getIndex()
-    {
-        return $this->get(route('admin.vue-routers.index'));
-    }
-
-    protected function destroy($id)
-    {
-        return $this->delete(route('admin.vue-routers.destroy', $id));
-    }
-
     public function testStoreValidation()
     {
         // title required
         // order integer
         // cache is_menu boolean
-        $res = $this->postStore([
+        $res = $this->storeResource('vue-routers', [
             'title' => '',
             'order' => 15.1,
             'cache' => 'not bool',
@@ -57,7 +35,7 @@ class VueRouterControllerTest extends TestCase
         $res->assertJsonValidationErrors(['title', 'order', 'cache', 'is_menu']);
 
         // max
-        $res = $this->postStore([
+        $res = $this->storeResource('vue-routers', [
             'title' => str_repeat('a', 51),
             'icon' => str_repeat('a', 51),
             'path' => str_repeat('a', 51),
@@ -66,14 +44,14 @@ class VueRouterControllerTest extends TestCase
         $res->assertJsonValidationErrors(['icon', 'path', 'title', 'order']);
 
         // order min
-        $res = $this->postStore([
+        $res = $this->storeResource('vue-routers', [
             'order' => -10000,
         ]);
         $res->assertJsonValidationErrors(['order']);
 
         factory(VueRouter::class)->create();
         // parent_id exists
-        $res = $this->postStore([
+        $res = $this->storeResource('vue-routers', [
             'parent_id' => 999,
         ]);
         $res->assertJsonValidationErrors('parent_id');
@@ -88,7 +66,7 @@ class VueRouterControllerTest extends TestCase
         ])->toArray();
         $inputs['created_at'] = (string) now()->addDay();
 
-        $res = $this->postStore($inputs);
+        $res = $this->storeResource('vue-routers', $inputs);
         $res->assertStatus(201);
 
         $this->assertDatabaseHas(
@@ -103,7 +81,7 @@ class VueRouterControllerTest extends TestCase
 
         // 不传 parent_id 默认为 0
         $inputs['parent_id'] = null;
-        $res = $this->postStore($inputs);
+        $res = $this->storeResource('vue-routers', $inputs);
         $res->assertStatus(201);
         $this->assertDatabaseHas('vue_routers', [
             'id' => 3,
@@ -115,13 +93,13 @@ class VueRouterControllerTest extends TestCase
     {
         // 与 store 唯一不同的是，parent_id 不能是自己
         factory(VueRouter::class, 2)->create();
-        $res = $this->putUpdate(1, [
+        $res = $this->updateResource('vue-routers', 1, [
             'parent_id' => 1,
         ]);
         $res->assertJsonValidationErrors(['parent_id'])
             // 更新时，只会验证有的字段
             ->assertJsonMissingValidationErrors(['title']);
-        $res = $this->putUpdate(1, [
+        $res = $this->updateResource('vue-routers', 1, [
             'parent_id' => 2,
         ]);
         $res->assertJsonMissingValidationErrors(['parent_id']);
@@ -129,7 +107,7 @@ class VueRouterControllerTest extends TestCase
 
     public function testUpdate()
     {
-        $this->putUpdate(999)->assertStatus(404);
+        $this->updateResource('vue-routers', 999)->assertStatus(404);
         factory(VueRouter::class, 2)->create();
 
         $inputs = [
@@ -139,7 +117,7 @@ class VueRouterControllerTest extends TestCase
             'path' => 'new/path',
             'order' => 99,
         ];
-        $res = $this->putUpdate(1, $inputs);
+        $res = $this->updateResource('vue-routers', 1, $inputs);
         $res->assertStatus(200);
 
         $inputs['path'] = '/'.$inputs['path'];
@@ -148,11 +126,11 @@ class VueRouterControllerTest extends TestCase
 
     public function testEdit()
     {
-        $res = $this->getEdit(999);
+        $res = $this->editResource('vue-routers', 999);
         $res->assertStatus(404);
 
         $router = factory(VueRouter::class)->create()->toArray();
-        $res = $this->getEdit(1);
+        $res = $this->editResource('vue-routers', 1);
         $res->assertStatus(200)
             ->assertJsonFragment($router);
     }
@@ -164,19 +142,19 @@ class VueRouterControllerTest extends TestCase
         $vueRouter = VueRouter::with(['children', 'children.children'])->find(2);
         $vueRouter = $vueRouter->toArray();
 
-        $res = $this->getIndex();
+        $res = $this->getResources('vue-routers');
         $res->assertStatus(200)
             ->assertJsonFragment($vueRouter);
     }
 
     public function testDestroy()
     {
-        $this->delete(999)->assertStatus(404);
+        $this->destroyResource('vue-routers', 999)->assertStatus(404);
 
         app(\VueRoutersTableSeeder::class)->run();
         $vueRouter = VueRouter::with(['children', 'children.children'])->find(2);
 
-        $this->destroy($vueRouter->id)->assertStatus(204);
+        $this->destroyResource('vue-routers', $vueRouter->id)->assertStatus(204);
 
         // 子菜单全部删除
         $this->assertDatabaseMissing('vue_routers', ['id' => $vueRouter->id]);

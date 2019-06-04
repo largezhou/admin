@@ -12,7 +12,7 @@ $factory->define(VueRouter::class, function (Faker $faker) {
         'order' => $faker->numberBetween(0, 100),
         'title' => '菜单'.$faker->unique()->name,
         'icon' => $faker->randomElement($icons),
-        'path' => '/'.implode('/', $faker->words($faker->numberBetween(2, 4))),
+        'path' => '/'.fake_path(),
         'cache' => $faker->randomElement([0, 1]),
         'is_menu' => $faker->randomElement([0, 1]),
     ];
