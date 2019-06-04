@@ -8,6 +8,7 @@ Route::middleware('auth:admin-api')
 
         Route::get('/user', 'AdminUserController@user')->name('user');
         Route::resource('/vue-routers', 'VueRouterController')->except(['show', 'create']);
+        Route::resource('/admin-permissions', 'AdminPermissionController')->except(['show']);
     });
 
 Route::post('/auth/login', 'Auth\LoginController@login')->name('login');
