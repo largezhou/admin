@@ -13,7 +13,7 @@ $factory->define(AdminPermission::class, function (Faker $faker) {
     $httpPaths = implode("\r\n", $httpPaths);
 
     return [
-        'name' => '权限'.$faker->unique()->name,
+        'name' => 'perm_'.$faker->unique()->word,
         'slug' => $faker->unique()->word,
         'http_method' => $faker->randomElements(AdminPermission::$httpMethods, $faker->numberBetween(0, 3)),
         'http_path' => $httpPaths,

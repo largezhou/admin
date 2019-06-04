@@ -24,9 +24,9 @@ trait RequestActions
     /**
      * 使用 route 函数时, 自动加上路由名前缀
      *
-     * @param array|string $name
-     * @param mixed        $parameters
-     * @param bool         $absolute
+     * @param string $name
+     * @param mixed  $parameters
+     * @param bool   $absolute
      *
      * @return string
      */
@@ -50,92 +50,99 @@ trait RequestActions
     /**
      * 请求资源集合
      *
-     * @param string $resourceName
      * @param array  $params
+     * @param string $name
      *
      * @return TestResponse
      */
-    protected function getResources(string $resourceName, array $params = []): TestResponse
+    protected function getResources(array $params = [], string $name = null): TestResponse
     {
-        return $this->get($this->route("{$resourceName}.index"), $params);
+        $name = $name ?: $this->resourceName;
+        return $this->get($this->route("{$name}.index"), $params);
     }
 
     /**
      * 请求添加资源
      *
-     * @param string $name
      * @param array  $data
+     * @param string $name
      *
      * @return TestResponse
      */
-    protected function storeResource(string $name, array $data = []): TestResponse
+    protected function storeResource(array $data = [], string $name = null): TestResponse
     {
+        $name = $name ?: $this->resourceName;
         return $this->post($this->route("{$name}.store"), $data);
     }
 
     /**
      * 请求软删除一个资源
      *
-     * @param string $name
      * @param int    $id
+     * @param string $name
      *
      * @return TestResponse
      */
-    protected function destroyResource(string $name, int $id): TestResponse
+    protected function destroyResource(int $id, string $name = null): TestResponse
     {
+        $name = $name ?: $this->resourceName;
         return $this->delete($this->route("{$name}.destroy", [$this->varName($name) => $id]));
     }
 
     /**
      * 请求获取单个资源
      *
-     * @param string $name
      * @param int    $id
+     * @param string $name
      *
      * @return TestResponse
      */
-    protected function getResource(string $name, int $id): TestResponse
+    protected function getResource(int $id, string $name = null): TestResponse
     {
+        $name = $name ?: $this->resourceName;
         return $this->get($this->route("{$name}.show", [$this->varName($name) => $id]));
     }
 
     /**
      * 请求更新一个资源
      *
-     * @param string $name
      * @param int    $id
      * @param array  $data
+     * @param string $name
      *
      * @return TestResponse
      */
-    protected function updateResource(string $name, int $id, array $data = []): TestResponse
+    protected function updateResource(int $id, array $data = [], string $name = null): TestResponse
     {
+        $name = $name ?: $this->resourceName;
         return $this->put($this->route("{$name}.update", [$this->varName($name) => $id]), $data);
     }
 
     /**
      * 请求编辑一个资源
      *
-     * @param string $name
      * @param int    $id
+     * @param string $name
      *
      * @return TestResponse
      */
-    protected function editResource(string $name, int $id): TestResponse
+    protected function editResource(int $id, string $name = null): TestResponse
     {
+        $name = $name ?: $this->resourceName;
         return $this->get($this->route("{$name}.edit", [$this->varName($name) => $id]));
     }
 
     /**
      * 请求创建一个资源
      *
-     * @param string $name
      * @param int    $id
+     * @param string $name
      *
      * @return TestResponse
      */
-    protected function createResource(string $name, int $id): TestResponse
+    protected function createResource(int $id, string $name = null): TestResponse
     {
+        $name = $name ?: $this->resourceName;
         return $this->get($this->route("{$name}.create", [$this->varName($name) => $id]));
     }
 }

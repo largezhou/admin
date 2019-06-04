@@ -3,7 +3,7 @@
 namespace Tests\Admin\Feature;
 
 use App\Http\Resources\AdminUserResource;
-use Tests\TestCase;
+use Tests\Admin\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
