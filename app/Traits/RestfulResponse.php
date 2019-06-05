@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use Illuminate\Http\Resources\Json\JsonResource;
+
 trait RestfulResponse
 {
     /**
@@ -39,6 +41,10 @@ trait RestfulResponse
      */
     protected function ok($data = null, array $headers = [])
     {
-        return response()->json($data, 200, $headers);
+        if ($data instanceof JsonResource) {
+            return $data->response()->withHeaders($headers)->setStatusCode(200);
+        } else {
+            return response()->json($data, 200, $headers);
+        }
     }
 }

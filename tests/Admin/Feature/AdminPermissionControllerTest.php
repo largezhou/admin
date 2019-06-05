@@ -69,4 +69,34 @@ class AdminPermissionControllerTest extends TestCase
 
         $this->assertDatabaseHas('admin_permissions', $model->getAttributes() + ['id' => 1]);
     }
+
+    public function testIndex()
+    {
+        factory(AdminPermission::class, 20)->create();
+
+        $res = $this->getResources();
+        // dd($res->getContent());
+        $res->assertStatus(200)
+            ->assertJsonFragment(['id' => '6'])
+            ->assertJsonFragment(['total' => 20])
+            ->assertJsonFragment(['last_page' => 2]);
+
+        // 筛选
+        factory(AdminPermission::class)->create([
+            'http_path' => 'path/to/query',
+            'http_method' => ['GET'],
+            'slug' => 'slug query',
+            'name' => 'name query',
+        ]);
+        $res = $this->getResources([
+            'id' => 21,
+            'http_path' => 'to',
+            'http_method' => 'GET',
+            'slug' => 'slug',
+            'name' => 'name',
+        ]);
+        $res->assertStatus(200)
+            ->assertJsonCount(1, 'data')
+            ->assertJsonFragment(['id' => '21']);
+    }
 }

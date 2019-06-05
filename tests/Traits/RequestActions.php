@@ -58,7 +58,7 @@ trait RequestActions
     protected function getResources(array $params = [], string $name = null): TestResponse
     {
         $name = $name ?: $this->resourceName;
-        return $this->get($this->route("{$name}.index"), $params);
+        return $this->get($this->route("{$name}.index", $params));
     }
 
     /**
