@@ -75,7 +75,6 @@ class AdminPermissionControllerTest extends TestCase
         factory(AdminPermission::class, 20)->create();
 
         $res = $this->getResources();
-        // dd($res->getContent());
         $res->assertStatus(200)
             ->assertJsonFragment(['id' => '6'])
             ->assertJsonFragment(['total' => 20])

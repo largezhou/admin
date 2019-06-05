@@ -20,7 +20,8 @@ class AdminPermissionController extends Controller
 
     public function index(Request $request, WhereBuilder $whereBuilder)
     {
-        $where = $whereBuilder->setInputs($request->input())
+        $where = $whereBuilder
+            ->setInputs($request->query())
             ->equal('id')
             ->like(['slug', 'name'], '?%')
             ->like(['http_method', 'http_path'], '%?%')
