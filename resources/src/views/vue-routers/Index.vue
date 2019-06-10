@@ -5,14 +5,12 @@
     </template>
     <el-table
       :data="vueRouters"
-      style="width: 100%;margin-bottom: 20px;"
       row-key="id"
       border
       :default-expand-all="false"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
-      <el-table-column width="200">
-        <template v-slot:header="scope">标题</template>
+      <el-table-column width="200" label="标题">
         <template v-slot="{ row }">
           <i :class="row.icon"/>
           <span>{{ row.title }}</span>

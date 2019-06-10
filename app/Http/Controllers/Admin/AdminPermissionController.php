@@ -27,7 +27,7 @@ class AdminPermissionController extends Controller
             ->like(['http_method', 'http_path'], '%?%')
             ->toWhere();
 
-        $perms = AdminPermission::getQuery()
+        $perms = AdminPermission::query()
             ->where($where)
             ->orderByDesc('id')
             ->paginate();
