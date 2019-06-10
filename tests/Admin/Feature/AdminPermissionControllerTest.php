@@ -2,6 +2,7 @@
 
 namespace Tests\Admin\Feature;
 
+use App\Http\Resources\AdminPermissionResource;
 use App\Models\Admin\AdminPermission;
 use Illuminate\Foundation\Testing\TestResponse;
 use Tests\Admin\TestCase;
@@ -108,5 +109,33 @@ class AdminPermissionControllerTest extends TestCase
         $res = $this->editResource(1);
         $res->assertStatus(200)
             ->assertJsonFragment(['id' => 1]);
+    }
+
+    public function testUpdate()
+    {
+        // id = 1
+        factory(AdminPermission::class)->create();
+        // id = 2
+        factory(AdminPermission::class)->create([
+            'name' => 'name',
+            'slug' => 'slug',
+        ]);
+
+        $res = $this->updateResource(1, [
+            'name' => 'name',
+            'slug' => 'slug',
+        ]);
+        $res->assertStatus(422)
+            ->assertJsonValidationErrors(['name', 'slug']);
+
+        $inputs = [
+            'slug' => 'new slug',
+            'http_path' => null,
+            'http_method' => null,
+        ];
+        $res = $this->updateResource(2, $inputs);
+        $res->assertStatus(200);
+
+        $this->assertDatabaseHas('admin_permissions', $inputs + ['id' => 2, 'name' => 'name']);
     }
 }

@@ -15,6 +15,8 @@ class AdminPermission extends Model
     {
         if (is_array($method)) {
             $this->attributes['http_method'] = implode(',', $method);
+        } else {
+            $this->attributes['http_method'] = $method;
         }
     }
 

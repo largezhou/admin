@@ -39,4 +39,11 @@ class AdminPermissionController extends Controller
     {
         return $this->ok(AdminPermissionResource::make($adminPermission));
     }
+
+    public function update(AdminPermissionRequest $request, AdminPermission $adminPermission)
+    {
+        $inputs = $request->validated();
+        $adminPermission->update($inputs);
+        return $this->ok();
+    }
 }
