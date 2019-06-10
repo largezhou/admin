@@ -46,4 +46,10 @@ class AdminPermissionController extends Controller
         $adminPermission->update($inputs);
         return $this->ok();
     }
+
+    public function destroy(AdminPermission $adminPermission)
+    {
+        $adminPermission->delete();
+        return $this->noContent();
+    }
 }

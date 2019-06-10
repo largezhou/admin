@@ -138,4 +138,14 @@ class AdminPermissionControllerTest extends TestCase
 
         $this->assertDatabaseHas('admin_permissions', $inputs + ['id' => 2, 'name' => 'name']);
     }
+
+    public function testDestroy()
+    {
+        factory(AdminPermission::class)->create();
+
+        $res = $this->destroyResource(1);
+        $res->assertStatus(204);
+
+        $this->assertDatabaseMissing('admin_permissions', ['id' => 1]);
+    }
 }
