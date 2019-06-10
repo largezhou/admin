@@ -98,4 +98,15 @@ class AdminPermissionControllerTest extends TestCase
             ->assertJsonCount(1, 'data')
             ->assertJsonFragment(['id' => '21']);
     }
+
+    public function testEdit()
+    {
+        $res = $this->editResource(1);
+        $res->assertStatus(404);
+
+        factory(AdminPermission::class)->create();
+        $res = $this->editResource(1);
+        $res->assertStatus(200)
+            ->assertJsonFragment(['id' => 1]);
+    }
 }

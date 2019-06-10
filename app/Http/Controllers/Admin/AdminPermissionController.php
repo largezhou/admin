@@ -34,4 +34,9 @@ class AdminPermissionController extends Controller
 
         return $this->ok(AdminPermissionResource::collection($perms));
     }
+
+    public function edit(AdminPermission $adminPermission)
+    {
+        return $this->ok(AdminPermissionResource::make($adminPermission));
+    }
 }
