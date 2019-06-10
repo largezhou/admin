@@ -75,7 +75,6 @@ class VueRouterControllerTest extends TestCase
                 'created_at' => (string) now(),
                 'id' => 2,
                 'parent_id' => 1,
-                'path' => '/'.$inputs['path'],
             ])
         );
 

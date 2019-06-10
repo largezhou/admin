@@ -15,17 +15,6 @@ class VueRouter extends Model
     ];
     protected $fillable = ['parent_id', 'order', 'title', 'icon', 'path', 'cache', 'is_menu'];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::saving(function (VueRouter $model) {
-            if ($model->path && $model->isDirty('path')) {
-                $model->path = '/'.ltrim($model->path, '/');
-            }
-        });
-    }
-
     /**
      * 把路由构建成嵌套的数组结构
      *
@@ -81,5 +70,10 @@ class VueRouter extends Model
     public function setParentIdAttribute($value)
     {
         $this->attributes['parent_id'] = $value ?: 0;
+    }
+
+    public function setPathAttribute($path)
+    {
+        $this->attributes['path'] = '/'.ltrim($path, '/');
     }
 }
