@@ -19,7 +19,7 @@ class VueRouter extends Model
      * 把路由构建成嵌套的数组结构
      *
      * @param array $nodes
-     * @param int   $parentId
+     * @param int $parentId
      *
      * @return array
      */
@@ -74,6 +74,6 @@ class VueRouter extends Model
 
     public function setPathAttribute($path)
     {
-        $this->attributes['path'] = '/'.ltrim($path, '/');
+        $this->attributes['path'] = $path ? ('/'.ltrim($path, '/')) : null;
     }
 }
