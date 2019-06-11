@@ -12,6 +12,6 @@ class AdminPermissionsTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(AdminPermission::class, 10)->create();
+        factory(AdminPermission::class, 20)->create();
     }
 }

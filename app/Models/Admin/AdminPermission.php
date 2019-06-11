@@ -3,6 +3,7 @@
 namespace App\Models\Admin;
 
 use App\Models\Model;
+use Illuminate\Support\Str;
 
 class AdminPermission extends Model
 {
@@ -14,7 +15,7 @@ class AdminPermission extends Model
     public function setHttpMethodAttribute($method)
     {
         if (is_array($method)) {
-            $this->attributes['http_method'] = implode(',', $method);
+            $this->attributes['http_method'] = implode(',', $method) ?: null;
         } else {
             $this->attributes['http_method'] = $method;
         }
@@ -22,9 +23,20 @@ class AdminPermission extends Model
 
     public function getHttpMethodAttribute($method)
     {
-        if (is_string($method)) {
-            return array_filter(explode(',', $method));
+        return array_filter(explode(',', $method));
+    }
+
+    public function setHttpPathAttribute($httpPath)
+    {
+        if (is_array($httpPath)) {
+            $this->attributes['http_path'] = implode("\r\n", $httpPath) ?: null;
+        } else {
+            $this->attributes['http_path'] = $httpPath;
         }
-        return $method;
+    }
+
+    public function getHttpPathAttribute($httpPath)
+    {
+        return array_filter(explode("\r\n", $httpPath));
     }
 }

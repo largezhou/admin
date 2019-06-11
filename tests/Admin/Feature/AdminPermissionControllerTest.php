@@ -3,6 +3,7 @@
 namespace Tests\Admin\Feature;
 
 use App\Models\Admin\AdminPermission;
+use Illuminate\Support\Facades\DB;
 use Tests\Admin\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -25,13 +26,15 @@ class AdminPermissionControllerTest extends TestCase
     {
         // name slug required
         // http_method array
+        // http_path valid
         $res = $this->storeResource([
             'name' => '',
             'slug' => '',
             'http_method' => 'not array',
+            'http_path' => "ERR:err/err",
         ]);
         $res->assertStatus(422)
-            ->assertJsonValidationErrors(['name', 'slug', 'http_method']);
+            ->assertJsonValidationErrors(['name', 'slug', 'http_method', 'http_path']);
 
         factory(AdminPermission::class)->create(['slug' => 'slug']);
         factory(AdminPermission::class)->create(['name' => 'name']);
@@ -50,7 +53,6 @@ class AdminPermissionControllerTest extends TestCase
     {
         /** @var AdminPermission $model */
         $model = factory(AdminPermission::class)->make();
-
         $this->assertStore($model);
 
         // http_method 和 http_path 为空
@@ -62,11 +64,12 @@ class AdminPermissionControllerTest extends TestCase
     protected function assertStore(AdminPermission $model)
     {
         AdminPermission::truncate();
-
-        $res = $this->storeResource($model->toArray());
+        $inputs = $model->toArray();
+        $inputs['http_path'] = implode("\r\n", $inputs['http_path']);
+        $res = $this->storeResource($inputs);
         $res->assertStatus(201);
 
-        $this->assertDatabaseHas('admin_permissions', $model->getAttributes() + ['id' => 1]);
+        $this->assertDatabaseHas('admin_permissions', array_merge($model->getAttributes(), ['id' => 1]));
     }
 
     public function testIndex()
