@@ -113,7 +113,7 @@ class WhereBuilder
         }
 
         $fields = $arguments[0];
-        if (is_string($fields)) {
+        if (!is_array($fields)) {
             $arguments[0] = [$fields];
         }
 

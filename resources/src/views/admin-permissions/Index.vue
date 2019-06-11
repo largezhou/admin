@@ -69,10 +69,6 @@ export default {
           label: '名称',
         },
         {
-          field: 'http_method',
-          label: '请求方法',
-        },
-        {
           field: 'http_path',
           label: '请求路径',
         },

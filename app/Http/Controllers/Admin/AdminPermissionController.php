@@ -24,7 +24,7 @@ class AdminPermissionController extends Controller
             ->setInputs($request->query())
             ->equal('id')
             ->like(['slug', 'name'], '?%')
-            ->like(['http_method', 'http_path'], '%?%')
+            ->like(['http_path'], '%?%')
             ->toWhere();
 
         $perms = AdminPermission::query()

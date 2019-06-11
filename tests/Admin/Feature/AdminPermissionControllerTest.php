@@ -3,7 +3,6 @@
 namespace Tests\Admin\Feature;
 
 use App\Models\Admin\AdminPermission;
-use Illuminate\Support\Facades\DB;
 use Tests\Admin\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -85,14 +84,12 @@ class AdminPermissionControllerTest extends TestCase
         // 筛选
         factory(AdminPermission::class)->create([
             'http_path' => 'path/to/query',
-            'http_method' => ['GET'],
             'slug' => 'slug query',
             'name' => 'name query',
         ]);
         $res = $this->getResources([
             'id' => 21,
             'http_path' => 'to',
-            'http_method' => 'GET',
             'slug' => 'slug',
             'name' => 'name',
         ]);
