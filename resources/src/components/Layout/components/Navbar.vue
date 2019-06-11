@@ -78,6 +78,7 @@ export default {
   box-shadow: $--box-shadow-light;
   padding-left: 0;
   display: flex;
+  border-bottom: 1px solid #dcdfe6;
 }
 
 /* breadcrumb transition */
