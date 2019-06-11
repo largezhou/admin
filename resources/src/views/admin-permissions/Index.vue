@@ -3,25 +3,10 @@
     <template v-slot:header>
       <span>所有权限</span>
     </template>
-    <el-table
-      :data="perms"
-      border
-    >
-      <el-table-column
-        prop="id"
-        label="ID"
-        width="60"
-      />
-      <el-table-column
-        prop="slug"
-        label="标识"
-        width="150"
-      />
-      <el-table-column
-        prop="name"
-        label="名称"
-        width="150"
-      />
+    <el-table :data="perms" border row-key="id">
+      <el-table-column prop="id" label="ID" width="60"/>
+      <el-table-column prop="slug" label="标识" width="150"/>
+      <el-table-column prop="name" label="名称" width="150"/>
       <el-table-column label="路由" min-width="400">
         <template v-slot="{ row }">
           <route-show :data="row"/>
@@ -35,11 +20,20 @@
             <el-button size="small" class="link">
               <router-link :to="`/admin-permissions/${row.id}/edit`">编辑</router-link>
             </el-button>
-            <pop-confirm type="danger" size="small" :confirm="onDestroy($index)">删除</pop-confirm>
+            <pop-confirm
+              type="danger"
+              size="small"
+              :confirm="onDestroy($index)"
+            >
+              删除
+            </pop-confirm>
           </el-button-group>
         </template>
       </el-table-column>
     </el-table>
+    <div class="card-footer">
+      <pagination :page="page"/>
+    </div>
   </el-card>
 </template>
 
@@ -47,14 +41,15 @@
 import { destroyAdminPerm, getAdminPerms } from '@/api/admin-perms'
 import RouteShow from './components/RouteShow'
 import PopConfirm from '@c/PopConfirm'
+import Pagination from '@c/Pagination'
 
 export default {
   name: 'Index',
-  components: { PopConfirm, RouteShow },
+  components: { Pagination, PopConfirm, RouteShow },
   data() {
     return {
       perms: [],
-      page: {},
+      page: null,
     }
   },
   methods: {
