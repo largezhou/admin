@@ -14,7 +14,7 @@
             clearable
           />
         </el-form-item>
-        <el-form-item style="display: block">
+        <el-form-item class="actions">
           <el-button type="primary" @click="onSubmit">查询</el-button>
           <el-button @click="onReset">重置</el-button>
         </el-form-item>
@@ -94,8 +94,6 @@ export default {
   margin-top: -20px;
 
   .el-collapse-item__header {
-    /*display: block;*/
-    /*text-align: center;*/
     color: #409eff;
     font-size: 16px;
     border: none;
@@ -104,5 +102,10 @@ export default {
   .el-collapse-item__arrow {
     display: none;
   }
+}
+
+.actions {
+  display: block;
+  margin-bottom: 0;
 }
 </style>

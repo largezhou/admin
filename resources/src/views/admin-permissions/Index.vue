@@ -6,7 +6,7 @@
 
     <search-form :fields="search"/>
 
-    <el-table :data="perms" border row-key="id">
+    <el-table :data="perms">
       <el-table-column prop="id" label="ID" width="60"/>
       <el-table-column prop="slug" label="标识" width="150"/>
       <el-table-column prop="name" label="名称" width="150"/>

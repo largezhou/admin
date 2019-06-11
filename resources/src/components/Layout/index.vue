@@ -46,6 +46,7 @@ export default {
 .el-main {
   padding: 10px;
   overflow-x: hidden;
+  overflow-y: scroll;
 }
 
 /* fade-transform */
