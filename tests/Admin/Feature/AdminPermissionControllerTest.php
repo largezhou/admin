@@ -2,9 +2,7 @@
 
 namespace Tests\Admin\Feature;
 
-use App\Http\Resources\AdminPermissionResource;
 use App\Models\Admin\AdminPermission;
-use Illuminate\Foundation\Testing\TestResponse;
 use Tests\Admin\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -77,7 +75,7 @@ class AdminPermissionControllerTest extends TestCase
 
         $res = $this->getResources();
         $res->assertStatus(200)
-            ->assertJsonFragment(['id' => '6'])
+            ->assertJsonFragment(['id' => 6])
             ->assertJsonFragment(['total' => 20])
             ->assertJsonFragment(['last_page' => 2]);
 
@@ -97,7 +95,7 @@ class AdminPermissionControllerTest extends TestCase
         ]);
         $res->assertStatus(200)
             ->assertJsonCount(1, 'data')
-            ->assertJsonFragment(['id' => '21']);
+            ->assertJsonFragment(['id' => 21]);
     }
 
     public function testEdit()
