@@ -2,23 +2,19 @@
   <el-pagination
     ref="page"
     v-if="page"
-    v-bind="attrs"
+    v-bind="$attrs"
     @size-change="onSizeChange"
     @current-change="onChange"
     :page-sizes="pageSizes"
     :current-page.sync="currentPage"
     :page-size.sync="perPage"
     :total="page.total"
+    layout="total, prev, pager, next, sizes, jumper"
+    background
   />
 </template>
 
 <script>
-const DEFAULT_CONFIG = {
-  background: true,
-  'page-sizes': [15, 30, 50, 100, 200],
-  layout: 'total, prev, pager, next, sizes, jumper',
-}
-
 export default {
   name: 'Pagination',
   data() {
@@ -31,11 +27,8 @@ export default {
     page: Object,
   },
   computed: {
-    attrs() {
-      return Object.assign({}, DEFAULT_CONFIG, this.$attrs)
-    },
     pageSizes() {
-      const sizes = this.attrs['page-sizes']
+      const sizes = [15, 30, 50, 100, 200]
       const perPage = this.page.per_page
       if (sizes.indexOf(perPage) === -1) {
         return [this.page.per_page, ...sizes]
