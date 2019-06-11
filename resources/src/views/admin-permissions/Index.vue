@@ -3,6 +3,9 @@
     <template v-slot:header>
       <span>所有权限</span>
     </template>
+
+    <search-form :fields="search"/>
+
     <el-table :data="perms" border row-key="id">
       <el-table-column prop="id" label="ID" width="60"/>
       <el-table-column prop="slug" label="标识" width="150"/>
@@ -42,14 +45,38 @@ import { destroyAdminPerm, getAdminPerms } from '@/api/admin-perms'
 import RouteShow from './components/RouteShow'
 import PopConfirm from '@c/PopConfirm'
 import Pagination from '@c/Pagination'
+import SearchForm from '@c/SearchForm'
 
 export default {
   name: 'Index',
-  components: { Pagination, PopConfirm, RouteShow },
+  components: { SearchForm, Pagination, PopConfirm, RouteShow },
   data() {
     return {
       perms: [],
       page: null,
+      searchForm: {},
+      search: [
+        {
+          field: 'id',
+          label: 'ID',
+        },
+        {
+          field: 'slug',
+          label: '标识',
+        },
+        {
+          field: 'name',
+          label: '名称',
+        },
+        {
+          field: 'http_method',
+          label: '请求方法',
+        },
+        {
+          field: 'http_path',
+          label: '请求路径',
+        },
+      ],
     }
   },
   methods: {
