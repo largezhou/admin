@@ -1,5 +1,5 @@
 <template>
-  <el-form :model="form" @keydown.enter.native="onSubmit">
+  <el-form :model="form" @keydown.enter.native="onSubmit" label-width>
     <el-form-item :error="errors.username">
       <el-input v-model="form.username" placeholder="账号">
         <svg-icon slot="prepend" icon-class="user"/>
