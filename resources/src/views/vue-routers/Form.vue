@@ -149,8 +149,4 @@ export default {
 .create {
   max-width: 800px;
 }
-
-.el-select {
-  width: 300px;
-}
 </style>

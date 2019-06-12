@@ -29,7 +29,7 @@ class AdminPermission extends Model
     public function setHttpPathAttribute($httpPath)
     {
         if (is_array($httpPath)) {
-            $this->attributes['http_path'] = implode("\r\n", $httpPath) ?: null;
+            $this->attributes['http_path'] = implode("\n", $httpPath) ?: null;
         } else {
             $this->attributes['http_path'] = $httpPath;
         }
@@ -37,6 +37,6 @@ class AdminPermission extends Model
 
     public function getHttpPathAttribute($httpPath)
     {
-        return array_filter(explode("\r\n", $httpPath));
+        return array_filter(explode("\n", $httpPath));
     }
 }

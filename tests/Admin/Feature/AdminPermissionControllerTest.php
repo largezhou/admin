@@ -64,7 +64,7 @@ class AdminPermissionControllerTest extends TestCase
     {
         AdminPermission::truncate();
         $inputs = $model->toArray();
-        $inputs['http_path'] = implode("\r\n", $inputs['http_path']);
+        $inputs['http_path'] = implode("\n", $inputs['http_path']);
         $res = $this->storeResource($inputs);
         $res->assertStatus(201);
 

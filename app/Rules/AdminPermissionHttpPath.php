@@ -8,6 +8,8 @@ use Illuminate\Support\Str;
 
 class AdminPermissionHttpPath implements Rule
 {
+    protected $errorMethods;
+
     /**
      * Determine if the validation rule passes.
      *
@@ -18,13 +20,15 @@ class AdminPermissionHttpPath implements Rule
      */
     public function passes($attribute, $value)
     {
-        $path = array_filter(explode("\r\n", $value));
+        $path = array_filter(explode("\n", $value));
         foreach ($path as $i) {
             if (Str::contains($i, ':')) {
                 [$methods, $path] = explode(':', $i);
                 if ($methods) {
                     $methods = explode(',', $methods);
-                    if (!empty(array_diff($methods, AdminPermission::$httpMethods))) {
+                    $errorMethods = array_diff($methods, AdminPermission::$httpMethods);
+                    if (!empty($errorMethods)) {
+                        $this->errorMethods = implode(',', $errorMethods);
                         return false;
                     }
                 }
@@ -40,6 +44,6 @@ class AdminPermissionHttpPath implements Rule
      */
     public function message()
     {
-        return 'HTTP 路径 无效';
+        return "HTTP 方法 [ {$this->errorMethods} ] 无效";
     }
 }

@@ -15,7 +15,7 @@ $factory->define(AdminPermission::class, function (Faker $faker) {
         $specifyMethod = (mt_rand(0, 10) > 8) ? implode(',', $getMethods()).':' : '';
         $httpPaths[] = $specifyMethod.'/'.fake_path();
     }
-    $httpPaths = implode("\r\n", $httpPaths);
+    $httpPaths = implode("\n", $httpPaths);
 
     return [
         'name' => 'perm_'.$faker->unique()->word,
