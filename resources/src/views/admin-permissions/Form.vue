@@ -3,63 +3,69 @@
     <template v-slot:header>
       <span>添加权限</span>
     </template>
-    <el-form ref="form" :model="form" label-width="100px">
-      <el-form-item
-        label="标识"
-        required
-        :error="errors.slug"
-        prop="slug"
-      >
-        <el-input v-model="form.slug"/>
-      </el-form-item>
-      <el-form-item
-        label="名称"
-        required
-        :error="errors.name"
-        prop="name"
-      >
-        <el-input v-model="form.name"/>
-      </el-form-item>
-      <el-form-item
-        label="方法"
-        :error="errors.http_method"
-        prop="http_method"
-      >
-        <el-select
-          v-model="form.http_method"
-          clearable
-          multiple
-          placeholder="选择请求方法"
+    <el-row type="flex" justify="center">
+      <lz-form ref="form" :model="form">
+        <el-form-item
+          label="标识"
+          required
+          :error="errors.slug"
+          prop="slug"
         >
-          <el-option
-            v-for="i in methods"
-            :key="i"
-            :label="i"
-            :value="i"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item
-        label="路径"
-        :error="errors.http_path"
-        prop="http_path"
-      >
-        <el-input :autosize="{ minRows: 6 }" type="textarea" v-model="form.http_path"/>
-      </el-form-item>
-      <el-form-item>
-        <loading-action type="primary" :action="onSubmit">{{ editMode ? '更新' : '添加' }}</loading-action>
-        <el-button @click="onReset">重置</el-button>
-      </el-form-item>
-    </el-form>
+          <el-input v-model="form.slug"/>
+        </el-form-item>
+        <el-form-item
+          label="名称"
+          required
+          :error="errors.name"
+          prop="name"
+        >
+          <el-input v-model="form.name"/>
+        </el-form-item>
+        <el-form-item
+          label="方法"
+          :error="errors.http_method"
+          prop="http_method"
+        >
+          <el-select
+            v-model="form.http_method"
+            clearable
+            multiple
+            placeholder="选择请求方法"
+          >
+            <el-option
+              v-for="i in methods"
+              :key="i"
+              :label="i"
+              :value="i"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="路径"
+          :error="errors.http_path"
+          prop="http_path"
+        >
+          <el-input :autosize="{ minRows: 6 }" type="textarea" v-model="form.http_path"/>
+        </el-form-item>
+        <el-form-item>
+          <loading-action type="primary" :action="onSubmit">{{ editMode ? '更新' : '添加' }}</loading-action>
+          <el-button @click="onReset">重置</el-button>
+        </el-form-item>
+      </lz-form>
+    </el-row>
   </el-card>
 </template>
 
 <script>
 import { assignExsits, handleValidateErrors } from '@/libs/utils'
 import { editAdminPerm, storeAdminPerm, updateAdminPerm } from '@/api/admin-perms'
+import LzForm from '@c/LzForm'
 
 export default {
   name: 'Form',
+  components: {
+    LzForm,
+  },
   data() {
     return {
       form: {

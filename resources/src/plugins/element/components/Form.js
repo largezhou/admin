@@ -2,6 +2,12 @@ import { Form } from 'element-ui'
 
 export default {
   extends: Form,
+  props: {
+    labelWidth: {
+      type: String,
+      default: '150px',
+    },
+  },
   methods: {
     setInitialValues() {
       if (!this.model) {

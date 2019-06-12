@@ -86,4 +86,9 @@ router.afterEach(() => {
   NProgress.done()
 })
 
+router.onError((e) => {
+  NProgress.done()
+  throw e
+})
+
 export default router
