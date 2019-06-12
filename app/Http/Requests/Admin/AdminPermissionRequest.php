@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Http\Requests\FormRequest;
 use App\Models\Admin\AdminPermission;
 use App\Rules\AdminPermissionHttpPath;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 
@@ -30,12 +30,12 @@ class AdminPermissionRequest extends FormRequest
         return $rules;
     }
 
-    public function messages()
+    public function attributes()
     {
         return [
             'name' => '名称',
             'slug' => '标识',
-            'http_method' => '请求方法',
+            'http_method.*' => '请求方法',
             'http_path' => '请求地址',
         ];
     }

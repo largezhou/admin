@@ -25,7 +25,12 @@
         :error="errors.http_method"
         prop="http_method"
       >
-        <el-select v-model="form.http_method" multiple>
+        <el-select
+          v-model="form.http_method"
+          clearable
+          multiple
+          placeholder="选择请求方法"
+        >
           <el-option
             v-for="i in methods"
             :key="i"
@@ -35,7 +40,7 @@
         </el-select>
       </el-form-item>
       <el-form-item
-        label="名称"
+        label="路径"
         :error="errors.http_path"
         prop="http_path"
       >

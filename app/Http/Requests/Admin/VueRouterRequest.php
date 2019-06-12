@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\FormRequest;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 
