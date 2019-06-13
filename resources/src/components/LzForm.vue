@@ -16,13 +16,13 @@ import Form from '@/plugins/element/components/Form'
 export default {
   name: 'LzForm',
   created() {
-    this.bindMethodThisToElForm()
+    this.copyMethods()
   },
   methods: {
     /**
-     * 把组件中继承来的方法中的 this, 指向 ElForm 实例
+     * 复制实际 Form 组件的方法, 给外部调用, 并把 this 指向 ElForm 实例
      */
-    bindMethodThisToElForm() {
+    copyMethods() {
       // 原始 ElForm 和 重写的 Form
       [Form.extends.methods, Form.methods].forEach(methods => {
         _forIn(methods, (m, k) => {
