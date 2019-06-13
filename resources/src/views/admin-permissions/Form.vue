@@ -4,28 +4,18 @@
       <span>添加权限</span>
     </template>
     <el-row type="flex" justify="center">
-      <lz-form ref="form" :model="form">
-        <el-form-item
-          label="标识"
-          required
-          :error="errors.slug"
-          prop="slug"
-        >
+      <lz-form
+        ref="form"
+        :model="form"
+        :errors="errors"
+      >
+        <el-form-item label="标识" required prop="slug">
           <el-input v-model="form.slug"/>
         </el-form-item>
-        <el-form-item
-          label="名称"
-          required
-          :error="errors.name"
-          prop="name"
-        >
+        <el-form-item label="名称" required prop="name">
           <el-input v-model="form.name"/>
         </el-form-item>
-        <el-form-item
-          label="方法"
-          :error="errors.http_method"
-          prop="http_method"
-        >
+        <el-form-item label="方法" prop="http_method">
           <el-select
             v-model="form.http_method"
             clearable
@@ -40,11 +30,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item
-          label="路径"
-          :error="errors.http_path"
-          prop="http_path"
-        >
+        <el-form-item label="路径" prop="http_path">
           <el-input :autosize="{ minRows: 6 }" type="textarea" v-model="form.http_path"/>
         </el-form-item>
         <el-form-item>

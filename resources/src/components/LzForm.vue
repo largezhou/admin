@@ -2,7 +2,7 @@
   <el-form
     ref="form"
     style="width: 800px;"
-    v-bind="$props"
+    v-bind="$attrs"
     v-on="$listeners"
   >
     <slot/>
@@ -15,7 +15,6 @@ import Form from '@/plugins/element/components/Form'
 
 export default {
   name: 'LzForm',
-  extends: Form,
   created() {
     this.bindMethodThisToElForm()
   },
