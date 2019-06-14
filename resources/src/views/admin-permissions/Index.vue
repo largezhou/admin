@@ -46,6 +46,7 @@ import RouteShow from './components/RouteShow'
 import PopConfirm from '@c/PopConfirm'
 import Pagination from '@c/Pagination'
 import SearchForm from '@c/SearchForm'
+import { getMessage } from '@/libs/utils'
 
 export default {
   name: 'Index',
@@ -80,6 +81,7 @@ export default {
       return async () => {
         await destroyAdminPerm(this.perms[index].id)
         this.perms.splice(index, 1)
+        this.$message.success(getMessage('destroyed'))
       }
     },
   },
@@ -95,7 +97,3 @@ export default {
   },
 }
 </script>
-
-<style scoped lang="scss">
-
-</style>

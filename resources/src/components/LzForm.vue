@@ -20,7 +20,7 @@
 <script>
 import _forIn from 'lodash/forIn'
 import Form from '@/plugins/element/components/Form'
-import { assignExsits, handleValidateErrors } from '@/libs/utils'
+import { assignExsits, getMessage, handleValidateErrors } from '@/libs/utils'
 
 export default {
   name: 'LzForm',
@@ -73,10 +73,12 @@ export default {
     async updateResource() {
       await this.updateMethod(this.resourceId, this.form)
       this.$router.back()
+      this.$message.success(getMessage('updated'))
     },
     async storeResource() {
       await this.storeMethod(this.form)
       this.$router.push(this.redirect)
+      this.$message.success(getMessage('created'))
     },
     async editResource() {
       const { data } = await this.editMethod(this.resourceId)

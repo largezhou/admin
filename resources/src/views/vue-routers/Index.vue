@@ -80,7 +80,7 @@
 <script>
 import { destroyVueRouter, getVueRouters, updateVueRouter } from '@/api/vue-routers'
 import PopConfirm from '@c/PopConfirm'
-import { hasChildren } from '@/libs/utils'
+import { getMessage, hasChildren } from '@/libs/utils'
 import SwitchEdit from '@c/quick-edit/SwitchEdit'
 import InputNumberEdit from '@c/quick-edit/InputNumberEdit'
 
@@ -109,6 +109,7 @@ export default {
       return async () => {
         await destroyVueRouter(row.id)
         this.removeVueRouter(this.vueRouters, row.id)
+        this.$message.success(getMessage('destroyed'))
       }
     },
     /**

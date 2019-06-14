@@ -22,7 +22,12 @@ export default {
   },
   computed: {
     httpRoute() {
-      return this.data.http_path.split('\n').map((i) => {
+      const t = this.data.http_path
+      if (!t) {
+        return []
+      }
+
+      return t.split('\n').map((i) => {
         let method = this.data.http_method
         let path = i
         if (i.indexOf(':') !== -1) {

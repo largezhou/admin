@@ -172,3 +172,13 @@ export const getFirstError = (res) => {
     return ''
   }
 }
+
+/**
+ * 获取提示消息
+ *
+ * @param key
+ * @returns {string|undefined}
+ */
+export const getMessage = key => {
+  return messages[key]
+}

@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { handleValidateErrors } from '@/libs/utils'
+import { getMessage, handleValidateErrors } from '@/libs/utils'
 
 export default {
   name: 'LoginForm',
@@ -39,7 +39,7 @@ export default {
       this.errors = {}
       try {
         await this.$store.dispatch('login', this.form)
-        this.$message.success('登录成功')
+        this.$message.success(getMessage('loggedIn'))
         this.$router.push(this.$route.query.redirect || { name: 'index' })
       } catch (e) {
         this.errors = handleValidateErrors(e.response)
