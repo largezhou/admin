@@ -35,6 +35,7 @@ class AdminPermissionRequest extends FormRequest
         return [
             'name' => '名称',
             'slug' => '标识',
+            'http_method' => '请求方法',
             'http_method.*' => '请求方法',
             'http_path' => '请求地址',
         ];
