@@ -17,6 +17,11 @@ module.exports = {
     plugins: [
       new LiveReloadPlugin(),
     ],
+    watchOptions: {
+      poll: (process.argv.indexOf('--poll') !== -1) ? 500 : false,
+      aggregateTimeout: 500,
+      ignored: /node_modules/,
+    },
   },
   chainWebpack(config) {
     config
