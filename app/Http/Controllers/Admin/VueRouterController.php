@@ -12,8 +12,8 @@ class VueRouterController extends AdminBaseController
     public function store(VueRouterRequest $request, VueRouter $model)
     {
         $inputs = $request->validated();
-        $model::create($inputs);
-        return $this->created();
+        $res = $model->create($inputs);
+        return $this->created(VueRouterResource::make($res));
     }
 
     public function update(VueRouterRequest $request, VueRouter $vueRouter)
@@ -21,7 +21,7 @@ class VueRouterController extends AdminBaseController
         $inputs = $request->validated();
         $vueRouter->update($inputs);
 
-        return $this->ok();
+        return $this->created(VueRouterResource::make($vueRouter));
     }
 
     public function edit(VueRouter $vueRouter)

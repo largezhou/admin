@@ -11,11 +11,11 @@ use App\Http\Controllers\Controller;
 
 class AdminPermissionController extends Controller
 {
-    public function store(AdminPermissionRequest $request)
+    public function store(AdminPermissionRequest $request, AdminPermission $model)
     {
         $inputs = $request->validated();
-        AdminPermission::create($inputs);
-        return $this->created();
+        $res = $model->create($inputs);
+        return $this->created(AdminPermissionResource::make($res));
     }
 
     public function index(Request $request, WhereBuilder $whereBuilder)
@@ -44,7 +44,7 @@ class AdminPermissionController extends Controller
     {
         $inputs = $request->validated();
         $adminPermission->update($inputs);
-        return $this->ok();
+        return $this->created(AdminPermissionResource::make($adminPermission));
     }
 
     public function destroy(AdminPermission $adminPermission)

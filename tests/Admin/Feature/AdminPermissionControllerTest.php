@@ -132,7 +132,7 @@ class AdminPermissionControllerTest extends TestCase
             'http_method' => null,
         ];
         $res = $this->updateResource(2, $inputs);
-        $res->assertStatus(200);
+        $res->assertStatus(201);
 
         $this->assertDatabaseHas('admin_permissions', $inputs + ['id' => 2, 'name' => 'name']);
     }

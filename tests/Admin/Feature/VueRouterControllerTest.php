@@ -117,7 +117,7 @@ class VueRouterControllerTest extends TestCase
             'order' => 99,
         ];
         $res = $this->updateResource(1, $inputs);
-        $res->assertStatus(200);
+        $res->assertStatus(201);
 
         $inputs['path'] = '/'.$inputs['path'];
         $this->assertDatabaseHas('vue_routers', ['id' => 1] + $inputs);
