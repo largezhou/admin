@@ -4,7 +4,15 @@
       <span>添加路由</span>
     </template>
     <el-row type="flex" justify="center">
-      <lz-form ref="form" :model="form" :errors="errors">
+      <lz-form
+        ref="form"
+        :form.sync="form"
+        :errors.sync="errors"
+        :edit-method="editVueRouter"
+        :update-method="updateVueRouter"
+        :store-method="storeVueRouter"
+        redirect="/vue-routers"
+      >
         <el-form-item label="父级路由" prop="parent_id">
           <el-select
             v-model="form.parent_id"
@@ -54,16 +62,12 @@
             inactive-text="不缓存"
           />
         </el-form-item>
-        <el-form-item>
-          <loading-action type="primary" :action="onSubmit">{{ editMode ? '更新' : '添加' }}</loading-action>
-          <el-button @click="onReset">重置</el-button>
-        </el-form-item>
       </lz-form>
     </el-row>
   </el-card>
 </template>
 <script>
-import { assignExsits, buildVueRouterOptions, handleValidateErrors } from '@/libs/utils'
+import { buildVueRouterOptions } from '@/libs/utils'
 import { editVueRouter, getVueRouters, storeVueRouter, updateVueRouter } from '@/api/vue-routers'
 import { isInt } from '@/libs/validates'
 import LzForm from '@c/LzForm'
@@ -92,51 +96,15 @@ export default {
     vueRouterOptions() {
       return buildVueRouterOptions(this.vueRouters)
     },
-    editMode() {
-      return !!this.vueRouterId
-    },
-    vueRouterId() {
-      return this.$route.params.id
-    },
   },
   created() {
     this.getVueRouters()
-    if (this.editMode) {
-      this.editVueRouter()
-    }
   },
   methods: {
-    async onSubmit() {
-      this.errors = {}
-      try {
-        this.editMode
-          ? await this.updateVueRouter()
-          : await this.storeVueRouter()
-      } catch (e) {
-        this.errors = handleValidateErrors(e.response)
-      }
-    },
-    async updateVueRouter() {
-      await updateVueRouter(this.vueRouterId, this.form)
-      this.$router.back()
-    },
-    async storeVueRouter() {
-      await storeVueRouter(this.form)
-      this.$router.push('/vue-routers')
-    },
-    onReset() {
-      this.$refs.form.resetFields()
-    },
     async getVueRouters() {
       const { data } = await getVueRouters()
       this.vueRouters = data
       !this.editMode && (this.form.parent_id = this.queryParentId())
-    },
-    async editVueRouter() {
-      const { data } = await editVueRouter(this.vueRouterId)
-      this.form = assignExsits(this.form, data)
-      await this.$nextTick()
-      this.$refs.form.setInitialValues()
     },
     queryParentId() {
       const id = Number.parseInt(this.$route.query.parent_id)
@@ -146,6 +114,9 @@ export default {
         return 0
       }
     },
+    editVueRouter,
+    storeVueRouter,
+    updateVueRouter,
   },
 }
 </script>
