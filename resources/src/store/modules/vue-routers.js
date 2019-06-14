@@ -1,6 +1,6 @@
 import { getVueRouters } from '@/api/vue-routers'
 import router from '@/router'
-import { pageNotFoundRoute } from '@/router/routes'
+import { fixedRoutes } from '@/router/routes'
 import { buildRoutes, makeRouteName } from '@/libs/utils'
 import _get from 'lodash/get'
 
@@ -35,7 +35,7 @@ export default {
       // 暂时写死 1 为首页
       const { routes, homeRoute } = buildRoutes(data, makeRouteName(1))
       router.addRoutes(routes)
-      router.addRoutes([pageNotFoundRoute])
+      router.addRoutes(fixedRoutes)
       commit('SET_HOME_ROUTE', homeRoute)
     },
     clearAuth({ commit }) {

@@ -32,5 +32,18 @@ export default {
       margin-left: 0;
     }
   }
+
+  .el-button {
+    &.link {
+      padding: 0;
+
+      /deep/ {
+        a {
+          padding: 0 20px;
+          line-height: 60px;
+        }
+      }
+    }
+  }
 }
 </style>

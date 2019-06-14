@@ -3,6 +3,7 @@
     <navbar-items>
       <hamburger :is-active="opened" @toggle="$store.dispatch('toggleOpened')"/>
       <refresh/>
+      <to-test/>
     </navbar-items>
     <navbar-items>
       <el-breadcrumb class="breadcrumb">
@@ -26,10 +27,12 @@ import ParentView from '@c/ParentView'
 import Hamburger from '@c/Hamburger'
 import NavbarItems from '@c/Layout/components/NavbarItems'
 import Refresh from '@c/Refresh'
+import ToTest from '@c/ToTest'
 
 export default {
   name: 'Navbar',
   components: {
+    ToTest,
     Refresh,
     NavbarItems,
     Hamburger,
