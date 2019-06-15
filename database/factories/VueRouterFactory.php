@@ -2,7 +2,7 @@
 
 /* @var $factory \Illuminate\Database\Eloquent\Factory */
 
-use App\Models\Admin\VueRouter;
+use App\Models\VueRouter;
 use Faker\Generator as Faker;
 
 $factory->define(VueRouter::class, function (Faker $faker) {

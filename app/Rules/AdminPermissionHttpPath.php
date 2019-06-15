@@ -2,7 +2,7 @@
 
 namespace App\Rules;
 
-use App\Models\Admin\AdminPermission;
+use App\Models\AdminPermission;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Str;
 

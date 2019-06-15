@@ -1,9 +1,6 @@
 <?php
 
-namespace App\Models\Admin;
-
-use App\Models\Model;
-use Illuminate\Support\Str;
+namespace App\Models;
 
 class AdminPermission extends Model
 {

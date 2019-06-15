@@ -1,14 +1,15 @@
 <?php
 
-namespace Tests\Admin\Feature;
+namespace Tests\Feature;
 
-use App\Models\Admin\VueRouter;
+use App\Models\VueRouter;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\Admin\TestCase;
+use Tests\AdminTestCase;
+use Tests\TestCase;
 use Tests\Traits\RequestActions;
 
-class VueRouterControllerTest extends TestCase
+class VueRouterControllerTest extends AdminTestCase
 {
     use RefreshDatabase;
     use WithFaker;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Admin\VueRouter;
+use App\Models\VueRouter;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class VueRouterResource extends JsonResource

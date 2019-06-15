@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Admin\AdminUser;
+use App\Models\AdminUser;
 use Illuminate\Database\Seeder;
 
 class AdminUsersTableSeeder extends Seeder

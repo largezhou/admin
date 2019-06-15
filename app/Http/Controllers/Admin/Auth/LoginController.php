@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin\Auth;
 use App\Http\Controllers\Admin\AdminBaseController;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class LoginController extends AdminBaseController
 {
@@ -14,11 +13,6 @@ class LoginController extends AdminBaseController
     public function username()
     {
         return 'username';
-    }
-
-    public function guard()
-    {
-        return Auth::guard('admin-api');
     }
 
     protected function sendLoginResponse(Request $request)

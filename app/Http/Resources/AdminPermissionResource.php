@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Admin\AdminPermission;
+use App\Models\AdminPermission;
 
 class AdminPermissionResource extends JsonResource
 {

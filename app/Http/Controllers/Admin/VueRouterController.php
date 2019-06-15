@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\Admin\VueRouterRequest;
+use App\Http\Requests\VueRouterRequest;
 use App\Http\Resources\VueRouterResource;
-use App\Models\Admin\VueRouter;
+use App\Models\VueRouter;
 use Illuminate\Http\Request;
 
 class VueRouterController extends AdminBaseController

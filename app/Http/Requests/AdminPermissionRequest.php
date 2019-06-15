@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Admin;
+namespace App\Http\Requests;
 
-use App\Http\Requests\FormRequest;
-use App\Models\Admin\AdminPermission;
+use App\Models\AdminPermission;
 use App\Rules\AdminPermissionHttpPath;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;

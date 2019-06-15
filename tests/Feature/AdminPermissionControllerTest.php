@@ -1,14 +1,14 @@
 <?php
 
-namespace Tests\Admin\Feature;
+namespace Tests\Feature;
 
-use App\Models\Admin\AdminPermission;
-use Tests\Admin\TestCase;
+use App\Models\AdminPermission;
+use Tests\AdminTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Traits\RequestActions;
 
-class AdminPermissionControllerTest extends TestCase
+class AdminPermissionControllerTest extends AdminTestCase
 {
     use RefreshDatabase;
     use WithFaker;

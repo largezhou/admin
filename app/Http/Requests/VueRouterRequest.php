@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Requests\Admin;
+namespace App\Http\Requests;
 
-use App\Http\Requests\FormRequest;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 

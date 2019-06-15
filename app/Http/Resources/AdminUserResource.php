@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Admin\AdminUser;
+use App\Models\AdminUser;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class AdminUserResource extends JsonResource

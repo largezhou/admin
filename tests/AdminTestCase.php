@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Admin;
+namespace Tests;
 
-use App\Models\Admin\AdminUser;
+use App\Models\AdminUser;
 
-class TestCase extends \Tests\TestCase
+class AdminTestCase extends TestCase
 {
     protected $routePrefix = 'admin';
 

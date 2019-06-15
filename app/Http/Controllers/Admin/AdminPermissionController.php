@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\Admin\AdminPermissionRequest;
+use App\Http\Requests\AdminPermissionRequest;
 use App\Http\Resources\AdminPermissionResource;
-use App\Models\Admin\AdminPermission;
+use App\Models\AdminPermission;
 use App\Utils\WhereBuilder;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;

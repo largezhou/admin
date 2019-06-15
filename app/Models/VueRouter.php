@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Models\Admin;
+namespace App\Models;
 
-use App\Models\Model;
 use Illuminate\Support\Facades\DB;
 
 class VueRouter extends Model

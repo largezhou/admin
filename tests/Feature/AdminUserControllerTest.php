@@ -1,13 +1,14 @@
 <?php
 
-namespace Tests\Admin\Feature;
+namespace Tests\Feature;
 
 use App\Http\Resources\AdminUserResource;
-use Tests\Admin\TestCase;
+use Tests\AdminTestCase;
+use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class AdminUserControllerTest extends TestCase
+class AdminUserControllerTest extends AdminTestCase
 {
     use RefreshDatabase;
 

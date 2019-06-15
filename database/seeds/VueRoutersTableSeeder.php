@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Admin\VueRouter;
+use App\Models\VueRouter;
 use Illuminate\Database\Seeder;
 
 class VueRoutersTableSeeder extends Seeder
