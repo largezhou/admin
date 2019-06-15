@@ -36,4 +36,14 @@ class AdminPermission extends Model
     {
         return array_filter(explode("\n", $httpPath));
     }
+
+    public function roles()
+    {
+        return $this->belongsToMany(
+            AdminRole::class,
+            'admin_permission_role',
+            'role_id',
+            'permission_id'
+        );
+    }
 }
