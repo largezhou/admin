@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Filters\AdminPermissionFilter;
 use App\Http\Requests\AdminPermissionRequest;
 use App\Http\Resources\AdminPermissionResource;
 use App\Models\AdminPermission;
-use App\Utils\WhereBuilder;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -18,17 +18,10 @@ class AdminPermissionController extends Controller
         return $this->created(AdminPermissionResource::make($res));
     }
 
-    public function index(Request $request, WhereBuilder $whereBuilder)
+    public function index(Request $request, AdminPermissionFilter $filter)
     {
-        $where = $whereBuilder
-            ->setInputs($request->query())
-            ->equal('id')
-            ->like(['slug', 'name'], '?%')
-            ->like(['http_path'], '%?%')
-            ->toWhere();
-
         $perms = AdminPermission::query()
-            ->where($where)
+            ->filter($filter)
             ->orderByDesc('id')
             ->paginate();
 

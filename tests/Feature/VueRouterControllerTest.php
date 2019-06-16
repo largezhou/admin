@@ -65,7 +65,6 @@ class VueRouterControllerTest extends AdminTestCase
             'parent_id' => 1,
             'path' => 'no/start/slash',
         ])->toArray();
-        $inputs['created_at'] = (string) now()->addDay();
 
         $res = $this->storeResource($inputs);
         $res->assertStatus(201);
@@ -73,7 +72,6 @@ class VueRouterControllerTest extends AdminTestCase
         $this->assertDatabaseHas(
             'vue_routers',
             array_merge($inputs, [
-                'created_at' => (string) now(),
                 'id' => 2,
                 'parent_id' => 1,
             ])
