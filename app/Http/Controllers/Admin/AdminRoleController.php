@@ -30,4 +30,14 @@ class AdminRoleController extends Controller
         }]);
         return $this->ok(AdminRoleResource::make($adminRole));
     }
+
+    public function update(AdminRoleRequest $request, AdminRole $adminRole)
+    {
+        $inputs = $request->validated();
+        $adminRole->update($inputs);
+        if (isset($inputs['permissions'])) {
+            $adminRole->permissions()->sync($inputs['permissions']);
+        }
+        return $this->created(AdminRoleResource::make($adminRole));
+    }
 }

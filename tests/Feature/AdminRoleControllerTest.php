@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Resources\AdminRoleResource;
 use App\Models\AdminPermission;
 use App\Models\AdminRole;
 use Tests\AdminTestCase;
@@ -85,5 +86,38 @@ class AdminRoleControllerTest extends AdminTestCase
         factory(AdminRole::class)->create()
             ->permissions()
             ->createMany([factory(AdminPermission::class)->make()->toArray()]);
+    }
+
+    public function testUpdate()
+    {
+        $this->createRole();
+        // 清空关联权限
+        // 不更新任何字段
+        $inputs = AdminRole::first()->toArray();
+        $res = $this->updateResource(1, $inputs + ['permissions' => []]);
+        $res->assertStatus(201);
+        $this->assertDatabaseHas('admin_roles', $inputs);
+        $this->assertDatabaseMissing('admin_permission_role', [
+            'role_id' => 1,
+            'permission_id' => 1,
+        ]);
+
+        $this->createRole();
+        // 更新字段和权限
+        $inputs = [
+            'name' => 'new name',
+            'slug' => 'new slug',
+        ];
+        $res = $this->updateResource(2, $inputs + ['permissions' => [1]]);
+        $res->assertStatus(201);
+        $this->assertDatabaseHas('admin_roles', $inputs);
+        $this->assertDatabaseHas('admin_permission_role', [
+            'role_id' => 2,
+            'permission_id' => 1,
+        ]);
+        $this->assertDatabaseMissing('admin_permission_role', [
+            'role_id' => 2,
+            'permission_id' => 2,
+        ]);
     }
 }
