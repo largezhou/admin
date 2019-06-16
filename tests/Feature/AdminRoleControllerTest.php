@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\AdminPermission;
 use App\Models\AdminRole;
-use Illuminate\Support\Facades\DB;
 use Tests\AdminTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -60,35 +59,31 @@ class AdminRoleControllerTest extends AdminTestCase
         $this->assertDatabaseHas('admin_roles', $inputs + ['id' => 1]);
 
         AdminRole::truncate();
-        $rolePerms = $this->faker
-            ->randomElements(
-                factory(AdminPermission::class, 10)->create()->pluck('id'),
-                2
-            );
-        $res = $this->storeResource($inputs + ['permissions' => $rolePerms]);
+        $res = $this->storeResource($inputs + [
+                'permissions' => [factory(AdminPermission::class)->create()->id],
+            ]);
         $res->assertStatus(201);
 
-        $datas = array_map(function ($i) {
-            return [
-                'permission_id' => $i,
-                'role_id' => 1,
-            ];
-        }, $rolePerms);
-        foreach ($datas as $data) {
-            $this->assertDatabaseHas('admin_permission_role', $data);
-        }
+        $this->assertDatabaseHas('admin_permission_role', [
+            'role_id' => 1,
+            'permission_id' => 1,
+        ]);
     }
 
     public function testEdit()
     {
-        factory(AdminRole::class)->create()
-            ->permissions()
-            ->createMany(factory(AdminPermission::class, 2)->make()->toArray());
+        $this->createRole();
 
         $res = $this->editResource(1);
-        dump(json_decode($res->getContent(), true)['permissions']);
         $res->assertStatus(200)
             ->assertJson(AdminRole::first()->toArray())
-            ->assertJsonCount(2, 'permissions');
+            ->assertJsonCount(1, 'permissions');
+    }
+
+    protected function createRole()
+    {
+        factory(AdminRole::class)->create()
+            ->permissions()
+            ->createMany([factory(AdminPermission::class)->make()->toArray()]);
     }
 }
