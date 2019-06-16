@@ -1,7 +1,7 @@
-<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
+<template>
   <el-card>
     <template v-slot:header>
-      <span>所有权限</span>
+      <span>所有角色</span>
     </template>
 
     <search-form :fields="search"/>
