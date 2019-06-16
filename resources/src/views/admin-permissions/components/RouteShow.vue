@@ -49,14 +49,10 @@ export default {
 
 <style scoped>
 .tag {
-  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .route {
   margin-bottom: 5px;
-}
-
-code {
-  margin-left: 5px;
 }
 </style>

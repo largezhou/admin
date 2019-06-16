@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Models\AdminRole;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 class AdminRoleResource extends JsonResource
 {

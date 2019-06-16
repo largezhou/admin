@@ -16,13 +16,11 @@ class AdminRoleFilter extends Filter
 
     protected function permissionName($value)
     {
-        $perms = AdminPermission::query()->where('name', 'like', $value.'%')->pluck('id');
-        if ($perms->isEmpty()) {
-            return;
-        }
-        $roleIds = DB::table('admin_permission_role')->whereIn('permission_id', $perms)->pluck('role_id');
-        if ($roleIds->isEmpty()) {
-            return;
+        $permIds = AdminPermission::query()->where('name', 'like', $value.'%')->pluck('id');
+        if ($permIds->isEmpty()) {
+            $roleIds = [];
+        } else {
+            $roleIds = DB::table('admin_permission_role')->whereIn('permission_id', $permIds)->pluck('role_id');
         }
         $this->builder->whereIn('id', $roleIds);
     }

@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <el-card>
     <template v-slot:header>
       <span>所有权限</span>
@@ -6,13 +6,20 @@
 
     <search-form :fields="search"/>
 
-    <el-table :data="perms">
+    <el-table :data="roles">
       <el-table-column prop="id" label="ID" width="60"/>
       <el-table-column prop="name" label="名称" width="150"/>
       <el-table-column prop="slug" label="标识" width="150"/>
-      <el-table-column label="路由" min-width="400">
+      <el-table-column label="权限" min-width="400">
         <template v-slot="{ row }">
-          <route-show :data="row"/>
+          <el-tag
+            v-for="i of row.permissions"
+            :key="i.id"
+            size="small"
+            class="tag"
+          >
+            {{ i.name }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="created_at" label="添加时间" width="180"/>
@@ -21,7 +28,7 @@
         <template v-slot="{ row, $index }">
           <el-button-group>
             <el-button size="small" class="link">
-              <router-link :to="`/admin-permissions/${row.id}/edit`">编辑</router-link>
+              <router-link :to="`/admin-roles/${row.id}/edit`">编辑</router-link>
             </el-button>
             <pop-confirm
               type="danger"
@@ -41,12 +48,11 @@
 </template>
 
 <script>
-import { destroyAdminPerm, getAdminPerms } from '@/api/admin-perms'
-import RouteShow from './components/RouteShow'
-import PopConfirm from '@c/PopConfirm'
-import Pagination from '@c/Pagination'
 import SearchForm from '@c/SearchForm'
+import { destroyAdminRole, getAdminRoles } from '@/api/admin-roles'
 import { getMessage } from '@/libs/utils'
+import Pagination from '@c/Pagination'
+import PopConfirm from '@c/PopConfirm'
 
 export default {
   name: 'Index',
@@ -54,13 +60,9 @@ export default {
     SearchForm,
     Pagination,
     PopConfirm,
-    RouteShow,
   },
   data() {
     return {
-      perms: [],
-      page: null,
-      searchForm: {},
       search: [
         {
           field: 'id',
@@ -75,17 +77,19 @@ export default {
           label: '标识',
         },
         {
-          field: 'http_path',
-          label: '请求路径',
+          field: 'permission_name',
+          label: '权限',
         },
       ],
+      roles: [],
+      page: null,
     }
   },
   methods: {
     onDestroy(index) {
       return async () => {
-        await destroyAdminPerm(this.perms[index].id)
-        this.perms.splice(index, 1)
+        await destroyAdminRole(this.roles[index].id)
+        this.roles.splice(index, 1)
         this.$message.success(getMessage('destroyed'))
       }
     },
@@ -93,8 +97,8 @@ export default {
   watch: {
     $route: {
       async handler(newVal) {
-        const { data: { data, meta } } = await getAdminPerms(newVal.query)
-        this.perms = data
+        const { data: { data, meta } } = await getAdminRoles(newVal.query)
+        this.roles = data
         this.page = meta
       },
       immediate: true,
@@ -102,3 +106,10 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.tag {
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+</style>
