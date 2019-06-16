@@ -51,14 +51,8 @@ class VueRouter extends Model
 
     public function delete()
     {
-        DB::beginTransaction();
-
-        $res = parent::delete();
         $this->children->each->delete();
-
-        DB::commit();
-
-        return $res;
+        return parent::delete();
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class AdminRole extends Model
 {
@@ -16,5 +17,11 @@ class AdminRole extends Model
             'role_id',
             'permission_id'
         )->withTimestamps();
+    }
+
+    public function delete()
+    {
+        $this->permissions()->detach();
+        return parent::delete();
     }
 }

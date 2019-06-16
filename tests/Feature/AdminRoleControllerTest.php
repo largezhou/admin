@@ -120,4 +120,16 @@ class AdminRoleControllerTest extends AdminTestCase
             'permission_id' => 2,
         ]);
     }
+
+    public function testDestroy()
+    {
+        $this->createRole();
+        $res = $this->destroyResource(1);
+        $res->assertStatus(204);
+        $this->assertDatabaseMissing('admin_roles', ['id' => 1]);
+        $this->assertDatabaseMissing('admin_permission_role', [
+            'role_id' => 1,
+            'permission_id' => 1,
+        ]);
+    }
 }

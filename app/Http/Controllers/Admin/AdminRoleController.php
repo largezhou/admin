@@ -40,4 +40,10 @@ class AdminRoleController extends Controller
         }
         return $this->created(AdminRoleResource::make($adminRole));
     }
+
+    public function destroy(AdminRole $adminRole)
+    {
+        $adminRole->delete();
+        return $this->noContent();
+    }
 }
