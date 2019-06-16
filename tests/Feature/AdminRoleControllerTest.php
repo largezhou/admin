@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Http\Resources\AdminRoleResource;
 use App\Models\AdminPermission;
 use App\Models\AdminRole;
 use Tests\AdminTestCase;
@@ -131,5 +130,32 @@ class AdminRoleControllerTest extends AdminTestCase
             'role_id' => 1,
             'permission_id' => 1,
         ]);
+    }
+
+    public function testIndex()
+    {
+        factory(AdminRole::class, 20);
+        factory(AdminPermission::class, 5);
+        app(\AdminPermissionRoleTableSeeder::class)->run();
+        $res = $this->getResources();
+        $res->assertStatus(200)
+            ->assertJsonCount(15, 'data')
+            // 角色对应的权限数
+            ->assertJsonCount(AdminRole::query()->find(20)->permissions->count(), 'data.0.permissions');
+
+        // 测试筛选
+        factory(AdminRole::class)
+            ->create([
+                'name' => 'role name query',
+                'slug' => 'role slug query',
+            ])
+            ->permissions()
+            ->create(factory(AdminPermission::class)->create(['name' => 'perm name query'])->toArray());
+        $res = $this->getResources([
+            'name' => 'role name',
+            'slug' => 'role slug',
+        ]);
+        $res->assertJsonCount(1, 'data');
+        // TODO 权限名筛选
     }
 }

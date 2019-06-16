@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\AdminRoleRequest;
 use App\Http\Resources\AdminRoleResource;
 use App\Models\AdminRole;
+use App\Utils\WhereBuilder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -25,9 +27,11 @@ class AdminRoleController extends Controller
 
     public function edit(AdminRole $adminRole)
     {
-        $adminRole->load(['permissions' => function (BelongsToMany $query) {
-            $query->select(['id', 'name']);
-        }]);
+        $adminRole->load([
+            'permissions' => function (BelongsToMany $query) {
+                $query->select(['id', 'name']);
+            },
+        ]);
         return $this->ok(AdminRoleResource::make($adminRole));
     }
 
@@ -45,5 +49,23 @@ class AdminRoleController extends Controller
     {
         $adminRole->delete();
         return $this->noContent();
+    }
+
+    public function index(Request $request, WhereBuilder $whereBuilder)
+    {
+        $where = $whereBuilder->setInputs($request->input())
+            ->like(['name', 'slug'], '?%')
+            ->toWhere();
+        $roles = AdminRole::query()
+            ->with([
+                'permissions' => function (BelongsToMany $query) {
+                    $query->select(['id', 'name']);
+                },
+            ])
+            ->where($where)
+            ->orderByDesc('id')
+            ->paginate();
+
+        return $this->ok(AdminRoleResource::collection($roles));
     }
 }
