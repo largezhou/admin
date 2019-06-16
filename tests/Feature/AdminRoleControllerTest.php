@@ -86,6 +86,7 @@ class AdminRoleControllerTest extends AdminTestCase
             ->createMany(factory(AdminPermission::class, 2)->make()->toArray());
 
         $res = $this->editResource(1);
+        dump(json_decode($res->getContent(), true)['permissions']);
         $res->assertStatus(200)
             ->assertJson(AdminRole::first()->toArray())
             ->assertJsonCount(2, 'permissions');

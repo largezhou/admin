@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\AdminRoleRequest;
 use App\Http\Resources\AdminRoleResource;
 use App\Models\AdminRole;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -24,7 +25,9 @@ class AdminRoleController extends Controller
 
     public function edit(AdminRole $adminRole)
     {
-        $adminRole->load('permissions');
+        $adminRole->load(['permissions' => function (BelongsToMany $query) {
+            $query->select(['id', 'name']);
+        }]);
         return $this->ok(AdminRoleResource::make($adminRole));
     }
 }
