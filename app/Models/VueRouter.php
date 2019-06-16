@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Facades\DB;
-
 class VueRouter extends Model
 {
     protected $casts = [

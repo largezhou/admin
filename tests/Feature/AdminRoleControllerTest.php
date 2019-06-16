@@ -152,10 +152,14 @@ class AdminRoleControllerTest extends AdminTestCase
             ->permissions()
             ->create(factory(AdminPermission::class)->create(['name' => 'perm name query'])->toArray());
         $res = $this->getResources([
+            'id' => 21,
             'name' => 'role name',
             'slug' => 'role slug',
         ]);
         $res->assertJsonCount(1, 'data');
-        // TODO 权限名筛选
+
+        // 权限名称筛选
+        $res = $this->getResources(['permission_name' => 'perm name']);
+        $res->assertJsonCount(1, 'data');
     }
 }
