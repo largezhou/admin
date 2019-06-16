@@ -15,6 +15,6 @@ class AdminRole extends Model
             'admin_permission_role',
             'role_id',
             'permission_id'
-        );
+        )->withTimestamps();
     }
 }

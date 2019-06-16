@@ -21,4 +21,10 @@ class AdminRoleController extends Controller
 
         return $this->created(AdminRoleResource::make($role));
     }
+
+    public function edit(AdminRole $adminRole)
+    {
+        $adminRole->load('permissions');
+        return $this->ok(AdminRoleResource::make($adminRole));
+    }
 }

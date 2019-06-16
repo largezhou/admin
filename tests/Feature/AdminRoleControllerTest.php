@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\AdminPermission;
 use App\Models\AdminRole;
+use Illuminate\Support\Facades\DB;
 use Tests\AdminTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -76,5 +77,17 @@ class AdminRoleControllerTest extends AdminTestCase
         foreach ($datas as $data) {
             $this->assertDatabaseHas('admin_permission_role', $data);
         }
+    }
+
+    public function testEdit()
+    {
+        factory(AdminRole::class)->create()
+            ->permissions()
+            ->createMany(factory(AdminPermission::class, 2)->make()->toArray());
+
+        $res = $this->editResource(1);
+        $res->assertStatus(200)
+            ->assertJson(AdminRole::first()->toArray())
+            ->assertJsonCount(2, 'permissions');
     }
 }
