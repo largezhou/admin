@@ -67,6 +67,19 @@ code {
   .el-transfer-panel {
     width: 100%;
   }
+
+  .el-transfer-panel__item {
+    display: block;
+    height: 35px;
+  }
+
+  .el-transfer-panel__item.el-checkbox .el-checkbox__label {
+    line-height: 35px;
+  }
+
+  .el-transfer-panel__item .el-checkbox__input {
+    top: 11px;
+  }
 }
 
 @media only screen and (max-width: 768px) {
