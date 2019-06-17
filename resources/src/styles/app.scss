@@ -1,3 +1,5 @@
+@import '~@/plugins/element/index';
+
 #admin-app,
 body,
 html {
@@ -41,4 +43,18 @@ code {
 
 .el-select {
   width: 100%;
+}
+
+.is-error {
+  .el-transfer-panel {
+    border: 1px solid $--color-danger;
+  }
+}
+
+.el-form-item.is-error .el-transfer-panel .el-input__inner {
+  border-color: $--border-color-base;
+
+  &:focus {
+    border-color: $--color-primary;
+  }
 }
