@@ -13,6 +13,14 @@ export default new Vuex.Store({
     vueRouters,
     sideMenu,
   },
+  state: {
+    miniWidth: window.innerWidth <= 768,
+  },
+  mutations: {
+    SET_MINI_WIDTH(state, payload) {
+      state.miniWidth = payload
+    },
+  },
   actions: {
     feLogout({ dispatch }) {
       dispatch('clearAuth')

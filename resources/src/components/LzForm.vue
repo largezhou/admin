@@ -6,6 +6,7 @@
     v-on="$listeners"
     :model="form"
     :errors="errors"
+    :label-position="labelPosition"
   >
     <slot/>
     <slot name="footer">
@@ -38,6 +39,9 @@ export default {
     },
     resourceId() {
       return this.$route.params.id
+    },
+    labelPosition() {
+      return this.$store.state.miniWidth ? 'top' : 'right'
     },
   },
   created() {

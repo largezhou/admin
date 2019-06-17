@@ -9,6 +9,7 @@ import '@/styles/app.scss'
 import '@/plugins/element'
 import '@c'
 import '@/icons'
+import '@/directives'
 
 Vue.config.productionTip = false
 
