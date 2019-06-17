@@ -64,7 +64,7 @@ class AdminRoleControllerTest extends AdminTestCase
             ]);
         $res->assertStatus(201);
 
-        $this->assertDatabaseHas('admin_permission_role', [
+        $this->assertDatabaseHas('admin_role_permission', [
             'role_id' => 1,
             'permission_id' => 1,
         ]);
@@ -96,7 +96,7 @@ class AdminRoleControllerTest extends AdminTestCase
         $res = $this->updateResource(1, $inputs + ['permissions' => []]);
         $res->assertStatus(201);
         $this->assertDatabaseHas('admin_roles', $inputs);
-        $this->assertDatabaseMissing('admin_permission_role', [
+        $this->assertDatabaseMissing('admin_role_permission', [
             'role_id' => 1,
             'permission_id' => 1,
         ]);
@@ -110,11 +110,11 @@ class AdminRoleControllerTest extends AdminTestCase
         $res = $this->updateResource(2, $inputs + ['permissions' => [1]]);
         $res->assertStatus(201);
         $this->assertDatabaseHas('admin_roles', $inputs);
-        $this->assertDatabaseHas('admin_permission_role', [
+        $this->assertDatabaseHas('admin_role_permission', [
             'role_id' => 2,
             'permission_id' => 1,
         ]);
-        $this->assertDatabaseMissing('admin_permission_role', [
+        $this->assertDatabaseMissing('admin_role_permission', [
             'role_id' => 2,
             'permission_id' => 2,
         ]);
@@ -126,7 +126,7 @@ class AdminRoleControllerTest extends AdminTestCase
         $res = $this->destroyResource(1);
         $res->assertStatus(204);
         $this->assertDatabaseMissing('admin_roles', ['id' => 1]);
-        $this->assertDatabaseMissing('admin_permission_role', [
+        $this->assertDatabaseMissing('admin_role_permission', [
             'role_id' => 1,
             'permission_id' => 1,
         ]);
@@ -136,7 +136,7 @@ class AdminRoleControllerTest extends AdminTestCase
     {
         factory(AdminRole::class, 20);
         factory(AdminPermission::class, 5);
-        app(\AdminPermissionRoleTableSeeder::class)->run();
+        app(\AdminRolePermissionTableSeeder::class)->run();
         $res = $this->getResources();
         $res->assertStatus(200)
             ->assertJsonCount(15, 'data')

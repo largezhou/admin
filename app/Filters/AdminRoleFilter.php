@@ -20,7 +20,7 @@ class AdminRoleFilter extends Filter
         if ($permIds->isEmpty()) {
             $roleIds = [];
         } else {
-            $roleIds = DB::table('admin_permission_role')->whereIn('permission_id', $permIds)->pluck('role_id');
+            $roleIds = DB::table('admin_role_permission')->whereIn('permission_id', $permIds)->pluck('role_id');
         }
         $this->builder->whereIn('id', $roleIds);
     }

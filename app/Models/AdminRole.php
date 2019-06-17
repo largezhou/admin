@@ -10,10 +10,10 @@ class AdminRole extends Model
     {
         return $this->belongsToMany(
             AdminPermission::class,
-            'admin_permission_role',
+            'admin_role_permission',
             'role_id',
             'permission_id'
-        )->withTimestamps();
+        );
     }
 
     public function delete()

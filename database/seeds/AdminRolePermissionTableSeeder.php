@@ -4,7 +4,7 @@ use App\Models\AdminPermission;
 use App\Models\AdminRole;
 use Illuminate\Database\Seeder;
 
-class AdminPermissionRoleTableSeeder extends Seeder
+class AdminRolePermissionTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -28,10 +28,7 @@ class AdminPermissionRoleTableSeeder extends Seeder
         $faker = app(Faker\Generator::class);
         $roles->each(function (AdminRole $role) use ($faker, $perms) {
             $role->permissions()
-                ->attach($faker->randomElements($perms, $faker->numberBetween(0, 5)), [
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
+                ->attach($faker->randomElements($perms, $faker->numberBetween(0, 5)));
         });
     }
 }

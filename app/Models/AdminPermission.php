@@ -41,9 +41,9 @@ class AdminPermission extends Model
     {
         return $this->belongsToMany(
             AdminRole::class,
-            'admin_permission_role',
+            'admin_role_permission',
             'role_id',
             'permission_id'
-        )->withTimestamps();
+        );
     }
 }
