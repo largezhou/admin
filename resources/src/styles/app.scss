@@ -58,3 +58,19 @@ code {
     border-color: $--color-primary;
   }
 }
+
+.el-transfer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .el-transfer-panel {
+    width: 100%;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .el-transfer {
+    flex-direction: column;
+  }
+}
