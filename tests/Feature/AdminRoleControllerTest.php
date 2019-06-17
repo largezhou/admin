@@ -161,5 +161,7 @@ class AdminRoleControllerTest extends AdminTestCase
         // 权限名称筛选
         $res = $this->getResources(['permission_name' => 'perm name']);
         $res->assertJsonCount(1, 'data');
+        $res = $this->getResources(['permission_name' => 'nothing']);
+        $res->assertJsonCount(0, 'data');
     }
 }

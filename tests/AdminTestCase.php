@@ -7,6 +7,10 @@ use App\Models\AdminUser;
 class AdminTestCase extends TestCase
 {
     protected $routePrefix = 'admin';
+    /**
+     * @var AdminUser
+     */
+    protected $user;
 
     protected function login(AdminUser $user = null)
     {

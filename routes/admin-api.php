@@ -7,6 +7,7 @@ Route::middleware('auth:admin-api')
         Route::post('/auth/logout', 'Auth\LoginController@logout')->name('logout');
 
         Route::get('/user', 'AdminUserController@user')->name('user');
+        Route::resource('/admin-users', 'AdminUserController');
         Route::resource('/vue-routers', 'VueRouterController')->except(['show', 'create']);
         Route::resource('/admin-permissions', 'AdminPermissionController')->except(['show']);
         Route::resource('/admin-roles', 'AdminRoleController')->except(['show']);

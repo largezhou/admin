@@ -24,7 +24,10 @@ class AdminUserResource extends JsonResource
             'username' => $model->username,
             'name' => $model->name,
             'avatar' => $model->avatar,
+            'roles' => AdminRoleResource::collection($this->whenLoaded('roles')),
+            'permissions' => AdminRoleResource::collection($this->whenLoaded('permissions')),
             'created_at' => (string) $model->created_at,
+            'updated_at' => (string) $model->updated_at,
         ];
     }
 }
