@@ -22,8 +22,8 @@ class AdminPermissionController extends Controller
     {
         $perms = AdminPermission::query()
             ->filter($filter)
-            ->orderByDesc('id')
-            ->paginate();
+            ->orderByDesc('id');
+        $perms = $request->get('all') ? $perms->get() : $perms->paginate();
 
         return $this->ok(AdminPermissionResource::collection($perms));
     }

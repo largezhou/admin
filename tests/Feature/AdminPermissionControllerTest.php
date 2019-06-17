@@ -96,6 +96,13 @@ class AdminPermissionControllerTest extends AdminTestCase
         $res->assertStatus(200)
             ->assertJsonCount(1, 'data')
             ->assertJsonFragment(['id' => 21]);
+
+        // 测试不分页 和 只包含特定字段
+        $res = $this->getResources([
+            'all' => 1,
+            'only' => ['id', 'name'],
+        ]);
+        $res->assertJsonCount(21);
     }
 
     public function testEdit()

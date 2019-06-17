@@ -70,8 +70,10 @@ export default {
     updateAdminRole,
     storeAdminRole,
     async getPerms() {
-      const { data } = await getAdminPerms()
-      this.perms = data.data
+      const { data } = await getAdminPerms({
+        all: 1,
+      })
+      this.perms = data
     },
     filterMethod(query, item) {
       return item.name.indexOf(query) > -1
