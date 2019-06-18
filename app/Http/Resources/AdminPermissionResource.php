@@ -17,7 +17,7 @@ class AdminPermissionResource extends JsonResource
             'name' => $model->name,
             'slug' => $model->slug,
             'http_method' => $model->http_method,
-            'http_path' => $model->getOriginal('http_path'),
+            'http_path' => $model->http_path,
             'created_at' => (string) $model->created_at,
             'updated_at' => (string) $model->updated_at,
         ];

@@ -65,7 +65,11 @@ export default {
     }
   },
   methods: {
-    editAdminPerm,
+    async editAdminPerm(id) {
+      const res = await editAdminPerm(id)
+      res.data.http_path = res.data.http_path.join('\n')
+      return res
+    },
     storeAdminPerm,
     updateAdminPerm,
   },

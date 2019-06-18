@@ -27,7 +27,7 @@ export default {
         return []
       }
 
-      return t.split('\n').map((i) => {
+      return t.map((i) => {
         let method = this.data.http_method
         let path = i
         if (i.indexOf(':') !== -1) {
