@@ -12,7 +12,7 @@ class AdminPermissionResource extends JsonResource
         /** @var AdminPermission $model */
         $model = $this->resource;
 
-        $data = [
+        return [
             'id' => $model->id,
             'name' => $model->name,
             'slug' => $model->slug,
@@ -21,10 +21,5 @@ class AdminPermissionResource extends JsonResource
             'created_at' => (string) $model->created_at,
             'updated_at' => (string) $model->updated_at,
         ];
-
-        // 过滤掉没有从数据库查询出来的字段
-        $data = Arr::only($data, array_keys($model->getAttributes()));
-
-        return $data;
     }
 }

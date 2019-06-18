@@ -26,11 +26,7 @@ class AdminRoleController extends Controller
 
     public function edit(AdminRole $adminRole)
     {
-        $adminRole->load([
-            'permissions' => function (BelongsToMany $query) {
-                $query->select(['id', 'name']);
-            },
-        ]);
+        $adminRole->load(['permissions']);
         return $this->ok(AdminRoleResource::make($adminRole));
     }
 
@@ -53,11 +49,7 @@ class AdminRoleController extends Controller
     public function index(Request $request, AdminRoleFilter $filter)
     {
         $roles = AdminRole::query()
-            ->with([
-                'permissions' => function (BelongsToMany $query) {
-                    $query->select(['id', 'name']);
-                },
-            ])
+            ->with(['permissions'])
             ->filter($filter)
             ->orderByDesc('id')
             ->paginate();

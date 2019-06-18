@@ -21,14 +21,7 @@ class AdminUserController extends AdminBaseController
     {
         $users = AdminUser::query()
             ->filter($filter)
-            ->with([
-                'roles' => function (BelongsToMany $query) {
-                    $query->select(['id', 'name']);
-                },
-                'permissions' => function (BelongsToMany $query) {
-                    $query->select(['id', 'name']);
-                },
-            ])
+            ->with(['roles', 'permissions'])
             ->orderByDesc('id')
             ->paginate();
 
@@ -52,14 +45,7 @@ class AdminUserController extends AdminBaseController
 
     public function show(AdminUser $adminUser)
     {
-        $adminUser->load([
-            'roles' => function (BelongsToMany $query) {
-                $query->select(['id', 'name']);
-            },
-            'permissions' => function (BelongsToMany $query) {
-                $query->select(['id', 'name']);
-            },
-        ]);
+        $adminUser->load(['roles', 'permissions']);
 
         return $this->ok(AdminUserResource::make($adminUser));
     }
