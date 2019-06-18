@@ -13,7 +13,8 @@ class AdminUserRequest extends FormRequest
      */
     public function rules()
     {
-        $id = (int) optional($this->route('admin_user'))->id;
+        $user = $this->route('admin_user');
+        $id = (int) optional($user)->id;
         $rules = [
             'username' => 'required|max:100|unique:admin_users,username,'.$id,
             'name' => 'required|max:100',
@@ -25,6 +26,10 @@ class AdminUserRequest extends FormRequest
         ];
         if ($this->isMethod('put')) {
             $rules = Arr::only($rules, $this->keys());
+            // 如果更新时, 密码没变, 则不用验证密码, 但是一定要有验证规则
+            if ($user->password == $this->post('password')) {
+                $rules['password'] = 'nullable';
+            }
         }
 
         return $rules;

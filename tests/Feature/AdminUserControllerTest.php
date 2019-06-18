@@ -147,4 +147,61 @@ class AdminUserControllerTest extends AdminTestCase
             ->assertJsonCount(3, 'roles')
             ->assertJsonCount(3, 'permissions');
     }
+
+    public function testUpdate()
+    {
+        $this->user->roles()
+            ->createMany(factory(AdminRole::class, 3)->make()->toArray());
+        $this->user->permissions()
+            ->createMany(factory(AdminPermission::class, 3)->make()->toArray());
+
+        $newRoles = factory(AdminRole::class, 3)->create()->pluck('id')->toArray();
+        $newPerms = factory(AdminPermission::class, 3)->create()->pluck('id')->toArray();
+
+        $pw = 'new password';
+        $res = $this->updateResource(1, [
+            'username' => 'admin',
+            'name' => 'new name',
+            'roles' => $newRoles,
+            'permissions' => $newPerms,
+            'password' => $pw,
+            'password_confirmation' => $pw,
+        ]);
+        $res->assertStatus(201);
+        $this->assertTrue(Hash::check($pw, AdminUser::find(1)->password));
+        $this->assertDatabaseHas('admin_users', [
+            'id' => 1,
+            'username' => 'admin',
+            'name' => 'new name',
+        ]);
+        // 新角色
+        $this->assertDatabaseHas('admin_user_role', [
+            'user_id' => 1,
+            'role_id' => $newRoles[0],
+        ]);
+        // 新权限
+        $this->assertDatabaseMissing('admin_user_role', [
+            'user_id' => 1,
+            'role_id' => 1,
+        ]);
+        // 旧角色移除
+        $this->assertDatabaseHas('admin_user_permission', [
+            'user_id' => 1,
+            'permission_id' => $newPerms[0],
+        ]);
+        // 旧权限移除
+        $this->assertDatabaseMissing('admin_user_permission', [
+            'user_id' => 1,
+            'permission_id' => 1,
+        ]);
+
+        // 密码没变化
+        $pw = AdminUser::find(1)->password;
+        $res = $this->updateResource(1, [
+            'password' => $pw,
+            'password_confirmation' => $pw,
+        ]);
+        $res->assertStatus(201);
+        $this->assertTrue($pw == AdminUser::find(1)->password);
+    }
 }

@@ -38,8 +38,7 @@ class AdminUserController extends AdminBaseController
     public function store(AdminUserRequest $request, AdminUser $user)
     {
         $inputs = $request->validated();
-        $inputs['password'] = bcrypt($inputs['password']);
-        $user = $user->create($inputs);
+        $user = $user::createUser($inputs);
 
         if (!empty($q = $request->post('roles', []))) {
             $user->roles()->attach($q);
@@ -63,5 +62,18 @@ class AdminUserController extends AdminBaseController
         ]);
 
         return $this->ok(AdminUserResource::make($adminUser));
+    }
+
+    public function update(AdminUserRequest $request, AdminUser $adminUser)
+    {
+        $inputs = $request->validated();
+        $adminUser->updateUser($inputs);
+        if (!empty($q = $request->post('roles', []))) {
+            $adminUser->roles()->sync($q);
+        }
+        if (!empty($q = $request->post('permissions', []))) {
+            $adminUser->permissions()->sync($q);
+        }
+        return $this->created(AdminUserResource::make($adminUser));
     }
 }
