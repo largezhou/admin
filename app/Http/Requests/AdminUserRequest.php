@@ -26,9 +26,9 @@ class AdminUserRequest extends FormRequest
         ];
         if ($this->isMethod('put')) {
             $rules = Arr::only($rules, $this->keys());
-            // 如果更新时, 密码没变, 则不用验证密码, 但是一定要有验证规则
-            if ($user->password == $this->post('password')) {
-                $rules['password'] = 'nullable';
+            // 如果更新时, 没填密码, 则不用验证
+            if (!$this->post('password')) {
+                unset($rules['password']);
             }
         }
 

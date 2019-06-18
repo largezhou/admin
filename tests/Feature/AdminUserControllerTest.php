@@ -195,11 +195,10 @@ class AdminUserControllerTest extends AdminTestCase
             'permission_id' => 1,
         ]);
 
-        // 密码没变化
+        // 不填密码, 或者为空
         $pw = AdminUser::find(1)->password;
         $res = $this->updateResource(1, [
-            'password' => $pw,
-            'password_confirmation' => $pw,
+            'password' => '',
         ]);
         $res->assertStatus(201);
         $this->assertTrue($pw == AdminUser::find(1)->password);

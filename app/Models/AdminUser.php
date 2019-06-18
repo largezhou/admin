@@ -70,9 +70,9 @@ class AdminUser extends Authenticatable implements JWTSubject
      */
     public function updateUser($inputs, $hashedPassword = false)
     {
-        // 密码有变化, 且没有经过哈希处理
+        // 更新时, 填了密码, 且没有经过哈希处理
         if (
-            ($this->password != $inputs['password']) &&
+            isset($inputs['password']) &&
             !$hashedPassword
         ) {
             $inputs['password'] = bcrypt($inputs['password']);
