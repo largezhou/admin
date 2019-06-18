@@ -50,4 +50,18 @@ class AdminUserController extends AdminBaseController
 
         return $this->created(AdminUserResource::make($user));
     }
+
+    public function show(AdminUser $adminUser)
+    {
+        $adminUser->load([
+            'roles' => function (BelongsToMany $query) {
+                $query->select(['id', 'name']);
+            },
+            'permissions' => function (BelongsToMany $query) {
+                $query->select(['id', 'name']);
+            },
+        ]);
+
+        return $this->ok(AdminUserResource::make($adminUser));
+    }
 }

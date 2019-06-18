@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Http\Resources\AdminUserResource;
 use App\Models\AdminPermission;
 use App\Models\AdminRole;
 use App\Models\AdminUser;
@@ -136,5 +135,16 @@ class AdminUserControllerTest extends AdminTestCase
             'user_id' => 2,
             'permission_id' => 4,
         ]);
+    }
+
+    public function testShow()
+    {
+        $this->user->roles()->attach(factory(AdminRole::class, 3)->create()->pluck('id'));
+        $this->user->permissions()->attach(factory(AdminPermission::class, 3)->create()->pluck('id'));
+
+        $res = $this->getResource(1);
+        $res->assertStatus(200)
+            ->assertJsonCount(3, 'roles')
+            ->assertJsonCount(3, 'permissions');
     }
 }

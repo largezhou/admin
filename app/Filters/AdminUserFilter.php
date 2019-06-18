@@ -2,10 +2,11 @@
 
 namespace App\Filters;
 
-use Illuminate\Database\Eloquent\Builder;
+use App\Filters\Traits\RolePermissionFilter;
 
 class AdminUserFilter extends Filter
 {
+    use RolePermissionFilter;
     protected $simpleFilters = [
         'id',
         'username' => ['like', '%?%'],
@@ -15,18 +16,4 @@ class AdminUserFilter extends Filter
         'role_name',
         'permission_name',
     ];
-
-    protected function roleName($val)
-    {
-        $this->builder->whereHas('roles', function (Builder $query) use ($val) {
-            $query->where('name', 'like', "%{$val}%");
-        }, '>', 0);
-    }
-
-    protected function permissionName($val)
-    {
-        $this->builder->whereHas('permissions', function (Builder $query) use ($val) {
-            $query->where('name', 'like', "%{$val}%");
-        }, '>', 0);
-    }
 }
