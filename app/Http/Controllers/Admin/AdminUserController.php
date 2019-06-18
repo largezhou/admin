@@ -76,4 +76,10 @@ class AdminUserController extends AdminBaseController
         }
         return $this->created(AdminUserResource::make($adminUser));
     }
+
+    public function destroy(AdminUser $adminUser)
+    {
+        $adminUser->delete();
+        return $this->noContent();
+    }
 }

@@ -203,4 +203,17 @@ class AdminUserControllerTest extends AdminTestCase
         $res->assertStatus(201);
         $this->assertTrue($pw == AdminUser::find(1)->password);
     }
+
+    public function testDestroy()
+    {
+        $this->user->roles()->createMany(factory(AdminRole::class, 1)->make()->toArray());
+        $this->user->permissions()->createMany(factory(AdminPermission::class, 1)->make()->toArray());
+
+        $res = $this->destroyResource(1);
+        $res->assertStatus(204);
+
+        $this->assertDatabaseMissing('admin_users', ['id' => 1]);
+        $this->assertDatabaseMissing('admin_user_role', ['user_id' => 1]);
+        $this->assertDatabaseMissing('admin_user_permission', ['user_id' => 1]);
+    }
 }

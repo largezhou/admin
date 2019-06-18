@@ -80,4 +80,11 @@ class AdminUser extends Authenticatable implements JWTSubject
 
         return $this->update($inputs);
     }
+
+    public function delete()
+    {
+        $this->roles()->detach();
+        $this->permissions()->detach();
+        return parent::delete();
+    }
 }
