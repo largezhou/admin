@@ -6,6 +6,7 @@ use App\Http\Resources\AdminUserResource;
 use App\Models\AdminPermission;
 use App\Models\AdminRole;
 use App\Models\AdminUser;
+use Illuminate\Support\Facades\Hash;
 use Tests\AdminTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -25,9 +26,9 @@ class AdminUserControllerTest extends AdminTestCase
 
     public function testUser()
     {
-        $user = $this->user;
         $res = $this->get(route('admin.user'));
-        $res->assertJson(AdminUserResource::make($user)->toArray(app('request')));
+        $res->assertStatus(200)
+            ->assertJsonFragment(['id' => $this->user->id]);
     }
 
     public function testIndex()
@@ -63,5 +64,77 @@ class AdminUserControllerTest extends AdminTestCase
         ]);
         $res->assertStatus(200)
             ->assertJsonCount(1, 'data');
+    }
+
+    public function testStoreValidation()
+    {
+        // username, name, password required
+        // roles.*, permissions.*, exists
+        $res = $this->storeResource([
+            'roles' => [9999],
+            'permissions' => [9999],
+        ]);
+        $res->assertJsonValidationErrors([
+            'username',
+            'name',
+            'password',
+            'roles.0',
+            'permissions.0',
+        ]);
+
+        // username, name max:100
+        // password max:20
+        $res = $this->storeResource([
+            'username' => str_repeat('e', 101),
+            'name' => str_repeat('e', 101),
+            'password' => str_repeat('e', 21),
+        ]);
+        $res->assertJsonValidationErrors(['username', 'name', 'password']);
+
+        // username unique
+        // password min:6
+        $res = $this->storeResource([
+            'username' => 'admin',
+            'password' => str_repeat('e', 5),
+        ]);
+        $res->assertJsonValidationErrors(['username', 'password']);
+
+        // password confirmed
+        $res = $this->storeResource([
+            'password' => 'password',
+            'password_confirmation' => 'not match',
+        ]);
+        $res->assertJsonValidationErrors(['password']);
+    }
+
+    public function testStore()
+    {
+        factory(AdminRole::class, 5)->create();
+        factory(AdminPermission::class, 5)->create();
+        $pw = '000000';
+        $userInputs = factory(AdminUser::class)->make(['password' => $pw])->toArray();
+
+        $res = $this->storeResource($userInputs + [
+                'password_confirmation' => $pw,
+                'roles' => [1, 2, 3],
+                'permissions' => [4, 5],
+            ]);
+        $res->assertStatus(201);
+
+        $this->assertDatabaseHas('admin_users', [
+            'id' => 2,
+            'username' => $userInputs['username'],
+            'name' => $userInputs['name'],
+        ]);
+        $this->assertTrue(Hash::check($pw, AdminUser::find(2)->password));
+
+        $this->assertDatabaseHas('admin_user_role', [
+            'user_id' => 2,
+            'role_id' => 1,
+        ]);
+        $this->assertDatabaseHas('admin_user_permission', [
+            'user_id' => 2,
+            'permission_id' => 4,
+        ]);
     }
 }

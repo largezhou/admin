@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Filters\AdminUserFilter;
+use App\Http\Requests\AdminUserRequest;
 use App\Http\Resources\AdminUserResource;
 use App\Models\AdminUser;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -32,5 +33,21 @@ class AdminUserController extends AdminBaseController
             ->paginate();
 
         return $this->ok(AdminUserResource::collection($users));
+    }
+
+    public function store(AdminUserRequest $request, AdminUser $user)
+    {
+        $inputs = $request->validated();
+        $inputs['password'] = bcrypt($inputs['password']);
+        $user = $user->create($inputs);
+
+        if (!empty($q = $request->post('roles', []))) {
+            $user->roles()->attach($q);
+        }
+        if (!empty($q = $request->post('permissions', []))) {
+            $user->permissions()->attach($q);
+        }
+
+        return $this->created(AdminUserResource::make($user));
     }
 }

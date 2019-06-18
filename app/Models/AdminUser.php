@@ -11,7 +11,7 @@ class AdminUser extends Authenticatable implements JWTSubject
 {
     use Notifiable;
     use ModelHelpers;
-    protected $guarded = [];
+    protected $fillable = ['username', 'password', 'name', 'avatar'];
 
     public function getJWTIdentifier()
     {
@@ -28,8 +28,8 @@ class AdminUser extends Authenticatable implements JWTSubject
         return $this->belongsToMany(
             AdminRole::class,
             'admin_user_role',
-            'role_id',
-            'user_id'
+            'user_id',
+            'role_id'
         );
     }
 
@@ -38,8 +38,8 @@ class AdminUser extends Authenticatable implements JWTSubject
         return $this->belongsToMany(
             AdminPermission::class,
             'admin_user_permission',
-            'permission_id',
-            'user_id'
+            'user_id',
+            'permission_id'
         );
     }
 }
