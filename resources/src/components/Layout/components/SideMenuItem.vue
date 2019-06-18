@@ -4,11 +4,13 @@
       <i :class="icon(menu.icon)"/>
       <span slot="title">{{ menu.title }}</span>
     </template>
-    <side-menu-item
-      v-for="sub of menu.children.filter(i => i.is_menu)"
-      :key="sub.id"
-      :menu="sub"
-    />
+    <template v-for="sub of menu.children">
+      <side-menu-item
+        v-if="sub.is_menu"
+        :key="sub.id"
+        :menu="sub"
+      />
+    </template>
   </el-submenu>
   <router-link
     v-else

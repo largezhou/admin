@@ -115,9 +115,6 @@ export const buildVueRouterOptions = (routers, indent = 2) => {
   const _build = (routers, indent) => {
     const options = []
     routers.forEach(i => {
-      if (!i.is_menu) {
-        return
-      }
       options.push({
         id: i.id,
         text: '　'.repeat(indent) + i.title,

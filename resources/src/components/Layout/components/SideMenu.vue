@@ -6,11 +6,9 @@
     text-color="#bfcbd9"
     :collapse="collapse"
   >
-    <side-menu-item
-      v-for="menu of menus"
-      :key="menu.id"
-      :menu="menu"
-    />
+    <template v-for="menu of menus">
+      <side-menu-item v-if="menu.is_menu" :menu="menu" :key="menu.id"/>
+    </template>
   </el-menu>
 </template>
 
@@ -30,7 +28,7 @@ export default {
   },
   computed: {
     menus() {
-      return this.$store.state.vueRouters.vueRouters.filter(i => i.is_menu)
+      return this.$store.state.vueRouters.vueRouters
     },
     activeName() {
       return this.$route.name
