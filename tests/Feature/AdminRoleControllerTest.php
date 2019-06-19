@@ -118,6 +118,13 @@ class AdminRoleControllerTest extends AdminTestCase
             'role_id' => 2,
             'permission_id' => 2,
         ]);
+
+        // 移除全部权限
+        $res = $this->updateResource(2, ['permissions' => []]);
+        $res->assertStatus(201);
+        $this->assertDatabaseMissing('admin_role_permission', [
+            'role_id' => 2,
+        ]);
     }
 
     public function testDestroy()

@@ -195,6 +195,16 @@ class AdminUserControllerTest extends AdminTestCase
             'permission_id' => 1,
         ]);
 
+        // 移除全部角色权限
+        $res = $this->updateResource(1, [
+            'roles' => [],
+            'permissions' => [],
+        ]);
+        $res->assertStatus(201);
+        $this->assertDatabaseMissing('admin_user_role', [
+            'user_id' => 1,
+        ]);
+
         // 不填密码, 或者为空
         $pw = AdminUser::find(1)->password;
         $res = $this->updateResource(1, [
@@ -215,5 +225,15 @@ class AdminUserControllerTest extends AdminTestCase
         $this->assertDatabaseMissing('admin_users', ['id' => 1]);
         $this->assertDatabaseMissing('admin_user_role', ['user_id' => 1]);
         $this->assertDatabaseMissing('admin_user_permission', ['user_id' => 1]);
+    }
+
+    public function testEdit()
+    {
+        $this->user->roles()->attach(factory(AdminRole::class, 3)->create()->pluck('id'));
+        $this->user->permissions()->attach(factory(AdminPermission::class, 3)->create()->pluck('id'));
+
+        $res = $this->editResource(1);
+        $res->assertStatus(200)
+            ->assertJsonFragment(['roles' => [1, 2, 3]]);
     }
 }

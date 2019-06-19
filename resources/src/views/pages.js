@@ -11,4 +11,8 @@ export default {
   'admin-roles': () => import('@v/admin-roles/Index'),
   'admin-roles/create': () => import('@v/admin-roles/Form'),
   'admin-roles/:id(\\d+)/edit': () => import('@v/admin-roles/Form'),
+
+  'admin-users': () => import('@v/admin-users/Index'),
+  'admin-users/create': () => import('@v/admin-users/Form'),
+  'admin-users/:id(\\d+)/edit': () => import('@v/admin-users/Form'),
 }

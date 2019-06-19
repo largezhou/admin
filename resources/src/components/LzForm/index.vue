@@ -22,9 +22,13 @@
 import _forIn from 'lodash/forIn'
 import Form from '@/plugins/element/components/Form'
 import { assignExsits, getMessage, handleValidateErrors } from '@/libs/utils'
+import EditHelper from '@c/LzForm/EditHelper'
 
 export default {
   name: 'LzForm',
+  mixins: [
+    EditHelper,
+  ],
   props: {
     redirect: String,
     updateMethod: Function,
@@ -34,12 +38,6 @@ export default {
     form: Object,
   },
   computed: {
-    editMode() {
-      return !!this.resourceId
-    },
-    resourceId() {
-      return this.$route.params.id
-    },
     labelPosition() {
       return this.$store.state.miniWidth ? 'top' : 'right'
     },

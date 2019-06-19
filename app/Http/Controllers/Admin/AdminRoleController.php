@@ -6,7 +6,6 @@ use App\Filters\AdminRoleFilter;
 use App\Http\Requests\AdminRoleRequest;
 use App\Http\Resources\AdminRoleResource;
 use App\Models\AdminRole;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -51,8 +50,8 @@ class AdminRoleController extends Controller
         $roles = AdminRole::query()
             ->with(['permissions'])
             ->filter($filter)
-            ->orderByDesc('id')
-            ->paginate();
+            ->orderByDesc('id');
+        $roles = $request->get('all') ? $roles->get() : $roles->paginate();
 
         return $this->ok(AdminRoleResource::collection($roles));
     }

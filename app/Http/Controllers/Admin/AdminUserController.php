@@ -6,7 +6,6 @@ use App\Filters\AdminUserFilter;
 use App\Http\Requests\AdminUserRequest;
 use App\Http\Resources\AdminUserResource;
 use App\Models\AdminUser;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Request;
 
 class AdminUserController extends AdminBaseController
@@ -54,11 +53,11 @@ class AdminUserController extends AdminBaseController
     {
         $inputs = $request->validated();
         $adminUser->updateUser($inputs);
-        if (!empty($q = $request->post('roles', []))) {
-            $adminUser->roles()->sync($q);
+        if (isset($inputs['roles'])) {
+            $adminUser->roles()->sync($inputs['roles']);
         }
-        if (!empty($q = $request->post('permissions', []))) {
-            $adminUser->permissions()->sync($q);
+        if (isset($inputs['permissions'])) {
+            $adminUser->permissions()->sync($inputs['permissions']);
         }
         return $this->created(AdminUserResource::make($adminUser));
     }
@@ -67,5 +66,12 @@ class AdminUserController extends AdminBaseController
     {
         $adminUser->delete();
         return $this->noContent();
+    }
+
+    public function edit(AdminUser $adminUser)
+    {
+        $adminUser->load(['roles', 'permissions']);
+
+        return $this->ok(AdminUserResource::make($adminUser)->onlyRolePermissionIds());
     }
 }

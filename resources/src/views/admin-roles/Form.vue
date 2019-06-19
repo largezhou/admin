@@ -6,7 +6,6 @@
     <el-row type="flex" justify="center">
       <lz-form
         ref="form"
-        :mo1del="form"
         :edit-method="editAdminRole"
         :store-method="storeAdminRole"
         :update-method="updateAdminRole"
