@@ -1,7 +1,7 @@
 <template>
   <el-card class="create">
     <template v-slot:header>
-      <span>添加路由</span>
+      <content-header/>
     </template>
     <el-row type="flex" justify="center">
       <lz-form

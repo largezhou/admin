@@ -1,7 +1,7 @@
 <template>
   <el-card>
     <template v-slot:header>
-      <span>所有管理员</span>
+      <content-header/>
     </template>
 
     <search-form :fields="search"/>

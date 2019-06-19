@@ -1,7 +1,7 @@
 <template>
   <el-card class="create">
     <template v-slot:header>
-      <span>所有路由</span>
+      <content-header/>
     </template>
     <el-table
       :data="vueRouters"

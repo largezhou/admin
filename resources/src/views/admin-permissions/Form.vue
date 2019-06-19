@@ -1,7 +1,7 @@
 <template>
   <el-card>
     <template v-slot:header>
-      <span>添加权限</span>
+      <content-header/>
     </template>
     <el-row type="flex" justify="center">
       <lz-form
