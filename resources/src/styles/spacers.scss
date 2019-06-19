@@ -1,0 +1,54 @@
+$levels: 0 5 10 20 24 30;
+
+@for $i from 0 to 6 {
+  $space: nth($levels, $i + 1);
+  $space-px: #{$space}px !important;
+
+  .ma-#{$i} {
+    margin: #{$space-px};
+  }
+  .mt-#{$i} {
+    margin-top: #{$space-px};
+  }
+  .mr-#{$i} {
+    margin-right: #{$space-px};
+  }
+  .mb-#{$i} {
+    margin-bottom: #{$space-px};
+  }
+  .ml-#{$i} {
+    margin-left: #{$space-px};
+  }
+  .my-#{$i} {
+    margin-top: #{$space-px};
+    margin-bottom: #{$space-px};
+  }
+  .mx-#{$i} {
+    margin-left: #{$space-px};
+    margin-right: #{$space-px};
+  }
+
+  .pa-#{$i} {
+    padding: #{$space-px};
+  }
+  .pt-#{$i} {
+    padding-top: #{$space-px};
+  }
+  .pr-#{$i} {
+    padding-right: #{$space-px};
+  }
+  .pb-#{$i} {
+    padding-bottom: #{$space-px};
+  }
+  .pl-#{$i} {
+    padding-left: #{$space-px};
+  }
+  .py-#{$i} {
+    padding-top: #{$space-px};
+    padding-bottom: #{$space-px};
+  }
+  .px-#{$i} {
+    padding-left: #{$space-px};
+    padding-right: #{$space-px};
+  }
+}

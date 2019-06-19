@@ -16,7 +16,7 @@
             v-for="i of row.permissions"
             :key="i.id"
             size="small"
-            class="tag"
+            class="mr-1"
           >
             {{ i.name }}
           </el-tag>
@@ -106,10 +106,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.tag {
-  margin-right: 5px;
-  margin-bottom: 5px;
-}
-</style>

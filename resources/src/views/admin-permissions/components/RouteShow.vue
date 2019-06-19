@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="route" v-for="(item, index) of httpRoute" :key="index">
+    <div class="mb-1" v-for="(item, index) of httpRoute" :key="index">
       <el-tag
+        class="mr-1"
         size="small"
-        class="tag"
         v-for="i of item.method"
         :key="i"
       >
@@ -46,13 +46,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.tag {
-  margin-right: 5px;
-}
-
-.route {
-  margin-bottom: 5px;
-}
-</style>

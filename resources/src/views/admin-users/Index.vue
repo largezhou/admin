@@ -10,25 +10,25 @@
       <el-table-column prop="id" label="ID" width="60"/>
       <el-table-column prop="name" label="姓名" width="150"/>
       <el-table-column prop="username" label="账号" width="200"/>
-      <el-table-column label="角色" min-width="400">
+      <el-table-column label="角色" min-width="150">
         <template v-slot="{ row }">
           <el-tag
             v-for="i of row.roles"
             :key="i.id"
             size="small"
-            class="tag"
+            class="mr-1"
           >
             {{ i.name }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="权限" min-width="400">
+      <el-table-column label="权限" min-width="150">
         <template v-slot="{ row }">
           <el-tag
             v-for="i of row.permissions"
             :key="i.id"
             size="small"
-            class="tag"
+            class="mr-1"
           >
             {{ i.name }}
           </el-tag>
@@ -122,7 +122,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-
-</style>
