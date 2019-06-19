@@ -4,19 +4,21 @@
       <span>{{ name }}</span>
     </slot>
     <flex-spacer/>
-    <el-button-group>
+    <collapse-button-group>
       <slot name="actions"/>
-    </el-button-group>
+    </collapse-button-group>
   </div>
 </template>
 
 <script>
 import _get from 'lodash/get'
 import FlexSpacer from '@c/FlexSpacer'
+import CollapseButtonGroup from '@c/CollapseButtonGroup'
 
 export default {
   name: 'ContentHeader',
   components: {
+    CollapseButtonGroup,
     FlexSpacer,
   },
   computed: {
@@ -28,11 +30,17 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.el-card__header {
+  .content-header {
+    margin-top: -20px;
+    margin-bottom: -20px;
+    padding: 0;
+  }
+}
 .content-header {
-  margin-top: -20px;
-  margin-bottom: -20px;
   height: 60px;
   display: flex;
   align-items: center;
+  padding: 0 20px;
 }
 </style>

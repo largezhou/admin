@@ -88,3 +88,35 @@ code {
     flex-direction: column;
   }
 }
+
+.el-dropdown-menu__item {
+  &.button-item {
+    padding: 0 !important;
+
+    .el-button {
+      width: 100%;
+      border: none;
+      background: transparent;
+    }
+
+    .el-button--primary {
+      color: $--color-primary;
+    }
+
+    .el-button--danger {
+      color: $--color-danger;
+    }
+
+    .el-button--success {
+      color: $--color-success;
+    }
+
+    .el-button--warning {
+      color: $--color-warning;
+    }
+
+    .el-button--info {
+      color: $--color-info;
+    }
+  }
+}
