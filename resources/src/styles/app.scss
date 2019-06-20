@@ -120,3 +120,8 @@ code {
     }
   }
 }
+
+.el-table [class*=el-table__row--level] .el-table__expand-icon {
+  float: right;
+  margin-top: 2px;
+}

@@ -8,7 +8,6 @@ use App\Models\VueRouter;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\AdminTestCase;
-use Tests\TestCase;
 use Tests\Traits\RequestActions;
 
 class VueRouterControllerTest extends AdminTestCase
@@ -40,6 +39,12 @@ class VueRouterControllerTest extends AdminTestCase
             'roles' => [999],
         ]);
         $res->assertJsonValidationErrors(['title', 'order', 'cache', 'menu', 'permission', 'roles.0']);
+
+        // permission nullable
+        $res = $this->storeResource([
+            'permission' => '',
+        ]);
+        $res->assertJsonMissingValidationErrors(['permission']);
 
         // max
         $res = $this->storeResource([

@@ -62,6 +62,37 @@
             inactive-text="不缓存"
           />
         </el-form-item>
+        <el-form-item label="角色" prop="roles">
+          <el-select
+            v-model="form.roles"
+            multiple
+            placeholder="选择角色"
+            filterable
+            clearable
+          >
+            <el-option
+              v-for="i of roles"
+              :key="i.id"
+              :label="i.name"
+              :value="i.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="权限" prop="permission">
+          <el-select
+            v-model="form.permission"
+            placeholder="选择权限"
+            filterable
+            clearable
+          >
+            <el-option
+              v-for="i of permissions"
+              :key="i.id"
+              :label="i.name"
+              :value="i.slug"
+            />
+          </el-select>
+        </el-form-item>
       </lz-form>
     </el-row>
   </el-card>
@@ -71,6 +102,8 @@ import { buildVueRouterOptions } from '@/libs/utils'
 import { editVueRouter, getVueRouters, storeVueRouter, updateVueRouter } from '@/api/vue-routers'
 import { isInt } from '@/libs/validates'
 import LzForm from '@c/LzForm'
+import { getAdminRoles } from '@/api/admin-roles'
+import { getAdminPerms } from '@/api/admin-perms'
 
 export default {
   name: 'Form',
@@ -87,9 +120,13 @@ export default {
         order: 0,
         cache: false,
         menu: false,
+        roles: [],
+        permission: '',
       },
       errors: {},
       vueRouters: [],
+      roles: [],
+      permissions: [],
     }
   },
   computed: {
@@ -98,14 +135,9 @@ export default {
     },
   },
   created() {
-    this.getVueRouters()
+    this.getOptions()
   },
   methods: {
-    async getVueRouters() {
-      const { data } = await getVueRouters()
-      this.vueRouters = data
-      !this.editMode && (this.form.parent_id = this.queryParentId())
-    },
     queryParentId() {
       const id = Number.parseInt(this.$route.query.parent_id)
       if (isInt(id) && this.vueRouterOptions.some(i => i.id === id)) {
@@ -117,6 +149,21 @@ export default {
     editVueRouter,
     storeVueRouter,
     updateVueRouter,
+    async getOptions() {
+      {
+        const { data } = await getVueRouters()
+        this.vueRouters = data
+        !this.editMode && (this.form.parent_id = this.queryParentId())
+      }
+      {
+        const { data } = await getAdminRoles({ all: 1 })
+        this.roles = data
+      }
+      {
+        const { data } = await getAdminPerms({ all: 1 })
+        this.permissions = data
+      }
+    },
   },
 }
 </script>

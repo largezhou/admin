@@ -18,7 +18,7 @@ class VueRouterRequest extends FormRequest
             'menu' => 'boolean',
             'roles' => 'array',
             'roles.*' => 'exists:admin_roles,id',
-            'permission' => 'exists:admin_permissions,slug',
+            'permission' => 'nullable|exists:admin_permissions,slug',
         ];
         $parentIdExists = Rule::exists('vue_routers', 'id');
 
@@ -51,7 +51,7 @@ class VueRouterRequest extends FormRequest
             'menu' => '显示',
             'roles' => '角色',
             'roles.*' => '角色',
-            'permissions' => '权限',
+            'permission' => '权限',
         ];
     }
 }

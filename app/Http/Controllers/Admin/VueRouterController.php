@@ -32,7 +32,8 @@ class VueRouterController extends AdminBaseController
 
     public function edit(VueRouter $vueRouter)
     {
-        return VueRouterResource::make($vueRouter);
+        $vueRouter->load('roles');
+        return $this->ok(VueRouterResource::make($vueRouter)->onlyRolePermissionIds());
     }
 
     public function index()

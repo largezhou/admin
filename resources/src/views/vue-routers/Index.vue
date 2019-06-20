@@ -10,8 +10,10 @@
       :default-expand-all="false"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
-      <el-table-column width="200" label="标题">
+      <el-table-column width="250" label="标题">
         <template v-slot="{ row }">
+          <span class="id mr-1">{{ row.id }}</span>
+          <!--<el-tag class="id mr-1" type="info">{{ row.id }}</el-tag>-->
           <i :class="row.icon"/>
           <span>{{ row.title }}</span>
         </template>
@@ -143,5 +145,12 @@ export default {
 <style scoped>
 .el-input-number {
   width: 130px;
+}
+
+.id {
+  width: 40px;
+  display: inline-block;
+  text-align: center;
+  font-weight: bolder;
 }
 </style>

@@ -4,16 +4,12 @@ namespace App\Http\Resources;
 
 use App\Models\AdminRole;
 use App\Models\AdminUser;
+use App\Traits\ResourceRolePermissionHelpers;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class AdminUserResource extends JsonResource
 {
-    /**
-     * 关联的角色和权限, 是否只是 id 数组
-     *
-     * @var bool
-     */
-    protected $onlyRolePermissionIds = false;
+    use ResourceRolePermissionHelpers;
 
     /**
      * Transform the resource into an array.
@@ -45,11 +41,5 @@ class AdminUserResource extends JsonResource
             'created_at' => (string) $model->created_at,
             'updated_at' => (string) $model->updated_at,
         ];
-    }
-
-    public function onlyRolePermissionIds($yes = true)
-    {
-        $this->onlyRolePermissionIds = $yes;
-        return $this;
     }
 }
