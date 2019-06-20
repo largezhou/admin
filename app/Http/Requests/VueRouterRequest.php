@@ -16,6 +16,9 @@ class VueRouterRequest extends FormRequest
             'order' => 'integer|between:-9999,9999',
             'cache' => 'boolean',
             'menu' => 'boolean',
+            'roles' => 'array',
+            'roles.*' => 'exists:admin_roles,id',
+            'permission' => 'exists:admin_permissions,slug',
         ];
         $parentIdExists = Rule::exists('vue_routers', 'id');
 
@@ -46,6 +49,9 @@ class VueRouterRequest extends FormRequest
             'order' => '排序',
             'cache' => '缓存',
             'menu' => '显示',
+            'roles' => '角色',
+            'roles.*' => '角色',
+            'permissions' => '权限',
         ];
     }
 }

@@ -9,17 +9,23 @@ use Illuminate\Http\Request;
 
 class VueRouterController extends AdminBaseController
 {
-    public function store(VueRouterRequest $request, VueRouter $model)
+    public function store(VueRouterRequest $request, VueRouter $vueRouter)
     {
         $inputs = $request->validated();
-        $res = $model->create($inputs);
-        return $this->created(VueRouterResource::make($res));
+        $vueRouter = $vueRouter->create($inputs);
+        if (!empty($q = $request->post('roles', []))) {
+            $vueRouter->roles()->attach($q);
+        }
+        return $this->created(VueRouterResource::make($vueRouter));
     }
 
     public function update(VueRouterRequest $request, VueRouter $vueRouter)
     {
         $inputs = $request->validated();
         $vueRouter->update($inputs);
+        if (isset($inputs['roles'])) {
+            $vueRouter->roles()->sync($inputs['roles']);
+        }
 
         return $this->created(VueRouterResource::make($vueRouter));
     }

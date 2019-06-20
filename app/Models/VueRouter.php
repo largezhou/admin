@@ -10,7 +10,16 @@ class VueRouter extends Model
         'cache' => 'bool',
         'menu' => 'bool',
     ];
-    protected $fillable = ['parent_id', 'order', 'title', 'icon', 'path', 'cache', 'menu'];
+    protected $fillable = [
+        'parent_id',
+        'order',
+        'title',
+        'icon',
+        'path',
+        'cache',
+        'menu',
+        'permission',
+    ];
 
     /**
      * 把路由构建成嵌套的数组结构
@@ -66,5 +75,15 @@ class VueRouter extends Model
     public function setPathAttribute($path)
     {
         $this->attributes['path'] = $path ? ('/'.ltrim($path, '/')) : null;
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(
+            AdminRole::class,
+            'vue_router_role',
+            'vue_router_id',
+            'role_id'
+        );
     }
 }

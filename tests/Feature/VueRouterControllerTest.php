@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\AdminPermission;
+use App\Models\AdminRole;
 use App\Models\VueRouter;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -27,13 +29,17 @@ class VueRouterControllerTest extends AdminTestCase
         // title required
         // order integer
         // cache menu boolean
+        // permission exists
+        // roles.* exists
         $res = $this->storeResource([
             'title' => '',
             'order' => 15.1,
             'cache' => 'not bool',
             'menu' => 'not bool',
+            'permission' => 'not exists',
+            'roles' => [999],
         ]);
-        $res->assertJsonValidationErrors(['title', 'order', 'cache', 'menu']);
+        $res->assertJsonValidationErrors(['title', 'order', 'cache', 'menu', 'permission', 'roles.0']);
 
         // max
         $res = $this->storeResource([
@@ -61,12 +67,15 @@ class VueRouterControllerTest extends AdminTestCase
     public function testStore()
     {
         factory(VueRouter::class)->create();
+        factory(AdminPermission::class)->create(['slug' => 'slug']);
+        factory(AdminRole::class)->create();
         $inputs = factory(VueRouter::class)->make([
             'parent_id' => 1,
             'path' => 'no/start/slash',
+            'permission' => 'slug',
         ])->toArray();
 
-        $res = $this->storeResource($inputs);
+        $res = $this->storeResource($inputs + ['roles' => [1]]);
         $res->assertStatus(201);
 
         $this->assertDatabaseHas(
@@ -74,8 +83,13 @@ class VueRouterControllerTest extends AdminTestCase
             array_merge($inputs, [
                 'id' => 2,
                 'parent_id' => 1,
+                'permission' => 'slug',
             ])
         );
+        $this->assertDatabaseHas('vue_router_role', [
+            'vue_router_id' => 2,
+            'role_id' => 1,
+        ]);
 
         // 不传 parent_id 默认为 0
         $inputs['parent_id'] = null;
@@ -107,6 +121,8 @@ class VueRouterControllerTest extends AdminTestCase
     {
         $this->updateResource(999)->assertStatus(404);
         factory(VueRouter::class, 2)->create();
+        factory(AdminRole::class, 2)->create();
+        VueRouter::find(1)->roles()->attach(1);
 
         $inputs = [
             'parent_id' => 2,
@@ -115,11 +131,26 @@ class VueRouterControllerTest extends AdminTestCase
             'path' => 'new/path',
             'order' => 99,
         ];
-        $res = $this->updateResource(1, $inputs);
+        $res = $this->updateResource(1, $inputs + ['roles' => [2]]);
         $res->assertStatus(201);
 
         $inputs['path'] = '/'.$inputs['path'];
         $this->assertDatabaseHas('vue_routers', ['id' => 1] + $inputs);
+        $this->assertDatabaseHas('vue_router_role', [
+            'vue_router_id' => 1,
+            'role_id' => 2,
+        ]);
+        $this->assertDatabaseMissing('vue_router_role', [
+            'vue_router_id' => 1,
+            'role_id' => 1,
+        ]);
+
+        $res = $this->updateResource(1, ['roles' => []]);
+        $res->assertStatus(201);
+        $this->assertDatabaseMissing('vue_router_role', [
+            'vue_router_id' => 1,
+            'role_id' => 2,
+        ]);
     }
 
     public function testEdit()
