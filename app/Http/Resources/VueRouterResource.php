@@ -20,7 +20,7 @@ class VueRouterResource extends JsonResource
             'path' => $model->path,
             'order' => $model->order,
             'cache' => $model->cache,
-            'is_menu' => $model->is_menu,
+            'menu' => $model->menu,
             'created_at' => (string) $model->created_at,
             'updated_at' => (string) $model->updated_at,
         ];

@@ -38,7 +38,7 @@ export const buildRoutes = (routers, homeName, level = 0) => {
         meta: {
           title: i.title,
           cache: !!i.cache,
-          isMenu: !!i.is_menu,
+          isMenu: !!i.menu,
         },
       }
 

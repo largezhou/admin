@@ -14,6 +14,6 @@ $factory->define(VueRouter::class, function (Faker $faker) {
         'icon' => $faker->randomElement($icons),
         'path' => '/'.fake_path(),
         'cache' => $faker->randomElement([0, 1]),
-        'is_menu' => $faker->randomElement([0, 1]),
+        'menu' => $faker->randomElement([0, 1]),
     ];
 });

@@ -33,8 +33,8 @@
         <template v-slot="{ row }">
           <switch-edit
             :id="row.id"
-            field="is_menu"
-            v-model="row.is_menu"
+            field="menu"
+            v-model="row.menu"
             active-text="是"
             inactive-text="否"
             :update="updateVueRouter"

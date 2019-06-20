@@ -48,9 +48,9 @@
         <el-form-item label="排序" prop="order">
           <el-input-number v-model="form.order" :min="-9999" :max="9999"/>
         </el-form-item>
-        <el-form-item label="显示在菜单" prop="is_menu">
+        <el-form-item label="显示在菜单" prop="menu">
           <el-switch
-            v-model="form.is_menu"
+            v-model="form.menu"
             active-text="显示"
             inactive-text="隐藏"
           />
@@ -86,7 +86,7 @@ export default {
         icon: '',
         order: 0,
         cache: false,
-        is_menu: false,
+        menu: false,
       },
       errors: {},
       vueRouters: [],

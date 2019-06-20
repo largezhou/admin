@@ -6,7 +6,7 @@
     </template>
     <template v-for="sub of menu.children">
       <side-menu-item
-        v-if="sub.is_menu"
+        v-if="sub.menu"
         :key="sub.id"
         :menu="sub"
       />

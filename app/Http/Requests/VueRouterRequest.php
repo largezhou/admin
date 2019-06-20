@@ -15,7 +15,7 @@ class VueRouterRequest extends FormRequest
             'path' => 'max:50',
             'order' => 'integer|between:-9999,9999',
             'cache' => 'boolean',
-            'is_menu' => 'boolean',
+            'menu' => 'boolean',
         ];
         $parentIdExists = Rule::exists('vue_routers', 'id');
 
@@ -45,7 +45,7 @@ class VueRouterRequest extends FormRequest
             'path' => '地址',
             'order' => '排序',
             'cache' => '缓存',
-            'is_menu' => '显示',
+            'menu' => '显示',
         ];
     }
 }

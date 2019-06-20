@@ -7,7 +7,7 @@
     :collapse="collapse"
   >
     <template v-for="menu of menus">
-      <side-menu-item v-if="menu.is_menu" :menu="menu" :key="menu.id"/>
+      <side-menu-item v-if="menu.menu" :menu="menu" :key="menu.id"/>
     </template>
   </el-menu>
 </template>

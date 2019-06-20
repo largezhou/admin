@@ -26,14 +26,14 @@ class VueRouterControllerTest extends AdminTestCase
     {
         // title required
         // order integer
-        // cache is_menu boolean
+        // cache menu boolean
         $res = $this->storeResource([
             'title' => '',
             'order' => 15.1,
             'cache' => 'not bool',
-            'is_menu' => 'not bool',
+            'menu' => 'not bool',
         ]);
-        $res->assertJsonValidationErrors(['title', 'order', 'cache', 'is_menu']);
+        $res->assertJsonValidationErrors(['title', 'order', 'cache', 'menu']);
 
         // max
         $res = $this->storeResource([

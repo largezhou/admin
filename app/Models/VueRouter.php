@@ -8,9 +8,9 @@ class VueRouter extends Model
         'parent_id' => 'integer',
         'order' => 'integer',
         'cache' => 'bool',
-        'is_menu' => 'bool',
+        'menu' => 'bool',
     ];
-    protected $fillable = ['parent_id', 'order', 'title', 'icon', 'path', 'cache', 'is_menu'];
+    protected $fillable = ['parent_id', 'order', 'title', 'icon', 'path', 'cache', 'menu'];
 
     /**
      * 把路由构建成嵌套的数组结构

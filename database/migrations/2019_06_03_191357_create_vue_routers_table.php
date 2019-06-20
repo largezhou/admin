@@ -20,7 +20,7 @@ class CreateVueRoutersTable extends Migration
             $table->string('path', 50)->nullable();
             $table->integer('order')->default(0);
             $table->string('icon', 50)->nullable();
-            $table->tinyInteger('is_menu')->default(false);
+            $table->tinyInteger('menu')->default(false);
             $table->tinyInteger('cache')->default(false);
             $table->timestamps();
         });
