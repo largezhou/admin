@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use App\Traits\ModelHelpers;
+use App\Utils\HasPermissions;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class AdminUser extends Authenticatable implements JWTSubject
 {
+    use HasPermissions;
+
     use Notifiable;
     use ModelHelpers;
     protected $fillable = ['username', 'password', 'name', 'avatar'];
@@ -79,12 +82,5 @@ class AdminUser extends Authenticatable implements JWTSubject
         }
 
         return $this->update($inputs);
-    }
-
-    public function delete()
-    {
-        $this->roles()->detach();
-        $this->permissions()->detach();
-        return parent::delete();
     }
 }
