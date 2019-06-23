@@ -48,13 +48,14 @@ class ConfigControllerTest extends AdminTestCase
         VueRouter::find(1)->roles()->create(
             factory(AdminRole::class)->create(['slug' => 'role-router-1'])->toArray()
         );
-        // 子菜单绑定权限, 导致父菜单的子菜单为空, 直接不返回该父菜单
+        // 子菜单绑定权限
         VueRouter::find(3)->update([
             'permission' => factory(AdminPermission::class)->create(['slug' => 'perm-router-3'])->slug,
         ]);
         $res = $this->getConfig('vue-routers');
         $res->assertStatus(200)
-            ->assertJsonCount(1);
+            ->assertJsonCount(2)
+            ->assertJsonMissing(['id' => 3]);
     }
 
     public function testVueRoutersUserHasAuth()

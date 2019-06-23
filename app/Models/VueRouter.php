@@ -65,10 +65,7 @@ class VueRouter extends Model
                         $node['children'] = $children;
                     }
 
-                    // 如果原本就没有子路由的, 则不能忽略该路由, 否则由于子路由都被权限筛选掉了, 该父路由可以忽略
-                    if (!isset($parentIds[$node['id']]) || $children) {
-                        $branch[] = $node;
-                    }
+                    $branch[] = $node;
                 }
             }
         }
