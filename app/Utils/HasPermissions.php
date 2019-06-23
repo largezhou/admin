@@ -90,7 +90,7 @@ trait HasPermissions
     /**
      * 判断是不是能通过这些角色的验证
      *
-     * @param array $roles
+     * @param mixed $roles 角色数组, 其中元素应该是有 slug 键的 ArrayAccess
      *
      * @return bool
      */

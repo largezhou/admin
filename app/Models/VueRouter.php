@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+
 class VueRouter extends Model
 {
     protected $casts = [
@@ -24,27 +26,50 @@ class VueRouter extends Model
     /**
      * 把路由构建成嵌套的数组结构
      *
+     * @param bool $withAuth 是否做角色权限筛选
      * @param array $nodes
      * @param int $parentId
      *
      * @return array
      */
-    public static function buildNestedArray(array $nodes = [], $parentId = 0): array
+    public static function buildNestedArray(bool $withAuth = false, array $nodes = [], $parentId = 0): array
     {
         $branch = [];
         if (empty($nodes)) {
-            $nodes = static::orderBy('order')->get()->toArray();
+            $nodes = static::query()
+                ->when($withAuth, function (Builder $query) {
+                    $query->with('roles');
+                })
+                ->orderBy('order')
+                ->get()
+                ->toArray();
         }
 
+        static $parentIds;
+        $parentIds = $parentIds ?: array_flip(array_column($nodes, 'parent_id'));
+
+        /** @var AdminUser $user */
+        static $user;
+        $user = $user ?: auth('admin-api')->user();
+
         foreach ($nodes as $node) {
-            if ($node['parent_id'] == $parentId) {
-                $children = static::buildNestedArray($nodes, $node['id']);
+            if (
+                !$withAuth ||
+                ($user->visible($node['roles']) &&
+                    (empty($node['permission']) ?: $user->can($node['permission'])))
+            ) {
+                if ($node['parent_id'] == $parentId) {
+                    $children = static::buildNestedArray($withAuth, $nodes, $node['id']);
 
-                if ($children) {
-                    $node['children'] = $children;
+                    if ($children) {
+                        $node['children'] = $children;
+                    }
+
+                    // 如果原本就没有子路由的, 则不能忽略该路由, 否则由于子路由都被权限筛选掉了, 该父路由可以忽略
+                    if (!isset($parentIds[$node['id']]) || $children) {
+                        $branch[] = $node;
+                    }
                 }
-
-                $branch[] = $node;
             }
         }
 
