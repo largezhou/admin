@@ -9,7 +9,7 @@
       >
         {{ i }}
       </el-tag>
-      <code>{{ item.path }}</code>
+      <code>{{ '/admin-api' + item.path }}</code>
     </div>
   </div>
 </template>
