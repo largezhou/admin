@@ -7,11 +7,11 @@ class Admin
     /**
      * 当前登录管理员
      *
-     * @return \App\Models\AdminUser
+     * @return \App\Models\AdminUser|\Illuminate\Contracts\Auth\Authenticatable
      */
     public static function user()
     {
-        return auth('admin-api')->user();
+        return static::guard()->user();
     }
 
     /**
@@ -43,5 +43,13 @@ class Admin
         }
 
         return $path;
+    }
+
+    /**
+     * @return \Illuminate\Contracts\Auth\Guard|\Tymon\JWTAuth\JWTGuard
+     */
+    public static function guard()
+    {
+        return auth('admin');
     }
 }

@@ -6,13 +6,14 @@ use App\Filters\AdminUserFilter;
 use App\Http\Requests\AdminUserRequest;
 use App\Http\Resources\AdminUserResource;
 use App\Models\AdminUser;
+use App\Utils\Admin;
 use Illuminate\Http\Request;
 
 class AdminUserController extends AdminBaseController
 {
     public function user()
     {
-        $user = $this->guard()->user();
+        $user = Admin::user();
         return $this->ok(AdminUserResource::make($user));
     }
 

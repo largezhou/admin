@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Utils\Admin;
 use Illuminate\Database\Eloquent\Builder;
 
 class VueRouter extends Model
@@ -48,15 +49,11 @@ class VueRouter extends Model
         static $parentIds;
         $parentIds = $parentIds ?: array_flip(array_column($nodes, 'parent_id'));
 
-        /** @var AdminUser $user */
-        static $user;
-        $user = $user ?: auth('admin-api')->user();
-
         foreach ($nodes as $node) {
             if (
                 !$withAuth ||
-                ($user->visible($node['roles']) &&
-                    (empty($node['permission']) ?: $user->can($node['permission'])))
+                (Admin::user()->visible($node['roles']) &&
+                    (empty($node['permission']) ?: Admin::user()->can($node['permission'])))
             ) {
                 if ($node['parent_id'] == $parentId) {
                     $children = static::buildNestedArray($withAuth, $nodes, $node['id']);

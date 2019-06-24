@@ -41,7 +41,7 @@ class Kernel extends HttpKernel
             'bindings',
         ],
 
-        'admin-api' => [
+        'admin' => [
             'force-json',
             'bindings',
         ],

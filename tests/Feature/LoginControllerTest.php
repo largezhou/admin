@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\AdminUser;
+use App\Utils\Admin;
 use Tests\AdminTestCase;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -30,12 +31,12 @@ class LoginControllerTest extends AdminTestCase
             'username' => 'admin',
             'password' => '000000',
         ]);
-        $auth = auth('admin-api');
+        $guard = Admin::guard();
         $res->assertStatus(201)
             ->assertJson([
-                'token' => $auth->getToken()->get(),
+                'token' => $guard->getToken()->get(),
                 'token_type' => 'bearer',
-                'expired_in' => $auth->factory()->getTTL() * 60,
+                'expired_in' => $guard->factory()->getTTL() * 60,
             ]);
     }
 

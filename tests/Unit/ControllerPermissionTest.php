@@ -31,8 +31,8 @@ class ControllerPermissionTest extends AdminTestCase
     {
         Route::prefix('admin-api')
             ->middleware([
-                'admin-api',
-                'auth:admin-api',
+                'admin',
+                'auth:admin',
                 'admin.permission',
             ])
             ->as('admin.')

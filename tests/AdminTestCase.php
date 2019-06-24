@@ -18,9 +18,9 @@ class AdminTestCase extends TestCase
     protected function login(AdminUser $user = null)
     {
         $user = $user ?: factory(AdminUser::class)->create(['username' => 'admin']);
-        $this->actingAs($user, 'admin-api');
+        $this->actingAs($user, 'admin');
 
-        $auth = auth('admin-api');
+        $auth = auth('admin');
         $this->user = $user;
         $this->token = $auth->tokenById($user->id);
         $auth->setToken($this->token);

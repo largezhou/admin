@@ -95,24 +95,6 @@ class PermissionChecker
     }
 
     /**
-     * 判断是不是超级管理员
-     *
-     * @return bool
-     */
-    public static function isAdministrator()
-    {
-        return Admin::user()->isRole('administrator');
-    }
-
-    /**
-     * @return AdminUser
-     */
-    public static function user()
-    {
-        return auth('admin-api')->user();
-    }
-
-    /**
      * 请求路径和方法的权限检测
      *
      * @param AdminPermission $permission

@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 Route::middleware([
-    'auth:admin-api',
+    'auth:admin',
     'admin.permission',
 ])->group(function () {
     Route::post('/auth/logout', 'Auth\LoginController@logout')->name('logout');
