@@ -12,5 +12,7 @@ class Permission extends PermissionMiddleware
     protected $excepts = [
         '/auth/login',
         '/auth/logout',
+        '/user',
+        '/configs/vue-routers',
     ];
 }
