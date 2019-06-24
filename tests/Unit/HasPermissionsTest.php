@@ -5,11 +5,11 @@ namespace Tests\Unit;
 use App\Models\AdminPermission;
 use App\Models\AdminRole;
 use App\Models\AdminUser;
-use Tests\AdminTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-class HasPermissionsTest extends AdminTestCase
+class HasPermissionsTest extends TestCase
 {
     use RefreshDatabase;
 
