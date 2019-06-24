@@ -7,13 +7,12 @@
       :data="vueRouters"
       row-key="id"
       border
-      :default-expand-all="false"
+      :expand-row-keys="levelTwoIds"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
       <el-table-column width="250" label="标题">
         <template v-slot="{ row }">
           <span class="id mr-1">{{ row.id }}</span>
-          <!--<el-tag class="id mr-1" type="info">{{ row.id }}</el-tag>-->
           <i :class="row.icon"/>
           <span>{{ row.title }}</span>
         </template>
@@ -98,6 +97,11 @@ export default {
       vueRouters: [],
       visible: false,
     }
+  },
+  computed: {
+    levelTwoIds() {
+      return this.vueRouters.filter(i => hasChildren(i)).map(i => i.id.toString())
+    },
   },
   created() {
     this.getVueRouters()
