@@ -7,6 +7,8 @@ use App\Utils\Admin;
 
 class AdminBaseController extends Controller
 {
+    protected $uploadFolder = 'admin';
+
     /**
      * @return \Illuminate\Contracts\Auth\Guard|\Tymon\JWTAuth\JWTGuard
      */

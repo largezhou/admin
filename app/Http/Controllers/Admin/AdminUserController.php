@@ -30,7 +30,7 @@ class AdminUserController extends AdminBaseController
 
     public function store(AdminUserRequest $request, AdminUser $user)
     {
-        $inputs = $request->validated();
+        $inputs = $this->handleUploadFile($request, 'avatar');
         $user = $user::createUser($inputs);
 
         if (!empty($q = $request->post('roles', []))) {

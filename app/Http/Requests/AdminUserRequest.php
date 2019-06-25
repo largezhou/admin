@@ -23,12 +23,17 @@ class AdminUserRequest extends FormRequest
             'roles.*' => 'exists:admin_roles,id',
             'permissions' => 'array',
             'permissions.*' => 'exists:admin_permissions,id',
+            'avatar' => 'bail|nullable|image|max:200',
         ];
         if ($this->isMethod('put')) {
             $rules = Arr::only($rules, $this->keys());
             // 如果更新时, 没填密码, 则不用验证
             if (!$this->post('password')) {
                 unset($rules['password']);
+            }
+            // 处理更新时，图片没有改，则不用验证
+            if ($this->input('avatar') === $user->avatar) {
+                unset($rules['avatar']);
             }
         }
 
@@ -45,6 +50,7 @@ class AdminUserRequest extends FormRequest
             'roles.*' => '角色',
             'permissions' => '权限',
             'permissions.*' => '权限',
+            'avatar' => '头像',
         ];
     }
 }
