@@ -1,5 +1,6 @@
 <template>
   <el-form
+    v-loading="loading"
     ref="form"
     style="width: 800px;"
     v-bind="$attrs"
@@ -29,11 +30,17 @@ export default {
   mixins: [
     EditHelper,
   ],
+  data() {
+    return {
+      loading: false,
+    }
+  },
   props: {
     redirect: String,
     updateMethod: Function,
     storeMethod: Function,
     editMethod: Function,
+    getOptions: Function,
     errors: Object,
     form: Object,
   },
@@ -44,9 +51,8 @@ export default {
   },
   created() {
     this.copyMethods()
-    if (this.editMode) {
-      this.editResource()
-    }
+
+    this.getData()
   },
   methods: {
     /**
@@ -61,6 +67,17 @@ export default {
           }
         })
       })
+    },
+    async getData() {
+      this.loading = true
+
+      this.getOptions && await this.getOptions()
+
+      if (this.editMode) {
+        await this.editResource()
+      }
+
+      this.loading = false
     },
     async onSubmit() {
       this.$emit('update:errors', {})

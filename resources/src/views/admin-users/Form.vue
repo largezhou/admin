@@ -9,6 +9,7 @@
         :edit-method="editAdminUser"
         :store-method="storeAdminUser"
         :update-method="updateAdminUser"
+        :get-options="getOptions"
         redirect="/admin-users"
         :form.sync="form"
         :errors.sync="errors"
@@ -100,22 +101,21 @@ export default {
       permissions: [],
     }
   },
-  created() {
-    this.getOptions()
-  },
   methods: {
     editAdminUser,
     storeAdminUser,
     updateAdminUser,
     async getOptions() {
-      {
-        const { data } = await getAdminRoles({ all: 1 })
-        this.roles = data
-      }
-      {
-        const { data } = await getAdminPerms({ all: 1 })
-        this.permissions = data
-      }
+      const [
+        { data: roles },
+        { data: permissions },
+      ] = await Promise.all([
+        getAdminRoles({ all: 1 }),
+        getAdminPerms({ all: 1 }),
+      ])
+
+      this.roles = roles
+      this.permissions = permissions
     },
   },
 }

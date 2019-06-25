@@ -9,6 +9,7 @@
         :edit-method="editAdminRole"
         :store-method="storeAdminRole"
         :update-method="updateAdminRole"
+        :get-options="getOptions"
         redirect="/admin-roles"
         :form.sync="form"
         :errors.sync="errors"
@@ -57,9 +58,6 @@ export default {
       perms: [],
     }
   },
-  created() {
-    this.getPerms()
-  },
   methods: {
     async editAdminRole(id) {
       const { data } = await editAdminRole(id)
@@ -68,10 +66,8 @@ export default {
     },
     updateAdminRole,
     storeAdminRole,
-    async getPerms() {
-      const { data } = await getAdminPerms({
-        all: 1,
-      })
+    async getOptions() {
+      const { data } = await getAdminPerms({ all: 1 })
       this.perms = data
     },
     filterMethod(query, item) {

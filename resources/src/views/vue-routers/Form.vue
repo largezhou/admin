@@ -11,6 +11,7 @@
         :edit-method="editVueRouter"
         :update-method="updateVueRouter"
         :store-method="storeVueRouter"
+        :get-options="getOptions"
         redirect="/vue-routers"
       >
         <el-form-item label="父级路由" prop="parent_id">
@@ -134,9 +135,6 @@ export default {
       return buildVueRouterOptions(this.vueRouters)
     },
   },
-  created() {
-    this.getOptions()
-  },
   methods: {
     queryParentId() {
       const id = Number.parseInt(this.$route.query.parent_id)
@@ -150,19 +148,20 @@ export default {
     storeVueRouter,
     updateVueRouter,
     async getOptions() {
-      {
-        const { data } = await getVueRouters()
-        this.vueRouters = data
-        !this.editMode && (this.form.parent_id = this.queryParentId())
-      }
-      {
-        const { data } = await getAdminRoles({ all: 1 })
-        this.roles = data
-      }
-      {
-        const { data } = await getAdminPerms({ all: 1 })
-        this.permissions = data
-      }
+      const [
+        { data: vueRouters },
+        { data: roles },
+        { data: permissions },
+      ] = await Promise.all([
+        getVueRouters(),
+        getAdminRoles({ all: 1 }),
+        getAdminPerms({ all: 1 }),
+      ])
+
+      this.vueRouters = vueRouters
+      !this.editMode && (this.form.parent_id = this.queryParentId())
+      this.roles = roles
+      this.permissions = permissions
     },
   },
 }
