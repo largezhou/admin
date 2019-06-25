@@ -1,5 +1,5 @@
 <template>
-  <keep-alive>
+  <keep-alive :include="$store.state.include">
     <router-view/>
   </keep-alive>
 </template>

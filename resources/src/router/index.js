@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import routes from '@/router/routes'
 import { getToken } from '@/libs/token'
 import store from '@/store'
+import _get from 'lodash/get'
 
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
@@ -24,11 +25,37 @@ const loginRoute = to => ({
   },
 })
 
+/**
+ * 在组件被解析前，修改组件的名字为：组件名 + 路由数据库 id，
+ * 使唯一，可用于 keep-alive 的 include 中
+ *
+ * @param to
+ * @returns {Promise<void>}
+ */
+const renameComponent = async (to) => {
+  // 如果去的页面不需要缓存，则跳过
+  if (!_get(to, 'meta.cache')) {
+    return
+  }
+
+  let c = router.getMatchedComponents(to)
+  c = c[c.length - 1]
+
+  if (c && (c instanceof Function)) {
+    c = (await c()).default
+    c.name += to.meta.id
+
+    store.commit('ADD_INCLUDE', c.name)
+  }
+}
+
 const getNeededData = async requests => {
   await Promise.all(requests)
 }
 
 router.beforeEach(async (to, from, next) => {
+  await renameComponent(to)
+
   // 刷新页面, 往 query 中加入 _refresh 当前时间戳
   // 然后立马用原页面 replace 掉
   if (to.query._refresh !== undefined) {

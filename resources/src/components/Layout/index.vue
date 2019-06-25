@@ -8,14 +8,13 @@
       <el-main>
         <transition name="fade-transform" mode="out-in">
           <template v-if="$route.query._refresh"/>
-          <router-view v-else :key="$route.name"/>
+          <router-view v-else/>
         </transition>
       </el-main>
     </el-container>
   </el-container>
 </template>
 <script>
-
 import SideMenu from './components/SideMenu'
 import Navbar from './components/Navbar'
 import { mapState } from 'vuex'

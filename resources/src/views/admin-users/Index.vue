@@ -113,6 +113,10 @@ export default {
   watch: {
     $route: {
       async handler(newVal) {
+        if (!this.$active) {
+          return
+        }
+
         const { data: { data, meta } } = await getAdminUsers(newVal.query)
         this.users = data
         this.page = meta

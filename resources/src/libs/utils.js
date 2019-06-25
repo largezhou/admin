@@ -39,6 +39,7 @@ export const buildRoutes = (routers, homeName, level = 0) => {
           title: i.title,
           cache: !!i.cache,
           isMenu: !!i.menu,
+          id: i.id,
         },
       }
 
