@@ -3,7 +3,7 @@
 namespace Tests;
 
 use App\Contracts\PermissionMiddleware;
-use App\Http\Middleware\Permission;
+use App\Http\Middleware\AdminPermission;
 use App\Models\AdminUser;
 use Illuminate\Http\Request;
 
@@ -41,11 +41,11 @@ class AdminTestCase extends TestCase
     protected function checkPermission($check)
     {
         if ($check) {
-            $ins = new class extends Permission
+            $ins = new class extends AdminPermission
             {
             };
         } else {
-            $ins = new class extends Permission
+            $ins = new class extends AdminPermission
             {
                 public function handle(Request $request, \Closure $next, ...$args)
                 {

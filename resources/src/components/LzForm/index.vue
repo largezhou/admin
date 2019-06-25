@@ -71,10 +71,14 @@ export default {
     async getData() {
       this.loading = true
 
-      this.getOptions && await this.getOptions()
+      try {
+        this.getOptions && await this.getOptions()
 
-      if (this.editMode) {
-        await this.editResource()
+        if (this.editMode) {
+          await this.editResource()
+        }
+      } catch (e) {
+        Promise.reject(e)
       }
 
       this.loading = false

@@ -47,9 +47,10 @@ export default {
       this.loading = true
       try {
         await this.action()
-      } finally {
-        this.loading = false
+      } catch (e) {
+        Promise.reject(e)
       }
+      this.loading = false
     },
   },
 }

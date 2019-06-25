@@ -6,7 +6,6 @@
 namespace App\Utils;
 
 use App\Models\AdminPermission;
-use App\Models\AdminUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -91,7 +90,7 @@ class PermissionChecker
      */
     public static function error()
     {
-        abort(403);
+        abort(403, '无权访问');
     }
 
     /**

@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Contracts\PermissionMiddleware;
-use App\Http\Middleware\Permission;
+use App\Http\Middleware\AdminPermission;
 use Illuminate\Http\Resources\Json\Resource;
 use Illuminate\Support\ServiceProvider;
 
@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
         Resource::withoutWrapping();
 
         $this->app->singleton(PermissionMiddleware::class, function () {
-            return new Permission();
+            return new AdminPermission();
         });
     }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Contracts\PermissionMiddleware;
 
-class Permission extends PermissionMiddleware
+class AdminPermission extends PermissionMiddleware
 {
     /**
      * @var array 白名单
