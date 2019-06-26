@@ -6,6 +6,9 @@
     <el-container direction="vertical">
       <navbar/>
       <el-main>
+        <div v-if="miniWidth" class="my-2">
+          <breadcrumb/>
+        </div>
         <transition name="fade-transform" mode="out-in">
           <template v-if="$route.query._refresh"/>
           <router-view v-else/>
@@ -18,15 +21,18 @@
 import SideMenu from './components/SideMenu'
 import Navbar from './components/Navbar'
 import { mapState } from 'vuex'
+import Breadcrumb from '@c/Layout/components/Breadcrumb'
 
 export default {
   name: 'Layout',
   components: {
+    Breadcrumb,
     Navbar,
     SideMenu,
   },
   computed: {
     ...mapState({
+      miniWidth: (state) => state.miniWidth,
       collapse: (state) => !state.sideMenu.opened,
     }),
   },

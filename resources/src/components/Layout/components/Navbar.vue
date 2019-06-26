@@ -5,18 +5,8 @@
       <refresh/>
       <to-test/>
     </navbar-items>
-    <navbar-items>
-      <el-breadcrumb class="breadcrumb">
-        <transition-group name="breadcrumb">
-          <el-breadcrumb-item
-            v-for="i of breadCrumb"
-            :key="i.name"
-            :to="breadLink(i)"
-          >
-            {{ i.meta.title }}
-          </el-breadcrumb-item>
-        </transition-group>
-      </el-breadcrumb>
+    <navbar-items v-if="!miniWidth">
+      <breadcrumb/>
     </navbar-items>
     <flex-spacer/>
     <navbar-items>
@@ -40,19 +30,17 @@
 
 <script>
 import { mapState } from 'vuex'
-import ParentView from '@c/ParentView'
 import Hamburger from '@c/Hamburger'
 import NavbarItems from '@c/Layout/components/NavbarItems'
 import Refresh from '@c/Refresh'
 import ToTest from '@c/ToTest'
 import FlexSpacer from '@c/FlexSpacer'
-import { logout } from '@/api/auth'
-import { getMessage } from '@/libs/utils'
-import { removeToken } from '@/libs/token'
+import Breadcrumb from '@c/Layout/components/Breadcrumb'
 
 export default {
   name: 'Navbar',
   components: {
+    Breadcrumb,
     FlexSpacer,
     ToTest,
     Refresh,
@@ -64,31 +52,14 @@ export default {
       return this.$store.state.sideMenu.opened
     },
     ...mapState({
-      homeRoute: (state) => state.vueRouters.homeRoute,
       user: (state) => state.users.user,
+      miniWidth: (state) => state.miniWidth,
     }),
     homeName() {
       return this.$store.getters.homeName
     },
-    breadCrumb() {
-      const m = this.$route.matched.filter(i => {
-        i.c = i.components.default
-        return i.name
-      })
-      if (this.$route.name !== this.homeName) {
-        m.unshift(this.homeRoute)
-      }
-      return m
-    },
   },
   methods: {
-    breadLink(route) {
-      if (route.c === ParentView) {
-        return ''
-      } else {
-        return route.path
-      }
-    },
     async onLogout() {
       this.$store.dispatch('logout')
     },
@@ -108,25 +79,5 @@ export default {
   padding-left: 0;
   display: flex;
   border-bottom: 1px solid #dcdfe6;
-}
-
-/* breadcrumb transition */
-.breadcrumb-enter-active,
-.breadcrumb-leave-active {
-  transition: all .5s;
-}
-
-.breadcrumb-enter,
-.breadcrumb-leave-active {
-  opacity: 0;
-  transform: translateX(20px);
-}
-
-.breadcrumb-move {
-  transition: all .5s;
-}
-
-.breadcrumb-leave-active {
-  position: absolute;
 }
 </style>
