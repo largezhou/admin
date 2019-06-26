@@ -14,7 +14,11 @@ class AdminUserController extends AdminBaseController
     public function user()
     {
         $user = Admin::user();
-        return $this->ok(AdminUserResource::make($user));
+        return $this->ok(
+            AdminUserResource::make($user)
+                ->gatherAllPermissions()
+                ->onlyRolePermissionSlugs()
+        );
     }
 
     public function index(AdminUserFilter $filter)

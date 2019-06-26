@@ -29,9 +29,17 @@ class AdminUserControllerTest extends AdminTestCase
 
     public function testUser()
     {
+        factory(AdminPermission::class)->create(['slug' => 'perm1']);
+        factory(AdminPermission::class)->create(['slug' => 'perm2']);
+        factory(AdminRole::class)->create(['slug' => 'role'])->permissions()->attach(1);
+        $this->user->roles()->attach(1);
+        $this->user->permissions()->attach(2);
+
         $res = $this->get(route('admin.user'));
         $res->assertStatus(200)
-            ->assertJsonFragment(['id' => $this->user->id]);
+            ->assertJsonFragment(['id' => $this->user->id])
+            ->assertJsonFragment(['roles' => ['role']])
+            ->assertJsonFragment(['permissions' => ['perm1', 'perm2']]);
     }
 
     public function testIndex()

@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Models\AdminRole;
 use App\Models\AdminUser;
 use App\Traits\ResourceRolePermissionHelpers;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -28,16 +27,8 @@ class AdminUserResource extends JsonResource
             'username' => $model->username,
             'name' => $model->name,
             'avatar' => $model->avatar,
-            'roles' => $this->when(
-                $this->onlyRolePermissionIds,
-                $model->roles()->pluck('id'),
-                AdminRoleResource::collection($this->whenLoaded('roles'))
-            ),
-            'permissions' => $this->when(
-                $this->onlyRolePermissionIds,
-                $model->permissions()->pluck('id'),
-                AdminPermissionResource::collection($this->whenLoaded('permissions'))
-            ),
+            'roles' => $this->getRoles(),
+            'permissions' => $this->getPermissions(),
             'created_at' => (string) $model->created_at,
             'updated_at' => (string) $model->updated_at,
         ];
