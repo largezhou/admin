@@ -13,6 +13,7 @@ class AdminPermission extends PermissionMiddleware
         '/auth/login',
         '/auth/logout',
         '/user',
+        '/user/edit',
         '/configs/vue-routers',
     ];
 }
