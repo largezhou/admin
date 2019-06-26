@@ -16,7 +16,15 @@ trait HasPermissions
      */
     public function allPermissions()
     {
-        return $this->roles()->with('permissions')->get()->pluck('permissions')->flatten()->merge($this->permissions);
+        return $this
+            ->roles()
+            ->with('permissions')
+            ->get()
+            ->pluck('permissions')
+            ->flatten()
+            ->merge($this->permissions)
+            ->unique('id')
+            ->values();
     }
 
     /**

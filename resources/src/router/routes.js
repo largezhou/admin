@@ -47,7 +47,7 @@ export default [
         meta: {
           title: '编辑资料',
         },
-        component: () => import('@v/admin-users/Form'),
+        component: () => import('@v/admin-users/EditProfile'),
       },
     ],
   },

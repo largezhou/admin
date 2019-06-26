@@ -27,3 +27,11 @@ export function showAdminUser(id) {
 export function editAdminUser(id) {
   return axios.get(`admin-users/${id}/edit`)
 }
+
+export function editUser() {
+  return axios.get('user/edit')
+}
+
+export function updateUser(data) {
+  return axios.put('user', data)
+}
