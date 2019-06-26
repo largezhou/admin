@@ -6,11 +6,8 @@
     <el-row type="flex" justify="center">
       <lz-form
         ref="form"
-        :edit-method="editAdminRole"
-        :store-method="storeAdminRole"
-        :update-method="updateAdminRole"
-        :get-options="getOptions"
-        redirect="/admin-roles"
+        :get-data="getData"
+        :on-submit="onSubmit"
         :form.sync="form"
         :errors.sync="errors"
       >
@@ -41,12 +38,17 @@
 import LzForm from '@c/LzForm'
 import { editAdminRole, updateAdminRole, storeAdminRole } from '@/api/admin-roles'
 import { getAdminPerms } from '@/api/admin-perms'
+import FormHelper from '@c/LzForm/FormHelper'
+import { getMessage } from '@/libs/utils'
 
 export default {
   name: 'Form',
   components: {
     LzForm,
   },
+  mixins: [
+    FormHelper,
+  ],
   data() {
     return {
       form: {
@@ -59,16 +61,26 @@ export default {
     }
   },
   methods: {
-    async editAdminRole(id) {
-      const { data } = await editAdminRole(id)
-      data.permissions = data.permissions.map(i => i.id)
-      return { data }
-    },
-    updateAdminRole,
-    storeAdminRole,
-    async getOptions() {
+    async getData() {
       const { data } = await getAdminPerms({ all: 1 })
       this.perms = data
+
+      if (this.editMode) {
+        const { data } = await editAdminRole(this.resourceId)
+        data.permissions = data.permissions.map(i => i.id)
+        this.fillForm(data)
+      }
+    },
+    async onSubmit() {
+      if (this.editMode) {
+        await updateAdminRole(this.resourceId, this.form)
+        this.$router.back()
+      } else {
+        await storeAdminRole(this.form)
+        this.$router.push('/admin-roles')
+      }
+
+      this.$message.success(getMessage('saved'))
     },
     filterMethod(query, item) {
       return item.name.indexOf(query) > -1

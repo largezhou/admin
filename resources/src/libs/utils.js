@@ -175,8 +175,9 @@ export const getFirstError = (res) => {
  * 获取提示消息
  *
  * @param key
- * @returns {string|undefined}
+ * @returns {string}
  */
 export const getMessage = key => {
-  return messages[key]
+  /* eslint-disable no-undef */
+  return messages[key] || messages.default
 }

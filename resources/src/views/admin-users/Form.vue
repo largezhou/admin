@@ -6,13 +6,10 @@
     <el-row type="flex" justify="center">
       <lz-form
         ref="form"
-        :edit-method="editAdminUser"
-        :store-method="storeAdminUser"
-        :update-method="updateAdminUser"
-        :get-options="getOptions"
-        redirect="/admin-users"
-        :form.sync="form"
+        :get-data="getData"
+        :on-submit="onSubmit"
         :errors.sync="errors"
+        :form.sync="form"
       >
         <el-form-item label="账号" required prop="username">
           <el-input v-model="form.username"/>
@@ -76,7 +73,8 @@ import LzForm from '@c/LzForm'
 import { editAdminUser, storeAdminUser, updateAdminUser } from '@/api/admin-users'
 import { getAdminRoles } from '@/api/admin-roles'
 import { getAdminPerms } from '@/api/admin-perms'
-import EditHelper from '@c/LzForm/EditHelper'
+import FormHelper from '@c/LzForm/FormHelper'
+import { getMessage } from '@/libs/utils'
 
 export default {
   name: 'Form',
@@ -84,7 +82,7 @@ export default {
     LzForm,
   },
   mixins: [
-    EditHelper,
+    FormHelper,
   ],
   data() {
     return {
@@ -102,10 +100,18 @@ export default {
     }
   },
   methods: {
-    editAdminUser,
-    storeAdminUser,
-    updateAdminUser,
-    async getOptions() {
+    async onSubmit() {
+      if (this.editMode) {
+        await updateAdminUser(this.resourceId, this.form)
+        this.$router.back()
+      } else {
+        await storeAdminUser(this.form)
+        this.$router.push('/admin-users')
+      }
+
+      this.$message.success(getMessage('saved'))
+    },
+    async getData() {
       const [
         { data: roles },
         { data: permissions },
@@ -116,6 +122,11 @@ export default {
 
       this.roles = roles
       this.permissions = permissions
+
+      if (this.editMode) {
+        const { data } = await editAdminUser(this.resourceId())
+        this.fillForm(data)
+      }
     },
   },
 }

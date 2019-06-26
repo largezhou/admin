@@ -12,8 +12,9 @@
     <slot/>
     <slot name="footer">
       <el-form-item>
-        <loading-action type="primary" :action="onSubmit">{{ editMode ? '更新' : '添加' }}</loading-action>
+        <loading-action type="primary" :action="_onSubmit">{{ submitText }}</loading-action>
         <el-button @click="onReset">重置</el-button>
+        <slot name="footer-append"/>
       </el-form-item>
     </slot>
   </el-form>
@@ -21,28 +22,33 @@
 
 <script>
 import _forIn from 'lodash/forIn'
+import _get from 'lodash/get'
 import Form from '@/plugins/element/components/Form'
-import { assignExsits, getMessage, handleValidateErrors } from '@/libs/utils'
-import EditHelper from '@c/LzForm/EditHelper'
+import { handleValidateErrors } from '@/libs/utils'
 
 export default {
   name: 'LzForm',
-  mixins: [
-    EditHelper,
-  ],
+  inject: {
+    // 使用 FormHelper 混入，会自动提供该注入
+    view: {
+      from: 'view',
+      default: null,
+    },
+  },
   data() {
     return {
       loading: false,
     }
   },
   props: {
-    redirect: String,
-    updateMethod: Function,
-    storeMethod: Function,
-    editMethod: Function,
-    getOptions: Function,
+    getData: Function,
+    onSubmit: Function,
     errors: Object,
     form: Object,
+    submitText: {
+      type: String,
+      default: '保存',
+    },
   },
   computed: {
     labelPosition() {
@@ -51,8 +57,6 @@ export default {
   },
   created() {
     this.copyMethods()
-
-    this.getData()
   },
   methods: {
     /**
@@ -68,49 +72,41 @@ export default {
         })
       })
     },
-    async getData() {
+    async _getData() {
       this.loading = true
+      this.view && this.$emit('update:form', this.view.formBak)
 
       try {
-        this.getOptions && await this.getOptions()
-
-        if (this.editMode) {
-          await this.editResource()
-        }
+        this.getData && await this.getData()
+        await this.$nextTick()
+        this.$refs.form.setInitialValues()
       } catch (e) {
         Promise.reject(e)
       }
 
       this.loading = false
     },
-    async onSubmit() {
+    async _onSubmit() {
       this.$emit('update:errors', {})
       try {
-        this.editMode
-          ? await this.updateResource()
-          : await this.storeResource()
+        this.onSubmit && await this.onSubmit()
       } catch (e) {
         this.$emit('update:errors', handleValidateErrors(e.response))
+        if (_get(e, 'response.status') !== 422) {
+          Promise.reject(e)
+        }
       }
-    },
-    async updateResource() {
-      await this.updateMethod(this.resourceId, this.form)
-      this.$router.back()
-      this.$message.success(getMessage('updated'))
-    },
-    async storeResource() {
-      await this.storeMethod(this.form)
-      this.$router.push(this.redirect)
-      this.$message.success(getMessage('created'))
-    },
-    async editResource() {
-      const { data } = await this.editMethod(this.resourceId)
-      this.$emit('update:form', assignExsits(this.form, data))
-      await this.$nextTick()
-      this.$refs.form.setInitialValues()
     },
     onReset() {
       this.$refs.form.resetFields()
+    },
+  },
+  watch: {
+    $route: {
+      handler() {
+        this._getData()
+      },
+      immediate: true,
     },
   },
 }

@@ -6,10 +6,8 @@
     <el-row type="flex" justify="center">
       <lz-form
         ref="form"
-        :edit-method="editAdminPerm"
-        :store-method="storeAdminPerm"
-        :update-method="updateAdminPerm"
-        redirect="/admin-permissions"
+        :get-data="getData"
+        :on-submit="onSubmit"
         :form.sync="form"
         :errors.sync="errors"
       >
@@ -45,12 +43,17 @@
 <script>
 import { editAdminPerm, storeAdminPerm, updateAdminPerm } from '@/api/admin-perms'
 import LzForm from '@c/LzForm'
+import FormHelper from '@c/LzForm/FormHelper'
+import { getMessage } from '@/libs/utils'
 
 export default {
   name: 'Form',
   components: {
     LzForm,
   },
+  mixins: [
+    FormHelper,
+  ],
   data() {
     return {
       form: {
@@ -64,13 +67,24 @@ export default {
     }
   },
   methods: {
-    async editAdminPerm(id) {
-      const res = await editAdminPerm(id)
-      res.data.http_path = res.data.http_path.join('\n')
-      return res
+    async getData() {
+      if (this.editMode) {
+        const { data } = await editAdminPerm(this.resourceId)
+        data.http_path = data.http_path.join('\n')
+        this.fillForm(data)
+      }
     },
-    storeAdminPerm,
-    updateAdminPerm,
+    async onSubmit() {
+      if (this.editMode) {
+        await updateAdminPerm(this.resourceId, this.form)
+        this.$router.back()
+      } else {
+        await storeAdminPerm(this.form)
+        this.$router.push('/admin-permissions')
+      }
+
+      this.$message.success(getMessage('saved'))
+    },
   },
 }
 </script>
