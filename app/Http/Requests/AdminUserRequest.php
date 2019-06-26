@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\AdminUser;
 use Illuminate\Support\Arr;
 
 class AdminUserRequest extends FormRequest
@@ -13,7 +14,7 @@ class AdminUserRequest extends FormRequest
      */
     public function rules()
     {
-        $user = $this->route('admin_user');
+        $user = $this->userResource();
         $id = (int) optional($user)->id;
         $rules = [
             'username' => 'required|max:100|unique:admin_users,username,'.$id,
@@ -38,6 +39,14 @@ class AdminUserRequest extends FormRequest
         }
 
         return $rules;
+    }
+
+    /**
+     * @return AdminUser
+     */
+    public function userResource()
+    {
+        return $this->route('admin_user');
     }
 
     public function attributes()

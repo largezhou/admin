@@ -9,6 +9,9 @@ Route::middleware([
     Route::post('/auth/logout', 'Auth\LoginController@logout')->name('logout');
 
     Route::get('/user', 'AdminUserController@user')->name('user');
+    Route::get('/user/edit', 'AdminUserController@editUser')->name('user.edit');
+    Route::put('/user', 'AdminUserController@updateUser')->name('user.update');
+
     Route::resource('/admin-users', 'AdminUserController');
     Route::resource('/vue-routers', 'VueRouterController')->except(['show', 'create']);
     Route::resource('/admin-permissions', 'AdminPermissionController')->except(['show']);

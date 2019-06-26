@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Filters\AdminUserFilter;
+use App\Http\Requests\AdminUserProfileRequest;
 use App\Http\Requests\AdminUserRequest;
 use App\Http\Resources\AdminUserResource;
 use App\Models\AdminUser;
@@ -19,6 +20,20 @@ class AdminUserController extends AdminBaseController
                 ->gatherAllPermissions()
                 ->onlyRolePermissionSlugs()
         );
+    }
+
+    public function editUser()
+    {
+        $user = Admin::user();
+        $user->load(['roles', 'permissions']);
+        return $this->ok(AdminUserResource::make($user));
+    }
+
+    public function updateUser(AdminUserProfileRequest $request)
+    {
+        $inputs = $request->validated();
+        Admin::user()->updateUser($inputs);
+        return $this->callAction('user', [])->setStatusCode(201);
     }
 
     public function index(AdminUserFilter $filter)

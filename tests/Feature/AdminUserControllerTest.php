@@ -27,19 +27,60 @@ class AdminUserControllerTest extends AdminTestCase
         $this->driver = Storage::disk('uploads');
     }
 
-    public function testUser()
+    protected function attachAuthToUser($user = null)
     {
+        $user = $user ?? $this->user;
+
         factory(AdminPermission::class)->create(['slug' => 'perm1']);
         factory(AdminPermission::class)->create(['slug' => 'perm2']);
         factory(AdminRole::class)->create(['slug' => 'role'])->permissions()->attach(1);
-        $this->user->roles()->attach(1);
-        $this->user->permissions()->attach(2);
+        $user->roles()->attach(1);
+        $user->permissions()->attach(2);
+    }
+
+    public function testUser()
+    {
+        $this->attachAuthToUser();
 
         $res = $this->get(route('admin.user'));
         $res->assertStatus(200)
             ->assertJsonFragment(['id' => $this->user->id])
             ->assertJsonFragment(['roles' => ['role']])
             ->assertJsonFragment(['permissions' => ['perm1', 'perm2']]);
+    }
+
+    public function testEditUser()
+    {
+        $this->attachAuthToUser();
+
+        $res = $this->get(route('admin.user.edit'));
+        $res->assertStatus(200)
+            ->assertJsonCount(1, 'roles')
+            ->assertJsonCount(1, 'permissions');
+    }
+
+    public function testUpdateUser()
+    {
+        $this->attachAuthToUser();
+
+        $res = $this->put(route('admin.user.update'), [
+            'name' => 'new name',
+            'password' => '123456',
+            'password_confirmation' => '123456',
+            'username' => 'can not update',
+            'roles' => [],
+            'permissions' => [],
+        ]);
+
+        $res->assertStatus(201)
+            ->assertSeeText('new name')
+            // 账号没变
+            ->assertDontSee('can not update')
+            // 权限没变
+            ->assertJsonFragment(['permissions' => ['perm1', 'perm2']]);
+
+        // 密码变了
+        $this->assertTrue(Hash::check('123456', $this->user->password));
     }
 
     public function testIndex()
