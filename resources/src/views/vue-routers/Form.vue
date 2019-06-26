@@ -6,13 +6,10 @@
     <el-row type="flex" justify="center">
       <lz-form
         ref="form"
-        :form.sync="form"
+        :get-data="getData"
+        :on-submit="onSubmit"
         :errors.sync="errors"
-        :edit-method="editVueRouter"
-        :update-method="updateVueRouter"
-        :store-method="storeVueRouter"
-        :get-options="getOptions"
-        redirect="/vue-routers"
+        :form.sync="form"
       >
         <el-form-item label="父级路由" prop="parent_id">
           <el-select
@@ -99,18 +96,22 @@
   </el-card>
 </template>
 <script>
-import { buildVueRouterOptions } from '@/libs/utils'
+import { buildVueRouterOptions, getMessage } from '@/libs/utils'
 import { editVueRouter, getVueRouters, storeVueRouter, updateVueRouter } from '@/api/vue-routers'
 import { isInt } from '@/libs/validates'
 import LzForm from '@c/LzForm'
 import { getAdminRoles } from '@/api/admin-roles'
 import { getAdminPerms } from '@/api/admin-perms'
+import FormHelper from '@c/LzForm/FormHelper'
 
 export default {
   name: 'Form',
   components: {
     LzForm,
   },
+  mixins: [
+    FormHelper,
+  ],
   data() {
     return {
       form: {
@@ -144,10 +145,18 @@ export default {
         return 0
       }
     },
-    editVueRouter,
-    storeVueRouter,
-    updateVueRouter,
-    async getOptions() {
+    async onSubmit() {
+      if (this.editMode) {
+        await updateVueRouter(this.resourceId, this.form)
+        this.$router.back()
+      } else {
+        await storeVueRouter(this.form)
+        this.$router.push('/vue-routers')
+      }
+
+      this.$message.success(getMessage('saved'))
+    },
+    async getData() {
       const [
         { data: vueRouters },
         { data: roles },
@@ -162,6 +171,11 @@ export default {
       !this.editMode && (this.form.parent_id = this.queryParentId())
       this.roles = roles
       this.permissions = permissions
+
+      if (this.editMode) {
+        const { data } = await editVueRouter(this.resourceId)
+        this.fillForm(data)
+      }
     },
   },
 }
