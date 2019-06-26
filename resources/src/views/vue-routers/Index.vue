@@ -5,8 +5,6 @@
     </template>
     <el-table
       :data="vueRouters"
-      row-key="id"
-      border
       :expand-row-keys="levelTwoIds"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
