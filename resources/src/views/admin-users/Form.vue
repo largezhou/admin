@@ -124,7 +124,7 @@ export default {
       this.permissions = permissions
 
       if (this.editMode) {
-        const { data } = await editAdminUser(this.resourceId())
+        const { data } = await editAdminUser(this.resourceId)
         this.fillForm(data)
       }
     },

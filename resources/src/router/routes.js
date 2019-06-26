@@ -1,6 +1,7 @@
 import Layout from '@c/Layout'
 import Page404 from '@v/errors/Page404'
 import Test from '@v/Test'
+import { randomChars } from '@/libs/utils'
 
 export const pageNotFoundRoute = {
   path: '/',
@@ -34,6 +35,20 @@ export default [
   {
     path: '/login',
     name: 'login',
-    component: () => import('@/views/Login'),
+    component: () => import('@v/Login'),
+  },
+  {
+    path: randomChars(),
+    component: Layout,
+    children: [
+      {
+        path: '/user/edit',
+        name: 'editMyProfile',
+        meta: {
+          title: '编辑资料',
+        },
+        component: () => import('@v/admin-users/Form'),
+      },
+    ],
   },
 ]

@@ -27,7 +27,7 @@
         </el-button>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item class="link-item">
-            <router-link to="/index">首页</router-link>
+            <router-link :to="{ name: 'editMyProfile' }">个人资料</router-link>
           </el-dropdown-item>
           <el-dropdown-item class="button-item">
             <el-button type="default" @click="onLogout">退出</el-button>
