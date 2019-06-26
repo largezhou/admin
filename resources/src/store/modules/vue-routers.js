@@ -38,9 +38,5 @@ export default {
       router.addRoutes(fixedRoutes)
       commit('SET_HOME_ROUTE', homeRoute)
     },
-    clearAuth({ commit }) {
-      commit('SET_VUE_ROUTERS', [])
-      commit('SET_LOADED', false)
-    },
   },
 }

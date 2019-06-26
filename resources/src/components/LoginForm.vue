@@ -40,7 +40,7 @@ export default {
       try {
         await this.$store.dispatch('login', this.form)
         this.$message.success(getMessage('loggedIn'))
-        this.$router.push(this.$route.query.redirect || { name: 'index' })
+        this.$router.push(this.$route.query.redirect || '/')
       } catch (e) {
         this.errors = handleValidateErrors(e.response)
       }

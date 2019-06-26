@@ -37,9 +37,4 @@ export default new Vuex.Store({
       state.include.push(name)
     },
   },
-  actions: {
-    feLogout({ dispatch }) {
-      dispatch('clearAuth')
-    },
-  },
 })

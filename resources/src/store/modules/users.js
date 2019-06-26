@@ -1,6 +1,7 @@
 import { getToken, removeToken, setToken } from '@/libs/token'
 import { login, logout } from '@/api/auth'
 import { getUser } from '@/api/admin-users'
+import router from '@/router'
 
 export default {
   state: {
@@ -32,12 +33,9 @@ export default {
     },
     async logout({ dispatch }) {
       await logout()
-      dispatch('feLogout')
-    },
-    clearAuth({ commit }) {
       removeToken()
-      commit('SET_TOKEN', '')
-      commit('SET_USER', null)
+      // 由于退出后，有一些状态清理麻烦，直接刷新页面
+      window.location.href = router.resolve({ name: 'login' }).href
     },
     async getUser({ commit }) {
       const { data } = await getUser()

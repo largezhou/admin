@@ -18,6 +18,23 @@
         </transition-group>
       </el-breadcrumb>
     </navbar-items>
+    <flex-spacer/>
+    <navbar-items>
+      <el-dropdown trigger="click">
+        <el-button type="text">
+          {{ user.name }}
+          <i class="el-icon-arrow-down el-icon--right"/>
+        </el-button>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item class="link-item">
+            <router-link to="/index">首页</router-link>
+          </el-dropdown-item>
+          <el-dropdown-item class="button-item">
+            <el-button type="default" @click="onLogout">退出</el-button>
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+    </navbar-items>
   </el-header>
 </template>
 
@@ -28,10 +45,15 @@ import Hamburger from '@c/Hamburger'
 import NavbarItems from '@c/Layout/components/NavbarItems'
 import Refresh from '@c/Refresh'
 import ToTest from '@c/ToTest'
+import FlexSpacer from '@c/FlexSpacer'
+import { logout } from '@/api/auth'
+import { getMessage } from '@/libs/utils'
+import { removeToken } from '@/libs/token'
 
 export default {
   name: 'Navbar',
   components: {
+    FlexSpacer,
     ToTest,
     Refresh,
     NavbarItems,
@@ -43,6 +65,7 @@ export default {
     },
     ...mapState({
       homeRoute: (state) => state.vueRouters.homeRoute,
+      user: (state) => state.users.user,
     }),
     homeName() {
       return this.$store.getters.homeName
@@ -65,6 +88,9 @@ export default {
       } else {
         return route.path
       }
+    },
+    async onLogout() {
+      this.$store.dispatch('logout')
     },
   },
 }

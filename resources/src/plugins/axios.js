@@ -55,7 +55,6 @@ _axios.interceptors.response.use(
           Message.error('请求的网址不存在')
           break
         case 401:
-          store.dispatch('feLogout')
           Message.error('登录已失效，请重新登录')
           break
         case 400:

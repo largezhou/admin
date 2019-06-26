@@ -90,6 +90,20 @@ code {
 }
 
 .el-dropdown-menu__item {
+  &.link-item {
+    padding: 0 !important;
+
+    a {
+      display: inline-block;
+      width: 100%;
+      border: none;
+      background: transparent;
+      text-decoration: none;
+      color: inherit;
+      text-align: center;
+    }
+  }
+
   &.button-item {
     padding: 0 !important;
 
