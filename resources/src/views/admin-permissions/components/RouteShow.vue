@@ -3,7 +3,6 @@
     <div class="mb-1" v-for="(item, index) of httpRoute" :key="index">
       <el-tag
         class="mr-1"
-        size="small"
         v-for="i of item.method"
         :key="i"
       >

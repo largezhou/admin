@@ -15,7 +15,6 @@
           <el-tag
             v-for="i of row.roles"
             :key="i.id"
-            size="small"
             class="mr-1"
           >
             {{ i.name }}
@@ -27,7 +26,6 @@
           <el-tag
             v-for="i of row.permissions"
             :key="i.id"
-            size="small"
             class="mr-1"
           >
             {{ i.name }}
