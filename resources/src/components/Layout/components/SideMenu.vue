@@ -2,6 +2,7 @@
   <div style="height: 100%;">
     <div v-if="miniWidth && !collapse" class="mask" @click="onCollapse"/>
     <el-menu
+      ref="menu"
       :default-active="activeName"
       :default-openeds="openedMenus"
       class="side-menu"
@@ -23,6 +24,7 @@
 <script>
 import SideMenuItem from './SideMenuItem'
 import _forIn from 'lodash/forIn'
+import _get from 'lodash/get'
 import { mapState } from 'vuex'
 
 export default {
@@ -78,6 +80,17 @@ export default {
         })
       },
       immediate: true,
+    },
+    collapse(newVal) {
+      // 菜单从折叠状态展开时，如果没有激活的菜单，
+      // 无法根据 default-opened 自动展开菜单，所以手动处理一下
+      if (!newVal && !_get(this.$refs, 'menu.activeIndex')) {
+        const bak = this.uniqueOpenedMenus
+        setTimeout(() => {
+          this.uniqueOpenedMenus = {}
+          this.uniqueOpenedMenus = bak
+        }, 400)
+      }
     },
   },
 }
