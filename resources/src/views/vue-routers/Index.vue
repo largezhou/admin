@@ -42,14 +42,16 @@
       </el-table-column>
       <el-table-column label="缓存" width="120">
         <template v-slot="{ row }">
-          <switch-edit
-            :id="row.id"
-            field="cache"
-            v-model="row.cache"
-            active-text="是"
-            inactive-text="否"
-            :update="updateVueRouter"
-          />
+          <template v-if="!hasChildren(row)">
+            <switch-edit
+              :id="row.id"
+              field="cache"
+              v-model="row.cache"
+              active-text="是"
+              inactive-text="否"
+              :update="updateVueRouter"
+            />
+          </template>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="240">
@@ -140,6 +142,7 @@ export default {
       return false
     },
     updateVueRouter,
+    hasChildren,
   },
 }
 </script>
