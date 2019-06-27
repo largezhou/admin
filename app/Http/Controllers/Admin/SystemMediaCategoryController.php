@@ -16,8 +16,19 @@ class SystemMediaCategoryController extends AdminBaseController
 
     public function update(SystemMediaCategoryRequest $request, SystemMediaCategory $systemMediaCategory)
     {
-        $inputs  = $request->validated();
+        $inputs = $request->validated();
         $systemMediaCategory->update($inputs);
         return $this->created($systemMediaCategory);
+    }
+
+    public function edit(SystemMediaCategory $systemMediaCategory)
+    {
+        return $this->ok($systemMediaCategory);
+    }
+
+    public function destroy(SystemMediaCategory $systemMediaCategory)
+    {
+        $systemMediaCategory->delete();
+        return $this->noContent();
     }
 }

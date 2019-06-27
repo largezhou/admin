@@ -114,4 +114,29 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
             'name' => 'level 0-2',
         ]);
     }
+
+    public function testEdit()
+    {
+        factory(SystemMediaCategory::class)->create(['name' => 'level 0-1']);
+
+        $res = $this->editResource(1);
+        $res->assertStatus(200)
+            ->assertJson([
+                'id' => 1,
+                'name' => 'level 0-1',
+                'parent_id' => 0,
+            ]);
+    }
+
+    public function testDestroy()
+    {
+        factory(SystemMediaCategory::class)->create(['name' => 'level 0-1']);
+        factory(SystemMediaCategory::class)->create(['name' => 'level 0-2', 'parent_id' => 1]);
+
+        $res = $this->destroyResource(1);
+        $res->assertStatus(204);
+
+        $this->assertDatabaseMissing('system_media_categories', ['id' => 1]);
+        $this->assertDatabaseMissing('system_media_categories', ['id' => 2]);
+    }
 }

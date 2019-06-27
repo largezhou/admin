@@ -23,4 +23,10 @@ class SystemMediaCategory extends Model
     {
         $this->attributes['parent_id'] = $value ?: 0;
     }
+
+    public function delete()
+    {
+        $this->children->each->delete();
+        return parent::delete();
+    }
 }
