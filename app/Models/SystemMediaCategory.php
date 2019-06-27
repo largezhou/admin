@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Utils\Admin;
+use Illuminate\Database\Eloquent\Builder;
+
 class SystemMediaCategory extends Model
 {
     protected $fillable = ['parent_id', 'name'];
@@ -28,5 +31,42 @@ class SystemMediaCategory extends Model
     {
         $this->children->each->delete();
         return parent::delete();
+    }
+
+    /**
+     * 构建树状结构数组
+     *
+     * @param int|null $except 要排除的某个 id
+     * @param array $nodes
+     * @param int $parentId
+     *
+     * @return array
+     */
+    public static function buildNestedArray(int $except = null, array $nodes = [], $parentId = 0): array
+    {
+        $branch = [];
+        if (empty($nodes)) {
+            $nodes = static::query()
+                ->when($except, function (Builder $query) use ($except) {
+                    $query->where('id', '<>', $except)->where('parent_id', '<>', $except);
+                })
+                ->orderBy('order')
+                ->get()
+                ->toArray();
+        }
+
+        foreach ($nodes as $node) {
+            if ($node['parent_id'] == $parentId) {
+                $children = static::buildNestedArray($except, $nodes, $node['id']);
+
+                if ($children) {
+                    $node['children'] = $children;
+                }
+
+                $branch[] = $node;
+            }
+        }
+
+        return $branch;
     }
 }

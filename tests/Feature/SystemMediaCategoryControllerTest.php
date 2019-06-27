@@ -20,7 +20,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
         $this->login();
     }
 
-    public function testStoreValidation()
+    protected function createNestedData()
     {
         SystemMediaCategory::insert([
             [
@@ -44,6 +44,11 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
                 'name' => 'level 3-1',
             ],
         ]);
+    }
+
+    public function testStoreValidation()
+    {
+        $this->createNestedData();
 
         // parent_id exists
         $res = $this->storeResource([
@@ -138,5 +143,49 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
 
         $this->assertDatabaseMissing('system_media_categories', ['id' => 1]);
         $this->assertDatabaseMissing('system_media_categories', ['id' => 2]);
+    }
+
+    public function testIndex()
+    {
+        $this->createNestedData();
+
+        $res = $this->getResources();
+        $res->assertStatus(200)
+            ->assertJson([
+                [
+                    'id' => 1,
+                    'parent_id' => 0,
+                    'name' => 'level 0-1',
+                    'children' => [
+                        [
+                            'id' => 3,
+                            'parent_id' => 1,
+                            'name' => 'level 1-1',
+                            'children' => [
+                                [
+                                    'id' => 4,
+                                    'parent_id' => 3,
+                                    'name' => 'level 3-1',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                [
+                    'id' => 2,
+                    'parent_id' => 0,
+                    'name' => 'level 0-2',
+                ],
+            ]);
+
+        $res = $this->getResources(['except' => 1]);
+        $res->assertStatus(200)
+            ->assertJson([
+                [
+                    'id' => 2,
+                    'parent_id' => 0,
+                    'name' => 'level 0-2',
+                ],
+            ]);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\SystemMediaCategoryRequest;
 use App\Models\SystemMediaCategory;
+use Illuminate\Http\Request;
 
 class SystemMediaCategoryController extends AdminBaseController
 {
@@ -30,5 +31,10 @@ class SystemMediaCategoryController extends AdminBaseController
     {
         $systemMediaCategory->delete();
         return $this->noContent();
+    }
+
+    public function index(Request $request)
+    {
+        return $this->ok(SystemMediaCategory::buildNestedArray((int) $request->input('except')));
     }
 }
