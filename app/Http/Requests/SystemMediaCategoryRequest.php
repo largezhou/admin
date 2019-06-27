@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 
@@ -17,7 +17,9 @@ class SystemMediaCategoryRequest extends FormRequest
             'name' => [
                 'required',
                 Rule::unique('system_media_categories', 'name')
-                    ->where('parent_id', $this->input('parent_id'))
+                    ->where(function (Builder $query) {
+                        return $query->where('parent_id', $this->input('parent_id'));
+                    })
                     ->ignore($id),
             ],
             'parent_id' => 'exists:system_media_categories,id',

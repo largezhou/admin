@@ -71,19 +71,47 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
 
     public function testStore()
     {
-        factory(SystemMediaCategory::class)->create();
+        $res = $this->storeResource([
+            'name' => 'level 0-1',
+        ]);
+        $res->assertStatus(201);
+        $this->assertDatabaseHas('system_media_categories', [
+            'id' => 1,
+            'name' => 'level 0-1',
+            'parent_id' => 0,
+        ]);
 
         $res = $this->storeResource([
             'parent_id' => 1,
             'name' => 'level 1-1',
         ]);
-        dump(json_decode($res->getContent()));
         $res->assertStatus(201);
 
         $this->assertDatabaseHas('system_media_categories', [
             'id' => 2,
             'parent_id' => 1,
             'name' => 'level 1-1',
+        ]);
+    }
+
+    public function testUpdate()
+    {
+        factory(SystemMediaCategory::class)->create(['name' => 'level 0-1']);
+        factory(SystemMediaCategory::class)->create(['name' => 'level 0-2']);
+
+        $res = $this->updateResource(1, [
+            'parent_id' => 2,
+            'name' => 'level 0-2',
+        ]);
+        $res->assertStatus(201);
+
+        $res = $this->updateResource(1);
+        $res->assertStatus(201);
+
+        $this->assertDatabaseHas('system_media_categories', [
+            'id' => 1,
+            'parent_id' => 2,
+            'name' => 'level 0-2',
         ]);
     }
 }

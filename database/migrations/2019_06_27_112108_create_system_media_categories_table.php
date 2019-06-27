@@ -15,7 +15,7 @@ class CreateSystemMediaCategoriesTable extends Migration
     {
         Schema::create('system_media_categories', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('parent_id');
+            $table->unsignedInteger('parent_id')->default(0);
             $table->string('name', 20);
             $table->timestamps();
         });

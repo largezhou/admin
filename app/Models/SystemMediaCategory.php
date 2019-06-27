@@ -18,4 +18,9 @@ class SystemMediaCategory extends Model
     {
         return $this->hasMany(static::class, 'parent_id');
     }
+
+    public function setParentIdAttribute($value)
+    {
+        $this->attributes['parent_id'] = $value ?: 0;
+    }
 }
