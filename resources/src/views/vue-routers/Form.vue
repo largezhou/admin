@@ -162,7 +162,7 @@ export default {
         { data: roles },
         { data: permissions },
       ] = await Promise.all([
-        getVueRouters(),
+        getVueRouters({ except: this.resourceId }),
         getAdminRoles({ all: 1 }),
         getAdminPerms({ all: 1 }),
       ])

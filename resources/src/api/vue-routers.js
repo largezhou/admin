@@ -1,7 +1,9 @@
 import axios from '@/plugins/axios'
 
-export function getVueRouters() {
-  return axios.get('vue-routers')
+export function getVueRouters(params = {}) {
+  return axios.get('vue-routers', {
+    params,
+  })
 }
 
 export function storeVueRouter(data) {

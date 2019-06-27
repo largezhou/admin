@@ -19,17 +19,11 @@ class VueRouterRequest extends FormRequest
             'roles' => 'array',
             'roles.*' => 'exists:admin_roles,id',
             'permission' => 'nullable|exists:admin_permissions,slug',
+            'parent_id' => 'exists:vue_routers,id',
         ];
-        $parentIdExists = Rule::exists('vue_routers', 'id');
 
-        switch (strtolower($this->method())) {
-            case 'post':
-                $rules['parent_id'] = $parentIdExists;
-                break;
-            case 'put':
-                $rules['parent_id'] = $parentIdExists->whereNot('id', $this->route('vue_router')->id);
-                $rules = Arr::only($rules, $this->keys());
-                break;
+        if ($this->isMethod('put')) {
+            $rules = Arr::only($rules, $this->keys());
         }
 
         if ($this->post('parent_id') == 0) {

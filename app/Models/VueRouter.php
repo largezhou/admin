@@ -28,18 +28,26 @@ class VueRouter extends Model
      * 把路由构建成嵌套的数组结构
      *
      * @param bool $withAuth 是否做角色权限筛选
+     * @param int $except 排除某个 id
      * @param array $nodes
      * @param int $parentId
      *
      * @return array
      */
-    public static function buildNestedArray(bool $withAuth = false, array $nodes = [], $parentId = 0): array
-    {
+    public static function buildNestedArray(
+        bool $withAuth = false,
+        int $except = null,
+        array $nodes = [],
+        $parentId = 0
+    ): array {
         $branch = [];
         if (empty($nodes)) {
             $nodes = static::query()
                 ->when($withAuth, function (Builder $query) {
                     $query->with('roles');
+                })
+                ->when($except, function (Builder $query) use ($except) {
+                    $query->where('id', '<>', $except)->where('parent_id', '<>', $except);
                 })
                 ->orderBy('order')
                 ->get()
@@ -56,7 +64,7 @@ class VueRouter extends Model
                     (empty($node['permission']) ?: Admin::user()->can($node['permission'])))
             ) {
                 if ($node['parent_id'] == $parentId) {
-                    $children = static::buildNestedArray($withAuth, $nodes, $node['id']);
+                    $children = static::buildNestedArray($withAuth, $except, $nodes, $node['id']);
 
                     if ($children) {
                         $node['children'] = $children;

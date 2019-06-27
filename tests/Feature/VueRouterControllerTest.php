@@ -106,22 +106,6 @@ class VueRouterControllerTest extends AdminTestCase
         ]);
     }
 
-    public function testUpdateValidation()
-    {
-        // 与 store 唯一不同的是，parent_id 不能是自己
-        factory(VueRouter::class, 2)->create();
-        $res = $this->updateResource(1, [
-            'parent_id' => 1,
-        ]);
-        $res->assertJsonValidationErrors(['parent_id'])
-            // 更新时，只会验证有的字段
-            ->assertJsonMissingValidationErrors(['title']);
-        $res = $this->updateResource(1, [
-            'parent_id' => 2,
-        ]);
-        $res->assertJsonMissingValidationErrors(['parent_id']);
-    }
-
     public function testUpdate()
     {
         $this->updateResource(999)->assertStatus(404);
@@ -179,6 +163,16 @@ class VueRouterControllerTest extends AdminTestCase
         $res = $this->getResources();
         $res->assertStatus(200)
             ->assertJsonFragment($vueRouter);
+
+        // 第二级路由 id
+        $except = $vueRouter['children'][0]['id'];
+        $fragment = $vueRouter;
+        // 排除了第二级的 id 后，该路由和所有子路由都不会返回了
+        unset($fragment['children']);
+
+        $res = $this->getResources(['except' => $except]);
+        $res->assertStatus(200)
+            ->assertJsonFragment($fragment);
     }
 
     public function testDestroy()
