@@ -22,6 +22,8 @@ Route::middleware([
         ->group(function () {
             Route::get('vue-routers', 'ConfigController@vueRouters')->name('vue-routers');
         });
+
+    Route::resource('/system-media-categories', 'SystemMediaCategoryController')->except(['show', 'create']);
 });
 
 Route::post('/auth/login', 'Auth\LoginController@login')->name('login');
