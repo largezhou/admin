@@ -19,11 +19,22 @@
         登录
       </loading-action>
     </el-form-item>
+    <el-form-item>
+      <loading-action
+        class="login-btn"
+        type="danger"
+        plain
+        :action="onResetSystem"
+      >
+        重置系统
+      </loading-action>
+    </el-form-item>
   </el-form>
 </template>
 
 <script>
 import { getMessage, handleValidateErrors } from '@/libs/utils'
+import axios from '@/plugins/axios'
 
 export default {
   name: 'LoginForm',
@@ -44,6 +55,10 @@ export default {
       } catch (e) {
         this.errors = handleValidateErrors(e.response)
       }
+    },
+    async onResetSystem() {
+      await axios.post('/demo/reset-system')
+      this.$message.success('已重置，admin 密码为 000000')
     },
   },
 }
