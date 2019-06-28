@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Filters\SystemMediaFilter;
 use App\Http\Requests\SystemMediaCategoryRequest;
 use App\Http\Requests\SystemMediaRequest;
 use App\Http\Resources\SystemMediaResource;
@@ -53,5 +54,23 @@ class SystemMediaCategoryController extends AdminBaseController
         $files = $this->saveFiles($request);
         $media = $systemMediaCategory->media()->create($files['file']);
         return $this->created(SystemMediaResource::make($media));
+    }
+
+    /**
+     * 获取分类下的所有文件
+     *
+     * @param SystemMediaCategory $systemMediaCategory
+     * @param SystemMediaFilter $filter
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function systemMediaIndex(SystemMediaCategory $systemMediaCategory, SystemMediaFilter $filter)
+    {
+        $media = $systemMediaCategory->media()
+            ->filter($filter)
+            ->orderByDesc('created_at')
+            ->paginate();
+
+        return $this->ok(SystemMediaResource::collection($media));
     }
 }

@@ -87,6 +87,14 @@ class AdminPermissionControllerTest extends AdminTestCase
             'slug' => 'slug query',
             'name' => 'name query',
         ]);
+
+        $res = $this->getResources([
+            'id' => 21,
+        ]);
+        $res->assertStatus(200)
+            ->assertJsonCount(1, 'data')
+            ->assertJsonFragment(['id' => 21]);
+
         $res = $this->getResources([
             'id' => 21,
             'http_path' => 'to',

@@ -31,7 +31,7 @@ abstract class Filter
         $t = [];
         foreach ($this->simpleFilters as $field => $op) {
             if (is_int($field)) {
-                $t[$op] = '=';
+                $t[$op] = 'equal';
             } else {
                 $t[$field] = $op;
             }
@@ -77,13 +77,20 @@ abstract class Filter
      */
     protected function applySimpleFilter($filter, $op, $value)
     {
-        if (is_string($op)) {
-            $this->builder->where($filter, $op, $value);
-            return;
+        if (is_array($op)) {
+            $args = array_slice($op, 1);
+            $op = $op[0];
         }
-        switch ($op[0]) {
+
+        switch ($op) {
+            case 'equal':
+                $this->builder->where($filter, $value);
+                break;
             case 'like':
-                $this->builder->where($filter, 'like', str_replace('?', $value, $op[1]));
+                $this->builder->where($filter, 'like', str_replace('?', $value, $args[0]));
+                break;
+            case 'in':
+                $this->builder->whereIn($filter, $value);
                 break;
             default:
                 // do nothing

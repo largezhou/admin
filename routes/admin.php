@@ -28,8 +28,12 @@ Route::middleware([
     Route::post(
         '/system-media-categories/{system_media_category}/system-media',
         'SystemMediaCategoryController@storeSystemMedia'
-    )
-        ->name('system-media-categories.system-media.store');
+    )->name('system-media-categories.system-media.store');
+    // 获取指定分类下的所有文件
+    Route::get(
+        '/system-media-categories/{system_media_category}/system-media',
+        'SystemMediaCategoryController@systemMediaIndex'
+    )->name('system-media-categories.system-media.index');
 });
 
 Route::post('/auth/login', 'Auth\LoginController@login')->name('login');

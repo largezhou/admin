@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Http\Controllers\Controller;
+use App\Models\SystemMedia;
 use App\Models\SystemMediaCategory;
 use Illuminate\Http\UploadedFile;
 use Tests\AdminTestCase;
@@ -241,5 +242,58 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
         ]);
         $this->storage->exists($path);
         $this->storage->delete($path);
+    }
+
+    protected function systemMediaIndex($params = [])
+    {
+        return $this->getResources($params, $this->resourceName.'.system-media');
+    }
+
+    public function testSystemMediaIndex()
+    {
+        factory(SystemMediaCategory::class)
+            ->create()
+            ->media()
+            ->createMany([
+                factory(SystemMedia::class)->make([
+                    'filename' => 'avatar.jpg',
+                    'ext' => 'jpg',
+                ])->toArray(),
+                factory(SystemMedia::class)->make([
+                    'filename' => 'funny.gif',
+                    'ext' => 'gif',
+                ])->toArray(),
+            ]);
+
+        // 其他分类的图片
+        factory(SystemMediaCategory::class)
+            ->create()
+            ->media()
+            ->createMany(factory(SystemMedia::class, 2)->make(['ext' => 'jpg'])->toArray());
+
+        // ext in 筛选
+        $res = $this->systemMediaIndex([
+            'id' => 1,
+            'ext' => ['jpg'],
+        ]);
+        $res->assertStatus(200)
+            ->assertJsonFragment(['ext' => 'jpg'])
+            ->assertJsonMissing(['ext' => 'gif']);
+
+        $res = $this->systemMediaIndex([
+            'id' => 1,
+            'ext' => ['jpg', 'gif'],
+        ]);
+        $res->assertStatus(200)
+            ->assertJsonCount(2, 'data');
+
+        // filename like
+        $res = $this->systemMediaIndex([
+            'id' => 1,
+            'filename' => 'ny',
+        ]);
+        $res->assertStatus(200)
+            ->assertJsonFragment(['filename' => 'funny.gif'])
+            ->assertJsonMissing(['filename' => 'avatar.jpg']);
     }
 }
