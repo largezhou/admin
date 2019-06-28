@@ -16,7 +16,10 @@ class AdminInitCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'admin:init';
+    protected $signature = '
+    admin:init
+    {--F|force : 强制执行，不询问}
+    ';
     /**
      * The console command description.
      *
@@ -32,7 +35,7 @@ class AdminInitCommand extends Command
      */
     public function handle()
     {
-        if ($this->confirm(static::$initConfirmTip)) {
+        if ($this->option('force') || $this->confirm(static::$initConfirmTip)) {
             $this->createVueRouters();
             $this->createUserRolePermission();
             $this->info('初始化完成，管理员为：admin，密码为：000000');
