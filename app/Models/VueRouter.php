@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\ModelTree;
 use App\Utils\Admin;
 use Illuminate\Database\Eloquent\Builder;
 
 class VueRouter extends Model
 {
+    use ModelTree {
+        ModelTree::allNodesQuery as parentAllNodesQuery;
+    }
     protected $casts = [
         'parent_id' => 'integer',
         'order' => 'integer',
@@ -23,71 +27,7 @@ class VueRouter extends Model
         'menu',
         'permission',
     ];
-
-    /**
-     * 把路由构建成嵌套的数组结构
-     *
-     * @param bool $withAuth 是否做角色权限筛选
-     * @param int $except 排除某个 id
-     * @param array $nodes
-     * @param int $parentId
-     *
-     * @return array
-     */
-    public static function buildNestedArray(
-        bool $withAuth = false,
-        int $except = null,
-        array $nodes = [],
-        $parentId = 0
-    ): array {
-        $branch = [];
-        if (empty($nodes)) {
-            $nodes = static::query()
-                ->when($withAuth, function (Builder $query) {
-                    $query->with('roles');
-                })
-                ->when($except, function (Builder $query) use ($except) {
-                    $query->where('id', '<>', $except)->where('parent_id', '<>', $except);
-                })
-                ->orderBy('order')
-                ->get()
-                ->toArray();
-        }
-
-        static $parentIds;
-        $parentIds = $parentIds ?: array_flip(array_column($nodes, 'parent_id'));
-
-        foreach ($nodes as $node) {
-            if (
-                !$withAuth ||
-                (Admin::user()->visible($node['roles']) &&
-                    (empty($node['permission']) ?: Admin::user()->can($node['permission'])))
-            ) {
-                if ($node['parent_id'] == $parentId) {
-                    $children = static::buildNestedArray($withAuth, $except, $nodes, $node['id']);
-
-                    if ($children) {
-                        $node['children'] = $children;
-                    }
-
-                    $branch[] = $node;
-                }
-            }
-        }
-
-        return $branch;
-    }
-
-    public function children()
-    {
-        return $this->hasMany(VueRouter::class, 'parent_id');
-    }
-
-    public function delete()
-    {
-        $this->children->each->delete();
-        return parent::delete();
-    }
+    protected $treeWithAuth = false;
 
     /**
      * parent_id 默认为 0 处理
@@ -112,5 +52,36 @@ class VueRouter extends Model
             'vue_router_id',
             'role_id'
         );
+    }
+
+    public function treeWithAuth()
+    {
+        $this->treeWithAuth = true;
+        return $this;
+    }
+
+    protected function allNodesQuery(): Builder
+    {
+        return $this->parentAllNodesQuery()
+            ->when($this->treeWithAuth, function (Builder $query) {
+                $query->with('roles');
+            });
+    }
+
+    protected function ignoreTreeNode($node): bool
+    {
+        // 不需要鉴权，或者有权限，则不忽略
+        if (
+            // 不需要鉴权
+            !$this->treeWithAuth ||
+            // 角色可见
+            (Admin::user()->visible($node['roles']) &&
+                // 并且路由没有配置权限，或者配置了权限，用户也有权限
+                (empty($node['permission']) ?: Admin::user()->can($node['permission'])))
+        ) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

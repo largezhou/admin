@@ -8,8 +8,8 @@ use Illuminate\Http\Request;
 
 class ConfigController extends Controller
 {
-    public function vueRouters()
+    public function vueRouters(VueRouter $vueRouter)
     {
-        return $this->ok(VueRouter::buildNestedArray(true));
+        return $this->ok($vueRouter->treeWithAuth()->toTree());
     }
 }

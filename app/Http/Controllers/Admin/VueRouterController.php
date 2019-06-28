@@ -36,9 +36,9 @@ class VueRouterController extends AdminBaseController
         return $this->ok(VueRouterResource::make($vueRouter)->onlyRolePermissionIds());
     }
 
-    public function index(Request $request)
+    public function index(Request $request, VueRouter $vueRouter)
     {
-        return $this->ok(VueRouter::buildNestedArray(false, (int) $request->input('except')));
+        return $this->ok($vueRouter->treeExcept((int) $request->input('except'))->toTree());
     }
 
     public function destroy(VueRouter $vueRouter)

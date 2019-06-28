@@ -76,6 +76,10 @@ trait ModelTree
         $parentIds = $parentIds ?: array_flip(array_column($nodes, $this->parentColumn()));
 
         foreach ($nodes as $node) {
+            if ($this->ignoreTreeNode($node)) {
+                continue;
+            }
+
             if ($node[$this->parentColumn()] == $parentId) {
                 $children = $this->buildNestedArray($nodes, $node[$this->idColumn()]);
 
@@ -97,14 +101,20 @@ trait ModelTree
      */
     protected function allNodes(): array
     {
+        return $this->allNodesQuery()->get()->toArray();
+    }
+
+    /**
+     * @return Builder|mixed
+     */
+    protected function allNodesQuery(): Builder
+    {
         return static::query()
             ->when($this->except, function (Builder $query) {
                 $query->where($this->idColumn(), '<>', $this->except)
                     ->where($this->parentColumn(), '<>', $this->except);
             })
-            ->orderBy($this->orderColumn())
-            ->get()
-            ->toArray();
+            ->orderBy($this->orderColumn());
     }
 
     public function children()
@@ -121,5 +131,17 @@ trait ModelTree
     {
         $this->children->each->delete();
         return parent::delete();
+    }
+
+    /**
+     * 是否跳过节点的处理
+     *
+     * @param array $node 当前节点
+     *
+     * @return bool
+     */
+    protected function ignoreTreeNode(array $node): bool
+    {
+        return false;
     }
 }
