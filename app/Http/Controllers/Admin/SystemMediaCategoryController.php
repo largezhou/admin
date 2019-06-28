@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\SystemMediaCategoryRequest;
 use App\Http\Requests\SystemMediaRequest;
 use App\Http\Resources\SystemMediaResource;
-use App\Models\SystemMedia;
 use App\Models\SystemMediaCategory;
 use Illuminate\Http\Request;
 

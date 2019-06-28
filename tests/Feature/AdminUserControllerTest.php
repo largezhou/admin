@@ -5,9 +5,7 @@ namespace Tests\Feature;
 use App\Models\AdminPermission;
 use App\Models\AdminRole;
 use App\Models\AdminUser;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Tests\AdminTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -18,13 +16,11 @@ class AdminUserControllerTest extends AdminTestCase
     use RefreshDatabase;
     use RequestActions;
     protected $resourceName = 'admin-users';
-    protected $driver;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->login();
-        $this->driver = Storage::disk('uploads');
     }
 
     protected function attachAuthToUser($user = null)
@@ -122,11 +118,9 @@ class AdminUserControllerTest extends AdminTestCase
     {
         // username, name, password required
         // roles.*, permissions.*, exists
-        // avatar image
         $res = $this->storeResource([
             'roles' => [9999],
             'permissions' => [9999],
-            'avatar' => 'not a image',
         ]);
         $res->assertJsonValidationErrors([
             'username',
@@ -134,7 +128,6 @@ class AdminUserControllerTest extends AdminTestCase
             'password',
             'roles.0',
             'permissions.0',
-            'avatar',
         ]);
 
         // username, name max:100
@@ -167,11 +160,9 @@ class AdminUserControllerTest extends AdminTestCase
         factory(AdminRole::class, 5)->create();
         factory(AdminPermission::class, 5)->create();
         $pw = '000000';
-        $avatar = UploadedFile::fake()->image('avatar.jpg', 200, 200);
 
         $userInputs = factory(AdminUser::class)->make([
             'password' => $pw,
-            'avatar' => $avatar,
         ])->toArray();
 
         $res = $this->storeResource($userInputs + [
@@ -181,15 +172,10 @@ class AdminUserControllerTest extends AdminTestCase
             ]);
         $res->assertStatus(201);
 
-        $avatarPath = 'admin/avatar/'.md5_file($avatar).'.jpg';
-        $this->assertFileExists(public_path('uploads/'.$avatarPath));
-        $this->driver->delete($avatarPath);
-
         $this->assertDatabaseHas('admin_users', [
             'id' => 2,
             'username' => $userInputs['username'],
             'name' => $userInputs['name'],
-            'avatar' => $this->driver->url($avatarPath),
         ]);
         $this->assertTrue(Hash::check($pw, AdminUser::find(2)->password));
 
@@ -224,11 +210,6 @@ class AdminUserControllerTest extends AdminTestCase
         $newRoles = factory(AdminRole::class, 3)->create()->pluck('id')->toArray();
         $newPerms = factory(AdminPermission::class, 3)->create()->pluck('id')->toArray();
 
-        $res = $this->updateResource(1, [
-            'avatar' => 'changed but not image',
-        ]);
-        $res->assertJsonValidationErrors(['avatar']);
-
         $pw = 'new password';
         $res = $this->updateResource(1, [
             'username' => 'admin',
@@ -237,7 +218,6 @@ class AdminUserControllerTest extends AdminTestCase
             'permissions' => $newPerms,
             'password' => $pw,
             'password_confirmation' => $pw,
-            'avatar' => $this->user->avatar,
         ]);
         $res->assertStatus(201);
         $this->assertTrue(Hash::check($pw, AdminUser::find(1)->password));

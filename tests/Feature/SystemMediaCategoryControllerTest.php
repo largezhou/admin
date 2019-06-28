@@ -229,6 +229,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
         $res->assertStatus(201);
 
         $filename = md5_file($file).'.jpg';
+        $path = 'system_media_categories/'.$filename;
         $this->assertDatabaseHas('system_media', [
             'id' => 1,
             'category_id' => 1,
@@ -236,8 +237,9 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
             'size' => $file->getSize(),
             'ext' => 'jpg',
             'mime_type' => $file->getMimeType(),
-            'path' => $this->storage->url('system_media_categories/'.$filename),
+            'path' => $this->storage->url($path),
         ]);
-        $this->storage->exists('system_media_categories/'.$filename);
+        $this->storage->exists($path);
+        $this->storage->delete($path);
     }
 }
