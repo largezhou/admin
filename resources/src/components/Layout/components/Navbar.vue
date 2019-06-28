@@ -4,6 +4,7 @@
       <hamburger :is-active="opened" @toggle="$store.dispatch('toggleOpened')"/>
       <refresh/>
       <to-test/>
+      <reset-system/>
     </navbar-items>
     <navbar-items v-if="!miniWidth">
       <breadcrumb/>
@@ -36,10 +37,12 @@ import Refresh from '@c/Refresh'
 import ToTest from '@c/ToTest'
 import FlexSpacer from '@c/FlexSpacer'
 import Breadcrumb from '@c/Layout/components/Breadcrumb'
+import ResetSystem from '@c/ResetSystem'
 
 export default {
   name: 'Navbar',
   components: {
+    ResetSystem,
     Breadcrumb,
     FlexSpacer,
     ToTest,

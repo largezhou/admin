@@ -43,3 +43,5 @@ Route::middleware([
 });
 
 Route::post('auth/login', 'Auth\LoginController@login')->name('login');
+
+Route::post('/demo/reset-system', 'DemoController@resetSystem');
