@@ -17,6 +17,10 @@ class Controller extends BaseController
      * 传入上传目录的字段
      */
     const UPLOAD_FOLDER_FIELD = '_upload_dir';
+    /**
+     * 上传根目录
+     */
+    const UPLOAD_FOLDER_PREFIX = 'uploads';
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
     use RestfulResponse;
 
@@ -45,7 +49,7 @@ class Controller extends BaseController
         $driver = Storage::disk('uploads');
 
         $folder = $request->input(static::UPLOAD_FOLDER_FIELD);
-        $folder = $folder ? trim($folder, '/') : '';
+        $folder = static::UPLOAD_FOLDER_PREFIX.'/'.($folder ? trim($folder, '/') : '');
 
         $files = array_map(function (UploadedFile $file) use ($driver, $folder) {
             $md5 = md5_file($file);

@@ -225,12 +225,12 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
 
         $res = $this->storeSystemMedia([
             'file' => $file,
-            Controller::UPLOAD_FOLDER_FIELD => 'system_media_categories',
+            Controller::UPLOAD_FOLDER_FIELD => 'tests',
         ]);
         $res->assertStatus(201);
 
         $filename = md5_file($file).'.jpg';
-        $path = 'system_media_categories/'.$filename;
+        $path = Controller::UPLOAD_FOLDER_PREFIX.'/tests/'.$filename;
         $this->assertDatabaseHas('system_media', [
             'id' => 1,
             'category_id' => 1,

@@ -34,6 +34,12 @@ Route::middleware([
         '/system-media-categories/{system_media_category}/system-media',
         'SystemMediaCategoryController@systemMediaIndex'
     )->name('system-media-categories.system-media.index');
+
+    Route::resource('/system-media', 'SystemMediaController')
+        // system-media 自动转成单数后 变为了 system-sedium
+        // 所以手动指定
+        ->parameters(['system-media' => 'system_media'])
+        ->except(['store', 'show', 'create']);
 });
 
 Route::post('/auth/login', 'Auth\LoginController@login')->name('login');
