@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Http\Controllers\Controller;
+use App\Models\SystemMedia;
 use App\Models\SystemMediaCategory;
 use Illuminate\Http\UploadedFile;
 use Tests\AdminTestCase;
@@ -45,6 +46,41 @@ class SystemMediaControllerTest extends AdminTestCase
         $this->assertFileNotExists($fileFullPath);
         $this->assertDatabaseMissing('system_media', [
             'id' => 1,
+        ]);
+    }
+
+    public function testEdit()
+    {
+        $media = factory(SystemMedia::class)->create();
+
+        $res = $this->editResource(1);
+        $res->assertStatus(200)
+            ->assertJsonFragment([
+                'id' => 1,
+                'category_id' => 0,
+                'url' => url($media->path),
+            ]);
+    }
+
+    public function testUpdate()
+    {
+        factory(SystemMediaCategory::class)->create();
+        factory(SystemMedia::class)->create();
+
+        // category_id exists
+        $res = $this->updateResource(1, [
+            'category_id' => 999,
+        ]);
+        $res->assertJsonValidationErrors(['category_id']);
+
+        $res = $this->updateResource(1, [
+            'category_id' => 1,
+        ]);
+        $res->assertStatus(201);
+
+        $this->assertDatabaseHas('system_media', [
+            'id' => 1,
+            'category_id' => 1,
         ]);
     }
 }
