@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Filters\SystemMediaFilter;
 use App\Http\Requests\SystemMediaRequest;
 use App\Http\Resources\SystemMediaResource;
 use App\Models\SystemMedia;
@@ -25,5 +26,15 @@ class SystemMediaController extends AdminBaseController
         $inputs = $request->validated();
         $systemMedia->update($inputs);
         return $this->created($systemMedia);
+    }
+
+    public function index(SystemMediaFilter $filter)
+    {
+        $media = SystemMedia::query()
+            ->filter($filter)
+            ->orderByDesc('created_at')
+            ->paginate();
+
+        return $this->ok(SystemMediaResource::collection($media));
     }
 }
