@@ -33,8 +33,8 @@ class SystemMediaCategoryController extends AdminBaseController
         return $this->noContent();
     }
 
-    public function index(Request $request)
+    public function index(Request $request, SystemMediaCategory $model)
     {
-        return $this->ok(SystemMediaCategory::buildNestedArray((int) $request->input('except')));
+        return $this->ok($model->treeExcept((int) $request->input('except'))->toTree());
     }
 }

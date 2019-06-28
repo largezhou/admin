@@ -135,14 +135,16 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
 
     public function testDestroy()
     {
-        factory(SystemMediaCategory::class)->create(['name' => 'level 0-1']);
-        factory(SystemMediaCategory::class)->create(['name' => 'level 0-2', 'parent_id' => 1]);
+        $this->createNestedData();
 
         $res = $this->destroyResource(1);
         $res->assertStatus(204);
 
         $this->assertDatabaseMissing('system_media_categories', ['id' => 1]);
-        $this->assertDatabaseMissing('system_media_categories', ['id' => 2]);
+        $this->assertDatabaseMissing('system_media_categories', ['id' => 3]);
+        $this->assertDatabaseMissing('system_media_categories', ['id' => 4]);
+
+        $this->assertDatabaseHas('system_media_categories', ['id' => 2]);
     }
 
     public function testIndex()
