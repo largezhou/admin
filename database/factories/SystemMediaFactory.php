@@ -12,7 +12,7 @@ $factory->define(SystemMedia::class, function (Faker $faker) {
     return [
         'filename' => $filename,
         'ext' => $ext,
-        'cate_id' => 0,
+        'category_id' => 0,
         'path' => '/'.implode('/', $faker->words()).'/'.$filename,
         'size' => $faker->numberBetween(),
         'mime_type' => $ext ? $faker->mimeType : null,

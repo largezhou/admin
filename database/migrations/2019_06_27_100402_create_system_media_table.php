@@ -17,7 +17,7 @@ class CreateSystemMediaTable extends Migration
             $table->bigIncrements('id');
             $table->string('filename', 100);
             $table->string('ext', 20)->default('')->index();
-            $table->unsignedInteger('cate_id')->default(0)->index();
+            $table->unsignedInteger('category_id')->default(0)->index();
             $table->string('path');
             $table->string('size')->default('0')->comment('单位 KB');
             $table->string('mime_type', 100)->nullable();

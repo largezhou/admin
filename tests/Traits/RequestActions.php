@@ -66,13 +66,14 @@ trait RequestActions
      *
      * @param array  $data
      * @param string $name
+     * @param array $params
      *
      * @return TestResponse
      */
-    protected function storeResource(array $data = [], string $name = null): TestResponse
+    protected function storeResource(array $data = [], string $name = null, array $params = []): TestResponse
     {
         $name = $name ?: $this->resourceName;
-        return $this->post($this->route("{$name}.store"), $data);
+        return $this->post($this->route("{$name}.store", $params), $data);
     }
 
     /**

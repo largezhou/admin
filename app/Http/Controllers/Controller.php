@@ -13,28 +13,39 @@ use Illuminate\Support\Facades\Storage;
 
 class Controller extends BaseController
 {
+    /**
+     * 传入上传目录的字段
+     */
+    const UPLOAD_FOLDER_FIELD = '_upload_dir';
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
     use RestfulResponse;
-    /**
-     * 上传目录，默认为空，即 public/uploads 下
-     *
-     * @var string
-     */
-    protected $uploadFolder = '';
 
     /**
-     * 保存文件到本地，并把请求中的数据的文件换成保存后的本地路径
+     * 保存请求中的文件到 storage，并返回各文件相关的信息
      *
      * @param Request $request
-     * @param string $folder 上传目录
      *
      * @return array
+     *
+     * 返回数据示例
+     * [
+     *     'file' => [
+     *         'filename' => 'filename.jpg',
+     *         'ext' => 'jpg',
+     *         'path' => '/path/to/filename.jpg',
+     *         'size' => 10240,
+     *         'mime_type' => 'image/jpeg',
+     *     ],
+     *     'other' => [...],
+     * ]
      */
-    protected function handleUploadFile(Request $request, string $folder = '')
+    protected function saveFiles(Request $request): array
     {
         $files = $request->file();
         $driver = Storage::disk('uploads');
-        $folder = trim($this->uploadFolder, '/').($folder ? ('/'.trim($folder, '/')) : '');
+
+        $folder = $request->input(static::UPLOAD_FOLDER_FIELD);
+        $folder = $folder ? trim($folder, '/') : '';
 
         $files = array_map(function (UploadedFile $file) use ($driver, $folder) {
             $md5 = md5_file($file);
@@ -44,15 +55,15 @@ class Controller extends BaseController
 
             $path = $driver->putFileAs($folder, $file, $filename);
 
-            return $driver->url($path);
+            return [
+                'filename' => $filename,
+                'ext' => $ext,
+                'path' => $driver->url($path),
+                'size' => $file->getSize(),
+                'mime_type' => $file->getMimeType(),
+            ];
         }, $files);
 
-        if (method_exists($request, 'validated')) {
-            $data = array_merge($request->validated(), $files);
-        } else {
-            $data = array_merge($request->all(), $files);
-        }
-
-        return $data;
+        return $files;
     }
 }

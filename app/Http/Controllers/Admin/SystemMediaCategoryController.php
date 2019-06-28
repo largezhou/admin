@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\SystemMediaCategoryRequest;
+use App\Http\Requests\SystemMediaRequest;
+use App\Http\Resources\SystemMediaResource;
+use App\Models\SystemMedia;
 use App\Models\SystemMediaCategory;
 use Illuminate\Http\Request;
 
@@ -36,5 +39,20 @@ class SystemMediaCategoryController extends AdminBaseController
     public function index(Request $request, SystemMediaCategory $model)
     {
         return $this->ok($model->treeExcept((int) $request->input('except'))->toTree());
+    }
+
+    /**
+     * 上传文件到指定分类下
+     *
+     * @param SystemMediaRequest $request
+     * @param SystemMediaCategory $systemMediaCategory
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function storeSystemMedia(SystemMediaRequest $request, SystemMediaCategory $systemMediaCategory)
+    {
+        $files = $this->saveFiles($request);
+        $media = $systemMediaCategory->media()->create($files['file']);
+        return $this->created(SystemMediaResource::make($media));
     }
 }

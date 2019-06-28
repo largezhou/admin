@@ -14,7 +14,7 @@ class SystemMediaCategory extends Model
 
     public function media()
     {
-        return $this->hasMany(SystemMedia::class, 'cate_id');
+        return $this->hasMany(SystemMedia::class, 'category_id');
     }
 
     public function setParentIdAttribute($value)

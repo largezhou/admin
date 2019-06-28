@@ -6,6 +6,7 @@ use App\Contracts\PermissionMiddleware;
 use App\Http\Middleware\AdminPermission;
 use App\Models\AdminUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AdminTestCase extends TestCase
 {
@@ -14,6 +15,11 @@ class AdminTestCase extends TestCase
      * @var AdminUser
      */
     protected $user;
+    /**
+     * @var \Illuminate\Contracts\Filesystem\Filesystem|\Illuminate\Contracts\Filesystem\Cloud
+     */
+    protected $storage;
+    protected $filesystem = 'uploads';
 
     protected function login(AdminUser $user = null)
     {
@@ -31,6 +37,8 @@ class AdminTestCase extends TestCase
         parent::setUp();
 
         $this->checkPermission(false);
+
+        $this->storage = Storage::disk($this->filesystem);
     }
 
     /**

@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Http\Controllers\Controller;
 use App\Models\SystemMediaCategory;
+use Illuminate\Http\UploadedFile;
 use Tests\AdminTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -189,5 +191,53 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
                     'name' => 'level 0-2',
                 ],
             ]);
+    }
+
+    /**
+     * @param array $data
+     * @param int $cateId
+     *
+     * @return \Illuminate\Foundation\Testing\TestResponse
+     */
+    protected function storeSystemMedia($data = [], $cateId = 1)
+    {
+        return $this->storeResource(
+            $data,
+            $this->resourceName.'.system-media',
+            ['id' => $cateId]
+        );
+    }
+
+    public function testStoreSystemMedia()
+    {
+        factory(SystemMediaCategory::class)->create();
+
+        // file required
+        $res = $this->storeSystemMedia();
+        $res->assertJsonValidationErrors(['file']);
+
+        // file file
+        $res = $this->storeSystemMedia(['file' => 'not a file']);
+        $res->assertJsonValidationErrors(['file']);
+
+        $file = UploadedFile::fake()->image('avatar.jpg', 200, 200);
+
+        $res = $this->storeSystemMedia([
+            'file' => $file,
+            Controller::UPLOAD_FOLDER_FIELD => 'system_media_categories',
+        ]);
+        $res->assertStatus(201);
+
+        $filename = md5_file($file).'.jpg';
+        $this->assertDatabaseHas('system_media', [
+            'id' => 1,
+            'category_id' => 1,
+            'filename' => $filename,
+            'size' => $file->getSize(),
+            'ext' => 'jpg',
+            'mime_type' => $file->getMimeType(),
+            'path' => $this->storage->url('system_media_categories/'.$filename),
+        ]);
+        $this->storage->exists('system_media_categories/'.$filename);
     }
 }

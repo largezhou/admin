@@ -19,7 +19,7 @@ class SystemMediaSeeder extends Seeder
         if (!empty($cateIds)) {
             $faker = app(Faker\Generator::class);
             $media->each(function (SystemMedia $i) use ($cateIds, $faker) {
-                $i->update(['cate_id' => $faker->randomElement($cateIds)]);
+                $i->update(['category_id' => $faker->randomElement($cateIds)]);
             });
         }
     }

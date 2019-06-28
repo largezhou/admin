@@ -5,14 +5,15 @@ namespace App\Models;
 class SystemMedia extends Model
 {
     protected $fillable = [
-        'filename', 'ext', 'cate_id', 'path', 'size', 'mime_type',
+        'filename', 'ext', 'category_id', 'path', 'size', 'mime_type',
     ];
     protected $casts = [
-        'cate_id' => 'integer',
+        'category_id' => 'integer',
+        'size' => 'integer',
     ];
 
     public function category()
     {
-        return $this->belongsTo(SystemMediaCategory::class, 'cate_id');
+        return $this->belongsTo(SystemMediaCategory::class, 'category_id');
     }
 }

@@ -24,6 +24,12 @@ Route::middleware([
         });
 
     Route::resource('/system-media-categories', 'SystemMediaCategoryController')->except(['show', 'create']);
+    // 在指定分类下，上传文件
+    Route::post(
+        '/system-media-categories/{system_media_category}/system-media',
+        'SystemMediaCategoryController@storeSystemMedia'
+    )
+        ->name('system-media-categories.system-media.store');
 });
 
 Route::post('/auth/login', 'Auth\LoginController@login')->name('login');
