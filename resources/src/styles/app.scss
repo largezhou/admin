@@ -1,5 +1,6 @@
 @import '~@/plugins/element/index';
 @import './spacers';
+@import './helpers';
 
 #admin-app,
 body,
@@ -27,6 +28,14 @@ html {
   &.link {
     a {
       padding: 9px 15px;
+    }
+  }
+}
+
+.el-button--mini {
+  &.link {
+    a {
+      padding: 7px 0 7px 0;
     }
   }
 }
@@ -147,4 +156,14 @@ code {
 
 .el-table__placeholder {
   width: 0 !important;
+}
+
+.el-scrollbar__bar {
+  &.is-vertical {
+    width: 10px !important;
+  }
+
+  &.is-horizontal {
+    height: 10px !important;
+  }
 }

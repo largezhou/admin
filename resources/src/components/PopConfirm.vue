@@ -1,5 +1,5 @@
 <template>
-  <el-button v-bind="$attrs" class="link">
+  <el-button :type="type" v-bind="$attrs" class="link">
     <el-popover placement="top" width="160" v-model="visible">
       <p>{{ notice }}</p>
       <div style="text-align: right; margin: 0">
@@ -31,6 +31,7 @@ export default {
       default: 'primary',
     },
     confirm: Function,
+    type: String,
   },
   methods: {
     onCancel() {

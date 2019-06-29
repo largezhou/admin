@@ -1,10 +1,17 @@
 <template>
-  <h1>TEST</h1>
+  <div>
+    <system-media/>
+  </div>
 </template>
 
 <script>
+import SystemMedia from '@c/SystemMedia'
+
 export default {
   name: 'Test',
+  components: {
+    SystemMedia,
+  },
 }
 </script>
 
