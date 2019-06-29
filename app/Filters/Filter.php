@@ -90,6 +90,9 @@ abstract class Filter
                 $this->builder->where($filter, 'like', str_replace('?', $value, $args[0]));
                 break;
             case 'in':
+                if (is_string($value)) {
+                    $value = explode(',', $value);
+                }
                 $this->builder->whereIn($filter, $value);
                 break;
             default:

@@ -14,6 +14,7 @@ class SystemMedia extends Model
         'category_id' => 'integer',
         'size' => 'integer',
     ];
+    protected $perPage = 30;
 
     public function category()
     {

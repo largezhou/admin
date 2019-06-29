@@ -9,7 +9,7 @@
     :current-page.sync="currentPage"
     :page-size.sync="perPage"
     :total="page.total"
-    layout="total, prev, pager, next, sizes, jumper"
+    :layout="layout"
     background
   />
 </template>
@@ -25,6 +25,17 @@ export default {
   },
   props: {
     page: Object,
+    layout: {
+      type: String,
+      default: 'total, prev, pager, next, sizes, jumper',
+    },
+    /**
+     * 分页改变时，是否自动改变地址栏的 query string
+     */
+    autoPush: {
+      type: Boolean,
+      default: true,
+    },
   },
   computed: {
     pageSizes() {
@@ -49,14 +60,19 @@ export default {
       })
     },
     onSizeChange(perPage) {
+      this.$emit('size-change', perPage)
+      if (!this.autoPush) {
+        return
+      }
       // 当切换后, 如果当前不大于总页数, 则不会触发 current-change 事件, 所以要跳转路由
       // 否则, 在 current-change 事件里跳转路由
       if (this.page.current_page <= (Math.ceil(this.page.total / perPage))) {
-        this.push()
+        this.autoPush && this.push()
       }
     },
     onChange(page) {
-      this.push()
+      this.$emit('current-change', page)
+      this.autoPush && this.push()
     },
   },
   watch: {

@@ -282,7 +282,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
 
         $res = $this->systemMediaIndex([
             'id' => 1,
-            'ext' => ['jpg', 'gif'],
+            'ext' => 'jpg,gif',
         ]);
         $res->assertStatus(200)
             ->assertJsonCount(2, 'data');

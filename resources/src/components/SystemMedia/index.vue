@@ -12,6 +12,7 @@
         <el-scrollbar class="scroll-wrapper">
           <div class="side-tree">
             <el-tree
+              v-loading="categoriesLoading"
               class="filter-tree"
               :expand-on-click-node="false"
               :data="categories"
@@ -20,10 +21,14 @@
               :filter-node-method="categoriesFilter"
               ref="tree"
               :indent="8"
+              node-key="id"
+              current-node-key="1"
+              highlight-current
+              @current-change="onCurrentChange"
             >
               <template v-slot="{ node, data }">
                 <div class="tree-node">
-                  <el-button-group class="actions">
+                  <el-button-group v-if="data.id" class="actions">
                     <el-button
                       type="text"
                       size="mini"
@@ -48,16 +53,20 @@
       <el-container>
         <el-header>
           <el-button type="primary">移动文件</el-button>
+          <loading-action :action="getCategories" :loading="categoriesLoading">刷新分类</loading-action>
+          <loading-action :action="onReloadMedia" :loading="mediaLoading">刷新文件</loading-action>
         </el-header>
-        <el-main>
+        <el-main v-loading="mediaLoading">
           <div class="h-100">
-            <el-scrollbar class="scroll-wrapper">
-              <div
-                class="grid-preview"
-                v-for="i of 20"
-                :key="i"
-              >
-                <img :src="url">
+            <el-scrollbar class="scroll-wrapper h-100">
+              <div class="file-wrapper">
+                <div
+                  class="file-preview"
+                  v-for="(item, i) of media"
+                  :key="item.id"
+                >
+                  <img :src="item.url">
+                </div>
               </div>
             </el-scrollbar>
           </div>
@@ -66,6 +75,13 @@
           <el-button type="primary">上传</el-button>
           <el-button type="primary">选定</el-button>
           <el-button>筛选</el-button>
+          <flex-spacer/>
+          <pagination
+            :page="page"
+            layout="total, prev, pager, next"
+            :auto-push="false"
+            @current-change="onPageChange"
+          />
         </el-footer>
       </el-container>
     </el-container>
@@ -74,81 +90,113 @@
 
 <script>
 import PopConfirm from '@c/PopConfirm'
+import { getCategories, getCategoryMedia, getMedia } from '@/api/system-media'
+import _get from 'lodash/get'
+import FlexSpacer from '@c/FlexSpacer'
+import Pagination from '@c/Pagination'
 
 export default {
   name: 'SystemMedia',
   components: {
+    Pagination,
+    FlexSpacer,
     PopConfirm,
   },
   data() {
     return {
-      categoryQ: '',
-      categories: [
-        {
-          id: 1,
-          name: '一级 1',
-          children: [
-            {
-              id: 4,
-              name: '二级 1-1',
-              children: [
-                {
-                  id: 9,
-                  name: '三级 1-1-1',
-                }, {
-                  id: 10,
-                  name: '三级 1-1-2',
-                },
-              ],
-            },
-          ],
-        },
-        {
-          id: 2,
-          name: '一级 2',
-          children: [
-            {
-              id: 5,
-              name: '二级 2-1',
-            }, {
-              id: 6,
-              name: '二级 2-2',
-            },
-          ],
-        },
-        {
-          id: 3,
-          name: '一级 3',
-          children: [
-            {
-              id: 7,
-              name: '二级 3-1',
-            }, {
-              id: 8,
-              name: '二级 3-2',
-            },
-          ],
-        },
-      ],
       treeOptions: {
         children: 'children',
         label: 'name',
       },
 
-      url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
+      categoryQ: '',
+      categories: [],
+      categoriesLoading: false,
+      currentCategory: null,
+
+      media: [],
+      mediaLoading: false,
+      page: null,
+      ext: '',
     }
   },
+  computed: {
+    currentCategoryId() {
+      return _get(this.currentCategory, 'id', 0)
+    },
+  },
+  async created() {
+    await this.getCategories()
+    await this.getMedia()
+  },
   methods: {
+    async getCategories() {
+      this.categoriesLoading = true
+      try {
+        const { data } = await getCategories()
+        data.unshift({
+          id: 0,
+          name: '所有分类',
+        })
+        this.categories = data
+        await this.$nextTick()
+        this.$refs.tree.setCurrentKey(0)
+        this.currentCategory = null
+      } finally {
+        this.categoriesLoading = false
+      }
+    },
     categoriesFilter(value, category) {
       if (!value) {
         return true
       }
       return category.name.indexOf(value) !== -1
     },
+    async getMedia(categoryId = 0, page) {
+      this.mediaLoading = true
+      let data
+      const params = {
+        page,
+        ext: this.ext || undefined,
+      }
+      try {
+        if (categoryId) {
+          ({ data } = await getCategoryMedia(categoryId, params))
+        } else {
+          ({ data } = await getMedia(params))
+        }
+
+        // 如果在请求图片时，且换了分类，则不做处理
+        if (this.currentCategoryId !== categoryId) {
+          return
+        }
+
+        this.media = data.data
+        this.page = data.meta
+      } finally {
+        this.mediaLoading = false
+      }
+    },
+    onCurrentChange(category, node) {
+      this.currentCategory = category
+      log(arguments)
+    },
+    onPageChange(page) {
+      this.getMedia(this.currentCategoryId, page)
+    },
+    async onReloadMedia() {
+      await this.getMedia(this.currentCategoryId)
+    },
+    test() {
+      log(...arguments)
+    },
   },
   watch: {
     categoryQ(val) {
       this.$refs.tree.filter(val)
+    },
+    currentCategoryId(newVal) {
+      this.getMedia(newVal)
     },
   },
 }
@@ -167,7 +215,7 @@ $padding-width: 15px;
 }
 
 .body {
-  height: 600px;
+  height: 550px;
 }
 
 .side-tree {
@@ -180,7 +228,12 @@ $padding-width: 15px;
   width: 185px;
 }
 
-.grid-preview {
+.file-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.file-preview {
   width: 100px;
   height: 100px;
   display: inline-flex;
@@ -188,6 +241,7 @@ $padding-width: 15px;
   border: 3px solid $--color-info-light;
   margin-right: 5px;
   margin-bottom: 5px;
+  justify-content: center;
 
   img {
     max-width: 100%;
@@ -213,7 +267,6 @@ $padding-width: 15px;
 }
 
 .tree-node {
-  height: 30px;
   display: flex;
   align-items: center;
 
@@ -246,6 +299,10 @@ $padding-width: 15px;
 
   .el-card__body {
     padding: 0;
+  }
+
+  .el-tree-node__content {
+    height: 30px;
   }
 }
 </style>

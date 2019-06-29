@@ -5,7 +5,7 @@
     v-bind="$attrs"
     v-on="$listeners"
     @click="onAction"
-    :loading="loading"
+    :loading="actionLoading || loading"
   >
     <slot/>
   </component>
@@ -15,7 +15,7 @@
 export default {
   name: 'LoadingAction',
   data: () => ({
-    loading: false,
+    actionLoading: false,
   }),
   props: {
     /**
@@ -38,19 +38,20 @@ export default {
      * 那渲染成的 html button 的 type 也是 primary，点击后会提交表单
      */
     type: String,
+    loading: Boolean,
   },
   methods: {
     async onAction() {
-      if (this.loading) {
+      if (this.actionLoading) {
         return false
       }
-      this.loading = true
+      this.actionLoading = true
       try {
         await this.action()
       } catch (e) {
         Promise.reject(e)
       }
-      this.loading = false
+      this.actionLoading = false
     },
   },
 }
