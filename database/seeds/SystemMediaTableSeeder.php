@@ -4,7 +4,7 @@ use App\Models\SystemMedia;
 use App\Models\SystemMediaCategory;
 use Illuminate\Database\Seeder;
 
-class SystemMediaSeeder extends Seeder
+class SystemMediaTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.

@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
         $this->call(AdminRolesTableSeeder::class);
         $this->call(AdminRolePermissionTableSeeder::class);
         $this->call(AdminUserRoleAndPermissionTableSeeder::class);
-        $this->call(SystemMediaCategorySeeder::class);
-        $this->call(SystemMediaSeeder::class);
+        $this->call(SystemMediaCategoriesTableSeeder::class);
+        $this->call(SystemMediaTableSeeder::class);
     }
 }
