@@ -6,7 +6,9 @@ use App\Traits\ModelTree;
 
 class SystemMediaCategory extends Model
 {
-    use ModelTree;
+    use ModelTree {
+        delete as modelTreeDelete;
+    }
     protected $fillable = ['parent_id', 'name'];
     protected $casts = [
         'parent_id' => 'integer',
@@ -25,5 +27,13 @@ class SystemMediaCategory extends Model
     protected function orderColumn()
     {
         return 'id';
+    }
+
+    public function delete()
+    {
+        $res = $this->modelTreeDelete();
+        $this->media()->update(['category_id' => 0]);
+
+        return $res;
     }
 }

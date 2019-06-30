@@ -139,13 +139,21 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
     public function testDestroy()
     {
         $this->createNestedData();
+        factory(SystemMedia::class)->create(['category_id' => 3]);
 
         $res = $this->destroyResource(1);
         $res->assertStatus(204);
 
+        // 删除所有子孙分类
         $this->assertDatabaseMissing('system_media_categories', ['id' => 1]);
         $this->assertDatabaseMissing('system_media_categories', ['id' => 3]);
         $this->assertDatabaseMissing('system_media_categories', ['id' => 4]);
+
+        // 被删除的分类下的文件的分类 id 设为 0
+        $this->assertDatabaseHas('system_media', [
+            'id' => 1,
+            'category_id' => 0,
+        ]);
 
         $this->assertDatabaseHas('system_media_categories', ['id' => 2]);
     }
