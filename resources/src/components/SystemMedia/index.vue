@@ -463,27 +463,35 @@ export default {
         return
       }
 
-      if (this.categoryEdit) {
-        await this.updateCategory(this.currentCategory, {
-          name: this.categoryName,
-        })
-      } else {
-        let parentId = this.categoryParentId
-        // -1 为所有分类，其下级为 一级 分类
-        parentId = parentId === -1 ? 0 : parentId
-        const { data } = await storeCategory({
-          parent_id: parentId,
-          name: this.categoryName,
-        })
-        if (parentId) {
-          this.$refs.tree.append(data, this.categoryParentId)
+      try {
+        if (this.categoryEdit) {
+          await this.updateCategory(this.currentCategory, {
+            name: this.categoryName,
+          })
         } else {
-          this.categories.push(data)
+          let parentId = this.categoryParentId
+          // -1 为所有分类，其下级为 一级 分类
+          parentId = parentId === -1 ? 0 : parentId
+          const { data } = await storeCategory({
+            parent_id: parentId,
+            name: this.categoryName,
+          })
+          if (parentId) {
+            this.$refs.tree.append(data, this.categoryParentId)
+          } else {
+            this.categories.push(data)
+          }
+          this.$message.success(getMessage('created'))
         }
-        this.$message.success(getMessage('created'))
-      }
 
-      this.categoryDialog = false
+        this.categoryDialog = false
+      } catch (e) {
+        const msg = getFirstError(e.response)
+        msg && this.$message.error(msg)
+        if (!msg) {
+          throw e
+        }
+      }
     },
     onOpenCategoryDialog(editMode = true) {
       this.categoryEdit = editMode
