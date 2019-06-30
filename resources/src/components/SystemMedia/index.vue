@@ -11,8 +11,20 @@
         />
         <el-button-group class="category-actions mb-2">
           <loading-action size="mini" :action="getCategories">刷新</loading-action>
-          <el-button :disabled="currentCategoryId === 0" size="mini">添加</el-button>
-          <el-button :disabled="currentCategoryId <= 0" size="mini">编辑</el-button>
+          <el-button
+            :disabled="currentCategoryId === 0"
+            size="mini"
+            @click="onOpenCategoryDialog(false)"
+          >
+            添加
+          </el-button>
+          <el-button
+            :disabled="currentCategoryId <= 0"
+            size="mini"
+            @click="onOpenCategoryDialog(true)"
+          >
+            编辑
+          </el-button>
           <pop-confirm
             :disabled="currentCategoryId <= 0"
             size="mini"
@@ -136,12 +148,25 @@
         </loading-action>
       </div>
     </el-dialog>
+
+    <el-dialog
+      :title="categoryEdit ? '编辑分类' : '添加分类'"
+      :visible.sync="categoryDialog"
+      :width="miniWidth ? '90%' : '300px'"
+      @keydown.enter.native="$refs.categorySaveConfirm.onAction"
+    >
+      <el-input v-model="categoryName" autocomplete="off" placeholder="请输入分类名称"/>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="categoryDialog = false">取消</el-button>
+        <loading-action ref="categorySaveConfirm" type="primary" :action="onSaveCategory">确定</loading-action>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
 <script>
 import PopConfirm from '@c/PopConfirm'
-import { batchDestroyMedia, batchUpdateMedia, destroyCategory, getCategories, getCategoryMedia, getMedia, updateCategory } from '@/api/system-media'
+import { batchDestroyMedia, batchUpdateMedia, destroyCategory, getCategories, getCategoryMedia, getMedia, storeCategory, updateCategory } from '@/api/system-media'
 import _get from 'lodash/get'
 import FlexSpacer from '@c/FlexSpacer'
 import Pagination from '@c/Pagination'
@@ -167,6 +192,11 @@ export default {
       categories: [],
       categoriesLoading: false,
       currentCategory: null,
+
+      categoryDialog: false,
+      categoryName: '',
+      categoryEdit: true,
+      categoryParentId: 0,
 
       media: [],
       mediaLoading: false,
@@ -220,6 +250,19 @@ export default {
         },
         ...this.categories,
       ]
+    },
+    canSaveCategory() {
+      const id = this.currentCategoryId
+      // 所有 和 无分类 不能编辑
+      if (this.categoryEdit && id <= 0) {
+        return false
+      }
+      // 无分类 不能添加子分类
+      if (!this.categoryEdit && id === 0) {
+        return false
+      }
+
+      return true
     },
   },
   async created() {
@@ -406,16 +449,53 @@ export default {
         id = target.parent_id
       }
 
-      this.updateCategory(source.id, {
+      this.updateCategory(source, {
         parent_id: id,
       })
     },
-    async updateCategory(id, data) {
-      await updateCategory(id, data)
+    async updateCategory(category, data) {
+      const res = await updateCategory(category.id, data)
+      category.name = res.data.name
       this.$message.success(getMessage('updated'))
     },
-    test() {
-      log(...arguments)
+    async onSaveCategory() {
+      if (!this.canSaveCategory) {
+        return
+      }
+
+      if (this.categoryEdit) {
+        await this.updateCategory(this.currentCategory, {
+          name: this.categoryName,
+        })
+      } else {
+        let parentId = this.categoryParentId
+        // -1 为所有分类，其下级为 一级 分类
+        parentId = parentId === -1 ? 0 : parentId
+        const { data } = await storeCategory({
+          parent_id: parentId,
+          name: this.categoryName,
+        })
+        if (parentId) {
+          this.$refs.tree.append(data, this.categoryParentId)
+        } else {
+          this.categories.push(data)
+        }
+        this.$message.success(getMessage('created'))
+      }
+
+      this.categoryDialog = false
+    },
+    onOpenCategoryDialog(editMode = true) {
+      this.categoryEdit = editMode
+
+      if (!this.canSaveCategory) {
+        return
+      }
+
+      this.categoryName = editMode ? this.currentCategory.name : ''
+      this.categoryParentId = this.currentCategoryId // 快照
+
+      this.categoryDialog = true
     },
   },
   watch: {

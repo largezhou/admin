@@ -14,6 +14,10 @@ export function updateCategory(id, data) {
   return axios.put(`system-media-categories/${id}`, data)
 }
 
+export function storeCategory(data) {
+  return axios.post('system-media-categories', data)
+}
+
 export function getCategoryMedia(categoryId, params = {}) {
   return axios.get(`system-media-categories/${categoryId}/system-media`, {
     params,
