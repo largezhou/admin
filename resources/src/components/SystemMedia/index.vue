@@ -10,11 +10,11 @@
           v-model="categoryQ"
         />
         <el-button-group class="category-actions mb-2">
-          <loading-action size="mini" :action="getCategories" hide-text>刷新</loading-action>
-          <el-button size="mini">添加</el-button>
-          <el-button :disabled="!currentCategoryId" size="mini">编辑</el-button>
+          <loading-action size="mini" :action="getCategories">刷新</loading-action>
+          <el-button :disabled="currentCategoryId === 0" size="mini">添加</el-button>
+          <el-button :disabled="currentCategoryId <= 0" size="mini">编辑</el-button>
           <pop-confirm
-            :disabled="!currentCategoryId"
+            :disabled="currentCategoryId <= 0"
             size="mini"
             type="danger"
             :confirm="onDestroyCategory"
@@ -79,9 +79,10 @@
           <flex-spacer/>
           <pagination
             :page="page"
-            layout="total, prev, pager, next"
+            layout="total, pager"
             :auto-push="false"
             @current-change="onPageChange"
+            :pager-count="5"
           />
         </el-footer>
       </el-container>
@@ -181,7 +182,7 @@ export default {
   },
   computed: {
     currentCategoryId() {
-      return _get(this.currentCategory, 'id', 0)
+      return _get(this.currentCategory, 'id', -1)
     },
     miniWidth() {
       return this.$store.state.miniWidth
@@ -198,7 +199,6 @@ export default {
         : ''
     },
     categoriesSelectOptions() {
-      log('select options changed')
       return nestedToSelectOptions(this.categories, {
         title: 'name',
         firstLevel: null,
@@ -207,8 +207,12 @@ export default {
     categoriesWithAll() {
       return [
         {
+          id: -1,
+          name: '所有',
+        },
+        {
           id: 0,
-          name: '所有分类',
+          name: '无分类',
         },
         ...this.categories,
       ]
@@ -225,7 +229,7 @@ export default {
         const { data } = await getCategories()
         this.categories = data
         await this.$nextTick()
-        this.$refs.tree.setCurrentKey(0)
+        this.$refs.tree.setCurrentKey(-1)
         this.currentCategory = null
       } finally {
         this.categoriesLoading = false
@@ -237,21 +241,24 @@ export default {
       }
       return category.name.indexOf(value) !== -1
     },
-    async getMedia(categoryId = 0, page) {
+    async getMedia(categoryId = -1, page) {
       this.mediaLoading = true
       let data
       const params = {
         page,
         ext: this.ext || undefined,
+        per_page: 2,
       }
       try {
-        if (categoryId) {
+        if (categoryId > 0) {
           ({ data } = await getCategoryMedia(categoryId, params))
         } else {
+          // -1 为获取所有文件，所以不需要传 category_id 参数，设为 undefined 就行
+          params.category_id = (categoryId === -1) ? undefined : 0;
           ({ data } = await getMedia(params))
         }
 
-        // 如果在请求图片时，且换了分类，则不做处理
+        // 如果在请求图片时，切换了分类，则不做处理
         if (this.currentCategoryId !== categoryId) {
           return
         }
@@ -264,7 +271,6 @@ export default {
     },
     onCurrentChange(category, node) {
       this.currentCategory = category
-      log(arguments)
     },
     onPageChange(page) {
       this.getMedia(this.currentCategoryId, page)
@@ -295,6 +301,9 @@ export default {
     findInSelected(media) {
       return _findIndex(this.selected, (i) => i.id === media.id)
     },
+    /**
+     * 清除选中状态
+     */
     clearSelected() {
       this.selected = []
     },
@@ -319,12 +328,11 @@ export default {
         this.movingDialog = false
         this.$message.success(getMessage('updated'))
 
-        if (this.currentCategoryId) { // 如果是在特定分类下，则要移除图片
-          this.moveSelected()
-        } else { // 否则只要清除选中
+        if (this.currentCategoryId === -1) { // 如果是在所有分类下，则只需要清除选中
           this.clearSelected()
+        } else { // 否则，要从数据中清除
+          this.moveSelected()
         }
-        this.currentCategoryId && this.moveSelected()
       } catch (e) {
         const msg = getFirstError(e.response)
         msg && this.$message.error(msg)
@@ -335,10 +343,16 @@ export default {
         }
       }
     },
+    /**
+     * 从当前数据中，移除选中的文件
+     */
     moveSelected() {
       // 从列表中，去掉已选择的
       this.media = _differenceBy(this.media, this.selected, 'id')
       this.clearSelected()
+      if (this.media.length === 0) {
+        this.onReloadMedia()
+      }
     },
     async onDestroyMedia() {
       if (!this.selectedCount) {
@@ -352,7 +366,7 @@ export default {
     async onDestroyCategory() {
       const id = this.currentCategoryId
 
-      if (!id) {
+      if (id <= 0) {
         return
       }
 
@@ -518,6 +532,10 @@ $padding-width: 15px;
 
   .el-tree-node__content {
     height: 30px;
+  }
+
+  .el-icon-more {
+    display: none;
   }
 }
 </style>
