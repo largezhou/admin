@@ -4,11 +4,17 @@
     <el-container class="body">
       <el-aside class="aside" width="221px">
         <el-input
-          class="filter-input mb-2"
+          class="filter-input mb-1"
           placeholder="搜索分类"
           size="small"
           v-model="categoryQ"
         />
+        <el-button-group class="category-actions mb-2">
+          <loading-action size="mini" :action="getCategories" hide-text>刷新</loading-action>
+          <el-button size="mini">添加</el-button>
+          <el-button :disabled="!currentCategoryId" size="mini">编辑</el-button>
+          <pop-confirm :disabled="!currentCategoryId" size="mini" type="danger">删除</pop-confirm>
+        </el-button-group>
         <el-scrollbar class="scroll-wrapper">
           <div class="side-tree">
             <el-tree
@@ -25,27 +31,7 @@
               current-node-key="1"
               highlight-current
               @current-change="onCurrentChange"
-            >
-              <template v-slot="{ node, data }">
-                <div class="tree-node">
-                  <el-button-group v-if="data.id" class="actions">
-                    <el-button
-                      type="text"
-                      size="mini"
-                      icon="el-icon-edit"
-                    />
-                    <pop-confirm
-                      class="delete"
-                      type="text"
-                      size="mini"
-                    >
-                      <i class="el-icon-delete"/>
-                    </pop-confirm>
-                  </el-button-group>
-                  <span class="label">{{ node.label }}</span>
-                </div>
-              </template>
-            </el-tree>
+            />
             <div/>
           </div>
         </el-scrollbar>
@@ -53,10 +39,10 @@
       <el-container>
         <el-header>
           <el-button-group>
-            <el-button type="primary" :disabled="!anySelected">移动</el-button>
+            <loading-action :action="onReloadMedia">刷新</loading-action>
+            <el-button>上传</el-button>
+            <el-button :disabled="!anySelected">移动</el-button>
             <pop-confirm type="danger" :disabled="!anySelected">删除</pop-confirm>
-            <loading-action :action="getCategories">刷新分类</loading-action>
-            <loading-action :action="onReloadMedia">刷新文件</loading-action>
             <el-switch v-model="multiple"/>
           </el-button-group>
         </el-header>
@@ -79,9 +65,8 @@
         </el-main>
         <el-footer>
           <el-button-group>
-            <el-button type="primary">上传</el-button>
             <el-button type="primary" :disabled="!anySelected">选定</el-button>
-            <el-button type="danger" :disabled="!anySelected" @click="clearSelected">清空 {{ countTip }}</el-button>
+            <el-button :disabled="!anySelected" @click="clearSelected">清空 {{ countTip }}</el-button>
             <el-button @click="extDialog = true" :title="ext">{{ ext ? '已筛选' : '筛选' }}</el-button>
           </el-button-group>
           <flex-spacer/>
@@ -308,8 +293,28 @@ $padding-width: 15px;
   display: inline-block;
 }
 
-.filter-input {
+.filter-input,
+.category-actions {
   width: 185px;
+}
+
+.category-actions {
+  display: flex;
+
+  > .el-button {
+    width: 25%;
+    flex-grow: 1;
+  }
+
+  > .el-button:not(.link) {
+    padding: 7px 0;
+  }
+
+  > /deep/ .el-button.link {
+    a {
+      padding: 7px 10px;
+    }
+  }
 }
 
 .file-wrapper {
@@ -380,7 +385,7 @@ $padding-width: 15px;
 
 /deep/ {
   .scroll-wrapper {
-    height: calc(100% - 42px);
+    height: calc(100% - 60px);
 
     .el-scrollbar__wrap {
       height: calc(100% + 17px);
