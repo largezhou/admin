@@ -171,7 +171,7 @@ import _get from 'lodash/get'
 import FlexSpacer from '@c/FlexSpacer'
 import Pagination from '@c/Pagination'
 import _findIndex from 'lodash/findIndex'
-import { getFirstError, getMessage, nestedToSelectOptions, removeFromNested } from '@/libs/utils'
+import { getFirstError, getMessage, nestedToSelectOptions } from '@/libs/utils'
 import _differenceBy from 'lodash/differenceBy'
 
 export default {
@@ -419,7 +419,7 @@ export default {
 
       await destroyCategory(id)
       this.$message.success(getMessage('destroyed'))
-      removeFromNested(this.categories, id)
+      this.$refs.tree.remove(id)
     },
     allowDrag({ data }) {
       return data.id > 0
