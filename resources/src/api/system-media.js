@@ -6,6 +6,14 @@ export function getCategories(params = {}) {
   })
 }
 
+export function destroyCategory(id) {
+  return axios.delete(`system-media-categories/${id}`)
+}
+
+export function updateCategory(id, data) {
+  return axios.put(`system-media-categories/${id}`, data)
+}
+
 export function getCategoryMedia(categoryId, params = {}) {
   return axios.get(`system-media-categories/${categoryId}/system-media`, {
     params,
@@ -28,8 +36,4 @@ export function batchDestroyMedia(id) {
     _method: 'DELETE',
     id,
   })
-}
-
-export function destroyCategory(id) {
-  return axios.delete(`system-media-categories/${id}`)
 }

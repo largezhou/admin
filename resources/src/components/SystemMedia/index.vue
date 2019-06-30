@@ -38,6 +38,10 @@
               current-node-key="1"
               highlight-current
               @current-change="onCurrentChange"
+              draggable
+              :allow-drag="allowDrag"
+              :allow-drop="allowDrop"
+              @node-drop="onNodeDrop"
             />
             <div/>
           </div>
@@ -137,7 +141,7 @@
 
 <script>
 import PopConfirm from '@c/PopConfirm'
-import { batchDestroyMedia, batchUpdateMedia, destroyCategory, getCategories, getCategoryMedia, getMedia } from '@/api/system-media'
+import { batchDestroyMedia, batchUpdateMedia, destroyCategory, getCategories, getCategoryMedia, getMedia, updateCategory } from '@/api/system-media'
 import _get from 'lodash/get'
 import FlexSpacer from '@c/FlexSpacer'
 import Pagination from '@c/Pagination'
@@ -373,6 +377,42 @@ export default {
       await destroyCategory(id)
       this.$message.success(getMessage('destroyed'))
       removeFromNested(this.categories, id)
+    },
+    allowDrag({ data }) {
+      return data.id > 0
+    },
+    allowDrop({ data: source }, { data: target }, type) {
+      // 不能拖放到 所有 和 无分类 下
+      if (target.id <= 0) {
+        return false
+      }
+      // 如果目标没有父级，则可以拖放到其前后（相当于变为一级分类）或内部
+      if (target.parent_id === 0) {
+        return true
+      }
+      // 同级之间，只能拖放到其内部，不能拖放到前后（相当于拖放排序）
+      if ((source.parent_id === target.parent_id) && (type !== 'inner')) {
+        return false
+      }
+
+      return true
+    },
+    onNodeDrop({ data: source }, { data: target }, type) {
+      // 目标分类 id
+      let id = 0
+      if (type === 'inner') { // 如果是放到目标内部，则 parent_id 为目标 id
+        id = target.id
+      } else { // 否则，拖放到目标的前后，则 parent_id 为目标的 parent_id（与目标同级）
+        id = target.parent_id
+      }
+
+      this.updateCategory(source.id, {
+        parent_id: id,
+      })
+    },
+    async updateCategory(id, data) {
+      await updateCategory(id, data)
+      this.$message.success(getMessage('updated'))
     },
     test() {
       log(...arguments)
