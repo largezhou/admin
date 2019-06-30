@@ -74,7 +74,7 @@
         <el-footer>
           <el-button type="primary">上传</el-button>
           <el-button type="primary">选定</el-button>
-          <el-button>筛选</el-button>
+          <el-button @click="extDialog = true" :title="ext">{{ ext ? '已筛选' : '筛选类型' }}</el-button>
           <flex-spacer/>
           <pagination
             :page="page"
@@ -85,6 +85,19 @@
         </el-footer>
       </el-container>
     </el-container>
+
+    <el-dialog
+      title="筛选类型"
+      :visible.sync="extDialog"
+      :width="miniWidth ? '90%' : '300px'"
+      @keydown.enter.native="onExtFilter"
+    >
+      <el-input v-model="extTemp" autocomplete="off" placeholder="多个之间用英文逗号隔开"/>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="extDialog = false">取消</el-button>
+        <el-button type="primary" @click="onExtFilter">确定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -118,11 +131,16 @@ export default {
       mediaLoading: false,
       page: null,
       ext: '',
+      extTemp: '', // 弹框中输入时，未确认的值
+      extDialog: false,
     }
   },
   computed: {
     currentCategoryId() {
       return _get(this.currentCategory, 'id', 0)
+    },
+    miniWidth() {
+      return this.$store.state.miniWidth
     },
   },
   async created() {
@@ -187,6 +205,10 @@ export default {
     async onReloadMedia() {
       await this.getMedia(this.currentCategoryId)
     },
+    onExtFilter() {
+      this.ext = this.extTemp
+      this.extDialog = false
+    },
     test() {
       log(...arguments)
     },
@@ -197,6 +219,14 @@ export default {
     },
     currentCategoryId(newVal) {
       this.getMedia(newVal)
+    },
+    extDialog(newVal) {
+      if (newVal) {
+        this.extTemp = this.ext
+      }
+    },
+    ext(newVal) {
+      this.getMedia(this.currentCategoryId)
     },
   },
 }
