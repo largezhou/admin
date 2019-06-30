@@ -13,7 +13,14 @@
           <loading-action size="mini" :action="getCategories" hide-text>刷新</loading-action>
           <el-button size="mini">添加</el-button>
           <el-button :disabled="!currentCategoryId" size="mini">编辑</el-button>
-          <pop-confirm :disabled="!currentCategoryId" size="mini" type="danger">删除</pop-confirm>
+          <pop-confirm
+            :disabled="!currentCategoryId"
+            size="mini"
+            type="danger"
+            :confirm="onDestroyCategory"
+          >
+            删除
+          </pop-confirm>
         </el-button-group>
         <el-scrollbar class="scroll-wrapper">
           <div class="side-tree">
@@ -129,12 +136,12 @@
 
 <script>
 import PopConfirm from '@c/PopConfirm'
-import { batchDestroyMedia, batchUpdateMedia, getCategories, getCategoryMedia, getMedia } from '@/api/system-media'
+import { batchDestroyMedia, batchUpdateMedia, destroyCategory, getCategories, getCategoryMedia, getMedia } from '@/api/system-media'
 import _get from 'lodash/get'
 import FlexSpacer from '@c/FlexSpacer'
 import Pagination from '@c/Pagination'
 import _findIndex from 'lodash/findIndex'
-import { getFirstError, getMessage, nestedToSelectOptions } from '@/libs/utils'
+import { getFirstError, getMessage, nestedToSelectOptions, removeFromNested } from '@/libs/utils'
 import _differenceBy from 'lodash/differenceBy'
 
 export default {
@@ -334,9 +341,24 @@ export default {
       this.clearSelected()
     },
     async onDestroyMedia() {
+      if (!this.selectedCount) {
+        return
+      }
+
       await batchDestroyMedia(this.selected.map((i) => i.id))
       this.$message.success(getMessage('destroyed'))
       this.moveSelected()
+    },
+    async onDestroyCategory() {
+      const id = this.currentCategoryId
+
+      if (!id) {
+        return
+      }
+
+      await destroyCategory(id)
+      this.$message.success(getMessage('destroyed'))
+      removeFromNested(this.categories, id)
     },
     test() {
       log(...arguments)

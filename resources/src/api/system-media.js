@@ -29,3 +29,7 @@ export function batchDestroyMedia(id) {
     id,
   })
 }
+
+export function destroyCategory(id) {
+  return axios.delete(`system-media-categories/${id}`)
+}

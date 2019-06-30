@@ -81,7 +81,7 @@
 <script>
 import { destroyVueRouter, getVueRouters, updateVueRouter } from '@/api/vue-routers'
 import PopConfirm from '@c/PopConfirm'
-import { getMessage, hasChildren } from '@/libs/utils'
+import { getMessage, hasChildren, removeFromNested } from '@/libs/utils'
 import SwitchEdit from '@c/quick-edit/SwitchEdit'
 import InputNumberEdit from '@c/quick-edit/InputNumberEdit'
 
@@ -114,32 +114,9 @@ export default {
     onDestroy(row) {
       return async () => {
         await destroyVueRouter(row.id)
-        this.removeVueRouter(this.vueRouters, row.id)
         this.$message.success(getMessage('destroyed'))
+        removeFromNested(this.vueRouters, row.id)
       }
-    },
-    /**
-     * 递归找到对应的 id 的路由, 并从 vueRouters 中移除
-     *
-     * @param vueRouters
-     * @param id
-     * @returns {boolean}
-     */
-    removeVueRouter(vueRouters, id) {
-      for (let i in vueRouters) {
-        const m = vueRouters[i]
-        if (m.id === id) {
-          vueRouters.splice(i, 1)
-          return true
-        }
-
-        if (hasChildren(m)) {
-          if (this.removeVueRouter(m.children, id)) {
-            return true
-          }
-        }
-      }
-      return false
     },
     updateVueRouter,
     hasChildren,

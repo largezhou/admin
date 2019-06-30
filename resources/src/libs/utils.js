@@ -190,3 +190,30 @@ export const getMessage = key => {
   /* eslint-disable no-undef */
   return messages[key] || messages.default
 }
+
+/**
+ * 从嵌套的数据结构中，移除指定项
+ *
+ * @param items
+ * @param identify 作比较的值
+ * @param identifyKey 做比较的值的键名，默认为 id
+ * @param childrenKey 存储子项目的键名，默认为 children
+ * @returns {boolean}
+ */
+export const removeFromNested = (items, identify, identifyKey = 'id', childrenKey = 'children') => {
+  for (let i in items) {
+    const item = items[i]
+    if (item[identifyKey] === identify) {
+      items.splice(i, 1)
+      return true
+    }
+
+    if (
+      hasChildren(item, childrenKey) &&
+      removeFromNested(item[childrenKey], identify, identifyKey, childrenKey)
+    ) {
+      return true
+    }
+  }
+  return false
+}
