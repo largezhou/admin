@@ -52,9 +52,13 @@
       </el-aside>
       <el-container>
         <el-header>
-          <el-button type="primary">移动文件</el-button>
-          <loading-action :action="getCategories" :loading="categoriesLoading">刷新分类</loading-action>
-          <loading-action :action="onReloadMedia" :loading="mediaLoading">刷新文件</loading-action>
+          <el-button-group>
+            <el-button type="primary" :disabled="!anySelected">移动</el-button>
+            <pop-confirm type="danger" :disabled="!anySelected">删除</pop-confirm>
+            <loading-action :action="getCategories">刷新分类</loading-action>
+            <loading-action :action="onReloadMedia">刷新文件</loading-action>
+            <el-switch v-model="multiple"/>
+          </el-button-group>
         </el-header>
         <el-main v-loading="mediaLoading">
           <div class="h-100">
@@ -63,7 +67,9 @@
                 <div
                   class="file-preview"
                   v-for="(item, i) of media"
+                  :class="{ selected: isSelected(item) }"
                   :key="item.id"
+                  @click="onSelect(item, i)"
                 >
                   <img :src="item.url">
                 </div>
@@ -72,9 +78,12 @@
           </div>
         </el-main>
         <el-footer>
-          <el-button type="primary">上传</el-button>
-          <el-button type="primary">选定</el-button>
-          <el-button @click="extDialog = true" :title="ext">{{ ext ? '已筛选' : '筛选类型' }}</el-button>
+          <el-button-group>
+            <el-button type="primary">上传</el-button>
+            <el-button type="primary" :disabled="!anySelected">选定</el-button>
+            <el-button type="danger" :disabled="!anySelected" @click="clearSelected">清空 {{ countTip }}</el-button>
+            <el-button @click="extDialog = true" :title="ext">{{ ext ? '已筛选' : '筛选' }}</el-button>
+          </el-button-group>
           <flex-spacer/>
           <pagination
             :page="page"
@@ -107,6 +116,7 @@ import { getCategories, getCategoryMedia, getMedia } from '@/api/system-media'
 import _get from 'lodash/get'
 import FlexSpacer from '@c/FlexSpacer'
 import Pagination from '@c/Pagination'
+import _findIndex from 'lodash/findIndex'
 
 export default {
   name: 'SystemMedia',
@@ -133,6 +143,9 @@ export default {
       ext: '',
       extTemp: '', // 弹框中输入时，未确认的值
       extDialog: false,
+
+      selected: [],
+      multiple: false,
     }
   },
   computed: {
@@ -141,6 +154,17 @@ export default {
     },
     miniWidth() {
       return this.$store.state.miniWidth
+    },
+    anySelected() {
+      return this.selectedCount > 0
+    },
+    selectedCount() {
+      return this.selected.length
+    },
+    countTip() {
+      return this.selectedCount
+        ? `(${this.selectedCount})`
+        : ''
     },
   },
   async created() {
@@ -209,6 +233,28 @@ export default {
       this.ext = this.extTemp
       this.extDialog = false
     },
+    onSelect(media, index) {
+      const i = this.findInSelected(media)
+
+      if (i !== -1) { // 已经选了，则取消选择
+        this.selected.splice(i, 1)
+      } else { // 否则加入选择
+        if (this.multiple) {
+          this.selected.push(media)
+        } else {
+          this.selected = [media]
+        }
+      }
+    },
+    isSelected(media) {
+      return this.findInSelected(media) !== -1
+    },
+    findInSelected(media) {
+      return _findIndex(this.selected, (i) => i.id === media.id)
+    },
+    clearSelected() {
+      this.selected = []
+    },
     test() {
       log(...arguments)
     },
@@ -218,6 +264,7 @@ export default {
       this.$refs.tree.filter(val)
     },
     currentCategoryId(newVal) {
+      this.clearSelected()
       this.getMedia(newVal)
     },
     extDialog(newVal) {
@@ -226,7 +273,14 @@ export default {
       }
     },
     ext(newVal) {
+      this.clearSelected()
       this.getMedia(this.currentCategoryId)
+    },
+    multiple(newVal) {
+      // 切换为单选时，只保留第一个
+      if (!newVal) {
+        this.selected.splice(1)
+      }
     },
   },
 }
@@ -272,10 +326,16 @@ $padding-width: 15px;
   margin-right: 5px;
   margin-bottom: 5px;
   justify-content: center;
+  cursor: pointer;
 
   img {
     max-width: 100%;
     max-height: 100%;
+  }
+
+  &.selected {
+    border-color: $--color-primary;
+    border-style: dashed;
   }
 }
 

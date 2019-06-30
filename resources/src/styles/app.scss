@@ -24,6 +24,14 @@ html {
   }
 }
 
+.el-button--medium {
+  &.link {
+    a {
+      padding: 10px 20px;
+    }
+  }
+}
+
 .el-button--small {
   &.link {
     a {
