@@ -40,6 +40,7 @@ Route::middleware([
         // 所以手动指定
         ->parameters(['system-media' => 'system_media'])
         ->except(['store', 'show', 'create']);
+    Route::put('system-media', 'SystemMediaController@batchUpdate')->name('system-media.batch.update');
 });
 
 Route::post('auth/login', 'Auth\LoginController@login')->name('login');

@@ -83,4 +83,25 @@ class SystemMediaControllerTest extends AdminTestCase
             'category_id' => 1,
         ]);
     }
+
+    public function testBatchUpdate()
+    {
+        factory(SystemMediaCategory::class)->create();
+        factory(SystemMedia::class, 2)->create();
+
+        $res = $this->put(route('admin.system-media.batch.update'), [
+            'category_id' => 1,
+            'id' => [1, 2],
+        ]);
+        $res->assertStatus(201);
+
+        $this->assertDatabaseHas('system_media', [
+            'id' => 1,
+            'category_id' => 1,
+        ]);
+        $this->assertDatabaseHas('system_media', [
+            'id' => 2,
+            'category_id' => 1,
+        ]);
+    }
 }

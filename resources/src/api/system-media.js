@@ -17,3 +17,7 @@ export function getMedia(params = {}) {
     params,
   })
 }
+
+export function batchUpdateMedia(data) {
+  return axios.put('system-media', data)
+}

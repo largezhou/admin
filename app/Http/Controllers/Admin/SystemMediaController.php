@@ -37,4 +37,15 @@ class SystemMediaController extends AdminBaseController
 
         return $this->ok(SystemMediaResource::collection($media));
     }
+
+    public function batchUpdate(SystemMediaRequest $request)
+    {
+        $inputs = $request->validated();
+
+        SystemMedia::query()
+            ->whereIn('id', $request->input('id'))
+            ->update($inputs);
+
+        return $this->created();
+    }
 }

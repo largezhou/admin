@@ -106,34 +106,43 @@ export const startSlash = path => '/' + _trim(path, '/')
 export const randomChars = () => Math.random().toString(36).substring(7)
 
 /**
- * 构建路由的 select options
+ * 把嵌套数据构建成 select 的缩进形式的 options
  *
- * @param routers
- * @param indent
+ * @param items
+ * @param props
  * @returns {Array}
  */
-export const buildVueRouterOptions = (routers, indent = 2) => {
-  const _build = (routers, indent) => {
+export const nestedToSelectOptions = (items, props = {}) => {
+  const defaultProps = {
+    id: 'id',
+    title: 'title',
+    children: 'children',
+    firstLevel: {
+      id: 0,
+      title: '一级',
+      text: '一级',
+    },
+  }
+  props = Object.assign({}, defaultProps, props)
+
+  const _build = (items, indent) => {
     const options = []
-    routers.forEach(i => {
+    items.forEach(i => {
       options.push({
-        id: i.id,
-        text: '　'.repeat(indent) + i.title,
-        title: i.title,
+        id: i[props.id],
+        text: '　'.repeat(indent) + i[props.title],
+        title: i[props.title],
       })
       if (hasChildren(i)) {
-        options.push(..._build(i.children, indent + 2))
+        options.push(..._build(i[props.children], indent + 2))
       }
     })
     return options
   }
 
-  const res = _build(routers, indent)
-  res.unshift({
-    id: 0,
-    title: '一级',
-    text: '一级',
-  })
+  // 如果不需要追加顶级选项，则初始缩进为 0
+  const res = _build(items, props.firstLevel ? 2 : 0)
+  props.firstLevel && res.unshift(props.firstLevel)
   return res
 }
 
@@ -144,7 +153,7 @@ export const buildVueRouterOptions = (routers, indent = 2) => {
  * @param source
  * @param force 如果为 true, 则即使 source 中没有的键, 也会复制到 target, 即 undefined
  */
-export const assignExsits = (target, source, force = false) => {
+export const assignExists = (target, source, force = false) => {
   const res = {}
   for (let k of Object.keys(target)) {
     if (source.hasOwnProperty(k) || force) {

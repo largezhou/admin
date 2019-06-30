@@ -96,7 +96,7 @@
   </el-card>
 </template>
 <script>
-import { buildVueRouterOptions, getMessage } from '@/libs/utils'
+import { nestedToSelectOptions, getMessage } from '@/libs/utils'
 import { editVueRouter, getVueRouters, storeVueRouter, updateVueRouter } from '@/api/vue-routers'
 import { isInt } from '@/libs/validates'
 import LzForm from '@c/LzForm'
@@ -133,7 +133,7 @@ export default {
   },
   computed: {
     vueRouterOptions() {
-      return buildVueRouterOptions(this.vueRouters)
+      return nestedToSelectOptions(this.vueRouters)
     },
   },
   methods: {

@@ -21,7 +21,7 @@
               v-loading="categoriesLoading"
               class="filter-tree"
               :expand-on-click-node="false"
-              :data="categories"
+              :data="categoriesWithAll"
               :props="treeOptions"
               default-expand-all
               :filter-node-method="categoriesFilter"
@@ -41,7 +41,7 @@
           <el-button-group>
             <loading-action :action="onReloadMedia">刷新</loading-action>
             <el-button>上传</el-button>
-            <el-button :disabled="!anySelected">移动</el-button>
+            <el-button :disabled="!anySelected" @click="movingDialog = true">移动</el-button>
             <pop-confirm type="danger" :disabled="!anySelected">删除</pop-confirm>
             <el-switch v-model="multiple"/>
           </el-button-group>
@@ -92,16 +92,50 @@
         <el-button type="primary" @click="onExtFilter">确定</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog
+      title="移动文件"
+      :visible.sync="movingDialog"
+      :width="miniWidth ? '90%' : '400px'"
+      :auto-focus="false"
+    >
+      <el-select
+        v-model="movingTarget"
+        filterable
+        placeholder="请选择目标分类"
+      >
+        <el-option
+          v-for="i of categoriesSelectOptions"
+          :key="i.id"
+          :label="i.title"
+          :value="i.id"
+        >
+          <span>{{ i.text }}</span>
+        </el-option>
+      </el-select>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="movingDialog = false">取消</el-button>
+        <loading-action
+          type="primary"
+          :action="onMove"
+          :disabled="!movingTarget"
+        >
+          移动
+        </loading-action>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
 <script>
 import PopConfirm from '@c/PopConfirm'
-import { getCategories, getCategoryMedia, getMedia } from '@/api/system-media'
+import { batchUpdateMedia, getCategories, getCategoryMedia, getMedia } from '@/api/system-media'
 import _get from 'lodash/get'
 import FlexSpacer from '@c/FlexSpacer'
 import Pagination from '@c/Pagination'
 import _findIndex from 'lodash/findIndex'
+import { getFirstError, getMessage, nestedToSelectOptions } from '@/libs/utils'
+import _differenceBy from 'lodash/differenceBy'
 
 export default {
   name: 'SystemMedia',
@@ -125,12 +159,17 @@ export default {
       media: [],
       mediaLoading: false,
       page: null,
+
       ext: '',
       extTemp: '', // 弹框中输入时，未确认的值
       extDialog: false,
 
       selected: [],
       multiple: false,
+
+      movingDialog: false,
+      moving: false,
+      movingTarget: '',
     }
   },
   computed: {
@@ -151,6 +190,22 @@ export default {
         ? `(${this.selectedCount})`
         : ''
     },
+    categoriesSelectOptions() {
+      log('select options changed')
+      return nestedToSelectOptions(this.categories, {
+        title: 'name',
+        firstLevel: null,
+      })
+    },
+    categoriesWithAll() {
+      return [
+        {
+          id: 0,
+          name: '所有分类',
+        },
+        ...this.categories,
+      ]
+    },
   },
   async created() {
     await this.getCategories()
@@ -161,10 +216,6 @@ export default {
       this.categoriesLoading = true
       try {
         const { data } = await getCategories()
-        data.unshift({
-          id: 0,
-          name: '所有分类',
-        })
         this.categories = data
         await this.$nextTick()
         this.$refs.tree.setCurrentKey(0)
@@ -238,6 +289,42 @@ export default {
       return _findIndex(this.selected, (i) => i.id === media.id)
     },
     clearSelected() {
+      this.selected = []
+    },
+    async onMove() {
+      if (!this.movingTarget || !this.selectedCount) {
+        return
+      }
+      if (this.movingTarget === this.currentCategoryId) {
+        this.$message.info('没有移动到其他分类')
+        this.movingDialog = false
+        return
+      }
+
+      await this.batchUpdateMedia({
+        id: this.selected.map((i) => i.id),
+        category_id: this.movingTarget,
+      })
+    },
+    async batchUpdateMedia(data) {
+      try {
+        await batchUpdateMedia(data)
+        this.movingDialog = false
+        this.$message.success(getMessage('updated'))
+        this.moveSelected()
+      } catch (e) {
+        const msg = getFirstError(e.response)
+        msg && this.$message.error(msg)
+
+        // 如果没有 422 错误，说明可能是其他错误，要抛出
+        if (!msg) {
+          throw e
+        }
+      }
+    },
+    moveSelected() {
+      // 从列表中，去掉已选择的
+      this.media = _differenceBy(this.media, this.selected, 'id')
       this.selected = []
     },
     test() {

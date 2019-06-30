@@ -1,4 +1,4 @@
-import { assignExsits } from '@/libs/utils'
+import { assignExists } from '@/libs/utils'
 
 export default {
   provide() {
@@ -45,7 +45,7 @@ export default {
      * @param data
      */
     fillForm(data) {
-      this.$data[this.formField] = assignExsits(this.$data[this.formField], data)
+      this.$data[this.formField] = assignExists(this.$data[this.formField], data)
     },
   },
 }
