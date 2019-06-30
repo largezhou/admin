@@ -104,4 +104,17 @@ class SystemMediaControllerTest extends AdminTestCase
             'category_id' => 1,
         ]);
     }
+
+    public function testBatchDestroy()
+    {
+        factory(SystemMedia::class, 2)->create();
+
+        $res = $this->delete(route('admin.system-media.batch.destroy'), [
+            'id' => [1, 2],
+        ]);
+        $res->assertStatus(204);
+
+        $this->assertDatabaseMissing('system_media', ['id' => 1]);
+        $this->assertDatabaseMissing('system_media', ['id' => 2]);
+    }
 }

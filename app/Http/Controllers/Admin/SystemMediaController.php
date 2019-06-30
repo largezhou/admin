@@ -43,9 +43,20 @@ class SystemMediaController extends AdminBaseController
         $inputs = $request->validated();
 
         SystemMedia::query()
-            ->whereIn('id', $request->input('id'))
+            ->whereIn('id', $request->input('id', []))
             ->update($inputs);
 
         return $this->created();
+    }
+
+    public function batchDestroy(Request $request)
+    {
+        SystemMedia::query()
+            ->whereIn('id', $request->input('id', []))
+            ->get()
+            ->each
+            ->delete();
+
+        return $this->noContent();
     }
 }

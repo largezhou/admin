@@ -42,7 +42,7 @@
             <loading-action :action="onReloadMedia">刷新</loading-action>
             <el-button>上传</el-button>
             <el-button :disabled="!anySelected" @click="movingDialog = true">移动</el-button>
-            <pop-confirm type="danger" :disabled="!anySelected">删除</pop-confirm>
+            <pop-confirm type="danger" :disabled="!anySelected" :confirm="onDestroyMedia">删除</pop-confirm>
             <el-switch v-model="multiple"/>
           </el-button-group>
         </el-header>
@@ -129,7 +129,7 @@
 
 <script>
 import PopConfirm from '@c/PopConfirm'
-import { batchUpdateMedia, getCategories, getCategoryMedia, getMedia } from '@/api/system-media'
+import { batchDestroyMedia, batchUpdateMedia, getCategories, getCategoryMedia, getMedia } from '@/api/system-media'
 import _get from 'lodash/get'
 import FlexSpacer from '@c/FlexSpacer'
 import Pagination from '@c/Pagination'
@@ -332,6 +332,11 @@ export default {
       // 从列表中，去掉已选择的
       this.media = _differenceBy(this.media, this.selected, 'id')
       this.clearSelected()
+    },
+    async onDestroyMedia() {
+      await batchDestroyMedia(this.selected.map((i) => i.id))
+      this.$message.success(getMessage('destroyed'))
+      this.moveSelected()
     },
     test() {
       log(...arguments)

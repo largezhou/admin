@@ -41,6 +41,7 @@ Route::middleware([
         ->parameters(['system-media' => 'system_media'])
         ->except(['store', 'show', 'create']);
     Route::put('system-media', 'SystemMediaController@batchUpdate')->name('system-media.batch.update');
+    Route::delete('system-media', 'SystemMediaController@batchDestroy')->name('system-media.batch.destroy');
 });
 
 Route::post('auth/login', 'Auth\LoginController@login')->name('login');

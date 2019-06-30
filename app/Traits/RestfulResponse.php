@@ -10,7 +10,7 @@ trait RestfulResponse
      * 返回 201 已创建 响应
      *
      * @param null|string|array $data
-     * @param array             $headers
+     * @param array $headers
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -46,5 +46,17 @@ trait RestfulResponse
         } else {
             return response()->json($data, 200, $headers);
         }
+    }
+
+    /**
+     * 返回 400 Bad Request 响应
+     *
+     * @param string $message
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function error(string $message = '')
+    {
+        return response()->json(['message' => $message], 400);
     }
 }

@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { getToken } from '@/libs/token'
-import store from '@/store'
 import { Message } from 'element-ui'
 import _trimStart from 'lodash/trimStart'
 

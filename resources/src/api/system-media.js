@@ -21,3 +21,11 @@ export function getMedia(params = {}) {
 export function batchUpdateMedia(data) {
   return axios.put('system-media', data)
 }
+
+// DELETE 方法不能传数据，利用 Laravel 的请求方法伪造
+export function batchDestroyMedia(id) {
+  return axios.post('system-media', {
+    _method: 'DELETE',
+    id,
+  })
+}
