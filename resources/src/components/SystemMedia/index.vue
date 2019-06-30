@@ -311,7 +311,13 @@ export default {
         await batchUpdateMedia(data)
         this.movingDialog = false
         this.$message.success(getMessage('updated'))
-        this.moveSelected()
+
+        if (this.currentCategoryId) { // 如果是在特定分类下，则要移除图片
+          this.moveSelected()
+        } else { // 否则只要清除选中
+          this.clearSelected()
+        }
+        this.currentCategoryId && this.moveSelected()
       } catch (e) {
         const msg = getFirstError(e.response)
         msg && this.$message.error(msg)
@@ -325,7 +331,7 @@ export default {
     moveSelected() {
       // 从列表中，去掉已选择的
       this.media = _differenceBy(this.media, this.selected, 'id')
-      this.selected = []
+      this.clearSelected()
     },
     test() {
       log(...arguments)
