@@ -1,7 +1,7 @@
 import axios from '@/plugins/axios'
 
-export function login(data, config) {
-  return axios.post('auth/login', data, config)
+export function login(data) {
+  return axios.post('auth/login', data)
 }
 
 export function logout() {
