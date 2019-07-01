@@ -14,12 +14,23 @@
         <el-header>
           <el-button-group>
             <loading-action :action="onReloadMedia">刷新</loading-action>
-            <el-button>上传</el-button>
+            <el-button :d1isabled="currentCategoryId <= 0" @click="onClickUpload">上传</el-button>
             <el-button :disabled="!anySelected" @click="movingDialog = true">移动</el-button>
             <pop-confirm type="danger" :disabled="!anySelected" :confirm="onDestroyMedia">删除</pop-confirm>
-            <el-switch v-model="multiple"/>
           </el-button-group>
+
+          <el-switch v-model="multiple"/>
+
+          <el-upload
+            :disabled="currentCategoryId <= 0"
+            ref="upload"
+            style="display: none"
+            multiple
+            action="#"
+            :http-request="storeMedia"
+          />
         </el-header>
+
         <el-main v-loading="mediaLoading">
           <div class="h-100">
             <el-scrollbar class="h-100">
@@ -108,14 +119,13 @@ import {
   batchDestroyMedia,
   batchUpdateMedia,
   getCategoryMedia,
-  getMedia,
+  getMedia, storeMedia,
 } from '@/api/system-media'
 import _get from 'lodash/get'
 import FlexSpacer from '@c/FlexSpacer'
 import Pagination from '@c/Pagination'
 import _findIndex from 'lodash/findIndex'
 import {
-  getFirstError,
   getMessage,
   nestedToSelectOptions,
 } from '@/libs/utils'
@@ -297,6 +307,23 @@ export default {
     },
     onCategoriesChange(categories) {
       this.categories = categories
+    },
+    onClickUpload() {
+      const t = _get(this.$refs, 'upload.$refs.upload-inner')
+      t && t.handleClick()
+    },
+    async storeMedia({ file }) {
+      const id = this.currentCategoryId
+
+      if (id <= 0) {
+        return
+      }
+      const { data } = await storeMedia(id, file)
+        .config({ showValidationMsg: true })
+      // 如果上传完后，没有切换分类，则把数据怼到当前的文件列表前面
+      if (id === this.currentCategoryId) {
+        this.media.unshift(data)
+      }
     },
   },
   watch: {

@@ -49,7 +49,7 @@ class Controller extends BaseController
         $driver = Storage::disk('uploads');
 
         $folder = $request->input(static::UPLOAD_FOLDER_FIELD);
-        $folder = static::UPLOAD_FOLDER_PREFIX.'/'.($folder ? trim($folder, '/') : '');
+        $folder = static::UPLOAD_FOLDER_PREFIX.($folder ? '/'.trim($folder, '/') : '');
 
         $files = array_map(function (UploadedFile $file) use ($driver, $folder) {
             $md5 = md5_file($file);
