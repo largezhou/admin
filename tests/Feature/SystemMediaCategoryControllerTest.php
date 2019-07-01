@@ -54,12 +54,12 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
         $this->createNestedData();
 
         // parent_id exists
+        // name max:20
         $res = $this->storeResource([
             'parent_id' => 111,
-            'name' => 'level 0-1',
+            'name' => str_repeat('a', 21),
         ]);
-        $res->assertJsonValidationErrors(['parent_id'])
-            ->assertJsonMissingValidationErrors(['name']);
+        $res->assertJsonValidationErrors(['parent_id', 'name']);
 
         // name 同级 unique
         $res = $this->storeResource([
@@ -106,6 +106,12 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
     {
         factory(SystemMediaCategory::class)->create(['name' => 'level 0-1']);
         factory(SystemMediaCategory::class)->create(['name' => 'level 0-2']);
+
+        // name 同级 unique
+        $res = $this->updateResource(1, [
+            'name' => 'level 0-2',
+        ]);
+        $res->assertJsonValidationErrors(['name']);
 
         $res = $this->updateResource(1, [
             'parent_id' => 2,

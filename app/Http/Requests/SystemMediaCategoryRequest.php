@@ -15,10 +15,16 @@ class SystemMediaCategoryRequest extends FormRequest
 
         $rules = [
             'name' => [
+                'bail',
                 'required',
+                'max:20',
                 Rule::unique('system_media_categories', 'name')
-                    ->where(function (Builder $query) {
-                        return $query->where('parent_id', $this->input('parent_id'));
+                    ->where(function (Builder $query) use ($cate) {
+                        // 有传 parent_id，即同时修改名称和 parent_id，
+                        // 所以以传入的 parent_id 为准
+                        // 没有传，则已当前分类的 parent_id 为准
+                        $parentId = $this->input('parent_id') ?? optional($cate)->parent_id;
+                        return $query->where('parent_id', $parentId);
                     })
                     ->ignore($id),
             ],
