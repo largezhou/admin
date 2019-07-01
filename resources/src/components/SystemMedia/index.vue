@@ -255,28 +255,21 @@ export default {
 
       await this.batchUpdateMedia({
         id: this.selected.map((i) => i.id),
-        category_id: this.movingTarget,
+        // category_id: this.movingTarget,
+        category_id: 999,
       })
     },
     async batchUpdateMedia(data) {
-      try {
-        await batchUpdateMedia(data)
-        this.movingDialog = false
-        this.$message.success(getMessage('updated'))
+      await batchUpdateMedia(data).config({
+        showValidationMsg: true,
+      })
+      this.movingDialog = false
+      this.$message.success(getMessage('updated'))
 
-        if (this.currentCategoryId === -1) { // 如果是在所有分类下，则只需要清除选中
-          this.clearSelected()
-        } else { // 否则，要从数据中清除
-          this.moveSelected()
-        }
-      } catch (e) {
-        const msg = getFirstError(e.response)
-        msg && this.$message.error(msg)
-
-        // 如果没有 422 错误，说明可能是其他错误，要抛出
-        if (!msg) {
-          throw e
-        }
+      if (this.currentCategoryId === -1) { // 如果是在所有分类下，则只需要清除选中
+        this.clearSelected()
+      } else { // 否则，要从数据中清除
+        this.moveSelected()
       }
     },
     /**

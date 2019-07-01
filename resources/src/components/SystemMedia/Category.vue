@@ -80,7 +80,6 @@ import {
 import _get from 'lodash/get'
 import PopConfirm from '@c/PopConfirm'
 import {
-  getFirstError,
   getMessage,
   removeFromNested,
 } from '@/libs/utils'
@@ -237,6 +236,7 @@ export default {
     },
     async updateCategory(category, data) {
       const res = await updateCategory(category.id, data)
+        .config({ showValidationMsg: true })
       category.name = res.data.name
       this.$message.success(getMessage('updated'))
 
@@ -247,37 +247,29 @@ export default {
         return
       }
 
-      try {
-        if (this.editMode) {
-          await this.updateCategory(this.current, {
-            name: this.inputName,
-          })
+      if (this.editMode) {
+        await this.updateCategory(this.current, {
+          name: this.inputName,
+        })
+      } else {
+        let parentId = this.parentId
+        // -1 为所有分类，其下级为 一级 分类
+        parentId = parentId === -1 ? 0 : parentId
+        const { data } = await storeCategory({
+          parent_id: parentId,
+          name: this.inputName,
+        }).config({ showValidationMsg: true })
+        if (parentId) {
+          this.$refs.tree.append(data, this.parentId)
         } else {
-          let parentId = this.parentId
-          // -1 为所有分类，其下级为 一级 分类
-          parentId = parentId === -1 ? 0 : parentId
-          const { data } = await storeCategory({
-            parent_id: parentId,
-            name: this.inputName,
-          })
-          if (parentId) {
-            this.$refs.tree.append(data, this.parentId)
-          } else {
-            this.categories.push(data)
-          }
-          this.$message.success(getMessage('created'))
+          this.categories.push(data)
         }
-
-        this.dialog = false
-
-        this.categoriesChanged()
-      } catch (e) {
-        const msg = getFirstError(e.response)
-        msg && this.$message.error(msg)
-        if (!msg) {
-          throw e
-        }
+        this.$message.success(getMessage('created'))
       }
+
+      this.dialog = false
+
+      this.categoriesChanged()
     },
     categoriesChanged() {
       this.$emit('categories-change', this.categories)
