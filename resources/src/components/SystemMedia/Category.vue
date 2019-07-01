@@ -161,7 +161,8 @@ export default {
         this.loading = false
       }
     },
-    initSelected() {
+    async initSelected() {
+      await this.$nextTick()
       this.$refs.tree.setCurrentKey(-1)
       this.current = this.categoriesWithAll[0]
     },
