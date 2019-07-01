@@ -14,7 +14,7 @@
         <el-header>
           <el-button-group>
             <loading-action :action="onReloadMedia">刷新</loading-action>
-            <el-button :d1isabled="currentCategoryId <= 0" @click="onClickUpload">上传</el-button>
+            <el-button :disabled="currentCategoryId <= 0" @click="onClickUpload">上传</el-button>
             <el-button :disabled="!anySelected" @click="movingDialog = true">移动</el-button>
             <pop-confirm type="danger" :disabled="!anySelected" :confirm="onDestroyMedia">删除</pop-confirm>
           </el-button-group>
@@ -34,17 +34,12 @@
         <el-main v-loading="mediaLoading">
           <div class="h-100">
             <el-scrollbar class="h-100">
-              <div class="file-wrapper">
-                <div
-                  class="file-preview"
-                  v-for="(item, i) of media"
-                  :class="{ selected: isSelected(item) }"
-                  :key="item.id"
-                  @click="onSelect(item, i)"
-                >
-                  <img :src="item.url">
-                </div>
-              </div>
+              <files
+                ref="media"
+                :media="media"
+                :multiple="multiple"
+                :selected.sync="selected"
+              />
             </el-scrollbar>
           </div>
         </el-main>
@@ -124,17 +119,18 @@ import {
 import _get from 'lodash/get'
 import FlexSpacer from '@c/FlexSpacer'
 import Pagination from '@c/Pagination'
-import _findIndex from 'lodash/findIndex'
 import {
   getMessage,
   nestedToSelectOptions,
 } from '@/libs/utils'
 import _differenceBy from 'lodash/differenceBy'
 import Category from './Category'
+import Files from '@c/SystemMedia/Files'
 
 export default {
   name: 'SystemMedia',
   components: {
+    Files,
     Category,
     Pagination,
     FlexSpacer,
@@ -228,25 +224,6 @@ export default {
       this.ext = this.extTemp
       this.extDialog = false
     },
-    onSelect(media, index) {
-      const i = this.findInSelected(media)
-
-      if (i !== -1) { // 已经选了，则取消选择
-        this.selected.splice(i, 1)
-      } else { // 否则加入选择
-        if (this.multiple) {
-          this.selected.push(media)
-        } else {
-          this.selected = [media]
-        }
-      }
-    },
-    isSelected(media) {
-      return this.findInSelected(media) !== -1
-    },
-    findInSelected(media) {
-      return _findIndex(this.selected, (i) => i.id === media.id)
-    },
     /**
      * 清除选中状态
      */
@@ -265,8 +242,7 @@ export default {
 
       await this.batchUpdateMedia({
         id: this.selected.map((i) => i.id),
-        // category_id: this.movingTarget,
-        category_id: 999,
+        category_id: this.movingTarget,
       })
     },
     async batchUpdateMedia(data) {
@@ -340,12 +316,6 @@ export default {
       this.clearSelected()
       this.getMedia(this.currentCategoryId)
     },
-    multiple(newVal) {
-      // 切换为单选时，只保留第一个
-      if (!newVal) {
-        this.selected.splice(1)
-      }
-    },
   },
 }
 </script>
@@ -364,33 +334,6 @@ $padding-width: 15px;
 
 .body {
   height: 550px;
-}
-
-.file-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.file-preview {
-  width: 100px;
-  height: 100px;
-  display: inline-flex;
-  align-items: center;
-  border: 3px solid $--color-info-light;
-  margin-right: 5px;
-  margin-bottom: 5px;
-  justify-content: center;
-  cursor: pointer;
-
-  img {
-    max-width: 100%;
-    max-height: 100%;
-  }
-
-  &.selected {
-    border-color: $--color-primary;
-    border-style: dashed;
-  }
 }
 
 .el-header,
