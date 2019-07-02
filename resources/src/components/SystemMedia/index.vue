@@ -68,7 +68,7 @@
     <el-dialog
       title="筛选类型"
       :visible.sync="extDialog"
-      :width="miniWidth ? '90%' : '300px'"
+      :width="miniWidth ? '90%' : '400px'"
       @keydown.enter.native="onExtFilter"
     >
       <el-input v-model="extTemp" autocomplete="off" placeholder="多个之间用英文逗号隔开"/>
@@ -131,12 +131,10 @@ import {
 import _differenceBy from 'lodash/differenceBy'
 import Category from './Category'
 import Files from '@c/SystemMedia/Files'
-import CollapseButtonGroup from '@c/CollapseButtonGroup'
 
 export default {
   name: 'SystemMedia',
   components: {
-    CollapseButtonGroup,
     Files,
     Category,
     Pagination,
