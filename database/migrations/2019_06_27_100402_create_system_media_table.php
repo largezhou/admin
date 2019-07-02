@@ -15,7 +15,7 @@ class CreateSystemMediaTable extends Migration
     {
         Schema::create('system_media', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('filename', 100);
+            $table->string('filename', 100)->index();
             $table->string('ext', 20)->default('')->index();
             $table->unsignedInteger('category_id')->default(0)->index();
             $table->string('path');

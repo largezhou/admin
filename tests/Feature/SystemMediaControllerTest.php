@@ -39,13 +39,24 @@ class SystemMediaControllerTest extends AdminTestCase
 
         $fileFullPath = public_path(Controller::UPLOAD_FOLDER_PREFIX.'/tests/'.md5_file($file).'.jpg');
         $this->assertFileExists($fileFullPath);
+        // 复制一条记录
+        factory(SystemMedia::class)->create(tap(SystemMedia::find(1))->addHidden(['id'])->toArray());
 
         $res = $this->destroyResource(1);
         $res->assertStatus(204);
 
-        $this->assertFileNotExists($fileFullPath);
+        // 有重复文件记录，所以不需要删除物理文件
+        $this->assertFileExists($fileFullPath);
         $this->assertDatabaseMissing('system_media', [
             'id' => 1,
+        ]);
+
+        $res = $this->destroyResource(2);
+        $res->assertStatus(204);
+        // 没有重复文件记录，删除物理文件
+        $this->assertFileNotExists($fileFullPath);
+        $this->assertDatabaseMissing('system_media', [
+            'id' => 2,
         ]);
     }
 

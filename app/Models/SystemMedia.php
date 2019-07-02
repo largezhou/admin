@@ -27,9 +27,11 @@ class SystemMedia extends Model
 
         $deleted = parent::delete();
 
-        // 记录删除成功，则继续删除文件
+        // 记录删除成功，且数据库中没有相同的文件记录，则要删除对应的文件
+        $needDeletedFile = $deleted && !$this->hasSameFile();
+
         $fileDeleted = false;
-        if ($deleted) {
+        if ($needDeletedFile) {
             $storage = Storage::disk('uploads');
             // 文件不存在，或者删除成功
             if (!$storage->exists($this->path) || $storage->delete($this->path)) {
@@ -37,12 +39,28 @@ class SystemMedia extends Model
             }
         }
 
-        if ($deleted && $fileDeleted) {
+        if (
+            ($needDeletedFile && $fileDeleted) || // 需要删除物理文件，且删除成功，则提交事务
+            (!$needDeletedFile && $deleted) // 或不需要物理删除，且当前记录删除成功
+        ) {
             DB::commit();
             return true;
-        } else {
+        } else { // 删除失败
             DB::rollBack();
             return false;
         }
+    }
+
+    /**
+     * 数据库中是否还有相同文件的记录
+     *
+     * @return bool
+     */
+    protected function hasSameFile()
+    {
+        return !!static::query()
+            ->where('filename', $this->filename)
+            ->where('id', '<>', $this->id)
+            ->first();
     }
 }
