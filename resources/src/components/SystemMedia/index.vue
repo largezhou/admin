@@ -1,6 +1,5 @@
 <template>
-  <el-card>
-    <template v-slot:header>选择产品主图</template>
+  <el-card class="system-media" shadow="never">
     <el-container class="body">
       <el-aside class="aside" width="221px">
         <category
@@ -18,8 +17,6 @@
             <el-button :disabled="!anySelected" @click="movingDialog = true">移动</el-button>
             <pop-confirm type="danger" :disabled="!anySelected" :confirm="onDestroyMedia">删除</pop-confirm>
           </el-button-group>
-
-          <el-switch v-model="multiple"/>
 
           <el-upload
             :disabled="currentCategoryId <= 0"
@@ -51,9 +48,9 @@
         </el-main>
         <el-footer>
           <el-button-group>
-            <el-button type="primary" :disabled="!anySelected">选定</el-button>
             <el-button :disabled="!anySelected" @click="clearSelected">清空 {{ countTip }}</el-button>
             <el-button @click="extDialog = true" :title="ext">{{ ext ? '已筛选' : '筛选' }}</el-button>
+            <slot name="actions"/>
           </el-button-group>
           <flex-spacer/>
           <pagination
@@ -62,6 +59,7 @@
             :auto-push="false"
             @current-change="onPageChange"
             :pager-count="5"
+            hide-on-single-page
           />
         </el-footer>
       </el-container>
@@ -120,7 +118,8 @@ import {
   batchDestroyMedia,
   batchUpdateMedia,
   getCategoryMedia,
-  getMedia, storeMedia,
+  getMedia,
+  storeMedia,
 } from '@/api/system-media'
 import _get from 'lodash/get'
 import FlexSpacer from '@c/FlexSpacer'
@@ -132,10 +131,12 @@ import {
 import _differenceBy from 'lodash/differenceBy'
 import Category from './Category'
 import Files from '@c/SystemMedia/Files'
+import CollapseButtonGroup from '@c/CollapseButtonGroup'
 
 export default {
   name: 'SystemMedia',
   components: {
+    CollapseButtonGroup,
     Files,
     Category,
     Pagination,
@@ -156,7 +157,6 @@ export default {
       extDialog: false,
 
       selected: [],
-      multiple: false,
 
       movingDialog: false,
       moving: false,
@@ -168,6 +168,12 @@ export default {
       uploadSuccess: 0,
       uploadInvalid: 0,
     }
+  },
+  props: {
+    multiple: {
+      type: Boolean,
+      default: true,
+    },
   },
   computed: {
     currentCategoryId() {
@@ -385,6 +391,11 @@ export default {
 
 $border: 1px solid $--color-info-light;
 $padding-width: 15px;
+
+.system-media {
+  border: none;
+  border-radius: 0;
+}
 
 .aside {
   border-right: $border;

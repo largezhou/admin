@@ -65,6 +65,8 @@ class AdminInitCommand extends Command
             [15, 14, '权限列表', '/admin-permissions', 14, null, 1],
             [16, 14, '添加权限', '/admin-permissions/create', 15, null, 1],
             [17, 14, '编辑权限', '/admin-permissions/:id(\\d+)/edit', 16, null, 0],
+
+            [18, 0, '文件管理', '/system-media', 17, null, 1],
         ];
 
         $inserts = collect($inserts)->map(function ($i) {
