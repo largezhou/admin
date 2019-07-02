@@ -26,7 +26,7 @@ class SystemMediaRequest extends FormRequest
     public function attributes()
     {
         return [
-            'file' => '上传',
+            'file' => '文件',
             'category_id' => '分类',
         ];
     }

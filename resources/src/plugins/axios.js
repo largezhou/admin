@@ -71,11 +71,9 @@ _axios.interceptors.response.use(
             config.validationForm[config.validationErrorKey || 'errors'] = handleValidateErrors(res)
           } // 否则不做处理
           break
-        case 500:
-          Message.error('服务器异常')
-          break
         default:
-        // null
+          Message.error(`服务器异常(code: ${res.status})`)
+          break
       }
     } else {
       if (err instanceof axios.Cancel) { // 手动取消时，err 为一个 Cancel 对象，有一个 message 属性

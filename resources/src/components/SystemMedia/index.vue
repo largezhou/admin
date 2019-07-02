@@ -28,10 +28,16 @@
             multiple
             action="#"
             :http-request="storeMedia"
+            :show-file-list="false"
+            :on-change="onUploadChange"
+            :before-upload="beforeUpload"
           />
         </el-header>
 
-        <el-main v-loading="mediaLoading">
+        <el-main
+          v-loading="mediaLoading || uploading"
+          :element-loading-text="uploadingText"
+        >
           <div class="h-100">
             <el-scrollbar class="h-100">
               <files
@@ -155,6 +161,12 @@ export default {
       movingDialog: false,
       moving: false,
       movingTarget: '',
+
+      uploading: false,
+      uploadCount: 0,
+      uploadFail: 0,
+      uploadSuccess: 0,
+      uploadInvalid: 0,
     }
   },
   computed: {
@@ -181,6 +193,11 @@ export default {
         firstLevel: null,
       })
     },
+    uploadingText() {
+      return this.uploading
+        ? `正在上传中 (${this.uploadSuccess} / ${this.uploadCount})`
+        : ''
+    },
   },
   async created() {
     await this.getMedia()
@@ -192,7 +209,6 @@ export default {
       const params = {
         page,
         ext: this.ext || undefined,
-        per_page: 2,
       }
       try {
         if (categoryId > 0) {
@@ -296,10 +312,54 @@ export default {
       }
       const { data } = await storeMedia(id, file)
         .config({ showValidationMsg: true })
-      // 如果上传完后，没有切换分类，则把数据怼到当前的文件列表前面
-      if (id === this.currentCategoryId) {
+      // 如果上传完后，没有切换分类，或者是所有分类
+      // 则把数据怼到当前的文件列表前面
+      if (id === this.currentCategoryId || this.currentCategoryId === -1) {
         this.media.unshift(data)
       }
+    },
+    onUploadChange(file, fileList) {
+      this.uploadCount = fileList.length
+      this.uploading = true
+
+      let success = 0
+      let fail = 0
+
+      fileList.forEach((i) => {
+        i.status === 'success' && success++
+        i.status === 'fail' && fail++
+      })
+
+      // 上传完毕，清除上传列表
+      if (success + fail === this.uploadCount) {
+        this.$refs.upload.clearFiles()
+        this.uploading = false
+        this.uploadCount = 0
+        this.uploadFail = 0
+        this.uploadSuccess = 0
+
+        this.$msgbox({
+          title: '上传完成',
+          message: `上传成功 (${success})，失败 (${fail})，无效 (${this.uploadInvalid})`,
+        })
+      } else {
+        this.uploadFail = fail
+        this.uploadSuccess = success
+      }
+    },
+    beforeUpload(file) {
+      const lt10M = file.size / 1024 / 1024 <= 10
+      if (!lt10M) {
+        this.$message.error('文件 不能大于 10240 KB。')
+      }
+
+      const res = lt10M
+
+      if (!res) {
+        this.uploadInvalid++
+      }
+
+      return res
     },
   },
   watch: {

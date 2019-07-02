@@ -31,10 +31,9 @@
         删除
       </pop-confirm>
     </el-button-group>
-    <el-scrollbar class="scroll-wrapper">
+    <el-scrollbar v-loading="loading" class="scroll-wrapper">
       <div class="side-tree">
         <el-tree
-          v-loading="loading"
           :expand-on-click-node="false"
           :data="categoriesWithAll"
           :props="treeOptions"

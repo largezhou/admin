@@ -7,13 +7,16 @@
       :key="item.id"
       @click="onSelect(item, i)"
     >
-      <img :src="item.url">
+      <img v-if="isImage(item.ext, true)" :src="item.url">
+      <div class="ext" v-else :title="item.ext">{{ toUpperCase(item.ext || 'file') }}</div>
     </div>
   </div>
 </template>
 
 <script>
 import _findIndex from 'lodash/findIndex'
+import { mapConstants } from '@/libs/constants'
+import { isImage } from '@/libs/validates'
 
 export default {
   name: 'Files',
@@ -21,6 +24,9 @@ export default {
     media: Array,
     multiple: Boolean,
     selected: Array,
+  },
+  computed: {
+    ...mapConstants(['IMAGE_EXTS']),
   },
   methods: {
     onSelect(media, index) {
@@ -43,6 +49,10 @@ export default {
     },
     isSelected(media) {
       return this.findInSelected(media) !== -1
+    },
+    isImage,
+    toUpperCase(str) {
+      return str.toUpperCase()
     },
   },
   watch: {
@@ -84,5 +94,14 @@ export default {
     border-color: $--color-primary;
     border-style: dashed;
   }
+}
+
+.ext {
+  overflow: hidden;
+  margin: 0 10px;
+  color: $--color-info;
+  font-size: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

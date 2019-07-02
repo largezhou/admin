@@ -217,3 +217,15 @@ export const removeFromNested = (items, identify, identifyKey = 'id', childrenKe
   }
   return false
 }
+
+/**
+ * 从文件名中获取文件后缀
+ * @param filename
+ * @returns {*}
+ */
+export const getExt = (filename) => {
+  const t = filename.split('.')
+  return t.length === 0
+    ? ''
+    : t[t.length - 1]
+}
