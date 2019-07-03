@@ -9,8 +9,10 @@ export default {
   name: 'ResetSystem',
   methods: {
     async onReset() {
-      await axios.post('/demo/reset-system')
-      location.reload()
+      if (confirm('确认重置？')) {
+        await axios.post('/demo/reset-system')
+        location.reload()
+      }
     },
   },
 }

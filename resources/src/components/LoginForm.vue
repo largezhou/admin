@@ -57,8 +57,10 @@ export default {
       }
     },
     async onResetSystem() {
-      await axios.post('/demo/reset-system')
-      this.$message.success('已重置，admin 密码为 000000')
+      if (confirm('确认重置？')) {
+        await axios.post('/demo/reset-system')
+        this.$message.success('已重置，admin 密码为 000000')
+      }
     },
   },
 }
