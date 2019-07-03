@@ -14,13 +14,15 @@
           <el-button-group>
             <loading-action :action="onReloadMedia">刷新</loading-action>
             <el-button :disabled="!anySelected" @click="movingDialog = true">移动</el-button>
-            <pop-confirm type="danger" :disabled="!anySelected" :confirm="onDestroyMedia">删除</pop-confirm>
-            <!-- 没有设置默认多选时，就可以切换多选 -->
-            <el-checkbox-button
+            <!-- 没有设置默认多选时，就可以切换多选，switch 组件放这里，样式懒得调 -->
+            <el-button
+              :type="multiple ? 'primary' : ''"
               v-if="defaultMultiple === undefined"
-              v-model="multiple"
-              label="多选"
-            />
+              @click="multiple = !multiple"
+            >
+              多选
+            </el-button>
+            <pop-confirm type="danger" :disabled="!anySelected" :confirm="onDestroyMedia">删除</pop-confirm>
           </el-button-group>
         </el-header>
 
