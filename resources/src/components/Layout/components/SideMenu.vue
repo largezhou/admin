@@ -10,8 +10,6 @@
       background-color="#304156"
       text-color="#bfcbd9"
       :collapse="collapse"
-      @close="onClose"
-      @open="onOpen"
       @select="onSelect"
     >
       <template v-for="menu of menus">
@@ -23,7 +21,6 @@
 
 <script>
 import SideMenuItem from './SideMenuItem'
-import _forIn from 'lodash/forIn'
 import _get from 'lodash/get'
 import { mapState } from 'vuex'
 
@@ -34,7 +31,7 @@ export default {
   },
   data() {
     return {
-      uniqueOpenedMenus: {},
+      openedMenus: [],
     }
   },
   props: {
@@ -47,24 +44,11 @@ export default {
     activeName() {
       return this.$route.name
     },
-    openedMenus() {
-      const res = []
-      _forIn(this.uniqueOpenedMenus, (val, key) => {
-        val && res.push(key)
-      })
-      return res
-    },
     ...mapState({
       miniWidth: (state) => state.miniWidth,
     }),
   },
   methods: {
-    onClose(index) {
-      this.$set(this.uniqueOpenedMenus, index, false)
-    },
-    onOpen(index) {
-      this.$set(this.uniqueOpenedMenus, index, true)
-    },
     onCollapse() {
       this.$store.commit('SET_OPENED', false)
     },
@@ -75,9 +59,11 @@ export default {
   watch: {
     $route: {
       handler(newVal) {
+        const t = new Set(this.openedMenus)
         newVal.matched.forEach(i => {
-          i.name && this.$set(this.uniqueOpenedMenus, i.name, true)
+          i.name && t.add(i.name)
         })
+        this.openedMenus = [...t]
       },
       immediate: true,
     },
@@ -85,10 +71,10 @@ export default {
       // 菜单从折叠状态展开时，如果没有激活的菜单，
       // 无法根据 default-opened 自动展开菜单，所以手动处理一下
       if (!newVal && !_get(this.$refs, 'menu.activeIndex')) {
-        const bak = this.uniqueOpenedMenus
+        const bak = this.openedMenus
+        this.openedMenus = []
         setTimeout(() => {
-          this.uniqueOpenedMenus = {}
-          this.uniqueOpenedMenus = bak
+          this.openedMenus = bak
         }, 400)
       }
     },
