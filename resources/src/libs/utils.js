@@ -3,6 +3,8 @@ import ParentView from '@c/ParentView'
 import Layout from '@c/Layout'
 import pages from '@v/pages'
 import Page404 from '@v/errors/Page404'
+import _debounce from 'lodash/debounce'
+import { Message } from 'element-ui'
 
 /**
  * 把 laravel 返回的错误消息，处理成只有一条
@@ -228,4 +230,23 @@ export const getExt = (filename) => {
   return t.length === 0
     ? ''
     : t[t.length - 1]
+}
+
+const _debounceMsg = () => {
+  const t = _debounceMsg.type || 'error'
+  _debounceMsg.msg && (Message[t])(_debounceMsg.msg)
+}
+
+const debouncedMsg = _debounce(_debounceMsg, 10)
+
+/**
+ * 防抖提示消息
+ *
+ * @param msg
+ * @param type
+ */
+export const debounceMsg = (msg, type = 'error') => {
+  _debounceMsg.msg = msg
+  _debounceMsg.type = type
+  debouncedMsg()
 }

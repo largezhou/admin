@@ -17,6 +17,14 @@
         <el-form-item label="姓名" required prop="name">
           <el-input v-model="form.name"/>
         </el-form-item>
+        <el-form-item label="头像" prop="avatar">
+          <file-picker
+            v-model="form.avatar"
+            ext="jpg,gif,png,jpeg"
+            value-fields="path"
+            flatten-value
+          />
+        </el-form-item>
         <el-form-item label="密码" :required="!editMode" prop="password">
           <el-input
             v-model="form.password"
@@ -75,10 +83,12 @@ import { getAdminRoles } from '@/api/admin-roles'
 import { getAdminPerms } from '@/api/admin-perms'
 import FormHelper from '@c/LzForm/FormHelper'
 import { getMessage } from '@/libs/utils'
+import FilePicker from '@c/FilePicker'
 
 export default {
   name: 'Form',
   components: {
+    FilePicker,
     LzForm,
   },
   mixins: [
@@ -93,6 +103,7 @@ export default {
         password_confirmation: '',
         roles: [],
         permissions: [],
+        avatar: '',
       },
       errors: {},
       roles: [],

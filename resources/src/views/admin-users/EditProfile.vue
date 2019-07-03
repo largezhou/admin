@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <el-card>
     <template v-slot:header>
       <content-header/>
@@ -16,6 +16,14 @@
         </el-form-item>
         <el-form-item label="姓名" required prop="name">
           <el-input v-model="form.name"/>
+        </el-form-item>
+        <el-form-item label="头像" prop="avatar">
+          <file-picker
+            v-model="form.avatar"
+            ext="jpg,gif,png,jpeg"
+            value-fields="path"
+            flatten-value
+          />
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input
@@ -59,11 +67,13 @@ import LzForm from '@c/LzForm'
 import FormHelper from '@c/LzForm/FormHelper'
 import { editUser, updateUser } from '@/api/admin-users'
 import { getMessage } from '@/libs/utils'
+import FilePicker from '@c/FilePicker'
 
 export default {
   name: 'EditProfile',
   components: {
     LzForm,
+    FilePicker,
   },
   mixins: [
     FormHelper,
@@ -72,6 +82,7 @@ export default {
     return {
       form: {
         name: '',
+        avatar: '',
         password: '',
         password_confirmation: '',
       },

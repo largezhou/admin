@@ -57,13 +57,21 @@
     <el-dialog
       :title="editMode ? '编辑分类' : '添加分类'"
       :visible.sync="dialog"
-      :width="miniWidth ? '90%' : '300px'"
+      :width="miniWidth ? '90%' : '400px'"
       @keydown.enter.native="$refs.saveConfirm.onAction"
+      append-to-body
     >
       <el-input v-model="inputName" autocomplete="off" placeholder="请输入分类名称"/>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialog = false">取消</el-button>
-        <loading-action ref="saveConfirm" type="primary" :action="onSave">确定</loading-action>
+        <loading-action
+          :disabled="!inputName"
+          ref="saveConfirm"
+          type="primary"
+          :action="onSave"
+        >
+          确定
+        </loading-action>
       </div>
     </el-dialog>
   </div>
@@ -243,7 +251,7 @@ export default {
       this.categoriesChanged()
     },
     async onSave() {
-      if (!this.canSave) {
+      if (!this.canSave || !this.inputName) {
         return
       }
 

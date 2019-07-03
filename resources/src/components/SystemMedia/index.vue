@@ -13,22 +13,15 @@
         <el-header>
           <el-button-group>
             <loading-action :action="onReloadMedia">刷新</loading-action>
-            <el-button :disabled="currentCategoryId <= 0" @click="onClickUpload">上传</el-button>
             <el-button :disabled="!anySelected" @click="movingDialog = true">移动</el-button>
             <pop-confirm type="danger" :disabled="!anySelected" :confirm="onDestroyMedia">删除</pop-confirm>
+            <!-- 没有设置默认多选时，就可以切换多选 -->
+            <el-checkbox-button
+              v-if="defaultMultiple === undefined"
+              v-model="multiple"
+              label="多选"
+            />
           </el-button-group>
-
-          <el-upload
-            :disabled="currentCategoryId <= 0"
-            ref="upload"
-            style="display: none"
-            multiple
-            action="#"
-            :http-request="storeMedia"
-            :show-file-list="false"
-            :on-change="onUploadChange"
-            :before-upload="beforeUpload"
-          />
         </el-header>
 
         <el-main
@@ -42,15 +35,28 @@
                 :media="media"
                 :multiple="multiple"
                 :selected.sync="selected"
+                :ext="defaultExt"
               />
             </el-scrollbar>
           </div>
         </el-main>
         <el-footer>
           <el-button-group>
-            <el-button :disabled="!anySelected" @click="clearSelected">清空 {{ countTip }}</el-button>
-            <el-button @click="extDialog = true" :title="ext">{{ ext ? '已筛选' : '筛选' }}</el-button>
-            <slot name="actions"/>
+            <el-button :disabled="currentCategoryId <= 0" @click="onClickUpload">上传</el-button>
+            <el-button
+              :disabled="!anySelected"
+              @click="clearSelected"
+            >
+              清空 {{ this.selectedCount ? `(${this.selectedCount})` : '' }}
+            </el-button>
+            <el-button
+              :disabled="!!defaultExt"
+              @click="onOpenExtDialog"
+              :title="ext"
+            >
+              {{ ext ? '已筛选' : '筛选' }}
+            </el-button>
+            <slot name="actions" v-bind="getThis"/>
           </el-button-group>
           <flex-spacer/>
           <pagination
@@ -66,10 +72,12 @@
     </el-container>
 
     <el-dialog
+      v-if="!defaultExt"
       title="筛选类型"
       :visible.sync="extDialog"
       :width="miniWidth ? '90%' : '400px'"
       @keydown.enter.native="onExtFilter"
+      append-to-body
     >
       <el-input v-model="extTemp" autocomplete="off" placeholder="多个之间用英文逗号隔开"/>
       <div slot="footer" class="dialog-footer">
@@ -83,6 +91,7 @@
       :visible.sync="movingDialog"
       :width="miniWidth ? '90%' : '400px'"
       :auto-focus="false"
+      append-to-body
     >
       <el-select
         v-model="movingTarget"
@@ -109,6 +118,19 @@
         </loading-action>
       </div>
     </el-dialog>
+
+    <el-upload
+      :disabled="currentCategoryId <= 0"
+      ref="upload"
+      style="display: none"
+      multiple
+      action="#"
+      :http-request="storeMedia"
+      :show-file-list="false"
+      :on-change="onUploadChange"
+      :before-upload="beforeUpload"
+      :accept="'.' + defaultExt.replace(/,/g, ',.')"
+    />
   </el-card>
 </template>
 
@@ -125,6 +147,8 @@ import _get from 'lodash/get'
 import FlexSpacer from '@c/FlexSpacer'
 import Pagination from '@c/Pagination'
 import {
+  debounceMsg,
+  getExt,
   getMessage,
   nestedToSelectOptions,
 } from '@/libs/utils'
@@ -150,7 +174,7 @@ export default {
       mediaLoading: false,
       page: null,
 
-      ext: '',
+      ext: this.defaultExt || '', // 只做查询筛选，不做强制限制
       extTemp: '', // 弹框中输入时，未确认的值
       extDialog: false,
 
@@ -165,12 +189,29 @@ export default {
       uploadFail: 0,
       uploadSuccess: 0,
       uploadInvalid: 0,
+
+      // 作为管理页面使用时，可以切换
+      multiple: this.defaultMultiple === undefined
+        ? true
+        : this.defaultMultiple,
     }
   },
   props: {
-    multiple: {
+    /**
+     * 设置了该值，就不能再手动筛选了，
+     * 并强制只能上传和选择这些类型的文件
+     */
+    defaultExt: {
+      type: String,
+      default: '',
+    },
+    /**
+     * 多选，同上
+     * 作为文件选择器使用时，设置就不能切换了
+     */
+    defaultMultiple: {
       type: Boolean,
-      default: true,
+      default: undefined,
     },
   },
   computed: {
@@ -186,11 +227,6 @@ export default {
     selectedCount() {
       return this.selected.length
     },
-    countTip() {
-      return this.selectedCount
-        ? `(${this.selectedCount})`
-        : ''
-    },
     categoriesSelectOptions() {
       return nestedToSelectOptions(this.categories, {
         title: 'name',
@@ -201,6 +237,12 @@ export default {
       return this.uploading
         ? `正在上传中 (${this.uploadSuccess} / ${this.uploadCount})`
         : ''
+    },
+    getThis() {
+      return this
+    },
+    extArray() {
+      return this.ext.split(',')
     },
   },
   async created() {
@@ -241,6 +283,10 @@ export default {
       await this.getMedia(this.currentCategoryId)
     },
     onExtFilter() {
+      if (this.defaultExt) {
+        return
+      }
+
       this.ext = this.extTemp
       this.extDialog = false
     },
@@ -323,47 +369,60 @@ export default {
       }
     },
     onUploadChange(file, fileList) {
-      this.uploadCount = fileList.length
-      this.uploading = true
-
-      let success = 0
-      let fail = 0
-
-      fileList.forEach((i) => {
-        i.status === 'success' && success++
-        i.status === 'fail' && fail++
-      })
+      if (file.status === 'success') { // 上传成功一个
+        this.uploadSuccess++
+      } else if (file.status === 'fail') { // 上传失败一个
+        this.uploadFail++
+      }
 
       // 上传完毕，清除上传列表
-      if (success + fail === this.uploadCount) {
+      if (
+        this.uploadCount &&
+        (this.uploadSuccess + this.uploadFail === this.uploadCount)
+      ) {
+        this.$msgbox({
+          title: '上传完成',
+          message: `上传成功 (${this.uploadSuccess})，失败 (${this.uploadFail})，无效 (${this.uploadInvalid})`,
+        })
+
         this.$refs.upload.clearFiles()
         this.uploading = false
         this.uploadCount = 0
         this.uploadFail = 0
         this.uploadSuccess = 0
-
-        this.$msgbox({
-          title: '上传完成',
-          message: `上传成功 (${success})，失败 (${fail})，无效 (${this.uploadInvalid})`,
-        })
-      } else {
-        this.uploadFail = fail
-        this.uploadSuccess = success
       }
     },
     beforeUpload(file) {
       const lt10M = file.size / 1024 / 1024 <= 10
       if (!lt10M) {
-        this.$message.error('文件 不能大于 10240 KB。')
+        // 有时候选择 N 个无效文件，会弹出一串提示，，所以搞个防抖，10ms 延迟
+        // 还有其他更好的方法？
+        debounceMsg('文件 不能大于 10240 KB')
       }
 
-      const res = lt10M
+      // 如果指定了类型，则只能上传该类型的文件
+      const validExt = !this.defaultExt || (this.extArray.indexOf(getExt(file.name)) !== -1)
+      if (!validExt) {
+        debounceMsg('文件类型只能是：' + this.defaultExt)
+      }
 
-      if (!res) {
+      const res = lt10M && validExt
+
+      if (res) { // 开始上传一个
+        this.uploadCount++
+        this.uploading = true
+      } else { // 无效文件
         this.uploadInvalid++
       }
 
       return res
+    },
+    onOpenExtDialog() {
+      if (this.defaultExt) {
+        return
+      }
+
+      this.extDialog = true
     },
   },
   watch: {

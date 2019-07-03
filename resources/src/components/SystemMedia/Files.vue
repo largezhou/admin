@@ -1,15 +1,13 @@
 <template>
   <div class="file-wrapper">
-    <div
+    <file-preview
       class="file-preview"
       v-for="(item, i) of media"
       :class="{ selected: isSelected(item) }"
       :key="item.id"
-      @click="onSelect(item, i)"
-    >
-      <img v-if="isImage(item.ext, true)" :src="item.url">
-      <div class="ext" v-else :title="item.ext">{{ toUpperCase(item.ext || 'file') }}</div>
-    </div>
+      @click.native="onSelect(item, i)"
+      :file="item"
+    />
   </div>
 </template>
 
@@ -17,19 +15,27 @@
 import _findIndex from 'lodash/findIndex'
 import { mapConstants } from '@/libs/constants'
 import { isImage } from '@/libs/validates'
+import FilePreview from '@c/FilePreview'
 
 export default {
   name: 'Files',
+  components: { FilePreview },
   props: {
     media: Array,
     multiple: Boolean,
     selected: Array,
+    ext: String,
   },
   computed: {
     ...mapConstants(['IMAGE_EXTS']),
   },
   methods: {
     onSelect(media, index) {
+      // 不是特定的类型，不能选择
+      if (this.ext && this.ext.split(',').indexOf(media.ext) === -1) {
+        return
+      }
+
       const i = this.findInSelected(media)
 
       if (i !== -1) { // 已经选了，则取消选择
@@ -75,33 +81,14 @@ export default {
 }
 
 .file-preview {
-  width: 100px;
-  height: 100px;
-  display: inline-flex;
-  align-items: center;
   border: 3px solid $--color-info-light;
   margin-right: 5px;
   margin-bottom: 5px;
-  justify-content: center;
   cursor: pointer;
-
-  img {
-    max-width: 100%;
-    max-height: 100%;
-  }
 
   &.selected {
     border-color: $--color-primary;
     border-style: dashed;
   }
-}
-
-.ext {
-  overflow: hidden;
-  margin: 0 10px;
-  color: $--color-info;
-  font-size: 20px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 </style>
