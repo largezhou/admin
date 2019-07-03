@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\SystemMedia;
+use Illuminate\Support\Facades\Storage;
 
 class SystemMediaResource extends JsonResource
 {
@@ -14,7 +15,7 @@ class SystemMediaResource extends JsonResource
         $data = parent::toArray($request);
         $data = array_merge($data, [
             'category' => $this->whenLoaded('category'),
-            'url' => url($model->path),
+            'url' => Storage::disk('uploads')->url($model->path),
         ]);
 
         return $data;

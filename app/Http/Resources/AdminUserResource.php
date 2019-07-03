@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Models\AdminUser;
 use App\Traits\ResourceRolePermissionHelpers;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class AdminUserResource extends JsonResource
 {
@@ -26,7 +27,7 @@ class AdminUserResource extends JsonResource
             'id' => $model->id,
             'username' => $model->username,
             'name' => $model->name,
-            'avatar' => $model->avatar,
+            'avatar' => Storage::disk('uploads')->url($model->avatar),
             'roles' => $this->getRoles(),
             'permissions' => $this->getPermissions(),
             'created_at' => (string) $model->created_at,

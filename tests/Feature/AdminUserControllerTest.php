@@ -118,9 +118,11 @@ class AdminUserControllerTest extends AdminTestCase
     {
         // username, name, password required
         // roles.*, permissions.*, exists
+        // avatar max:255
         $res = $this->storeResource([
             'roles' => [9999],
             'permissions' => [9999],
+            'avatar' => str_repeat('a', 256),
         ]);
         $res->assertJsonValidationErrors([
             'username',
@@ -128,6 +130,7 @@ class AdminUserControllerTest extends AdminTestCase
             'password',
             'roles.0',
             'permissions.0',
+            'avatar',
         ]);
 
         // username, name max:100
@@ -202,6 +205,15 @@ class AdminUserControllerTest extends AdminTestCase
 
     public function testUpdate()
     {
+        // 测试更新时，判断 传入的 全路径 头像，是否会替换掉数据库的相对路径
+        $this->storage
+            ->getDriver()
+            ->getConfig()
+            ->set('url', 'http://domain.com');
+
+        $this->user->avatar = '/path/to/avatar/jpg';
+        $this->user->save();
+
         $this->user->roles()
             ->createMany(factory(AdminRole::class, 3)->make()->toArray());
         $this->user->permissions()
@@ -218,6 +230,7 @@ class AdminUserControllerTest extends AdminTestCase
             'permissions' => $newPerms,
             'password' => $pw,
             'password_confirmation' => $pw,
+            'avatar' => $this->storage->url($this->user->avatar),
         ]);
         $res->assertStatus(201);
         $this->assertTrue(Hash::check($pw, AdminUser::find(1)->password));
@@ -225,6 +238,7 @@ class AdminUserControllerTest extends AdminTestCase
             'id' => 1,
             'username' => 'admin',
             'name' => 'new name',
+            'avatar' => $this->user->avatar,
         ]);
         // 新角色
         $this->assertDatabaseHas('admin_user_role', [

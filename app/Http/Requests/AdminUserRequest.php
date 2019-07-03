@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\AdminUser;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 
 class AdminUserRequest extends FormRequest
 {
@@ -33,7 +34,7 @@ class AdminUserRequest extends FormRequest
                 unset($rules['password']);
             }
             // 处理更新时，图片没有改，则不用验证
-            if ($this->input('avatar') === $user->avatar) {
+            if ($this->input('avatar') === Storage::disk('uploads')->url($user->avatar)) {
                 unset($rules['avatar']);
             }
         }
