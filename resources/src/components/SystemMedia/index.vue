@@ -22,7 +22,14 @@
             >
               多选
             </el-button>
-            <pop-confirm type="danger" :disabled="!anySelected" :confirm="onDestroyMedia">删除</pop-confirm>
+            <pop-confirm
+              notice="物理文件也有可能会被删除！确认删除？"
+              type="danger"
+              :disabled="!anySelected"
+              :confirm="onDestroyMedia"
+            >
+              删除
+            </pop-confirm>
           </el-button-group>
         </el-header>
 
