@@ -11,10 +11,16 @@
     <flex-spacer/>
     <navbar-items>
       <el-dropdown trigger="click">
-        <el-button type="text">
-          {{ user.name }}
+        <div class="avatar flex-box">
+          <img
+            v-if="user.avatar"
+            :src="user.avatar"
+            :alt="user.name"
+            :title="user.name"
+          >
+          <span v-else>{{ user.name }}</span>
           <i class="el-icon-arrow-down el-icon--right"/>
-        </el-button>
+        </div>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item class="link-item">
             <router-link :to="{ name: 'editMyProfile' }">个人资料</router-link>
@@ -68,7 +74,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '~@/plugins/element/index';
+@import '~element-ui/packages/theme-chalk/src/common/var';
 
 .header {
   line-height: 60px;
@@ -79,5 +85,17 @@ export default {
   padding-left: 0;
   display: flex;
   border-bottom: 1px solid #dcdfe6;
+}
+
+.avatar {
+  color: $--color-primary;
+  cursor: pointer;
+  height: 100%;
+
+  img {
+    border-radius: $--border-radius-base;
+    max-width: 40px;
+    max-height: 40px;
+  }
 }
 </style>
