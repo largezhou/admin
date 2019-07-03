@@ -194,7 +194,7 @@ export default {
 
       // 作为管理页面使用时，可以切换
       multiple: this.defaultMultiple === undefined
-        ? true
+        ? false
         : this.defaultMultiple,
     }
   },

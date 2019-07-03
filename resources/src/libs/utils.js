@@ -227,7 +227,7 @@ export const removeFromNested = (items, identify, identifyKey = 'id', childrenKe
  */
 export const getExt = (filename) => {
   const t = filename.split('.')
-  return t.length === 0
+  return t.length <= 1
     ? ''
     : t[t.length - 1]
 }
