@@ -12,8 +12,16 @@
       :collapse="collapse"
       @select="onSelect"
     >
+      <div class="pa-2">
+        <el-input v-model="q" placeholder="搜索菜单"/>
+      </div>
       <template v-for="menu of menus">
-        <side-menu-item v-if="menu.menu" :menu="menu" :key="menu.id"/>
+        <side-menu-item
+          :q="q"
+          v-if="menu.menu"
+          :menu="menu"
+          :key="menu.id"
+        />
       </template>
     </el-menu>
   </div>
@@ -21,7 +29,6 @@
 
 <script>
 import SideMenuItem from './SideMenuItem'
-import _get from 'lodash/get'
 import { mapState } from 'vuex'
 
 export default {
@@ -32,6 +39,7 @@ export default {
   data() {
     return {
       openedMenus: [],
+      q: '',
     }
   },
   props: {
@@ -59,6 +67,9 @@ export default {
   watch: {
     $route: {
       handler(newVal) {
+        // 如果直接用 matched 中的作为默认展开的菜单，
+        // 在路由切换时，其他打开的菜单全部会关掉，
+        // 所以手动处理一下
         const t = new Set(this.openedMenus)
         newVal.matched.forEach(i => {
           i.name && t.add(i.name)
@@ -70,7 +81,7 @@ export default {
     collapse(newVal) {
       // 菜单从折叠状态展开时，如果没有激活的菜单，
       // 无法根据 default-opened 自动展开菜单，所以手动处理一下
-      if (!newVal && !_get(this.$refs, 'menu.activeIndex')) {
+      if (!newVal) {
         const bak = this.openedMenus
         this.openedMenus = []
         setTimeout(() => {
