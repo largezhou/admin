@@ -49,10 +49,6 @@ const renameComponent = async (to) => {
   }
 }
 
-const getNeededData = async requests => {
-  await Promise.all(requests)
-}
-
 router.beforeEach(async (to, from, next) => {
   await renameComponent(to)
 
@@ -84,7 +80,7 @@ router.beforeEach(async (to, from, next) => {
 
         !loggedIn && requests.push(store.dispatch('getUser'))
         !vueRoutersLoaded && requests.push(store.dispatch('getVueRouters'))
-        await getNeededData(requests)
+        await Promise.all(requests)
 
         // 如果之前没有路由配置，则获取完路由配置后，要重新定位到要去的路由
         // 因为路由配置已经变了

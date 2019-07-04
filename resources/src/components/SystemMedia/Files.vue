@@ -1,5 +1,5 @@
 <template>
-  <div class="file-wrapper">
+  <transition-group class="file-wrapper" name="el-fade-in">
     <file-preview
       class="file-preview"
       v-for="(item, i) of media"
@@ -8,7 +8,7 @@
       @click.native="onSelect(item, i)"
       :file="item"
     />
-  </div>
+  </transition-group>
 </template>
 
 <script>
@@ -85,6 +85,7 @@ export default {
   margin-right: 5px;
   margin-bottom: 5px;
   cursor: pointer;
+  transition: all .2s;
 
   &.selected {
     border-color: $--color-primary;
