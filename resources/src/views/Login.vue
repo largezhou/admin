@@ -3,7 +3,7 @@
     <div class="login-wrap">
       <el-card>
         <template v-slot:header>
-          <span>登录牛逼商城吧</span>
+          <span>登录</span>
         </template>
         <LoginForm/>
       </el-card>
