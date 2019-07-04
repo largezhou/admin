@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import routes from '@/router/routes'
-import { getToken } from '@/libs/token'
+import { getToken, removeToken } from '@/libs/token'
 import store from '@/store'
 import _get from 'lodash/get'
 
@@ -49,10 +49,6 @@ const renameComponent = async (to) => {
   }
 }
 
-const getNeededData = async requests => {
-  await Promise.all(requests)
-}
-
 router.beforeEach(async (to, from, next) => {
   await renameComponent(to)
 
@@ -84,7 +80,7 @@ router.beforeEach(async (to, from, next) => {
 
         !loggedIn && requests.push(store.dispatch('getUser'))
         !vueRoutersLoaded && requests.push(store.dispatch('getVueRouters'))
-        await getNeededData(requests)
+        await Promise.all(requests)
 
         // 如果之前没有路由配置，则获取完路由配置后，要重新定位到要去的路由
         // 因为路由配置已经变了
@@ -95,7 +91,8 @@ router.beforeEach(async (to, from, next) => {
         }
       } catch ({ response: res }) {
         if (res && res.status === 401) {
-          next(loginRoute(to))
+          removeToken()
+          location.href = router.resolve(loginRoute(to)).href
         } else {
           NProgress.done()
           next(false)
