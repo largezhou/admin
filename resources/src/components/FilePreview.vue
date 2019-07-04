@@ -30,7 +30,7 @@ export default {
       return isImage(this.formattedFile.path)
     },
     upperCaseExt() {
-      return (getExt(this.formattedFile.path) || 'file').toUpperCase()
+      return (this.formattedFile.ext || 'file').toUpperCase()
     },
   },
   methods: {
@@ -50,7 +50,7 @@ export default {
         }
       } else if (typeof f === 'object') {
         this.formattedFile = Object.assign({}, f, {
-          ext: getExt(f.path),
+          ext: f.ext || getExt(f.path),
           url: f.url || f.path,
         })
       } else {

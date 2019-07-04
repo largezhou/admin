@@ -15,8 +15,7 @@ $factory->define(SystemMedia::class, function (Faker $faker) {
         'filename' => $filename,
         'ext' => $ext,
         'category_id' => 0,
-        // 'path' => '/'.implode('/', $faker->words()).'/'.$filename,
-        'path' => 'https://dummyimage.com/'.$faker->randomElement($dimensions).'x'.$faker->randomElement($dimensions).'/'.substr($faker->hexColor, 1),
+        'path' => '/'.$faker->randomElement($dimensions).'x'.$faker->randomElement($dimensions).'/'.substr($faker->hexColor, 1),
         'size' => $faker->numberBetween(500, 102400),
         'mime_type' => $ext ? $faker->mimeType : null,
     ];

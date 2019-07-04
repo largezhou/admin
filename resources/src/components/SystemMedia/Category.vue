@@ -27,6 +27,7 @@
         size="mini"
         type="danger"
         :confirm="onDestroyCategory"
+        notice="所有子孙分类也将被删除!分类下的文件会被移动到“无分类”下。确认删除？"
       >
         删除
       </pop-confirm>

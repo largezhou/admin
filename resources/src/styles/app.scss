@@ -101,9 +101,32 @@ code {
   }
 }
 
+//穿梭框，在小屏幕下的兼容
 @media only screen and (max-width: 768px) {
   .el-transfer {
     flex-direction: column;
+  }
+
+  .el-transfer__buttons {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+  }
+
+  .el-transfer__button {
+    display: inline-block !important;
+    margin: 0 !important;
+
+    & + .el-transfer__button {
+      margin-left: 5px !important;
+    }
+
+    .el-icon-arrow-right:before {
+      content: '\E6DF';
+    }
+
+    .el-icon-arrow-left:before {
+      content: '\E6E1';
+    }
   }
 }
 

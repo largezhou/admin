@@ -17,7 +17,7 @@ export default {
     const buttons = this.$slots.default
     if (this.collapse) {
       return (
-        <el-dropdown>
+        <el-dropdown trigger="click">
           <el-button>
             操作<i class="el-icon-arrow-down el-icon--right"/>
           </el-button>
