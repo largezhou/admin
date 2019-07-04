@@ -23,6 +23,10 @@ const showError = res => {
   msg && Message.error(msg)
 }
 
+const cancelAll = (msg = '') => {
+  Object.values(queue).forEach(i => i.source.cancel(msg))
+}
+
 _axios.interceptors.request.use(
   (config) => {
     config.headers.Authorization = getToken()
@@ -56,13 +60,14 @@ _axios.interceptors.response.use(
           break
         case 401:
           Message.error('登录已失效，请重新登录')
+          cancelAll('登录失效: ' + res.config.url)
           break
         case 400:
           showError(res)
           break
         case 403:
           showError(res)
-          Object.values(queue).forEach(i => i.source.cancel('无权访问: ' + res.config.url))
+          cancelAll('无权访问: ' + res.config.url)
           break
         case 422:
           if (config.showValidationMsg) { // 如果显示验证消息，则显示首条
