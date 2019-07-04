@@ -4,7 +4,6 @@
     v-bind="$attrs"
     v-on="$listeners"
     @change="onChange"
-    @blur="onBlur"
     :disabled="loading"
   />
 </template>
@@ -31,9 +30,6 @@ export default {
   methods: {
     onChange(val) {
       this.value = val
-      this.debounceUpdate()
-    },
-    onBlur() {
       this.debounceUpdate()
     },
   },

@@ -1,4 +1,4 @@
-import { getFirstError } from '@/libs/utils'
+import { getFirstError, getMessage } from '@/libs/utils'
 
 export default {
   data() {
@@ -28,7 +28,7 @@ export default {
         this.loading = true
         await this.update(this.id, { [this.field]: val })
         this.setOldVal()
-        this.$message.success('修改成功')
+        this.$message.success(getMessage('updated'))
       } catch ({ response: res }) {
         this.$refs.input.$emit('input', this.oldVal)
 
