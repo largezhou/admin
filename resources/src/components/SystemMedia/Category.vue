@@ -2,11 +2,12 @@
   <div>
     <el-input
       class="filter-input mb-1"
+      :class="{ 'w-100': miniWidth }"
       placeholder="搜索分类"
       size="small"
       v-model="q"
     />
-    <el-button-group class="category-actions mb-2">
+    <el-button-group class="category-actions mb-2" :class="{ 'w-100': miniWidth }">
       <loading-action size="mini" :action="getCategories">刷新</loading-action>
       <el-button
         :disabled="currentId === 0"

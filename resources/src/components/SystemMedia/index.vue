@@ -1,7 +1,7 @@
 <template>
-  <el-card class="system-media" shadow="never">
+  <el-card class="system-media" :class="{ 'mini-width': miniWidth }" shadow="never">
     <el-container class="body">
-      <el-aside class="aside" width="221px">
+      <el-aside v-if="!miniWidth" class="aside" width="221px">
         <category
           class="h-100"
           ref="category"
@@ -9,9 +9,27 @@
           @categories-change="onCategoriesChange"
         />
       </el-aside>
+
+      <el-dialog
+        class="categories-dialog"
+        title="选择分类"
+        :visible.sync="categoriesDialog"
+        width="90%"
+        :auto-focus="false"
+        append-to-body
+      >
+        <category
+          v-if="miniWidth"
+          class="h-100"
+          ref="category"
+          @select="onCategorySelect"
+          @categories-change="onCategoriesChange"
+        />
+      </el-dialog>
+
       <el-container>
         <el-header>
-          <el-button-group>
+          <collapse-button-group>
             <loading-action :action="onReloadMedia">刷新</loading-action>
             <el-button :disabled="!anySelected" @click="movingDialog = true">移动</el-button>
             <!-- 没有设置默认多选时，就可以切换多选，switch 组件放这里，样式懒得调 -->
@@ -30,7 +48,8 @@
             >
               删除
             </pop-confirm>
-          </el-button-group>
+          </collapse-button-group>
+          <el-button v-if="miniWidth" class="ml-1" @click="categoriesDialog = true">选择分类</el-button>
         </el-header>
 
         <el-main
@@ -49,8 +68,8 @@
             </el-scrollbar>
           </div>
         </el-main>
-        <el-footer>
-          <el-button-group>
+        <el-footer class="footer">
+          <collapse-button-group class="footer-actions">
             <el-button :disabled="currentCategoryId <= 0" @click="onClickUpload">上传</el-button>
             <el-button
               :disabled="!anySelected"
@@ -66,7 +85,7 @@
               {{ ext ? '已筛选' : '筛选' }}
             </el-button>
             <slot name="actions" v-bind="getThis"/>
-          </el-button-group>
+          </collapse-button-group>
           <flex-spacer/>
           <pagination
             :page="page"
@@ -164,10 +183,12 @@ import {
 import _differenceBy from 'lodash/differenceBy'
 import Category from './Category'
 import Files from '@c/SystemMedia/Files'
+import CollapseButtonGroup from '@c/CollapseButtonGroup'
 
 export default {
   name: 'SystemMedia',
   components: {
+    CollapseButtonGroup,
     Files,
     Category,
     Pagination,
@@ -203,6 +224,8 @@ export default {
       multiple: this.defaultMultiple === undefined
         ? false
         : this.defaultMultiple,
+
+      categoriesDialog: false,
     }
   },
   props: {
@@ -448,6 +471,11 @@ export default {
       this.clearSelected()
       this.getMedia(this.currentCategoryId)
     },
+    miniWidth(newVal) {
+      if (!newVal) {
+        this.categoriesDialog = false
+      }
+    },
   },
 }
 </script>
@@ -501,6 +529,28 @@ $padding-width: 15px;
 
   .el-icon-more {
     display: none;
+  }
+}
+
+.categories-dialog {
+  /deep/ {
+    .el-dialog__body {
+      height: 400px;
+    }
+  }
+}
+
+.mini-width {
+  .footer {
+    flex-direction: column-reverse;
+
+    & > * {
+      align-self: flex-start;
+    }
+  }
+
+  .footer-actions {
+    margin-top: 10px;
   }
 }
 </style>
