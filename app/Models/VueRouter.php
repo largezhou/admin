@@ -39,11 +39,6 @@ class VueRouter extends Model
         $this->attributes['parent_id'] = $value ?: 0;
     }
 
-    public function setPathAttribute($path)
-    {
-        $this->attributes['path'] = $path ? ('/'.ltrim($path, '/')) : null;
-    }
-
     public function roles()
     {
         return $this->belongsToMany(

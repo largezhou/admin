@@ -12,10 +12,13 @@
       />
     </template>
   </el-submenu>
-  <router-link
-    v-else
-    :to="makePath(menu.path)"
-  >
+  <a v-else-if="isExternal(menu.path)" :href="menu.path" target="_blank">
+    <el-menu-item>
+      <i :class="icon(menu.icon)"/>
+      <span slot="title">{{ menu.title }}</span>
+    </el-menu-item>
+  </a>
+  <router-link v-else :to="makePath(menu.path)">
     <el-menu-item :index="makeRouteName(menu.id)">
       <i :class="icon(menu.icon)"/>
       <span slot="title">{{ menu.title }}</span>
@@ -25,13 +28,13 @@
 
 <script>
 import { hasChildren, makeRouteName, startSlash } from '@/libs/utils'
+import { isExternal } from '@/libs/validates'
 
 export default {
   name: 'SideMenuItem',
   props: {
     menu: Object,
   },
-  computed: {},
   methods: {
     hasChildren,
     icon(icon) {
@@ -39,6 +42,7 @@ export default {
     },
     makeRouteName,
     makePath: path => path ? startSlash(path) : '',
+    isExternal,
   },
 }
 </script>

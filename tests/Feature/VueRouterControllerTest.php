@@ -123,7 +123,6 @@ class VueRouterControllerTest extends AdminTestCase
         $res = $this->updateResource(1, $inputs + ['roles' => [2]]);
         $res->assertStatus(201);
 
-        $inputs['path'] = '/'.$inputs['path'];
         $this->assertDatabaseHas('vue_routers', ['id' => 1] + $inputs);
         $this->assertDatabaseHas('vue_router_role', [
             'vue_router_id' => 1,
