@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import routes from '@/router/routes'
-import { getToken } from '@/libs/token'
+import { getToken, removeToken } from '@/libs/token'
 import store from '@/store'
 import _get from 'lodash/get'
 
@@ -91,7 +91,8 @@ router.beforeEach(async (to, from, next) => {
         }
       } catch ({ response: res }) {
         if (res && res.status === 401) {
-          next(loginRoute(to))
+          removeToken()
+          location.href = router.resolve(loginRoute(to)).href
         } else {
           NProgress.done()
           next(false)
