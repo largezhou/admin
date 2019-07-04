@@ -147,35 +147,19 @@ code {
 
   &.button-item {
     padding: 0 !important;
+    margin: 0 -1px 0 -1px !important;
 
     .el-button {
       width: 100%;
       border: none;
-      background: transparent;
-      padding-left: 20px;
-      padding-right: 20px;
+      border-radius: 0;
       text-align: left;
       transition: none;
-    }
 
-    .el-button--primary {
-      color: $--color-primary;
-    }
-
-    .el-button--danger {
-      color: $--color-danger;
-    }
-
-    .el-button--success {
-      color: $--color-success;
-    }
-
-    .el-button--warning {
-      color: $--color-warning;
-    }
-
-    .el-button--info {
-      color: $--color-info;
+      &:not(.link) {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
     }
   }
 }
