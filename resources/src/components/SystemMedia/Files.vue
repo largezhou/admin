@@ -1,5 +1,5 @@
 <template>
-  <transition-group class="file-wrapper" name="el-fade-in">
+  <div class="file-wrapper">
     <file-preview
       class="file-preview"
       v-for="(item, i) of media"
@@ -8,7 +8,7 @@
       @click.native="onSelect(item, i)"
       :file="item"
     />
-  </transition-group>
+  </div>
 </template>
 
 <script>
