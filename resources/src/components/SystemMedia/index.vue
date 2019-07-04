@@ -1,23 +1,6 @@
 <template>
   <el-card class="system-media" :class="{ 'mini-width': miniWidth }" shadow="never">
     <el-container class="body">
-      <el-dialog
-        v-if="miniWidth"
-        class="categories-dialog"
-        title="选择分类"
-        :visible.sync="categoriesDialog"
-        :width="miniWidth ? '90%' : '400px'"
-        :auto-focus="false"
-        append-to-body
-      >
-        <category
-          class="h-100"
-          ref="category"
-          @select="onCategorySelect"
-          @categories-change="onCategoriesChange"
-        />
-      </el-dialog>
-
       <el-aside v-if="!miniWidth" class="aside" width="221px">
         <category
           class="h-100"
@@ -26,6 +9,24 @@
           @categories-change="onCategoriesChange"
         />
       </el-aside>
+
+      <el-dialog
+        class="categories-dialog"
+        title="选择分类"
+        :visible.sync="categoriesDialog"
+        width="90%"
+        :auto-focus="false"
+        append-to-body
+      >
+        <category
+          v-if="miniWidth"
+          class="h-100"
+          ref="category"
+          @select="onCategorySelect"
+          @categories-change="onCategoriesChange"
+        />
+      </el-dialog>
+
       <el-container>
         <el-header>
           <collapse-button-group>
@@ -469,6 +470,11 @@ export default {
     ext(newVal) {
       this.clearSelected()
       this.getMedia(this.currentCategoryId)
+    },
+    miniWidth(newVal) {
+      if (!newVal) {
+        this.categoriesDialog = false
+      }
     },
   },
 }
