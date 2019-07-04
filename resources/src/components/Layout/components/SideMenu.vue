@@ -12,8 +12,16 @@
       :collapse="collapse"
       @select="onSelect"
     >
+      <div class="pa-2">
+        <el-input v-model="q" placeholder="搜索菜单"/>
+      </div>
       <template v-for="menu of menus">
-        <side-menu-item v-if="menu.menu" :menu="menu" :key="menu.id"/>
+        <side-menu-item
+          :q="q"
+          v-if="menu.menu"
+          :menu="menu"
+          :key="menu.id"
+        />
       </template>
     </el-menu>
   </div>
@@ -31,6 +39,7 @@ export default {
   data() {
     return {
       openedMenus: [],
+      q: '',
     }
   },
   props: {
