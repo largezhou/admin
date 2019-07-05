@@ -22,7 +22,7 @@ export default new Vuex.Store({
   },
   state: {
     miniWidth: window.innerWidth <= 768,
-    include: ['ParentView'],
+    include: [],
   },
   mutations: {
     SET_MINI_WIDTH(state, payload) {
