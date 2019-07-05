@@ -37,7 +37,7 @@
       <div class="side-tree">
         <el-tree
           :expand-on-click-node="false"
-          :data="categoriesWithAll"
+          :data="categories"
           :props="treeOptions"
           default-expand-all
           :filter-node-method="filter"
@@ -90,7 +90,6 @@ import _get from 'lodash/get'
 import PopConfirm from '@c/PopConfirm'
 import {
   getMessage,
-  removeFromNested,
 } from '@/libs/utils'
 
 export default {
@@ -124,19 +123,6 @@ export default {
     miniWidth() {
       return this.$store.state.miniWidth
     },
-    categoriesWithAll() {
-      return [
-        {
-          id: -1,
-          name: '所有',
-        },
-        {
-          id: 0,
-          name: '无分类',
-        },
-        ...this.categories,
-      ]
-    },
     canSave() {
       const id = this.currentId
       // 所有 和 无分类 不能编辑
@@ -160,8 +146,18 @@ export default {
       try {
         const { data } = await getCategories()
 
-        this.categories = data
-        this.categoriesChanged()
+        // 追加两个伪分类，但是同步到父组件时，要去掉
+        this.categories = [
+          {
+            id: -1,
+            name: '所有',
+          },
+          {
+            id: 0,
+            name: '无分类',
+          },
+          ...data,
+        ]
 
         await this.$nextTick()
 
@@ -173,7 +169,7 @@ export default {
     async initSelected() {
       await this.$nextTick()
       this.$refs.tree.setCurrentKey(-1)
-      this.current = this.categoriesWithAll[0]
+      this.current = this.categories[0]
     },
     onOpenDialog(editMode = true) {
       this.editMode = editMode
@@ -199,9 +195,7 @@ export default {
 
       this.initSelected()
 
-      // 用 el-tree 的 remove 方法，居然不会改变 categories 中的数，，，
-      removeFromNested(this.categories, id)
-      this.categoriesChanged()
+      this.$refs.tree.remove(id)
     },
     filter(value, category) {
       if (!value) {
@@ -249,8 +243,6 @@ export default {
         .config({ showValidationMsg: true })
       category.name = res.data.name
       this.$message.success(getMessage('updated'))
-
-      this.categoriesChanged()
     },
     async onSave() {
       if (!this.canSave || !this.inputName) {
@@ -269,20 +261,16 @@ export default {
           parent_id: parentId,
           name: this.inputName,
         }).config({ showValidationMsg: true })
-        if (parentId) {
-          this.$refs.tree.append(data, this.parentId)
-        } else {
-          this.categories.push(data)
-        }
+
+        // 手动先加一个 children 字段，不然后面给该节点添加子节点时，
+        // el-tree 组件自动加的 children 属性，没有响应式
+        data.children = []
+        this.$refs.tree.append(data, parentId)
+
         this.$message.success(getMessage('created'))
       }
 
       this.dialog = false
-
-      this.categoriesChanged()
-    },
-    categoriesChanged() {
-      this.$emit('categories-change', this.categories)
     },
   },
   watch: {
@@ -294,6 +282,13 @@ export default {
         this.$emit('select', newVal)
       },
       immediate: true,
+    },
+    categories: {
+      handler(newVal) {
+        // 去掉前面两个 伪分类
+        this.$emit('categories-change', newVal.slice(2))
+      },
+      deep: true,
     },
   },
 }
