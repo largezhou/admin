@@ -5,7 +5,7 @@
     :index="makeRouteName(menu.id)"
   >
     <template v-slot:title>
-      <i :class="icon(menu.icon)"/>
+      <svg-icon :icon-class="icon(menu.icon)"/>
       <span slot="title">{{ menu.title }}</span>
     </template>
     <template v-for="sub of menu.children">
@@ -19,13 +19,13 @@
   </el-submenu>
   <a v-else-if="isExternal(menu.path)" :href="menu.path" target="_blank">
     <el-menu-item v-show="filtered">
-      <i :class="icon(menu.icon)"/>
+      <svg-icon :icon-class="icon(menu.icon)"/>
       <span slot="title">{{ menu.title }}</span>
     </el-menu-item>
   </a>
   <router-link v-else :to="makePath(menu.path)">
     <el-menu-item v-show="filtered" :index="makeRouteName(menu.id)">
-      <i :class="icon(menu.icon)"/>
+      <svg-icon :icon-class="icon(menu.icon)"/>
       <span slot="title">{{ menu.title }}</span>
     </el-menu-item>
   </router-link>
@@ -53,7 +53,7 @@ export default {
   methods: {
     hasChildren,
     icon(icon) {
-      return icon || 'el-icon-setting'
+      return icon || 'cog-fill'
     },
     makeRouteName,
     makePath: path => path ? startSlash(path) : '',
@@ -68,5 +68,18 @@ export default {
 <style scoped lang="scss">
 a {
   text-decoration: none;
+}
+
+/deep/ {
+  .el-menu-item,
+  .el-submenu__title {
+    display: flex;
+    align-items: center;
+
+    svg {
+      width: 28px;
+      height: 16px;
+    }
+  }
 }
 </style>
