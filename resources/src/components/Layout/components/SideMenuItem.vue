@@ -76,6 +76,11 @@ a {
     display: flex;
     align-items: center;
 
+    .el-tooltip {
+      display: inline-flex !important;
+      align-items: center;
+    }
+
     svg {
       width: 28px;
       height: 16px;
