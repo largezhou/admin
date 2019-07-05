@@ -71,10 +71,15 @@ export default {
         // 在路由切换时，其他打开的菜单全部会关掉，
         // 所以手动处理一下
         const t = new Set(this.openedMenus)
-        newVal.matched.forEach(i => {
+        newVal.matched.slice(0, -1).forEach(i => {
           i.name && t.add(i.name)
         })
-        this.openedMenus = [...t]
+        // this.openedMenus = [...t]
+        // 直接上面这样，在首次进入页面时，如果手动展开了一个菜单
+        // openedMenus 不会有改变，所以，，，没什么是一个 nextTick 解决不了的？
+        this.$nextTick(() => {
+          this.openedMenus = [...t]
+        })
       },
       immediate: true,
     },
@@ -82,11 +87,7 @@ export default {
       // 菜单从折叠状态展开时，如果没有激活的菜单，
       // 无法根据 default-opened 自动展开菜单，所以手动处理一下
       if (!newVal) {
-        const bak = this.openedMenus
-        this.openedMenus = []
-        setTimeout(() => {
-          this.openedMenus = bak
-        }, 400)
+        this.openedMenus = [...this.openedMenus]
       }
     },
   },
