@@ -41,7 +41,20 @@
           </el-input>
         </el-form-item>
         <el-form-item label="图标" prop="icon">
-          <el-input v-model="form.icon" style="width: 200px;"/>
+          <el-input placeholder="请输入内容" v-model="form.icon" class="icon">
+            <el-select v-model="form.icon" slot="prepend" placeholder="图标">
+              <el-option
+                v-for="i of icons"
+                :key="i"
+                label="图标"
+                :value="i"
+              >
+                <svg-icon class="mr-2" :icon-class="i"/>
+                <span class="fr">{{ i }}</span>
+              </el-option>
+            </el-select>
+            <svg-icon slot="append" :icon-class="form.icon || 'cog-fill'"/>
+          </el-input>
         </el-form-item>
         <el-form-item label="排序" prop="order">
           <el-input-number v-model="form.order" :min="-9999" :max="9999"/>
@@ -103,6 +116,7 @@ import LzForm from '@c/LzForm'
 import { getAdminRoles } from '@/api/admin-roles'
 import { getAdminPerms } from '@/api/admin-perms'
 import FormHelper from '@c/LzForm/FormHelper'
+import icons from '@/icons'
 
 export default {
   name: 'Form',
@@ -134,6 +148,9 @@ export default {
   computed: {
     vueRouterOptions() {
       return nestedToSelectOptions(this.vueRouters)
+    },
+    icons() {
+      return icons
     },
   },
   methods: {
@@ -180,3 +197,11 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+.icon {
+  .el-select .el-input {
+    width: 80px;
+  }
+}
+</style>

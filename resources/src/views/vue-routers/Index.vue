@@ -11,7 +11,7 @@
       <el-table-column width="250" label="标题">
         <template v-slot="{ row }">
           <span class="id mr-1">{{ row.id }}</span>
-          <i :class="row.icon"/>
+          <svg-icon :icon-class="row.icon || ''" class="mr-1"/>
           <span>{{ row.title }}</span>
         </template>
       </el-table-column>
