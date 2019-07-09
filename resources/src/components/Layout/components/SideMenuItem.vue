@@ -1,7 +1,7 @@
 <template>
   <el-submenu
     v-if="hasChildren(menu)"
-    v-show="filtered || anyChildFiltered"
+    v-show="filtered"
     :index="makeRouteName(menu.id)"
   >
     <template v-slot:title>
@@ -10,6 +10,7 @@
     </template>
     <template v-for="sub of menu.children">
       <side-menu-item
+        ref="children"
         :q="q"
         v-if="sub.menu"
         :key="sub.id"
@@ -43,11 +44,9 @@ export default {
   },
   computed: {
     filtered() {
-      return !this.q || this.filter(this.menu.title)
-    },
-    anyChildFiltered() {
-      return this.menu.children &&
-        this.menu.children.some((i) => this.filter(i.title))
+      return !this.q ||
+        (this.menu.title.indexOf(this.q) !== -1) ||
+        (this.$refs.children && this.$refs.children.some((i) => i.filtered))
     },
   },
   methods: {
@@ -58,9 +57,6 @@ export default {
     makeRouteName,
     makePath: path => path ? startSlash(path) : '',
     isExternal,
-    filter(title) {
-      return !this.q || (title.indexOf(this.q) !== -1)
-    },
   },
 }
 </script>
