@@ -36,12 +36,22 @@
           <el-input v-model="form.title"/>
         </el-form-item>
         <el-form-item label="地址" prop="path">
-          <el-input v-model="form.path">
+          <el-autocomplete
+            class="w-100"
+            popper-class="path-input"
+            v-model="form.path"
+            :fetch-suggestions="pathSearch"
+            clearable
+          >
             <template slot="prepend">/admin/</template>
-          </el-input>
+            <template slot-scope="{ item }">
+              <div class="path">{{ item.value }}</div>
+              <div class="component">{{ item.component }}</div>
+            </template>
+          </el-autocomplete>
         </el-form-item>
         <el-form-item label="图标" prop="icon">
-          <el-input placeholder="请输入内容" v-model="form.icon" class="icon">
+          <el-input v-model="form.icon" class="icon">
             <el-select v-model="form.icon" slot="prepend" placeholder="图标">
               <el-option
                 v-for="i of icons"
@@ -117,6 +127,8 @@ import { getAdminRoles } from '@/api/admin-roles'
 import { getAdminPerms } from '@/api/admin-perms'
 import FormHelper from '@c/LzForm/FormHelper'
 import icons from '@/icons'
+import pages from '@v/pages'
+import _forIn from 'lodash/forIn'
 
 export default {
   name: 'Form',
@@ -152,6 +164,9 @@ export default {
     icons() {
       return icons
     },
+  },
+  created() {
+    this.initPathComponents()
   },
   methods: {
     queryParentId() {
@@ -194,14 +209,50 @@ export default {
         this.fillForm(data)
       }
     },
+    initPathComponents() {
+      this.pathComponents = []
+
+      _forIn(pages, (func, key) => {
+        this.pathComponents.push({
+          value: key,
+          component: func.toString().match(/\/src\/views\/(.*?)"/)[1],
+        })
+      })
+    },
+    pathSearch(q, cb) {
+      const results = q
+        ? this.pathComponents.filter((i) => (i.value.indexOf(q) !== -1) || (i.component.indexOf(q) !== -1))
+        : this.pathComponents
+      cb(results)
+    },
   },
 }
 </script>
 
 <style lang="scss">
+@import '~element-ui/packages/theme-chalk/src/common/var';
+
 .icon {
   .el-select .el-input {
     width: 80px;
+  }
+}
+
+.path-input {
+  li {
+    line-height: normal;
+    padding-top: 7px;
+    padding-bottom: 7px;
+  }
+
+  .path,
+  .component {
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .component {
+    color: $--color-info;
   }
 }
 </style>
