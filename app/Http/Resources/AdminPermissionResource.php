@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Models\AdminPermission;
-use Illuminate\Support\Arr;
 
 class AdminPermissionResource extends JsonResource
 {

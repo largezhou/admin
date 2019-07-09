@@ -1,11 +1,7 @@
 <template>
-  <el-collapse class="search-toggle" v-model="show">
-    <el-collapse-item name="only">
-      <template v-slot:title>
-        <i class="el-icon-search"/>
-        <span style="margin-left: 5px;">筛选</span>
-      </template>
-      <el-form inline @keydown.enter.native="onSubmit">
+  <el-collapse-transition>
+    <div v-show="realShow">
+      <el-form class="pb-3" inline @keydown.enter.native="onSubmit">
         <el-form-item v-for="item of fields" :key="item.field">
           <component
             :is="item.type || 'el-input'"
@@ -19,8 +15,8 @@
           <el-button @click="onReset">重置</el-button>
         </el-form-item>
       </el-form>
-    </el-collapse-item>
-  </el-collapse>
+    </div>
+  </el-collapse-transition>
 </template>
 
 <script>
@@ -29,11 +25,12 @@ export default {
   data() {
     return {
       form: {},
-      show: [],
+      realShow: this.show,
     }
   },
   props: {
     fields: Array,
+    show: Boolean,
   },
   created() {
     this.initFormShow()
@@ -66,7 +63,7 @@ export default {
     initFormShow() {
       this.fields.some(i => {
         if (this.$route.query[i.field]) {
-          this.show = ['only']
+          this.realShow = true
           return true
         }
       })
@@ -83,6 +80,9 @@ export default {
         })
       },
       immediate: true,
+    },
+    show(newVal) {
+      this.realShow = newVal
     },
   },
 }

@@ -4,7 +4,11 @@
       <content-header/>
     </template>
 
-    <search-form :fields="search"/>
+    <el-button-group class="mb-3">
+      <el-button @click="searchShow = !searchShow">筛选</el-button>
+    </el-button-group>
+
+    <search-form :show="searchShow" :fields="search"/>
 
     <el-table :data="roles">
       <el-table-column prop="id" label="ID" width="60"/>
@@ -62,6 +66,7 @@ export default {
   },
   data() {
     return {
+      searchShow: false,
       search: [
         {
           field: 'id',
