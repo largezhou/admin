@@ -38,16 +38,11 @@
         <el-form-item label="地址" prop="path">
           <el-autocomplete
             class="w-100"
-            popper-class="path-input"
             v-model="form.path"
             :fetch-suggestions="pathSearch"
             clearable
           >
             <template slot="prepend">/admin/</template>
-            <template slot-scope="{ item }">
-              <div class="path">{{ item.value }}</div>
-              <div class="component">{{ item.component }}</div>
-            </template>
           </el-autocomplete>
         </el-form-item>
         <el-form-item label="图标" prop="icon">
@@ -166,7 +161,7 @@ export default {
     },
   },
   created() {
-    this.initPathComponents()
+    this.initPaths()
   },
   methods: {
     queryParentId() {
@@ -209,20 +204,19 @@ export default {
         this.fillForm(data)
       }
     },
-    initPathComponents() {
-      this.pathComponents = []
+    initPaths() {
+      this.paths = []
 
       _forIn(pages, (func, key) => {
-        this.pathComponents.push({
+        this.paths.push({
           value: key,
-          component: func.toString().match(/\/src\/views\/(.*?)"/)[1],
         })
       })
     },
     pathSearch(q, cb) {
       const results = q
-        ? this.pathComponents.filter((i) => (i.value.indexOf(q) !== -1) || (i.component.indexOf(q) !== -1))
-        : this.pathComponents
+        ? this.paths.filter((i) => (i.value.indexOf(q) !== -1))
+        : this.paths
       cb(results)
     },
   },
@@ -230,29 +224,9 @@ export default {
 </script>
 
 <style lang="scss">
-@import '~element-ui/packages/theme-chalk/src/common/var';
-
 .icon {
   .el-select .el-input {
     width: 80px;
-  }
-}
-
-.path-input {
-  li {
-    line-height: normal;
-    padding-top: 7px;
-    padding-bottom: 7px;
-  }
-
-  .path,
-  .component {
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
-
-  .component {
-    color: $--color-info;
   }
 }
 </style>
