@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use App\Models\AdminUser;
 use App\Traits\ResourceRolePermissionHelpers;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 
 class AdminUserResource extends JsonResource

@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use App\Models\VueRouter;
 use App\Traits\ResourceRolePermissionHelpers;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 class VueRouterResource extends JsonResource
 {

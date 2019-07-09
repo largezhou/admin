@@ -23,7 +23,7 @@ class AdminInitCommandTest extends TestCase
 
         $this->assertDatabaseHas('vue_routers', [
             'id' => 1,
-            'path' => '/index',
+            'path' => 'index',
             'title' => '首页',
         ]);
         $this->assertDatabaseHas('admin_users', [
