@@ -123,7 +123,6 @@ import { getAdminPerms } from '@/api/admin-perms'
 import FormHelper from '@c/LzForm/FormHelper'
 import icons from '@/icons'
 import pages from '@v/pages'
-import _forIn from 'lodash/forIn'
 
 export default {
   name: 'Form',
@@ -205,13 +204,7 @@ export default {
       }
     },
     initPaths() {
-      this.paths = []
-
-      _forIn(pages, (func, key) => {
-        this.paths.push({
-          value: key,
-        })
-      })
+      this.paths = Object.keys(pages).sort().map((i) => ({ value: i }))
     },
     pathSearch(q, cb) {
       const results = q
