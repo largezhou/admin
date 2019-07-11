@@ -5,6 +5,10 @@ import pages from '@v/pages'
 import Page404 from '@v/errors/Page404'
 import _debounce from 'lodash/debounce'
 import { Message } from 'element-ui'
+import store from '@/store'
+import _get from 'lodash/get'
+import { PERMISSION_PASS_ALL, ROLE_ADMIN } from '@/libs/constants'
+import _intersection from 'lodash/intersection'
 
 /**
  * 把 laravel 返回的错误消息，处理成只有一条
@@ -249,4 +253,43 @@ export const debounceMsg = (msg, type = 'error') => {
   _debounceMsg.msg = msg
   _debounceMsg.type = type
   debouncedMsg()
+}
+
+/**
+ * 是否有权限
+ *
+ * @param permissions
+ *
+ * @return boolean
+ */
+export const can = (permissions) => {
+  const userPerms = _get(store, 'state.users.user.permissions', [])
+
+  if (userPerms.indexOf(PERMISSION_PASS_ALL) !== -1) {
+    return true
+  }
+
+  if (typeof permissions === 'string') {
+    permissions = permissions.split(',')
+  } else if (!Array.isArray(permissions)) {
+    throw new Error('必须是权限数组，或者用英文逗号分隔的权限字符串')
+  }
+
+  return _intersection(userPerms, permissions).length === permissions.length
+}
+
+export const roleIn = (roles) => {
+  const userRoles = _get(store, 'state.users.user.roles', [])
+
+  if (userRoles.indexOf(ROLE_ADMIN) !== -1) {
+    return true
+  }
+
+  if (typeof roles === 'string') {
+    roles = roles.split(',')
+  } else if (!Array.isArray(roles)) {
+    throw new Error('必须是角色数组，或者用英文逗号分隔的角色字符串')
+  }
+
+  return _intersection(userRoles, roles).length > 0
 }

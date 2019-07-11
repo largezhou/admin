@@ -12,8 +12,8 @@ export default {
     loggedIn(state) {
       return !!state.user
     },
-    userInfo: state => field => {
-      return state.user ? state.user[field] : null
+    userInfo: state => (field, defaultValue = null) => {
+      return state.user ? state.user[field] : defaultValue
     },
   },
   mutations: {

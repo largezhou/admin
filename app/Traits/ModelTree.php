@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 
 /**
  * 嵌套结构模型辅助 trait
@@ -13,11 +14,12 @@ use Illuminate\Database\Eloquent\Builder;
 trait ModelTree
 {
     /**
-     *
+     * 要排除的节点 id，子元素都会被排除
      *
      * @var int
      */
     protected $except = 0;
+    protected static $branchOrder = [];
 
     protected function parentColumn()
     {
@@ -82,11 +84,8 @@ trait ModelTree
 
             if ($node[$this->parentColumn()] == $parentId) {
                 $children = $this->buildNestedArray($nodes, $node[$this->idColumn()]);
-
-                if ($children) {
-                    $node['children'] = $children;
-                }
-
+                // 没有子菜单也显示一个空的数组，避免前端没有 children 时，不能响应式
+                $node['children'] = $children;
                 $branch[] = $node;
             }
         }
@@ -143,5 +142,34 @@ trait ModelTree
     protected function ignoreTreeNode(array $node): bool
     {
         return false;
+    }
+
+    protected function setBranchOrder(array $order)
+    {
+        static::$branchOrder = array_flip(Arr::flatten($order));
+
+        static::$branchOrder = array_map(function ($item) {
+            return ++$item;
+        }, static::$branchOrder);
+    }
+
+    public function saveOrder($tree = [], $parentId = 0)
+    {
+        if (empty(static::$branchOrder)) {
+            $this->setBranchOrder($tree);
+        }
+
+        foreach ($tree as $branch) {
+            /** @var ModelTree $node */
+            $node = static::find($branch[$this->idColumn()]);
+
+            $node->{$node->parentColumn()} = $parentId;
+            $node->{$node->orderColumn()} = static::$branchOrder[$branch[$this->idColumn()]];
+            $node->save();
+
+            if (isset($branch['children'])) {
+                static::saveOrder($branch['children'], $branch[$this->idColumn()]);
+            }
+        }
     }
 }
