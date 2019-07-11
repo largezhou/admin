@@ -16,3 +16,17 @@ export const mapConstants = (names) => {
 export const IMAGE_EXTS = [
   'jpg', 'jpeg', 'gif', 'png', 'bmp', 'ico', 'webp', 'svg', 'tiff',
 ]
+
+/**
+ * 所有权限
+ *
+ * @type {string}
+ */
+export const PERMISSION_PASS_ALL = 'pass-all'
+
+/**
+ * 超管角色
+ *
+ * @type {string}
+ */
+export const ROLE_ADMIN = 'administrator'
