@@ -52,7 +52,7 @@ export default {
 
 .el-main {
   padding: 10px;
-  overflow-x: hidden;
+  overflow-x: auto;
   overflow-y: scroll;
 }
 

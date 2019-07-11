@@ -1,107 +1,74 @@
 <template>
-  <el-card class="create">
+  <el-card class="vue-routers-index">
     <template v-slot:header>
       <content-header/>
     </template>
-    <el-table
-      :data="vueRouters"
-      :expand-row-keys="levelTwoIds"
-      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+
+    <el-button-group class="mb-3">
+      <el-button @click="onExpand">展开</el-button>
+      <el-button @click="onCollapse">收起</el-button>
+      <loading-action :action="onSaveOrder">保存</loading-action>
+    </el-button-group>
+
+    <nested-draggable
+      ref="routers"
+      :expand-keys="defaultExpanded"
+      class="vue-routers"
+      :list="vueRouters"
+      handle=".drag-zone"
     >
-      <el-table-column width="250" label="标题">
-        <template v-slot="{ row }">
-          <span class="id mr-1">{{ row.id }}</span>
-          <svg-icon :icon-class="row.icon || ''" class="mr-1"/>
-          <span>{{ row.title }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="path" label="地址" min-width="200"/>
-      <el-table-column label="排序" width="150">
-        <template v-slot="{ row }">
-          <input-number-edit
-            :id="row.id"
-            field="order"
-            :update="updateVueRouter"
-            v-model="row.order"
-            :min="-9999"
-            :max="9999"
-          />
-        </template>
-      </el-table-column>
-      <el-table-column label="显示在菜单" width="120">
-        <template v-slot="{ row }">
-          <switch-edit
-            :id="row.id"
-            field="menu"
-            v-model="row.menu"
-            active-text="是"
-            inactive-text="否"
-            :update="updateVueRouter"
-          />
-        </template>
-      </el-table-column>
-      <el-table-column label="缓存" width="120">
-        <template v-slot="{ row }">
-          <template v-if="!hasChildren(row)">
-            <switch-edit
-              :id="row.id"
-              field="cache"
-              v-model="row.cache"
-              active-text="是"
-              inactive-text="否"
-              :update="updateVueRouter"
-            />
-          </template>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="240">
-        <template v-slot="{ row }">
-          <el-button-group>
-            <el-button size="small" class="link">
-              <router-link :to="`/vue-routers/create?parent_id=${row.id}`">添加子路由</router-link>
-            </el-button>
-            <el-button size="small" class="link">
-              <router-link :to="`/vue-routers/${row.id}/edit`">编辑</router-link>
-            </el-button>
-            <pop-confirm
-              type="danger"
-              size="small"
-              :confirm="onDestroy(row)"
-              notice="所有子路由都会被删除！！！"
-            >
-              删除
-            </pop-confirm>
-          </el-button-group>
-        </template>
-      </el-table-column>
-    </el-table>
+      <template v-slot:default="{ data }">
+        <div class="drag-zone">
+          <span class="id mr-1">{{ data.id }}</span>
+          <svg-icon :icon-class="data.icon || ''" class="mr-1"/>
+          <span>{{ data.title }}</span>
+          <span class="ml-2 path">{{ data.path }}</span>
+        </div>
+        <flex-spacer/>
+        <collapse-button-group>
+          <el-button size="small" class="link">
+            <router-link :to="`/vue-routers/create?parent_id=${data.id}`">添加</router-link>
+          </el-button>
+          <el-button size="small" class="link">
+            <router-link :to="`/vue-routers/${data.id}/edit`">编辑</router-link>
+          </el-button>
+          <pop-confirm
+            type="danger"
+            size="small"
+            :confirm="onDestroy(data)"
+            notice="所有子路由都会被删除！！！"
+          >
+            删除
+          </pop-confirm>
+        </collapse-button-group>
+      </template>
+    </nested-draggable>
   </el-card>
 </template>
 
 <script>
-import { destroyVueRouter, getVueRouters, updateVueRouter } from '@/api/vue-routers'
+import { destroyVueRouter, getVueRouters, updateVueRouters } from '@/api/vue-routers'
 import PopConfirm from '@c/PopConfirm'
 import { getMessage, hasChildren, removeFromNested } from '@/libs/utils'
-import SwitchEdit from '@c/quick-edit/SwitchEdit'
-import InputNumberEdit from '@c/quick-edit/InputNumberEdit'
+import NestedDraggable from '@c/NestedDraggable'
+import FlexSpacer from '@c/FlexSpacer'
+import CollapseButtonGroup from '@c/CollapseButtonGroup'
 
 export default {
   name: 'Index',
   components: {
-    InputNumberEdit,
-    SwitchEdit,
+    CollapseButtonGroup,
+    FlexSpacer,
+    NestedDraggable,
     PopConfirm,
   },
   data() {
     return {
       vueRouters: [],
       visible: false,
+      // 默认展开第二级路由
+      defaultExpanded: [],
     }
-  },
-  computed: {
-    levelTwoIds() {
-      return this.vueRouters.filter(i => hasChildren(i)).map(i => i.id.toString())
-    },
   },
   created() {
     this.getVueRouters()
@@ -110,6 +77,7 @@ export default {
     async getVueRouters() {
       const { data } = await getVueRouters()
       this.vueRouters = data
+      this.defaultExpanded = this.vueRouters.filter(i => hasChildren(i)).map(i => i.id)
     },
     onDestroy(row) {
       return async () => {
@@ -118,21 +86,66 @@ export default {
         removeFromNested(this.vueRouters, row.id)
       }
     },
-    updateVueRouter,
     hasChildren,
+    onExpand() {
+      this.$refs.routers.expandAll()
+    },
+    onCollapse() {
+      this.$refs.routers.collapseAll()
+    },
+    /**
+     * 获取路由结构，仅包含 id 和 children 字段
+     * @param vueRouters
+     * @returns {Array}
+     */
+    getVueRouterStruct(vueRouters = this.vueRouters) {
+      let struct = []
+      vueRouters.forEach((i) => {
+        struct.push({
+          id: i.id,
+          children: hasChildren(i)
+            ? this.getVueRouterStruct(i.children)
+            : undefined,
+        })
+      })
+      return struct
+    },
+    async onSaveOrder() {
+      await updateVueRouters({
+        _order: this.getVueRouterStruct(this.vueRouters),
+      })
+      this.$message.success(getMessage('updated'))
+    },
   },
 }
 </script>
 
-<style scoped>
-.el-input-number {
-  width: 130px;
+<style scoped lang="scss">
+@import '~element-ui/packages/theme-chalk/src/common/var';
+
+.vue-routers-index {
+  min-width: 100%;
+  display: inline-block;
+  overflow: initial;
+  box-sizing: border-box;
 }
 
-.id {
-  width: 40px;
-  display: inline-block;
-  text-align: center;
-  font-weight: bolder;
+.vue-routers {
+  min-width: 600px;
+
+  .id {
+    width: 40px;
+    display: inline-block;
+    text-align: center;
+    font-weight: bolder;
+  }
+
+  .path {
+    color: $--color-primary;
+  }
+
+  .drag-zone {
+    cursor: move;
+  }
 }
 </style>

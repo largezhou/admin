@@ -46,4 +46,11 @@ class VueRouterController extends AdminBaseController
         $vueRouter->delete();
         return $this->noContent();
     }
+
+    public function batchUpdate(Request $request, VueRouter $vueRouter)
+    {
+        $vueRouter->saveOrder($request->input('_order', []));
+
+        return $this->created();
+    }
 }

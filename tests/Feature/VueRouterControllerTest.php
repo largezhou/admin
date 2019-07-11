@@ -156,7 +156,11 @@ class VueRouterControllerTest extends AdminTestCase
     {
         app(\VueRoutersTableSeeder::class)->run();
         // 手动查出 3 级嵌套菜单
-        $vueRouter = VueRouter::with(['children', 'children.children'])->find(2);
+        $vueRouter = VueRouter::with([
+            'children',
+            'children.children',
+            'children.children.children',
+        ])->find(2);
         $vueRouter = $vueRouter->toArray();
 
         $res = $this->getResources();
@@ -188,5 +192,29 @@ class VueRouterControllerTest extends AdminTestCase
         // hack 一下，无妨，，，
         $this->assertDatabaseMissing('vue_routers', ['id' => $vueRouter['children'][0]['id']]);
         $this->assertDatabaseMissing('vue_routers', ['id' => $vueRouter['children'][0]['children'][0]['id']]);
+    }
+
+    public function testBatchUpdateOrder()
+    {
+        factory(VueRouter::class, 3)->create();
+
+        $res = $this->put($this->route('vue-routers.batch.update'), [
+            '_order' => [
+                [
+                    'id' => 3,
+                    'children' => [['id' => 1]],
+                ],
+                [
+                    'id' => 2,
+                ],
+            ],
+        ]);
+        $res->assertStatus(201);
+
+        $this->assertDatabaseHas('vue_routers', [
+            'id' => 1,
+            'parent_id' => 3,
+            'order' => 2,
+        ]);
     }
 }
