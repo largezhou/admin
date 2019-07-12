@@ -23,8 +23,8 @@
           <i class="el-icon-arrow-down el-icon--right"/>
         </div>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item class="link-item">
-            <router-link :to="{ name: 'editMyProfile' }">个人资料</router-link>
+          <el-dropdown-item class="button-item">
+            <button-link :to="{ name: 'editMyProfile' }">个人资料</button-link>
           </el-dropdown-item>
           <el-dropdown-item class="button-item">
             <el-button type="default" @click="onLogout">退出</el-button>
@@ -44,11 +44,13 @@ import ToTest from '@c/ToTest'
 import FlexSpacer from '@c/FlexSpacer'
 import Breadcrumb from '@c/Layout/components/Breadcrumb'
 import ResetSystem from '@c/ResetSystem'
+import ButtonLink from '@c/ButtonLink'
 
 export default {
   name: 'Navbar',
   components: {
     ResetSystem,
+    ButtonLink,
     Breadcrumb,
     FlexSpacer,
     ToTest,

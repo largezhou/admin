@@ -12,42 +12,6 @@ html {
   padding: 0;
 }
 
-.el-button {
-  &.link {
-    padding: 0;
-
-    a {
-      display: inline-block;
-      text-decoration: none;
-      color: inherit;
-    }
-  }
-}
-
-.el-button--medium {
-  &.link {
-    a {
-      padding: 10px 20px;
-    }
-  }
-}
-
-.el-button--small {
-  &.link {
-    a {
-      padding: 9px 15px;
-    }
-  }
-}
-
-.el-button--mini {
-  &.link {
-    a {
-      padding: 7px 15px;
-    }
-  }
-}
-
 code {
   color: #c7254e;
   background: #f9f2f4;
@@ -131,23 +95,8 @@ code {
 }
 
 .el-dropdown-menu__item {
-  &.link-item {
-    padding: 0 !important;
-
-    a {
-      display: inline-block;
-      border: none;
-      background: transparent;
-      text-decoration: none;
-      color: inherit;
-      //text-align: center;
-      padding: 0 20px;
-    }
-  }
-
   &.button-item {
     padding: 0 !important;
-    margin: 0 -1px 0 -1px !important;
 
     .el-button {
       width: 100%;
@@ -155,11 +104,6 @@ code {
       border-radius: 0;
       text-align: left;
       transition: none;
-
-      &:not(.link) {
-        padding-left: 20px;
-        padding-right: 20px;
-      }
     }
   }
 }

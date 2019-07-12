@@ -26,12 +26,8 @@
         </div>
         <flex-spacer/>
         <collapse-button-group>
-          <el-button size="small" class="link">
-            <router-link :to="`/vue-routers/create?parent_id=${data.id}`">添加</router-link>
-          </el-button>
-          <el-button size="small" class="link">
-            <router-link :to="`/vue-routers/${data.id}/edit`">编辑</router-link>
-          </el-button>
+          <button-link size="small" :to="`/vue-routers/create?parent_id=${data.id}`">添加</button-link>
+          <button-link size="small" :to="`/vue-routers/${data.id}/edit`">编辑</button-link>
           <pop-confirm
             type="danger"
             size="small"
@@ -53,10 +49,12 @@ import { getMessage, hasChildren, removeFromNested } from '@/libs/utils'
 import NestedDraggable from '@c/NestedDraggable'
 import FlexSpacer from '@c/FlexSpacer'
 import CollapseButtonGroup from '@c/CollapseButtonGroup'
+import ButtonLink from '@c/ButtonLink'
 
 export default {
   name: 'Index',
   components: {
+    ButtonLink,
     CollapseButtonGroup,
     FlexSpacer,
     NestedDraggable,

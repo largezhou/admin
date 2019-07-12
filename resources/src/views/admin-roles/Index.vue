@@ -30,9 +30,7 @@
       <el-table-column label="操作" width="150">
         <template v-slot="{ row, $index }">
           <el-button-group>
-            <el-button size="small" class="link">
-              <router-link :to="`/admin-roles/${row.id}/edit`">编辑</router-link>
-            </el-button>
+            <button-link size="small" :to="`/admin-roles/${row.id}/edit`">编辑</button-link>
             <pop-confirm
               type="danger"
               size="small"
@@ -56,10 +54,12 @@ import { destroyAdminRole, getAdminRoles } from '@/api/admin-roles'
 import { getMessage } from '@/libs/utils'
 import Pagination from '@c/Pagination'
 import PopConfirm from '@c/PopConfirm'
+import ButtonLink from '@c/ButtonLink'
 
 export default {
   name: 'Index',
   components: {
+    ButtonLink,
     SearchForm,
     Pagination,
     PopConfirm,
