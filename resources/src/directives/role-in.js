@@ -1,13 +1,13 @@
-import { replaceWithComment } from './utils'
 import { roleIn } from '@/libs/utils'
 
-const handler = (el, { value }, vnode) => {
-  if (!roleIn(value)) {
-    replaceWithComment(el, vnode)
-  }
-}
-
 export default {
-  inserted: handler,
-  update: handler,
+  inserted(el, { value, modifiers }) {
+    const hasRole = roleIn(value)
+    if (
+      (modifiers.not && hasRole) ||
+      (!modifiers.not && !hasRole)
+    ) {
+      el.parentNode && el.parentNode.removeChild(el)
+    }
+  },
 }

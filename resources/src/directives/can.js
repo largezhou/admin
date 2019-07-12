@@ -1,13 +1,13 @@
-import { replaceWithComment } from './utils'
 import { can } from '@/libs/utils'
 
-const handler = (el, { value }, vnode) => {
-  if (!can(value)) {
-    replaceWithComment(el, vnode)
-  }
-}
-
 export default {
-  inserted: handler,
-  update: handler,
+  inserted(el, { value, modifiers }) {
+    const hasPerms = can(value)
+    if (
+      (modifiers.not && hasPerms) ||
+      (!modifiers.not && !hasPerms)
+    ) {
+      el.parentNode && el.parentNode.removeChild(el)
+    }
+  },
 }
