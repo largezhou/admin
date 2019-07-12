@@ -1,16 +1,21 @@
 <template>
-  <el-button
+  <button-link
     v-if="isDev"
-    class="link"
+    to="/test/test"
     style="color: red; font-weight: bolder;"
   >
-    <router-link to="/test/test">TEST</router-link>
-  </el-button>
+    TEST
+  </button-link>
 </template>
 
 <script>
+import ButtonLink from '@c/ButtonLink'
+
 export default {
   name: 'ToTest',
+  components: {
+    ButtonLink,
+  },
   computed: {
     isDev() {
       return process.env.NODE_ENV === 'development'

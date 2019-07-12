@@ -16,9 +16,10 @@ export default {
   render(h) {
     const buttons = this.$slots.default
     if (this.collapse) {
+      const size = buttons[0].componentOptions.propsData.size
       return (
         <el-dropdown trigger="click">
-          <el-button>
+          <el-button size={size}>
             操作<i class="el-icon-arrow-down el-icon--right"/>
           </el-button>
           <el-dropdown-menu slot="dropdown">
