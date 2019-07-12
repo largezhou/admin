@@ -51,4 +51,18 @@ export default [
       },
     ],
   },
+  {
+    path: randomChars(),
+    component: Layout,
+    children: [
+      {
+        path: '/permission-test',
+        name: 'permissionTest',
+        meta: {
+          title: '权限测试',
+        },
+        component: () => import('@v/PermissionTest'),
+      },
+    ],
+  },
 ]
