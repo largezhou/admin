@@ -107,7 +107,12 @@
       @keydown.enter.native="onExtFilter"
       append-to-body
     >
-      <el-input v-model="extTemp" autocomplete="off" placeholder="多个之间用英文逗号隔开"/>
+      <el-input
+        autofocus
+        v-model="extTemp"
+        autocomplete="off"
+        placeholder="多个之间用英文逗号隔开"
+      />
       <div slot="footer" class="dialog-footer">
         <el-button @click="extDialog = false">取消</el-button>
         <el-button type="primary" @click="onExtFilter">确定</el-button>

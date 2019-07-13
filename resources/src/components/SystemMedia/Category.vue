@@ -63,7 +63,12 @@
       @keydown.enter.native="$refs.saveConfirm.onAction"
       append-to-body
     >
-      <el-input v-model="inputName" autocomplete="off" placeholder="请输入分类名称"/>
+      <el-input
+        autofocus
+        v-model="inputName"
+        autocomplete="off"
+        placeholder="请输入分类名称"
+      />
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialog = false">取消</el-button>
         <loading-action

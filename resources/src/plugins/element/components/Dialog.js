@@ -2,18 +2,12 @@ import { Dialog } from 'element-ui'
 
 export default {
   extends: Dialog,
-  props: {
-    autoFocus: {
-      type: Boolean,
-      default: true,
-    },
-  },
   watch: {
     async visible(newVal) {
-      if (this.autoFocus && newVal) {
+      if (newVal) {
         await this.$nextTick()
-        const firstInput = this.$el.querySelector('input,textarea')
-        firstInput && firstInput.focus()
+        const firstFocus = this.$el.querySelector('input[autofocus],textarea[autofocus]')
+        firstFocus && firstFocus.focus()
       }
     },
   },
