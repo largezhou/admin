@@ -27,22 +27,10 @@ export default {
     padding: 0 20px;
     border: none;
     border-radius: 0;
+    box-shadow: none;
 
     + .el-button {
       margin-left: 0;
-    }
-  }
-
-  .el-button {
-    &.link {
-      padding: 0;
-
-      /deep/ {
-        a {
-          padding: 0 20px;
-          line-height: 60px;
-        }
-      }
     }
   }
 }
