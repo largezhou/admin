@@ -3,4 +3,12 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
 $--box-shadow-light: 0 1px 4px rgba(0, 21, 41, .08) !default;
 
+// bootstrap 配色
+$--color-primary: #007BFF;
+$--color-success: #28A745;
+$--color-warning: #FFC107;
+$--color-danger: #DC3545;
+
 @import '~element-ui/packages/theme-chalk/src/index';
+
+@import './focus-box-shadow';

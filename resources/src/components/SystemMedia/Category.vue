@@ -306,16 +306,7 @@ export default {
   > .el-button {
     width: 25%;
     flex-grow: 1;
-  }
-
-  > .el-button:not(.link) {
     padding: 7px 0;
-  }
-
-  > /deep/ .el-button.link {
-    a {
-      padding: 7px 10px;
-    }
   }
 }
 

@@ -1,0 +1,100 @@
+@import '~element-ui/packages/theme-chalk/src/index';
+
+// bootstrap
+@function color-yiq($color, $dark: #212529, $light: #fff) {
+  $r: red($color);
+  $g: green($color);
+  $b: blue($color);
+
+  $yiq: (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+
+  @return if($yiq >= 150, $dark, $light);
+}
+
+@mixin button-origin-focus($color, $background-color, $border-color) {
+  &:focus,
+  &.is-focus {
+    color: $color;
+    background: $background-color;
+    border-color: $border-color;
+    box-shadow: 0 0 0 .2rem rgba(mix(color-yiq($background-color), $border-color, 15%), .5);
+  }
+}
+
+@include b(button) {
+  &:focus,
+  &.is-focus {
+    background: $--button-default-background-color;
+    border: $--border-base;
+    border-color: $--button-default-border-color;
+    color: $--button-default-font-color;
+    box-shadow: 0 0 0 .2rem rgba(mix(color-yiq($--button-default-background-color), $--button-default-border-color, 15%), .5);
+  }
+
+  @include m(primary) {
+    @include button-origin-focus($--button-primary-font-color, $--button-primary-background-color, $--button-primary-border-color);
+  }
+  @include m(success) {
+    @include button-origin-focus($--button-success-font-color, $--button-success-background-color, $--button-success-border-color);
+  }
+  @include m(warning) {
+    @include button-origin-focus($--button-warning-font-color, $--button-warning-background-color, $--button-warning-border-color);
+  }
+  @include m(danger) {
+    @include button-origin-focus($--button-danger-font-color, $--button-danger-background-color, $--button-danger-border-color);
+  }
+  @include m(info) {
+    @include button-origin-focus($--button-info-font-color, $--button-info-background-color, $--button-info-border-color);
+  }
+}
+
+$input-focus-box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+$input-focus-border-color: mix(#fff, $--input-focus-border, 50%);
+
+@mixin input-focus {
+  &:focus,
+  &.is-focus {
+    box-shadow: $input-focus-box-shadow;
+    border-color: $input-focus-border-color;
+  }
+}
+
+@include b(textarea) {
+  @include e(inner) {
+    @include input-focus;
+  }
+}
+
+@include b(input) {
+  @include e(inner) {
+    @include input-focus;
+  }
+}
+
+@include b(select) {
+  .el-input__inner:focus {
+    border-color: $input-focus-border-color !important;
+  }
+}
+
+.el-select .el-input.is-focus .el-input__inner {
+  box-shadow: $input-focus-box-shadow;
+  border-color: $input-focus-border-color;
+}
+
+.el-radio__input.is-checked .el-radio__inner,
+.el-checkbox__input.is-checked .el-checkbox__inner {
+  box-shadow: $input-focus-box-shadow;
+}
+
+@include b(form-item) {
+  @include when(error) {
+    & .el-input__inner,
+    & .el-textarea__inner {
+      &, &:focus {
+        border-color: mix(#fff, $--color-danger, 50%);
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, .25);
+      }
+    }
+  }
+}
