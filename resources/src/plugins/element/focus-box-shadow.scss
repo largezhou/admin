@@ -82,9 +82,24 @@ $input-focus-border-color: mix(#fff, $--input-focus-border, 50%);
   border-color: $input-focus-border-color;
 }
 
-.el-radio__input.is-checked .el-radio__inner,
-.el-checkbox__input.is-checked .el-checkbox__inner {
-  box-shadow: $input-focus-box-shadow;
+.el-radio .el-radio__inner,
+.el-checkbox__input .el-checkbox__inner {
+  transition: all .2s;
+}
+
+.el-radio:focus:not(:active):not(.is-disabled) .el-radio__inner,
+.el-radio.is-focus .el-radio__inner,
+.el-checkbox__input.is-focus .el-checkbox__inner {
+  box-shadow: $input-focus-box-shadow !important;
+}
+
+.el-switch {
+  input:focus {
+    & + .el-switch__core {
+      box-shadow: $input-focus-box-shadow;
+      transition: all .2s;
+    }
+  }
 }
 
 @include b(form-item) {
