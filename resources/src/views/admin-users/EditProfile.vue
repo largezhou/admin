@@ -21,8 +21,7 @@
           <file-picker
             v-model="form.avatar"
             ext="jpg,gif,png,jpeg"
-            value-fields="path"
-            flatten-value
+            value-fields="path,url"
           />
         </el-form-item>
         <el-form-item label="密码" prop="password">
@@ -68,6 +67,7 @@ import FormHelper from '@c/LzForm/FormHelper'
 import { editUser, updateUser } from '@/api/admin-users'
 import { getMessage } from '@/libs/utils'
 import FilePicker from '@c/FilePicker'
+import _get from 'lodash/get'
 
 export default {
   name: 'EditProfile',
@@ -100,7 +100,11 @@ export default {
       this.fillForm(data)
     },
     async onSubmit() {
-      const { data } = await updateUser(this.form)
+      const { data } = await updateUser(
+        Object.assign(
+          {}, this.form,
+          { avatar: _get(this.form, 'avatar.path', null) }),
+      )
       this.$message.success(getMessage('updated'))
       this.$store.commit('SET_USER', data)
       this.form = Object.assign({}, this.form, {

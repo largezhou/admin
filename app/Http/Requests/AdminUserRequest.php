@@ -20,7 +20,7 @@ class AdminUserRequest extends FormRequest
         $rules = [
             'username' => 'required|max:100|unique:admin_users,username,'.$id,
             'name' => 'required|max:100',
-            'avatar' => 'max:255',
+            'avatar' => 'nullable|string|max:255',
             'password' => 'required|between:6,20|confirmed',
             'roles' => 'array',
             'roles.*' => 'exists:admin_roles,id',
