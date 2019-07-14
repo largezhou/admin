@@ -95,7 +95,7 @@ $input-focus-border-color: mix(#fff, $--input-focus-border, 50%);
 
 .el-switch {
   input:focus {
-    & + .el-switch__core {
+    & ~ .el-switch__core {
       box-shadow: $input-focus-box-shadow;
       transition: all .2s;
     }
