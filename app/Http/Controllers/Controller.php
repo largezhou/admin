@@ -62,7 +62,7 @@ class Controller extends BaseController
             return [
                 'filename' => $filename,
                 'ext' => $ext,
-                'path' => $driver->url($path),
+                'path' => $path,
                 'size' => $file->getSize(),
                 'mime_type' => $file->getMimeType(),
             ];
