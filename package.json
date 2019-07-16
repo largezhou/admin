@@ -31,6 +31,6 @@
     "vue-template-compiler": "^2.5.21",
     "vuedraggable": "^2.23.0",
     "vuex": "^3.0.1",
-    "webpack-livereload-plugin": "1"
+    "webpack-livereload-plugin": "^2.2.0"
   }
 }
