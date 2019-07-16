@@ -1,6 +1,5 @@
 {
-  "name": "iview",
-  "version": "0.1.0",
+  "name": "admin-template",
   "private": true,
   "scripts": {
     "dev": "vue-cli-service build --mode development",
@@ -32,6 +31,6 @@
     "vue-template-compiler": "^2.5.21",
     "vuedraggable": "^2.23.0",
     "vuex": "^3.0.1",
-    "webpack-livereload-plugin": "1"
+    "webpack-livereload-plugin": "^2.2.0"
   }
 }
