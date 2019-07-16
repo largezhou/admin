@@ -24,6 +24,15 @@
             value-fields="path,url"
           />
         </el-form-item>
+        <el-form-item label="相册（4）" prop="files">
+          <file-picker
+            v-model="files"
+            ext="jpg,gif,png,jpeg"
+            value-fields="path,url"
+            multiple
+            max="4"
+          />
+        </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input
             v-model="form.password"
@@ -86,6 +95,7 @@ export default {
         password: '',
         password_confirmation: '',
       },
+      files: [],
       profile: null,
       errors: {},
     }
@@ -111,6 +121,8 @@ export default {
         password: '',
         password_confirmation: '',
       })
+
+      this.files.length && alert('相册：\n' + this.files.map((i) => i.url).join('\n'))
     },
   },
 }
