@@ -1,6 +1,5 @@
 {
-  "name": "iview",
-  "version": "0.1.0",
+  "name": "admin-template",
   "private": true,
   "scripts": {
     "dev": "vue-cli-service build --mode development",
