@@ -32,7 +32,7 @@ class SystemMediaController extends AdminBaseController
     {
         $media = SystemMedia::query()
             ->filter($filter)
-            ->orderByDesc('created_at')
+            ->orderByDesc('id')
             ->paginate();
 
         return $this->ok(SystemMediaResource::collection($media));

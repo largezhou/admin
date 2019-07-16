@@ -20,10 +20,12 @@ Route::middleware([
     Route::resource('admin-permissions', 'AdminPermissionController')->except(['show']);
     Route::resource('admin-roles', 'AdminRoleController')->except(['show']);
 
+    Route::resource('config-categories', 'ConfigCategoryController')->except(['show', 'create']);
     Route::prefix('configs')
         ->as('configs.')
         ->group(function () {
             Route::get('vue-routers', 'ConfigController@vueRouters')->name('vue-routers');
+            Route::get('', 'ConfigController@index')->name('index');
         });
 
     Route::resource('system-media-categories', 'SystemMediaCategoryController')->except(['show', 'create']);
