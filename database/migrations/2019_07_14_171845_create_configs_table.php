@@ -22,6 +22,7 @@ class CreateConfigsTable extends Migration
             $table->string('desc')->nullable();
             $table->string('options')->nullable()->comment('填写配置时的选项，比如单选、多选下拉的选项');
             $table->string('value', 5000)->nullable();
+            $table->string('validation_rules', 255)->nullable()->comment('验证规则');
             $table->timestamps();
         });
     }

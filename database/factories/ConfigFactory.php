@@ -14,5 +14,6 @@ $factory->define(Config::class, function (Faker $faker) {
         'desc' => (mt_rand(0, 9) > 8) ? ('desc '.$faker->paragraph) : null,
         'options' => null,
         'value' => null,
+        'validation_rules' => $faker->randomElement(['required', 'max:5', 'min:5']),
     ];
 });

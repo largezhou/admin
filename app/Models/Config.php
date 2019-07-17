@@ -13,7 +13,7 @@ class Config extends Model
         self::TYPE_FILE => '文件',
     ];
     protected $fillable = [
-        'config_category_id', 'type', 'name', 'slug', 'desc', 'options', 'value',
+        'category_id', 'type', 'name', 'slug', 'desc', 'options', 'value', 'validation_rules',
     ];
     protected $casts = [
         'config_category_id' => 'integer',

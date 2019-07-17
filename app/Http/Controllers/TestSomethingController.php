@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Config;
+
 class TestSomethingController extends Controller
 {
     public function index($path = null)
     {
-        dd($path);
+        $inserts = factory(Config::class)->make(['category_id' => 1, 'options' => 'options'])->toArray();
+        dd(Config::create($inserts));
     }
 }

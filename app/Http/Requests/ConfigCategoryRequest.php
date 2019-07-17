@@ -15,7 +15,14 @@ class ConfigCategoryRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:50|unique:config_categories,name,'.
-                (int) optional($this->route('config_category'))->id,
+                (int) $this->route()->originalParameter('config_category'),
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'name' => '名称',
         ];
     }
 }
