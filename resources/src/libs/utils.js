@@ -293,3 +293,33 @@ export const roleIn = (roles) => {
 
   return _intersection(userRoles, roles).length > 0
 }
+
+/**
+ * 格式化传入到 FilePicker 组件中的值
+ * @param data
+ */
+export const formatForFilePicker = (data) => {
+  if (!data) {
+    return data
+  }
+
+  if (typeof data !== 'object') {
+    return {
+      path: data,
+    }
+  }
+
+  if (Array.isArray(data)) {
+    return data.map((i) => {
+      if (typeof i !== 'object') {
+        return {
+          path: i,
+        }
+      } else {
+        return i
+      }
+    })
+  }
+
+  return data
+}

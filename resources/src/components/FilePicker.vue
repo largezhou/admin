@@ -100,16 +100,13 @@ export default {
      */
     ext: String,
     /**
-     * 返回的数据对象中，只包含指定字段
+     * 返回的数据对象中，只包含指定字段，url 字段会自动包含
+     * 不传则包含所有字段
      */
     valueFields: {
       type: String,
       default: '',
     },
-    /**
-     * 返回的对象只有单一字段时，是否直接用该字段的值代替对象返回
-     */
-    flattenValue: Boolean,
   },
   computed: {
     pickerIcon() {
@@ -161,11 +158,11 @@ export default {
      */
     formatReturn(value) {
       const fields = this.valueFields ? this.valueFields.split(',') : []
-      if (fields.length === 1 && this.flattenValue) { // 返回字段只有一个，并且要扁平化
-        return value[fields[0]]
-      } else if (fields.length === 0) { // 返回字段为空，返回所有字段
+      if (fields.length === 0) { // 返回字段为空，返回所有字段
         return { ...value }
       } else { // 否则返回指定字段
+        // 默认自动包含 url 字段
+        fields.push('url')
         return _pick(value, fields)
       }
     },

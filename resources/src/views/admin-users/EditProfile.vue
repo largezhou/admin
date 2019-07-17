@@ -1,4 +1,4 @@
-<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
+<template>
   <el-card>
     <template v-slot:header>
       <content-header/>
@@ -21,7 +21,7 @@
           <file-picker
             v-model="form.avatar"
             ext="jpg,gif,png,jpeg"
-            value-fields="path,url"
+            value-fields="path"
           />
         </el-form-item>
         <el-form-item label="密码" prop="password">
@@ -65,7 +65,7 @@
 import LzForm from '@c/LzForm'
 import FormHelper from '@c/LzForm/FormHelper'
 import { editUser, updateUser } from '@/api/admin-users'
-import { getMessage } from '@/libs/utils'
+import { formatForFilePicker, getMessage } from '@/libs/utils'
 import FilePicker from '@c/FilePicker'
 import _get from 'lodash/get'
 
@@ -96,6 +96,7 @@ export default {
     },
     async getData() {
       const { data } = await editUser()
+      data.avatar = formatForFilePicker(data.avatar)
       this.profile = data
       this.fillForm(data)
     },
