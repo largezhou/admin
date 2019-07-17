@@ -139,4 +139,25 @@ class ConfigControllerTest extends AdminTestCase
         ]);
         $this->assertDatabaseHas('configs', $expectData);
     }
+
+    public function testIndex()
+    {
+        factory(ConfigCategory::class, 2)->create()
+            ->each(function (ConfigCategory $cate) {
+                $cate->configs()->createMany(factory(Config::class, 2)->make()->toArray());
+            });
+
+        $res = $this->getResources();
+        $res->assertStatus(200)
+            ->assertJsonCount(4, 'data')
+            ->assertJsonFragment(['type_map' => Config::$typeMap]);
+
+        // 测试分类名筛选
+        ConfigCategory::where('id', 1)->update(['name' => 'new query name']);
+        $res = $this->getResources([
+            'category_name' => 'query',
+        ]);
+        $res->assertStatus(200)
+            ->assertJsonCount(2, 'data');
+    }
 }

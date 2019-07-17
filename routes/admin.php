@@ -30,7 +30,7 @@ Route::middleware([
         ->group(function () {
             Route::get('vue-routers', 'ConfigController@vueRouters')->name('vue-routers');
         });
-    Route::resource('configs', 'ConfigController')->only(['edit', 'update', 'destroy']);
+    Route::resource('configs', 'ConfigController')->except(['show', 'create', 'store']);
 
     Route::resource('system-media-categories', 'SystemMediaCategoryController')->except(['show', 'create']);
     // 在指定分类下，上传文件

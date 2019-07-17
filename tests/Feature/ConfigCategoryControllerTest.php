@@ -194,9 +194,6 @@ class ConfigCategoryControllerTest extends AdminTestCase
         factory(ConfigCategory::class)->create();
 
         $res = $this->storeConfig(factory(Config::class)->make()->toArray());
-
-        dump(json_decode($res->getContent()));
-
         $res->assertStatus(201);
 
         $this->assertDatabaseHas('configs', [

@@ -13,6 +13,7 @@ class ConfigResource extends JsonResource
 
         $data = [
             'type_text' => $model->type_text,
+            'category' => ConfigCategoryResource::make($this->whenLoaded('category')),
         ];
 
         return array_merge(parent::toArray($request), $data);
