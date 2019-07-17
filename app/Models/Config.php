@@ -16,7 +16,7 @@ class Config extends Model
         'category_id', 'type', 'name', 'slug', 'desc', 'options', 'value', 'validation_rules',
     ];
     protected $casts = [
-        'config_category_id' => 'integer',
+        'category_id' => 'integer',
         'options' => 'array',
         'value' => 'array',
     ];
