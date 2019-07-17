@@ -88,7 +88,7 @@ export default {
   },
   created() {
     this.$on(EXPAND_ALL_EVENT_KEY, this.expandAll)
-    this.$on(COLLAPSE_ALL_EVENT_KEY, this.expandAll)
+    this.$on(COLLAPSE_ALL_EVENT_KEY, this.collapseAll)
   },
   beforeDestroy() {
     this.$off(EXPAND_ALL_EVENT_KEY, this.expandAll)
