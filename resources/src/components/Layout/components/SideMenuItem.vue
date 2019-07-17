@@ -73,7 +73,7 @@ a {
     align-items: center;
 
     svg {
-      width: 28px;
+      width: 24px;
       height: 16px;
     }
   }
