@@ -4,7 +4,7 @@ namespace App\Models;
 
 class ConfigCategory extends Model
 {
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'slug'];
 
     public function configs()
     {

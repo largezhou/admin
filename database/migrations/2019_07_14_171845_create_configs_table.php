@@ -15,7 +15,7 @@ class CreateConfigsTable extends Migration
     {
         Schema::create('configs', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('category_id');
+            $table->unsignedInteger('category_id')->index();
             $table->string('type')->default(\App\Models\Config::TYPE_INPUT);
             $table->string('name', 50);
             $table->string('slug', 50)->index();
