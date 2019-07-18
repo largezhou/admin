@@ -24,12 +24,16 @@ class ConfigCategoryController extends AdminBaseController
 
     public function store(ConfigCategoryRequest $request)
     {
-        return $this->created(ConfigCategory::create($request->validated()));
+        $inputs = $request->validated();
+        $cate = ConfigCategory::create($inputs);
+        return $this->created(ConfigCategoryResource::make($cate));
     }
 
     public function update(ConfigCategoryRequest $request, ConfigCategory $configCategory)
     {
-        return $this->created($configCategory->update($request->validated()));
+        $inputs = $request->validated();
+        $configCategory->update($inputs);
+        return $this->created(ConfigCategoryResource::make($configCategory));
     }
 
     public function destroy(ConfigCategory $configCategory)
