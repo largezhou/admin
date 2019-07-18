@@ -114,6 +114,10 @@ export default {
           field: 'name',
           label: '名称',
         },
+        {
+          field: 'slug',
+          label: '标识',
+        },
       ],
 
       cates: [],

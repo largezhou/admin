@@ -6,5 +6,6 @@ class ConfigCategoryFilter extends Filter
 {
     protected $simpleFilters = [
         'name' => ['like', '%?%'],
+        'slug' => ['like', '%?%'],
     ];
 }
