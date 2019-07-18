@@ -4,14 +4,20 @@ namespace Tests\Feature;
 
 use App\Models\AdminPermission;
 use App\Models\AdminRole;
+use App\Models\Config;
+use App\Models\ConfigCategory;
 use App\Models\VueRouter;
+use Illuminate\Support\Arr;
 use Tests\AdminTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Traits\RequestActions;
 
 class ConfigControllerTest extends AdminTestCase
 {
     use RefreshDatabase;
+    use RequestActions;
+    protected $resourceName = 'configs';
 
     protected function setUp(): void
     {
@@ -68,5 +74,90 @@ class ConfigControllerTest extends AdminTestCase
         $res = $this->getConfig('vue-routers');
         $res->assertStatus(200)
             ->assertJsonCount(3);
+    }
+
+    public function testDestroy()
+    {
+        factory(Config::class)->create();
+
+        $res = $this->destroyResource(1);
+        $res->assertStatus(204);
+
+        $this->assertDatabaseMissing('configs', ['id' => 1]);
+    }
+
+    public function testEdit()
+    {
+        factory(Config::class)->create();
+
+        $res = $this->editResource(1);
+        $res->assertStatus(200);
+    }
+
+    public function testUpdate()
+    {
+        factory(ConfigCategory::class)->create();
+        factory(Config::class)->create([
+            'name' => 'name',
+            'slug' => 'slug',
+            'type' => Config::TYPE_INPUT,
+        ]);
+
+        // category_id exists
+        $res = $this->updateResource(1, [
+            'category_id' => -1,
+        ]);
+        $res->assertStatus(422)
+            ->assertJsonValidationErrors(['category_id']);
+
+        // name unique 排除自身
+        $res = $this->updateResource(1, [
+            'name' => 'name1',
+        ]);
+        $res->assertStatus(201)
+            ->assertJsonMissingValidationErrors(['name']);
+
+        // type, slug 不能修改
+        $inputs = [
+            'name' => 'new name',
+            'type' => 'new type',
+            'slug' => 'new slug',
+            'category_id' => 1,
+            'desc' => 'new desc',
+            'options' => 'new options',
+            'value' => 'new value',
+            'validation_rules' => 'new rules',
+        ];
+        $res = $this->updateResource(1, $inputs);
+        $res->assertStatus(201);
+
+        $expectData = array_merge($inputs, [
+            'type' => Config::TYPE_INPUT,
+            'slug' => 'slug',
+            'options' => json_encode('new options'),
+            'value' => json_encode('new value'),
+        ]);
+        $this->assertDatabaseHas('configs', $expectData);
+    }
+
+    public function testIndex()
+    {
+        factory(ConfigCategory::class, 2)->create()
+            ->each(function (ConfigCategory $cate) {
+                $cate->configs()->createMany(factory(Config::class, 2)->make()->toArray());
+            });
+
+        $res = $this->getResources();
+        $res->assertStatus(200)
+            ->assertJsonCount(4, 'data')
+            ->assertJsonFragment(['type_map' => Config::$typeMap]);
+
+        // 测试分类名筛选
+        ConfigCategory::where('id', 1)->update(['name' => 'new query name']);
+        $res = $this->getResources([
+            'category_name' => 'query',
+        ]);
+        $res->assertStatus(200)
+            ->assertJsonCount(2, 'data');
     }
 }

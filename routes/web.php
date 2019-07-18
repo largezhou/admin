@@ -10,3 +10,8 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+if (config('app.env') == 'local') {
+    Route::any('/test', 'TestSomethingController@index');
+    Route::any('/{path}/test', 'TestSomethingController@index')->where('path', '.*');
+}

@@ -64,11 +64,10 @@ export default {
       if (!this.autoPush) {
         return
       }
-      // 当切换后, 如果当前不大于总页数, 则不会触发 current-change 事件, 所以要跳转路由
-      // 否则, 在 current-change 事件里跳转路由
-      if (this.page.current_page <= (Math.ceil(this.page.total / perPage))) {
-        this.autoPush && this.push()
-      }
+
+      // 切换每页数后，当前页置为 1
+      this.currentPage = 1
+      this.push()
     },
     onChange(page) {
       this.$emit('current-change', page)

@@ -3,7 +3,7 @@
     ref="input"
     v-bind="$attrs"
     v-on="$listeners"
-    @change="onChange"
+    @change="onSubmit"
     :disabled="loading"
   />
 </template>
@@ -17,6 +17,7 @@ export default {
   data() {
     return {
       value: this.$attrs.value,
+      resetValueWhenError: true,
     }
   },
   mixins: [
@@ -28,7 +29,7 @@ export default {
     }, 500)
   },
   methods: {
-    onChange(val) {
+    onSubmit(val) {
       this.value = val
       this.debounceUpdate()
     },

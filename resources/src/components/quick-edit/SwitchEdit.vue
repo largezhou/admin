@@ -3,7 +3,7 @@
     ref="input"
     v-bind="$attrs"
     v-on="$listeners"
-    @change="onChange"
+    @change="onSubmit"
     :disabled="loading"
   />
 </template>
@@ -16,5 +16,13 @@ export default {
   mixins: [
     Mixin,
   ],
+  data: () => ({
+    resetValueWhenError: true,
+  }),
+  methods: {
+    onSubmit(val) {
+      this.goUpdate(val)
+    },
+  },
 }
 </script>
