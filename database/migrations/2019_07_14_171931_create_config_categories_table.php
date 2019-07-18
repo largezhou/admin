@@ -16,6 +16,7 @@ class CreateConfigCategoriesTable extends Migration
         Schema::create('config_categories', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name', 50);
+            $table->string('slug', 50)->index();
             $table->timestamps();
         });
     }

@@ -23,6 +23,8 @@ class ConfigCategoryControllerTest extends AdminTestCase
 
     public function testStoreValidation()
     {
+        // slug 和 name 验证规则一样，验证一个即可
+
         // name required
         $res = $this->storeResource([
             'name' => '',
@@ -57,11 +59,13 @@ class ConfigCategoryControllerTest extends AdminTestCase
     {
         $res = $this->storeResource([
             'name' => 'name',
+            'slug' => 'slug',
         ]);
         $res->assertStatus(201);
         $this->assertDatabaseHas('config_categories', [
             'id' => 1,
             'name' => 'name',
+            'slug' => 'slug',
         ]);
     }
 
@@ -75,11 +79,13 @@ class ConfigCategoryControllerTest extends AdminTestCase
 
         $res = $this->updateResource(1, [
             'name' => 'new',
+            'slug' => 'new',
         ]);
         $res->assertStatus(201);
         $this->assertDatabaseHas('config_categories', [
             'id' => 1,
             'name' => 'new',
+            'slug' => 'new',
         ]);
     }
 

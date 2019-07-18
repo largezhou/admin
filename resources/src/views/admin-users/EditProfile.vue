@@ -7,7 +7,7 @@
       <lz-form
         ref="form"
         :get-data="getData"
-        :on-submit="onSubmit"
+        :submit="onSubmit"
         :errors.sync="errors"
         :form.sync="form"
       >

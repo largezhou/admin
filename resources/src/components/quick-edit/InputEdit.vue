@@ -88,7 +88,7 @@ export default {
 
 /deep/ {
   .el-input {
-    width: calc(100% - 86px);
+    width: calc(100% - 62px);
     max-width: 300px;
   }
 
@@ -99,7 +99,7 @@ export default {
   }
 
   .el-button {
-    padding: 9px 15px;
+    padding: 9px;
   }
 }
 

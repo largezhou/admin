@@ -14,7 +14,7 @@
     <el-table :data="cates">
       <el-table-column prop="id" label="ID" width="60"/>
       <el-table-column prop="name" label="名称" min-width="180">
-        <template #default="{ row, $index }">
+        <template #default="{ row }">
           <input-edit
             :id="row.id"
             field="name"
@@ -23,10 +23,20 @@
           />
         </template>
       </el-table-column>
-      <el-table-column prop="created_at" label="添加时间" width="180"/>
-      <el-table-column prop="updated_at" label="修改时间" width="180"/>
+      <el-table-column prop="slug" label="名称" min-width="150">
+        <template #default="{ row }">
+          <input-edit
+            :id="row.id"
+            field="slug"
+            :update="updateConfigCategory"
+            v-model="row.slug"
+          />
+        </template>
+      </el-table-column>
+      <el-table-column prop="created_at" label="添加时间" width="160"/>
+      <el-table-column prop="updated_at" label="修改时间" width="160"/>
       <el-table-column label="操作" width="160">
-        <template v-slot="{ row, $index }">
+        <template #default="{ row, $index }">
           <el-button-group>
             <button-link size="small" :to="'/'">查看配置</button-link>
             <pop-confirm
@@ -49,25 +59,24 @@
       title="添加分类"
       :visible.sync="createDialog"
       width="400px"
-      @keydown.enter.native="$refs.saveConfirm.onAction"
       append-to-body
     >
-      <el-input
-        autofocus
-        autocomplete="off"
-        v-model="name"
-      />
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="createDialog = false">取消</el-button>
-        <loading-action
-          ref="saveConfirm"
-          :disabled="!name"
-          type="primary"
-          :action="onStoreCategory"
-        >
-          确定
-        </loading-action>
-      </div>
+      <lz-form
+        style="width: auto;"
+        ref="form"
+        :submit="onStoreCategory"
+        :errors.sync="errors"
+        :form.sync="form"
+        label-position="top"
+        in-dialog
+      >
+        <el-form-item label="名称" required prop="name">
+          <el-input v-model="form.name" autofocus/>
+        </el-form-item>
+        <el-form-item label="标识" required prop="slug">
+          <el-input v-model="form.slug"/>
+        </el-form-item>
+      </lz-form>
     </el-dialog>
   </el-card>
 </template>
@@ -85,17 +94,17 @@ import ButtonLink from '@c/ButtonLink'
 import PopConfirm from '@c/PopConfirm'
 import { getMessage } from '@/libs/utils'
 import InputEdit from '@c/quick-edit/InputEdit'
-import InputNumberEdit from '@c/quick-edit/InputNumberEdit'
+import LzForm from '@c/LzForm'
 
 export default {
   name: 'Index',
   components: {
-    InputNumberEdit,
     InputEdit,
     PopConfirm,
     ButtonLink,
     SearchForm,
     Pagination,
+    LzForm,
   },
   data() {
     return {
@@ -111,13 +120,17 @@ export default {
       page: null,
 
       createDialog: false,
-      name: '',
+
+      form: {
+        name: '',
+        slug: '',
+      },
+      errors: {},
     }
   },
   methods: {
     async onStoreCategory() {
-      const { data } = await storeConfigCategory({ name: this.name })
-        .config({ showValidationMsg: true })
+      const { data } = await storeConfigCategory(this.form)
 
       this.createDialog = false
       this.$message.success(getMessage('created'))
@@ -143,7 +156,10 @@ export default {
     },
     createDialog(newVal) {
       if (!newVal) {
-        this.name = ''
+        this.form = {
+          name: '',
+          slug: '',
+        }
       }
     },
   },

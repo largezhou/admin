@@ -2,17 +2,18 @@
   <el-form
     v-loading="loading"
     ref="form"
-    style="width: 800px;"
+    :style="{ width: inDialog ? 'auto' : '800px' }"
+    :class="{ 'in-dialog': inDialog }"
     v-bind="$attrs"
     v-on="$listeners"
     :model="form"
     :errors="errors"
-    :label-position="labelPosition"
+    :label-position="realLabelPosition"
   >
     <slot/>
     <slot name="footer">
-      <el-form-item>
-        <loading-action type="primary" :action="_onSubmit">{{ submitText }}</loading-action>
+      <el-form-item class="footer">
+        <loading-action type="primary" :action="onSubmit">{{ submitText }}</loading-action>
         <el-button @click="onReset">重置</el-button>
         <slot name="footer-append"/>
       </el-form-item>
@@ -42,17 +43,19 @@ export default {
   },
   props: {
     getData: Function,
-    onSubmit: Function,
+    submit: Function,
     errors: Object,
     form: Object,
     submitText: {
       type: String,
       default: '保存',
     },
+    labelPosition: String,
+    inDialog: Boolean,
   },
   computed: {
-    labelPosition() {
-      return this.$store.state.miniWidth ? 'top' : 'right'
+    realLabelPosition() {
+      return this.labelPosition || (this.$store.state.miniWidth ? 'top' : 'right')
     },
   },
   created() {
@@ -86,10 +89,10 @@ export default {
 
       this.loading = false
     },
-    async _onSubmit() {
+    async onSubmit() {
       this.$emit('update:errors', {})
       try {
-        this.onSubmit && await this.onSubmit()
+        this.submit && await this.submit()
       } catch (e) {
         this.$emit('update:errors', handleValidateErrors(e.response))
         if (_get(e, 'response.status') !== 422) {
@@ -111,3 +114,11 @@ export default {
   },
 }
 </script>
+
+<style scoped lang="scss">
+.in-dialog {
+  .footer {
+    text-align: right;
+  }
+}
+</style>
