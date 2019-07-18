@@ -13,7 +13,16 @@
 
     <el-table :data="cates">
       <el-table-column prop="id" label="ID" width="60"/>
-      <el-table-column prop="name" label="名称" min-width="180"/>
+      <el-table-column prop="name" label="名称" min-width="180">
+        <template #default="{ row, $index }">
+          <input-edit
+            :id="row.id"
+            field="name"
+            :update="updateConfigCategory"
+            v-model="row.name"
+          />
+        </template>
+      </el-table-column>
       <el-table-column prop="created_at" label="添加时间" width="180"/>
       <el-table-column prop="updated_at" label="修改时间" width="180"/>
       <el-table-column label="操作" width="160">
@@ -66,14 +75,23 @@
 <script>
 import SearchForm from '@c/SearchForm'
 import Pagination from '@c/Pagination'
-import { destroyConfigCategory, getConfigCategories, storeConfigCategory } from '@/api/admin-configs'
+import {
+  destroyConfigCategory,
+  getConfigCategories,
+  storeConfigCategory,
+  updateConfigCategory,
+} from '@/api/admin-configs'
 import ButtonLink from '@c/ButtonLink'
 import PopConfirm from '@c/PopConfirm'
 import { getMessage } from '@/libs/utils'
+import InputEdit from '@c/quick-edit/InputEdit'
+import InputNumberEdit from '@c/quick-edit/InputNumberEdit'
 
 export default {
   name: 'Index',
   components: {
+    InputNumberEdit,
+    InputEdit,
     PopConfirm,
     ButtonLink,
     SearchForm,
@@ -112,6 +130,7 @@ export default {
         this.$message.success(getMessage('destroyed'))
       }
     },
+    updateConfigCategory,
   },
   watch: {
     $route: {

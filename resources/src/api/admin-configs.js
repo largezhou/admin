@@ -15,3 +15,7 @@ export function storeConfigCategory(data) {
 export function destroyConfigCategory(id) {
   return axios.delete(`config-categories/${id}`)
 }
+
+export function updateConfigCategory(id, data) {
+  return axios.put(`config-categories/${id}`, data)
+}
