@@ -32,7 +32,7 @@
         :default-multiple="multiple"
         :default-ext="ext"
       >
-        <template v-slot:actions="media">
+        <template #actions="media">
           <el-button
             type="primary"
             :disabled="!media.anySelected"

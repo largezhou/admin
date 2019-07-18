@@ -1,6 +1,6 @@
 <template>
   <el-card class="create">
-    <template v-slot:header>
+    <template #header>
       <content-header/>
     </template>
     <el-row type="flex" justify="center">

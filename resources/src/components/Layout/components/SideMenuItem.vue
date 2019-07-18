@@ -4,7 +4,7 @@
     v-show="filtered"
     :index="makeRouteName(menu.id)"
   >
-    <template v-slot:title>
+    <template #title>
       <svg-icon :icon-class="icon(menu.icon)"/>
       <span slot="title">{{ menu.title }}</span>
     </template>

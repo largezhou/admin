@@ -1,6 +1,6 @@
 <template>
   <el-card>
-    <template v-slot:header>
+    <template #header>
       <content-header/>
     </template>
 
@@ -15,14 +15,14 @@
       <el-table-column prop="name" label="名称" width="150"/>
       <el-table-column prop="slug" label="标识" width="150"/>
       <el-table-column label="路由" min-width="400">
-        <template v-slot="{ row }">
+        <template #default="{ row }">
           <route-show :data="row"/>
         </template>
       </el-table-column>
       <el-table-column prop="created_at" label="添加时间" width="180"/>
       <el-table-column prop="updated_at" label="修改时间" width="180"/>
       <el-table-column label="操作" width="150">
-        <template v-slot="{ row, $index }">
+        <template #default="{ row, $index }">
           <el-button-group>
             <button-link size="small" :to="`/admin-permissions/${row.id}/edit`">编辑</button-link>
             <pop-confirm

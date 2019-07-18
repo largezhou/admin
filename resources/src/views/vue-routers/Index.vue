@@ -1,6 +1,6 @@
 <template>
   <el-card class="vue-routers-index">
-    <template v-slot:header>
+    <template #header>
       <content-header/>
     </template>
 
@@ -18,7 +18,7 @@
         :list="vueRouters"
         handle=".drag-zone"
       >
-        <template v-slot:default="{ data }">
+        <template #default="{ data }">
           <div class="drag-zone">
             <span class="id mr-1">{{ data.id }}</span>
             <svg-icon :icon-class="data.icon || ''" class="mr-1"/>
