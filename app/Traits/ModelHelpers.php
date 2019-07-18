@@ -14,12 +14,19 @@ use Illuminate\Support\Facades\Request;
  */
 trait ModelHelpers
 {
+    /**
+     * 最大每页数，避免瞎搞的人
+     *
+     * @var int
+     */
+    protected $maxPerPage = 200;
+
     public function getPerPage()
     {
         $perPage = Request::get('per_page');
-        $int = (int) $perPage;
-        if (($int > 0) && ((string) $int === $perPage)) {
-            return $int;
+        $intPerPage = (int) $perPage;
+        if (($intPerPage > 0) && ((string) $intPerPage === $perPage)) {
+            return min($intPerPage, $this->maxPerPage);
         } else {
             return $this->perPage;
         }
