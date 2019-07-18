@@ -17,10 +17,23 @@ class BaseModelTest extends TestCase
         $this->mockGetPerPage('4');
         $this->assertEquals(4, $model->getPerPage());
 
+        // 不规范测试
         foreach (['4.4', 'not number', '-1', '0'] as $page) {
             $this->mockGetPerPage($page);
             $this->assertEquals(15, $model->getPerPage());
         }
+
+        // 大于最大每页数测试
+        $model = new class() extends Model
+        {
+            public function getMaxPerPage()
+            {
+                return $this->maxPerPage;
+            }
+        };
+        $maxPerPage = $model->getMaxPerPage();
+        $this->mockGetPerPage((string) ($maxPerPage + 1));
+        $this->assertEquals($maxPerPage, $model->getPerPage());
     }
 
     /**
