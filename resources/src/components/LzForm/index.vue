@@ -119,6 +119,7 @@ export default {
 .in-dialog {
   .footer {
     text-align: right;
+    margin-bottom: 0;
   }
 }
 </style>
