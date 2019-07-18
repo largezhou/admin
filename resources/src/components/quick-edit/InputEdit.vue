@@ -2,6 +2,7 @@
   <div
     v-click-outside="onCancel"
     @keydown.esc="onCancel"
+    class="input-edit"
   >
     <span
       class="value"
@@ -79,6 +80,11 @@ export default {
 
 <style scoped lang="scss">
 @import '~element-ui/packages/theme-chalk/src/common/var';
+
+.input-edit {
+  display: flex;
+  align-items: center;
+}
 
 .value {
   color: $--color-primary;
