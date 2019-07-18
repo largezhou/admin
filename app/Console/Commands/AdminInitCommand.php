@@ -67,6 +67,9 @@ class AdminInitCommand extends Command
             [17, 14, '编辑权限', 'admin-permissions/:id(\\d+)/edit', 16, null, 0],
 
             [18, 0, '文件管理', 'system-media', 17, null, 1],
+
+            [19, 0, '系统配置', null, 18, null, 1],
+            [20, 19, '配置分类', 'config-categories', 19, null, 1],
         ];
 
         $inserts = collect($inserts)->map(function ($i) {

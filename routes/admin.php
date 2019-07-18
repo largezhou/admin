@@ -23,7 +23,7 @@ Route::middleware([
     Route::resource('config-categories', 'ConfigCategoryController')->except(['show', 'create']);
     Route::post(
         'config-categories/{config_category}/configs',
-        'ConfigCategoryController@storeConfig'
+        'ConfigCategoryController@storeConfigCategory'
     )->name('config-categories.configs.store');
     Route::prefix('configs')
         ->as('configs.')

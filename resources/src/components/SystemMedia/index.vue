@@ -15,7 +15,6 @@
         title="选择分类"
         :visible.sync="categoriesDialog"
         width="90%"
-        :auto-focus="false"
         append-to-body
       >
         <category
@@ -103,7 +102,7 @@
       v-if="!defaultExt"
       title="筛选类型"
       :visible.sync="extDialog"
-      :width="miniWidth ? '90%' : '400px'"
+      width="400px"
       @keydown.enter.native="onExtFilter"
       append-to-body
     >
@@ -122,8 +121,7 @@
     <el-dialog
       title="移动文件"
       :visible.sync="movingDialog"
-      :width="miniWidth ? '90%' : '400px'"
-      :auto-focus="false"
+      width="400px"
       append-to-body
     >
       <el-select

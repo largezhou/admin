@@ -1,7 +1,7 @@
 <template>
   <el-collapse-transition>
     <div v-show="realShow">
-      <el-form class="pb-3" inline @keydown.enter.native="onSubmit">
+      <el-form class="pb-3" inline @keydown.enter.native.prevent="onSubmit">
         <el-form-item v-for="item of fields" :key="item.field">
           <component
             :is="item.type || 'el-input'"
@@ -31,6 +31,13 @@ export default {
   props: {
     fields: Array,
     show: Boolean,
+    /**
+     * 筛选后，重置当前页到第一页
+     */
+    resetCurrentPage: {
+      type: Boolean,
+      default: true,
+    },
   },
   created() {
     this.initFormShow()
@@ -38,6 +45,9 @@ export default {
   methods: {
     onSubmit() {
       const query = { ...this.$route.query }
+      if (this.resetCurrentPage) {
+        delete query.page
+      }
 
       // 构建查询对象, 空值的不放入, 保留非搜索表单的 query 字段
       this.fields.forEach(i => {

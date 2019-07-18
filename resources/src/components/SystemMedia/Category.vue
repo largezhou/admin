@@ -59,7 +59,7 @@
     <el-dialog
       :title="editMode ? '编辑分类' : '添加分类'"
       :visible.sync="dialog"
-      :width="miniWidth ? '90%' : '400px'"
+      width="400px"
       @keydown.enter.native="$refs.saveConfirm.onAction"
       append-to-body
     >
