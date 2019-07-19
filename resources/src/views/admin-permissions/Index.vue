@@ -24,7 +24,7 @@
       <el-table-column label="操作" width="150">
         <template #default="{ row, $index }">
           <el-button-group>
-            <button-link size="small" :to="`/admin-permissions/${row.id}/edit`">编辑</button-link>
+            <row-to-edit/>
             <row-destroy/>
           </el-button-group>
         </template>
@@ -41,14 +41,14 @@ import { getAdminPerms } from '@/api/admin-perms'
 import RouteShow from './components/RouteShow'
 import Pagination from '@c/Pagination'
 import SearchForm from '@c/SearchForm'
-import ButtonLink from '@c/ButtonLink'
 import RowDestroy from '@c/LzTable/RowDestroy'
+import RowToEdit from '@c/LzTable/RowToEdit'
 
 export default {
   name: 'Index',
   components: {
+    RowToEdit,
     RowDestroy,
-    ButtonLink,
     SearchForm,
     Pagination,
     RouteShow,

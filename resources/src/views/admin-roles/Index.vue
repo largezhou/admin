@@ -30,7 +30,7 @@
       <el-table-column label="操作" width="150">
         <template #default="{ row, $index }">
           <el-button-group>
-            <button-link size="small" :to="`/admin-roles/${row.id}/edit`">编辑</button-link>
+            <row-to-edit/>
             <row-destroy/>
           </el-button-group>
         </template>
@@ -45,16 +45,15 @@
 <script>
 import SearchForm from '@c/SearchForm'
 import { getAdminRoles } from '@/api/admin-roles'
-import { getMessage } from '@/libs/utils'
 import Pagination from '@c/Pagination'
-import ButtonLink from '@c/ButtonLink'
 import RowDestroy from '@c/LzTable/RowDestroy'
+import RowToEdit from '@c/LzTable/RowToEdit'
 
 export default {
   name: 'Index',
   components: {
+    RowToEdit,
     RowDestroy,
-    ButtonLink,
     SearchForm,
     Pagination,
   },
