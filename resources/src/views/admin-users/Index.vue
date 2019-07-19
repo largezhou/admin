@@ -42,7 +42,7 @@
         <template #default="{ row, $index }">
           <el-button-group>
             <button-link size="small" :to="`/admin-users/${row.id}/edit`">编辑</button-link>
-            <row-destroy :index="$index"/>
+            <row-destroy/>
           </el-button-group>
         </template>
       </el-table-column>

@@ -39,7 +39,7 @@
         <template #default="{ row, $index }">
           <el-button-group>
             <button-link size="small" :to="'/'">查看配置</button-link>
-            <row-destroy notice="分类下的所有配置都会被删除" :index="$index"/>
+            <row-destroy notice="分类下的所有配置都会被删除"/>
           </el-button-group>
         </template>
       </el-table-column>
