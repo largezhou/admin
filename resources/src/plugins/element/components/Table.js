@@ -2,6 +2,11 @@ import { Table } from 'element-ui'
 
 export default {
   extends: Table,
+  provide() {
+    return {
+      elTable: this,
+    }
+  },
   props: {
     stripe: {
       type: Boolean,
@@ -15,5 +20,9 @@ export default {
       type: [String, Function],
       default: 'id',
     },
+    /**
+     * API 资源名
+     */
+    resource: String,
   },
 }

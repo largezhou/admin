@@ -11,7 +11,7 @@
 
     <search-form :show="searchShow" :fields="search"/>
 
-    <el-table :data="cates">
+    <el-table :data="cates" resource="config-categories">
       <el-table-column prop="id" label="ID" width="60"/>
       <el-table-column prop="name" label="名称" min-width="180">
         <template #default="{ row }">
@@ -39,14 +39,7 @@
         <template #default="{ row, $index }">
           <el-button-group>
             <button-link size="small" :to="'/'">查看配置</button-link>
-            <pop-confirm
-              type="danger"
-              :confirm="onDestroy($index)"
-              notice="分类下的所有配置都会被删除"
-              size="small"
-            >
-              删除
-            </pop-confirm>
+            <row-destroy notice="分类下的所有配置都会被删除" :index="$index"/>
           </el-button-group>
         </template>
       </el-table-column>
@@ -85,22 +78,21 @@
 import SearchForm from '@c/SearchForm'
 import Pagination from '@c/Pagination'
 import {
-  destroyConfigCategory,
   getConfigCategories,
   storeConfigCategory,
   updateConfigCategory,
 } from '@/api/admin-configs'
 import ButtonLink from '@c/ButtonLink'
-import PopConfirm from '@c/PopConfirm'
 import { getMessage } from '@/libs/utils'
 import InputEdit from '@c/quick-edit/InputEdit'
 import LzForm from '@c/LzForm'
+import RowDestroy from '@c/LzTable/RowDestroy'
 
 export default {
   name: 'Index',
   components: {
+    RowDestroy,
     InputEdit,
-    PopConfirm,
     ButtonLink,
     SearchForm,
     Pagination,
@@ -139,13 +131,6 @@ export default {
       this.createDialog = false
       this.$message.success(getMessage('created'))
       this.cates.unshift(data)
-    },
-    onDestroy(index) {
-      return async () => {
-        await destroyConfigCategory(this.cates[index].id)
-        this.cates.splice(index, 1)
-        this.$message.success(getMessage('destroyed'))
-      }
     },
     updateConfigCategory,
   },

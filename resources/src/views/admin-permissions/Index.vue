@@ -10,7 +10,7 @@
 
     <search-form :show="searchShow" :fields="search"/>
 
-    <el-table :data="perms">
+    <el-table :data="perms" resource="admin-permissions">
       <el-table-column prop="id" label="ID" width="60"/>
       <el-table-column prop="name" label="名称" width="150"/>
       <el-table-column prop="slug" label="标识" width="150"/>
@@ -25,13 +25,7 @@
         <template #default="{ row, $index }">
           <el-button-group>
             <button-link size="small" :to="`/admin-permissions/${row.id}/edit`">编辑</button-link>
-            <pop-confirm
-              type="danger"
-              size="small"
-              :confirm="onDestroy($index)"
-            >
-              删除
-            </pop-confirm>
+            <row-destroy :index="$index"/>
           </el-button-group>
         </template>
       </el-table-column>
@@ -43,21 +37,20 @@
 </template>
 
 <script>
-import { destroyAdminPerm, getAdminPerms } from '@/api/admin-perms'
+import { getAdminPerms } from '@/api/admin-perms'
 import RouteShow from './components/RouteShow'
-import PopConfirm from '@c/PopConfirm'
 import Pagination from '@c/Pagination'
 import SearchForm from '@c/SearchForm'
-import { getMessage } from '@/libs/utils'
 import ButtonLink from '@c/ButtonLink'
+import RowDestroy from '@c/LzTable/RowDestroy'
 
 export default {
   name: 'Index',
   components: {
+    RowDestroy,
     ButtonLink,
     SearchForm,
     Pagination,
-    PopConfirm,
     RouteShow,
   },
   data() {
@@ -86,15 +79,6 @@ export default {
         },
       ],
     }
-  },
-  methods: {
-    onDestroy(index) {
-      return async () => {
-        await destroyAdminPerm(this.perms[index].id)
-        this.perms.splice(index, 1)
-        this.$message.success(getMessage('destroyed'))
-      }
-    },
   },
   watch: {
     $route: {

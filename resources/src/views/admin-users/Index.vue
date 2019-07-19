@@ -10,7 +10,7 @@
 
     <search-form :show="searchShow" :fields="search"/>
 
-    <el-table :data="users">
+    <el-table :data="users" resource="admin-users">
       <el-table-column prop="id" label="ID" width="60"/>
       <el-table-column prop="name" label="姓名" width="150"/>
       <el-table-column prop="username" label="账号" width="200"/>
@@ -42,13 +42,7 @@
         <template #default="{ row, $index }">
           <el-button-group>
             <button-link size="small" :to="`/admin-users/${row.id}/edit`">编辑</button-link>
-            <pop-confirm
-              type="danger"
-              size="small"
-              :confirm="onDestroy($index)"
-            >
-              删除
-            </pop-confirm>
+            <row-destroy :index="$index"/>
           </el-button-group>
         </template>
       </el-table-column>
@@ -62,18 +56,17 @@
 <script>
 import SearchForm from '@c/SearchForm'
 import Pagination from '@c/Pagination'
-import { destroyAdminUser, getAdminUsers } from '@/api/admin-users'
-import { getMessage } from '@/libs/utils'
-import PopConfirm from '@c/PopConfirm'
+import { getAdminUsers } from '@/api/admin-users'
 import ButtonLink from '@c/ButtonLink'
+import RowDestroy from '@c/LzTable/RowDestroy'
 
 export default {
   name: 'Index',
   components: {
+    RowDestroy,
     ButtonLink,
     SearchForm,
     Pagination,
-    PopConfirm,
   },
   data() {
     return {
@@ -103,15 +96,6 @@ export default {
       users: [],
       page: null,
     }
-  },
-  methods: {
-    onDestroy(index) {
-      return async () => {
-        await destroyAdminUser(this.users[index].id)
-        this.users.splice(index, 1)
-        this.$message.success(getMessage('destroyed'))
-      }
-    },
   },
   watch: {
     $route: {
