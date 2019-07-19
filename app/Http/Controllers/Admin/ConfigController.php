@@ -43,11 +43,6 @@ class ConfigController extends Controller
             ->orderByDesc('id')
             ->paginate();
 
-        return $this->ok(
-            ConfigResource::collection($configs)
-                ->additional([
-                    'type_map' => Config::$typeMap,
-                ])
-        );
+        return $this->ok(ConfigResource::collection($configs));
     }
 }

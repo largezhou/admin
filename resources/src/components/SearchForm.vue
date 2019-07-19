@@ -1,36 +1,14 @@
-<template>
-  <el-collapse-transition>
-    <div v-show="realShow">
-      <el-form class="pb-3" inline @keydown.enter.native.prevent="onSubmit">
-        <el-form-item v-for="item of fields" :key="item.field">
-          <component
-            :is="item.type || 'el-input'"
-            v-model="form[item.field]"
-            :placeholder="item.label"
-            clearable
-          />
-        </el-form-item>
-        <el-form-item class="actions">
-          <el-button type="primary" @click="onSubmit">查询</el-button>
-          <el-button @click="onReset">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-  </el-collapse-transition>
-</template>
-
 <script>
 export default {
   name: 'SearchForm',
   data() {
     return {
       form: {},
-      realShow: this.show,
+      show: false,
     }
   },
   props: {
     fields: Array,
-    show: Boolean,
     /**
      * 筛选后，重置当前页到第一页
      */
@@ -53,8 +31,10 @@ export default {
       this.fields.forEach(i => {
         const key = i.field
         let val = this.form[key]
-        val = (val === undefined) ? '' : val.trim()
-        if (val === '') {
+        if (typeof val === 'string') {
+          val = val.trim()
+        }
+        if (val === '' || val === undefined) {
           delete query[key]
         } else {
           query[key] = val
@@ -73,27 +53,93 @@ export default {
     initFormShow() {
       this.fields.some(i => {
         if (this.$route.query[i.field]) {
-          this.realShow = true
+          this.show = true
           return true
         }
       })
     },
+    setFormValueFromQuery() {
+      const query = this.$route.query
+      this.fields.forEach(i => {
+        const key = i.field
+        const val = query[key]
+        this.$set(this.form, key, val)
+      })
+    },
+    toggleShow() {
+      this.show = !this.show
+    },
   },
   watch: {
     $route: {
-      handler(newVal) {
-        const { query } = newVal
-        this.fields.forEach(i => {
-          const key = i.field
-          const val = query[key]
-          this.$set(this.form, key, val)
-        })
+      handler() {
+        this.setFormValueFromQuery()
       },
       immediate: true,
     },
-    show(newVal) {
-      this.realShow = newVal
-    },
+  },
+
+  render(h) {
+    return (
+      <el-collapse-transition>
+        <div v-show={this.show}>
+          <el-form
+            class="pb-3"
+            inline
+            vOn:keydown_enter_native_prevent={this.onSubmit}
+          >
+            {
+              this.fields.map((item) => {
+                let c
+                switch (item.type) {
+                  case 'el-select':
+                    c = (
+                      <el-select
+                        v-model={this.form[item.field]}
+                        placeholder={item.label}
+                        filterable
+                        clearable
+                      >
+                        {
+                          item.options.map((i) => {
+                            const valueField = item.valueField || 'id'
+                            const labelField = item.labelField || 'name'
+                            return (
+                              <el-option
+                                key={i[valueField]}
+                                label={i[labelField]}
+                                value={String(i[valueField])}
+                              />
+                            )
+                          })
+                        }
+                      </el-select>
+                    )
+                    break
+                  default: // 默认是 input
+                    c = (
+                      <el-input
+                        v-model={this.form[item.field]}
+                        placeholder={item.label}
+                        clearable
+                      />
+                    )
+                }
+
+                return (
+                  <el-form-item key={item.field}>{c}</el-form-item>
+                )
+              })
+            }
+
+            <el-form-item class="actions">
+              <el-button type="primary" vOn:click={this.onSubmit}>查询</el-button>
+              <el-button vOn:click={this.onReset}>重置</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+      </el-collapse-transition>
+    )
   },
 }
 </script>

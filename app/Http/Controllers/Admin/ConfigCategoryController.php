@@ -12,12 +12,14 @@ use Illuminate\Http\Request;
 
 class ConfigCategoryController extends AdminBaseController
 {
-    public function index(ConfigCategoryFilter $filter)
+    public function index(Request $request, ConfigCategoryFilter $filter)
     {
         $categories = ConfigCategory::query()
             ->filter($filter)
-            ->orderByDesc('id')
-            ->paginate();
+            ->orderByDesc('id');
+        $categories = $request->input('all')
+            ? $categories->get()
+            : $categories->paginate();
 
         return $this->ok(ConfigCategoryResource::collection($categories));
     }

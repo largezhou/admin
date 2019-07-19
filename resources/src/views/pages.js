@@ -19,4 +19,5 @@ export default {
   'system-media': () => import('@v/system-media/Index'),
 
   'config-categories': () => import('@v/config-categories/Index'),
+  'configs': () => import('@v/configs/Index'),
 }

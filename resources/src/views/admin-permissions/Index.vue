@@ -5,10 +5,10 @@
     </template>
 
     <el-button-group class="mb-3">
-      <el-button @click="searchShow = !searchShow">筛选</el-button>
+      <el-button @click="() => $refs.searchForm.toggleShow()">筛选</el-button>
     </el-button-group>
 
-    <search-form :show="searchShow" :fields="search"/>
+    <search-form ref="searchForm" :fields="search"/>
 
     <el-table :data="perms" resource="admin-permissions">
       <el-table-column prop="id" label="ID" width="60"/>
@@ -59,7 +59,6 @@ export default {
       page: null,
       searchForm: {},
 
-      searchShow: false,
       search: [
         {
           field: 'id',

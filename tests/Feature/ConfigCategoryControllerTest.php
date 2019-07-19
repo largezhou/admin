@@ -121,9 +121,10 @@ class ConfigCategoryControllerTest extends AdminTestCase
         ConfigCategory::find(1)->update(['name' => 'test query name']);
         ConfigCategory::find(2)->update(['name' => 'test query name 2']);
 
-        $res = $this->getResources();
+        // 查出所有
+        $res = $this->getResources(['all' => 1]);
         $res->assertStatus(200)
-            ->assertJsonCount(15, 'data');
+            ->assertJsonCount(20);
 
         // name like %?%
         $res = $this->getResources([

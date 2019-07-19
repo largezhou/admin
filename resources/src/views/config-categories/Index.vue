@@ -5,11 +5,11 @@
     </template>
 
     <el-button-group class="mb-3">
-      <el-button @click="searchShow = !searchShow">筛选</el-button>
+      <el-button @click="() => $refs.searchForm.toggleShow()">筛选</el-button>
       <el-button @click="createDialog = true">添加</el-button>
     </el-button-group>
 
-    <search-form :show="searchShow" :fields="search"/>
+    <search-form ref="searchForm" :fields="search"/>
 
     <el-table :data="cates" resource="config-categories">
       <el-table-column prop="id" label="ID" width="60"/>
@@ -36,9 +36,9 @@
       <el-table-column prop="created_at" label="添加时间" width="160"/>
       <el-table-column prop="updated_at" label="修改时间" width="160"/>
       <el-table-column label="操作" width="160">
-        <template #default="{ row, $index }">
+        <template #default="{ row }">
           <el-button-group>
-            <button-link size="small" :to="'/'">查看配置</button-link>
+            <button-link size="small" :to="`/configs?category_id=${row.id}`">查看配置</button-link>
             <row-destroy notice="分类下的所有配置都会被删除"/>
           </el-button-group>
         </template>
@@ -100,7 +100,6 @@ export default {
   },
   data() {
     return {
-      searchShow: false,
       search: [
         {
           field: 'name',

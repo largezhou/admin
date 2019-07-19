@@ -4,7 +4,7 @@ export function getVueRouters() {
   return axios.get('configs/vue-routers')
 }
 
-export function getConfigCategories(params = []) {
+export function getConfigCategories(params = {}) {
   return axios.get('config-categories', { params })
 }
 
@@ -18,4 +18,12 @@ export function destroyConfigCategory(id) {
 
 export function updateConfigCategory(id, data) {
   return axios.put(`config-categories/${id}`, data)
+}
+
+export function getConfigs(params = {}) {
+  return axios.get('configs', { params })
+}
+
+export function updateConfig(id, data) {
+  return axios.put(`configs/${id}`, data)
 }
