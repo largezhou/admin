@@ -70,6 +70,9 @@ class AdminInitCommand extends Command
 
             [19, 0, '系统配置', null, 18, null, 1],
             [20, 19, '配置分类', 'config-categories', 19, null, 1],
+            [21, 19, '所有配置', 'configs', 20, null, 1],
+            [22, 19, '添加配置', 'configs/create', 21, null, 1],
+            [23, 19, '编辑配置', 'configs/:id(\\d+)/edit', 22, null, 0],
         ];
 
         $inserts = collect($inserts)->map(function ($i) {
