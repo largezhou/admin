@@ -117,6 +117,7 @@ export default {
     const TYPES = this.CONFIG_TYPES
     switch (this.type) {
       case TYPES.INPUT:
+      case TYPES.OTHER:
         component = 'el-input'
         break
       case TYPES.TEXTAREA:

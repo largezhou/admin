@@ -40,4 +40,5 @@ export const CONFIG_TYPES = {
   FILE: 'file',
   SINGLE_SELECT: 'single_select',
   MULTIPLE_SELECT: 'multiple_select',
+  OTHER: 'other',
 }
