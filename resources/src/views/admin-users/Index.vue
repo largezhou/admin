@@ -1,21 +1,21 @@
 <template>
   <el-card>
-    <template v-slot:header>
+    <template #header>
       <content-header/>
     </template>
 
     <el-button-group class="mb-3">
-      <el-button @click="searchShow = !searchShow">筛选</el-button>
+      <el-button @click="() => $refs.searchForm.toggleShow()">筛选</el-button>
     </el-button-group>
 
-    <search-form :show="searchShow" :fields="search"/>
+    <search-form ref="searchForm" :fields="search"/>
 
-    <el-table :data="users">
+    <el-table :data="users" resource="admin-users">
       <el-table-column prop="id" label="ID" width="60"/>
       <el-table-column prop="name" label="姓名" width="150"/>
       <el-table-column prop="username" label="账号" width="200"/>
       <el-table-column label="角色" min-width="150">
-        <template v-slot="{ row }">
+        <template #default="{ row }">
           <el-tag
             v-for="i of row.roles"
             :key="i.id"
@@ -26,7 +26,7 @@
         </template>
       </el-table-column>
       <el-table-column label="权限" min-width="150">
-        <template v-slot="{ row }">
+        <template #default="{ row }">
           <el-tag
             v-for="i of row.permissions"
             :key="i.id"
@@ -39,16 +39,10 @@
       <el-table-column prop="created_at" label="添加时间" width="180"/>
       <el-table-column prop="updated_at" label="修改时间" width="180"/>
       <el-table-column label="操作" width="150">
-        <template v-slot="{ row, $index }">
+        <template #default="{ row, $index }">
           <el-button-group>
-            <button-link size="small" :to="`/admin-users/${row.id}/edit`">编辑</button-link>
-            <pop-confirm
-              type="danger"
-              size="small"
-              :confirm="onDestroy($index)"
-            >
-              删除
-            </pop-confirm>
+            <row-to-edit/>
+            <row-destroy/>
           </el-button-group>
         </template>
       </el-table-column>
@@ -62,22 +56,20 @@
 <script>
 import SearchForm from '@c/SearchForm'
 import Pagination from '@c/Pagination'
-import { destroyAdminUser, getAdminUsers } from '@/api/admin-users'
-import { getMessage } from '@/libs/utils'
-import PopConfirm from '@c/PopConfirm'
-import ButtonLink from '@c/ButtonLink'
+import { getAdminUsers } from '@/api/admin-users'
+import RowDestroy from '@c/LzTable/RowDestroy'
+import RowToEdit from '@c/LzTable/RowToEdit'
 
 export default {
   name: 'Index',
   components: {
-    ButtonLink,
+    RowToEdit,
+    RowDestroy,
     SearchForm,
     Pagination,
-    PopConfirm,
   },
   data() {
     return {
-      searchShow: false,
       search: [
         {
           field: 'id',
@@ -103,15 +95,6 @@ export default {
       users: [],
       page: null,
     }
-  },
-  methods: {
-    onDestroy(index) {
-      return async () => {
-        await destroyAdminUser(this.users[index].id)
-        this.users.splice(index, 1)
-        this.$message.success(getMessage('destroyed'))
-      }
-    },
   },
   watch: {
     $route: {

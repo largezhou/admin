@@ -2,7 +2,7 @@
   <div class="login">
     <div class="login-wrap">
       <el-card>
-        <template v-slot:header>
+        <template #header>
           <span>登录</span>
         </template>
         <LoginForm/>

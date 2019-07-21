@@ -1,21 +1,21 @@
 <template>
   <el-card>
-    <template v-slot:header>
+    <template #header>
       <content-header/>
     </template>
 
     <el-button-group class="mb-3">
-      <el-button @click="searchShow = !searchShow">筛选</el-button>
+      <el-button @click="() => $refs.searchForm.toggleShow()">筛选</el-button>
     </el-button-group>
 
-    <search-form :show="searchShow" :fields="search"/>
+    <search-form ref="searchForm" :fields="search"/>
 
-    <el-table :data="roles">
+    <el-table :data="roles" resource="admin-roles">
       <el-table-column prop="id" label="ID" width="60"/>
       <el-table-column prop="name" label="名称" width="150"/>
       <el-table-column prop="slug" label="标识" width="150"/>
       <el-table-column label="权限" min-width="400">
-        <template v-slot="{ row }">
+        <template #default="{ row }">
           <el-tag
             v-for="i of row.permissions"
             :key="i.id"
@@ -28,16 +28,10 @@
       <el-table-column prop="created_at" label="添加时间" width="180"/>
       <el-table-column prop="updated_at" label="修改时间" width="180"/>
       <el-table-column label="操作" width="150">
-        <template v-slot="{ row, $index }">
+        <template #default="{ row, $index }">
           <el-button-group>
-            <button-link size="small" :to="`/admin-roles/${row.id}/edit`">编辑</button-link>
-            <pop-confirm
-              type="danger"
-              size="small"
-              :confirm="onDestroy($index)"
-            >
-              删除
-            </pop-confirm>
+            <row-to-edit/>
+            <row-destroy/>
           </el-button-group>
         </template>
       </el-table-column>
@@ -50,23 +44,21 @@
 
 <script>
 import SearchForm from '@c/SearchForm'
-import { destroyAdminRole, getAdminRoles } from '@/api/admin-roles'
-import { getMessage } from '@/libs/utils'
+import { getAdminRoles } from '@/api/admin-roles'
 import Pagination from '@c/Pagination'
-import PopConfirm from '@c/PopConfirm'
-import ButtonLink from '@c/ButtonLink'
+import RowDestroy from '@c/LzTable/RowDestroy'
+import RowToEdit from '@c/LzTable/RowToEdit'
 
 export default {
   name: 'Index',
   components: {
-    ButtonLink,
+    RowToEdit,
+    RowDestroy,
     SearchForm,
     Pagination,
-    PopConfirm,
   },
   data() {
     return {
-      searchShow: false,
       search: [
         {
           field: 'id',
@@ -88,15 +80,6 @@ export default {
       roles: [],
       page: null,
     }
-  },
-  methods: {
-    onDestroy(index) {
-      return async () => {
-        await destroyAdminRole(this.roles[index].id)
-        this.roles.splice(index, 1)
-        this.$message.success(getMessage('destroyed'))
-      }
-    },
   },
   watch: {
     $route: {

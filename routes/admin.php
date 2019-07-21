@@ -21,16 +21,12 @@ Route::middleware([
     Route::resource('admin-roles', 'AdminRoleController')->except(['show']);
 
     Route::resource('config-categories', 'ConfigCategoryController')->except(['show', 'create']);
-    Route::post(
-        'config-categories/{config_category}/configs',
-        'ConfigCategoryController@storeConfig'
-    )->name('config-categories.configs.store');
     Route::prefix('configs')
         ->as('configs.')
         ->group(function () {
             Route::get('vue-routers', 'ConfigController@vueRouters')->name('vue-routers');
         });
-    Route::resource('configs', 'ConfigController')->except(['show', 'create', 'store']);
+    Route::resource('configs', 'ConfigController')->except(['show']);
 
     Route::resource('system-media-categories', 'SystemMediaCategoryController')->except(['show', 'create']);
     // 在指定分类下，上传文件

@@ -19,4 +19,7 @@ export default {
   'system-media': () => import('@v/system-media/Index'),
 
   'config-categories': () => import('@v/config-categories/Index'),
+  'configs': () => import('@v/configs/Index'),
+  'configs/create': () => import('@v/configs/Form'),
+  'configs/:id(\\d+)/edit': () => import('@v/configs/Form'),
 }

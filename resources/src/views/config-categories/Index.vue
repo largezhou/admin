@@ -5,13 +5,13 @@
     </template>
 
     <el-button-group class="mb-3">
-      <el-button @click="searchShow = !searchShow">筛选</el-button>
+      <el-button @click="() => $refs.searchForm.toggleShow()">筛选</el-button>
       <el-button @click="createDialog = true">添加</el-button>
     </el-button-group>
 
-    <search-form :show="searchShow" :fields="search"/>
+    <search-form ref="searchForm" :fields="search"/>
 
-    <el-table :data="cates">
+    <el-table :data="cates" resource="config-categories">
       <el-table-column prop="id" label="ID" width="60"/>
       <el-table-column prop="name" label="名称" min-width="180">
         <template #default="{ row }">
@@ -36,17 +36,10 @@
       <el-table-column prop="created_at" label="添加时间" width="160"/>
       <el-table-column prop="updated_at" label="修改时间" width="160"/>
       <el-table-column label="操作" width="160">
-        <template #default="{ row, $index }">
+        <template #default="{ row }">
           <el-button-group>
-            <button-link size="small" :to="'/'">查看配置</button-link>
-            <pop-confirm
-              type="danger"
-              :confirm="onDestroy($index)"
-              notice="分类下的所有配置都会被删除"
-              size="small"
-            >
-              删除
-            </pop-confirm>
+            <button-link size="small" :to="`/configs?category_id=${row.id}`">查看配置</button-link>
+            <row-destroy notice="分类下的所有配置都会被删除"/>
           </el-button-group>
         </template>
       </el-table-column>
@@ -85,22 +78,21 @@
 import SearchForm from '@c/SearchForm'
 import Pagination from '@c/Pagination'
 import {
-  destroyConfigCategory,
   getConfigCategories,
   storeConfigCategory,
   updateConfigCategory,
-} from '@/api/admin-configs'
+} from '@/api/configs'
 import ButtonLink from '@c/ButtonLink'
-import PopConfirm from '@c/PopConfirm'
 import { getMessage } from '@/libs/utils'
 import InputEdit from '@c/quick-edit/InputEdit'
 import LzForm from '@c/LzForm'
+import RowDestroy from '@c/LzTable/RowDestroy'
 
 export default {
   name: 'Index',
   components: {
+    RowDestroy,
     InputEdit,
-    PopConfirm,
     ButtonLink,
     SearchForm,
     Pagination,
@@ -108,7 +100,6 @@ export default {
   },
   data() {
     return {
-      searchShow: false,
       search: [
         {
           field: 'name',
@@ -139,13 +130,6 @@ export default {
       this.createDialog = false
       this.$message.success(getMessage('created'))
       this.cates.unshift(data)
-    },
-    onDestroy(index) {
-      return async () => {
-        await destroyConfigCategory(this.cates[index].id)
-        this.cates.splice(index, 1)
-        this.$message.success(getMessage('destroyed'))
-      }
     },
     updateConfigCategory,
   },

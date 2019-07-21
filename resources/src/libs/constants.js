@@ -30,3 +30,14 @@ export const PERMISSION_PASS_ALL = 'pass-all'
  * @type {string}
  */
 export const ROLE_ADMIN = 'administrator'
+
+/**
+ * 配置的类型
+ */
+export const CONFIG_TYPES = {
+  INPUT: 'input',
+  TEXTAREA: 'textarea',
+  FILE: 'file',
+  SINGLE_SELECT: 'single_select',
+  MULTIPLE_SELECT: 'multiple_select',
+}
