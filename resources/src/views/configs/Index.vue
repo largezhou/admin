@@ -36,7 +36,17 @@
       <el-table-column prop="type_text" label="类型" width="100"/>
       <el-table-column prop="value" label="值" min-width="150">
         <template #default="{ row }">
-          <json-show :json="row.value"/>
+          <div v-if="row.type === CONFIG_TYPES.FILE" style="display: flex; overflow-x: auto">
+            <template v-if="Array.isArray(row.value)">
+              <file-preview
+                v-for="(item, index) of row.value"
+                :key="index"
+                :file="item"
+              />
+            </template>
+            <file-preview v-else-if="row.value" :file="row.value"/>
+          </div>
+          <json-show v-else :json="row.value"/>
         </template>
       </el-table-column>
       <el-table-column prop="created_at" label="添加时间" width="160"/>
@@ -68,6 +78,8 @@ import InputEdit from '@c/quick-edit/InputEdit'
 import RowDestroy from '@c/LzTable/RowDestroy'
 import RowToEdit from '@c/LzTable/RowToEdit'
 import JsonShow from '@c/JsonShow'
+import { mapConstants } from '@/libs/constants'
+import FilePreview from '@c/FilePreview'
 
 export default {
   name: 'Index',
@@ -78,6 +90,7 @@ export default {
     Pagination,
     InputEdit,
     RowDestroy,
+    FilePreview,
   },
   data() {
     return {
@@ -103,6 +116,9 @@ export default {
       configs: [],
       page: null,
     }
+  },
+  computed: {
+    ...mapConstants('CONFIG_TYPES'),
   },
   created() {
     this.getConfigCategories()

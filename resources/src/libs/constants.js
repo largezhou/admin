@@ -4,6 +4,9 @@
  * @param names
  */
 export const mapConstants = (names) => {
+  if (typeof names === 'string') {
+    names = [names]
+  }
   const mapped = {}
   names.forEach((n) => {
     mapped[n] = () => {

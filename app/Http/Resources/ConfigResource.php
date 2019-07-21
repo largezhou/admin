@@ -28,7 +28,7 @@ class ConfigResource extends JsonResource
                         'url' => $storage->url($i),
                     ];
                 }, $model->value);
-            } else {
+            } elseif ($model->value) {
                 $model->value = [
                     'path' => $model->value,
                     'url' => $storage->url($model->value),

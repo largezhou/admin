@@ -202,6 +202,8 @@ export default {
 .file-item {
   width: 100px;
   height: 100px;
+  min-width: 100px;
+  min-height: 100px;
   border: $--border-base;
   border-radius: $--border-radius-base;
   color: $--color-info;
