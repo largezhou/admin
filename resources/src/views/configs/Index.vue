@@ -62,7 +62,7 @@ import {
   getConfigCategories,
   getConfigs,
   updateConfig,
-} from '@/api/admin-configs'
+} from '@/api/configs'
 import Pagination from '@c/Pagination'
 import InputEdit from '@c/quick-edit/InputEdit'
 import RowDestroy from '@c/LzTable/RowDestroy'

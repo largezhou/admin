@@ -1,0 +1,161 @@
+<template>
+  <el-card>
+    <template #header>
+      <content-header/>
+    </template>
+    <el-row type="flex" justify="center">
+      <lz-form
+        ref="form"
+        :get-data="getData"
+        :submit="onSubmit"
+        :errors.sync="errors"
+        :form.sync="form"
+      >
+        <el-form-item label="类型" required prop="type">
+          <el-radio-group v-model="form.type">
+            <el-radio
+              v-for="i of types"
+              :key="i.value"
+              :label="i.value"
+            >
+              {{ i.label }}
+            </el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="分类" required prop="category_id">
+          <el-select
+            v-model="form.category_id"
+            placeholder="选择分类"
+            filterable
+          >
+            <el-option
+              v-for="i of cates"
+              :key="i.id"
+              :label="i.name"
+              :value="i.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="名称" required prop="name">
+          <el-input v-model="form.name"/>
+        </el-form-item>
+        <el-form-item label="标识" required prop="slug">
+          <el-input v-model="form.slug"/>
+        </el-form-item>
+        <el-form-item label="简介" prop="desc">
+          <el-input v-model="form.desc" type="textarea"/>
+        </el-form-item>
+        <el-form-item label="选项" prop="options">
+          <type-options v-model="form.options" :type="form.type"/>
+        </el-form-item>
+        <el-form-item label="值" prop="value">
+          <type-input
+            v-model="form.value"
+            :type="form.type"
+            :options="form.options"
+          />
+        </el-form-item>
+        <el-form-item label="验证规则" prop="validation_rules">
+          <el-input v-model="form.validation_rules"/>
+        </el-form-item>
+      </lz-form>
+    </el-row>
+  </el-card>
+</template>
+
+<script>
+import LzForm from '@c/LzForm'
+import {
+  createConfig,
+  editConfig,
+  getConfigCategories, storeConfig, updateConfig,
+} from '@/api/configs'
+import FormHelper from '@c/LzForm/FormHelper'
+import _forIn from 'lodash/forIn'
+import TypeOptions from '@v/configs/TypeOptions'
+import TypeInput from '@v/configs/TypeInput'
+import {  getMessage } from '@/libs/utils'
+import { CONFIG_TYPES } from '@/libs/constants'
+
+export default {
+  name: 'Form',
+  components: {
+    TypeInput,
+    TypeOptions,
+    LzForm,
+  },
+  mixins: [
+    FormHelper,
+  ],
+  data() {
+    return {
+      form: {
+        type: '',
+        category_id: '',
+        name: '',
+        slug: '',
+        desc: '',
+        options: {},
+        value: '',
+        validation_rules: '',
+      },
+      errors: {},
+
+      types: [],
+      cates: [],
+    }
+  },
+  methods: {
+    async getData() {
+      const [
+        { data: typeMap },
+        { data: cates },
+      ] = await Promise.all([
+        createConfig(),
+        getConfigCategories({ all: 1 }),
+      ])
+
+      this.cates = cates
+
+      const types = []
+      _forIn(typeMap, (value, key) => {
+        types.push({
+          value: key,
+          label: value,
+        })
+      })
+      this.types = types
+      // 表单中类型，默认选择第一个
+      this.form.type = types[0].value
+
+      if (this.editMode) {
+        const { data: form } = await editConfig(this.resourceId)
+        this.fillForm(form)
+      }
+    },
+    async onSubmit() {
+      let form = this.form
+      // 把文件的对象数组，处理成 path 的数组
+      if (form.type === CONFIG_TYPES.FILE) {
+        // 复制一下 form，避免处理完文件路径后，预览区无法显示图片
+        form = { ...form }
+        if (form.options.max > 1) {
+          form.value = form.value.map((i) => i.path)
+        } else {
+          form.value = form.value ? form.value.path : null
+        }
+      }
+
+      if (this.editMode) {
+        await updateConfig(this.resourceId, form)
+        this.$router.back()
+      } else {
+        await storeConfig(form)
+        this.$router.push('/configs')
+      }
+
+      this.$message.success(getMessage('saved'))
+    },
+  },
+}
+</script>

@@ -160,7 +160,7 @@
       :show-file-list="false"
       :on-change="onUploadChange"
       :before-upload="beforeUpload"
-      :accept="'.' + defaultExt.replace(/,/g, ',.')"
+      :accept="'.' + (defaultExt ? defaultExt : '').replace(/,/g, ',.')"
     />
   </el-card>
 </template>

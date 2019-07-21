@@ -45,4 +45,16 @@ class ConfigController extends Controller
 
         return $this->ok(ConfigResource::collection($configs));
     }
+
+    public function create()
+    {
+        return $this->ok(Config::$typeMap);
+    }
+
+    public function store(ConfigRequest $request)
+    {
+        $inputs = $request->validated();
+        $config = Config::create($inputs);
+        return $this->created(ConfigResource::make($config));
+    }
 }

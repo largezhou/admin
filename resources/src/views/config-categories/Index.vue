@@ -81,7 +81,7 @@ import {
   getConfigCategories,
   storeConfigCategory,
   updateConfigCategory,
-} from '@/api/admin-configs'
+} from '@/api/configs'
 import ButtonLink from '@c/ButtonLink'
 import { getMessage } from '@/libs/utils'
 import InputEdit from '@c/quick-edit/InputEdit'

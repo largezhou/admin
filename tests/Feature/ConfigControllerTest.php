@@ -7,7 +7,6 @@ use App\Models\AdminRole;
 use App\Models\Config;
 use App\Models\ConfigCategory;
 use App\Models\VueRouter;
-use Illuminate\Support\Arr;
 use Tests\AdminTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -120,11 +119,11 @@ class ConfigControllerTest extends AdminTestCase
         // type, slug 不能修改
         $inputs = [
             'name' => 'new name',
-            'type' => 'new type',
+            'type' => Config::TYPE_TEXTAREA,
             'slug' => 'new slug',
             'category_id' => 1,
             'desc' => 'new desc',
-            'options' => 'new options',
+            'options' => [],
             'value' => 'new value',
             'validation_rules' => 'new rules',
         ];
@@ -132,9 +131,9 @@ class ConfigControllerTest extends AdminTestCase
         $res->assertStatus(201);
 
         $expectData = array_merge($inputs, [
-            'type' => Config::TYPE_INPUT,
-            'slug' => 'slug',
-            'options' => json_encode('new options'),
+            'type' => Config::TYPE_TEXTAREA,
+            'slug' => 'new slug',
+            'options' => json_encode([]),
             'value' => json_encode('new value'),
         ]);
         $this->assertDatabaseHas('configs', $expectData);
@@ -150,5 +149,82 @@ class ConfigControllerTest extends AdminTestCase
         $res = $this->getResources();
         $res->assertStatus(200)
             ->assertJsonCount(4, 'data');
+    }
+
+    public function testStoreValidation()
+    {
+        factory(ConfigCategory::class)->create();
+        factory(Config::class)->create([
+            'name' => 'name',
+            'slug' => 'slug',
+        ]);
+
+        // type, name, slug required
+        // category_id required
+        // options array
+        // desc, validation_rules string
+        $res = $this->storeResource([
+            'desc' => [],
+            'options' => 'not array',
+            'validation_rules' => [],
+        ]);
+        $res->assertStatus(422)
+            ->assertJsonValidationErrors([
+                'type', 'name', 'slug', 'desc', 'options',
+                'validation_rules', 'category_id',
+            ]);
+
+        // type in
+        // category_id exists
+        // name, slug string
+        // desc, options, validation_rules max:xx
+        $res = $this->storeResource([
+            'type' => 'not in',
+            'category_id' => '-999',
+            'name' => [],
+            'slug' => [],
+            'desc' => str_repeat('a', 256),
+            'options' => str_repeat('a', 256),
+            'validation_rules' => str_repeat('a', 256),
+        ]);
+        $res->assertStatus(422)
+            ->assertJsonValidationErrors([
+                'type', 'name', 'slug', 'desc',
+                'options', 'validation_rules',
+            ]);
+
+        // name, slug max:50
+        $res = $this->storeResource([
+            'type' => Config::TYPE_INPUT,
+            'name' => str_repeat('a', 51),
+            'slug' => str_repeat('a', 51),
+        ]);
+        $res->assertStatus(422)
+            ->assertJsonValidationErrors(['name', 'slug']);
+
+        // name, slug unique
+        $res = $this->storeResource([
+            'type' => Config::TYPE_INPUT,
+            'name' => 'name',
+            'slug' => 'slug',
+        ]);
+        $res->assertStatus(422)
+            ->assertJsonValidationErrors(['name', 'slug']);
+    }
+
+    public function testStore()
+    {
+        factory(ConfigCategory::class)->create();
+
+        $inputs = factory(Config::class)->make()->toArray();
+        $inputs['category_id'] = 1;
+
+        $res = $this->storeResource($inputs);
+        $res->assertStatus(201);
+
+        $this->assertDatabaseHas('configs', [
+            'id' => 1,
+            'category_id' => 1,
+        ]);
     }
 }

@@ -19,18 +19,16 @@ class ConfigRequest extends FormRequest
 
         $rules = [
             'type' => 'required|in:'.implode(',', array_keys(Config::$typeMap)),
+            'category_id' => 'required|exists:config_categories,id',
             'name' => 'required|string|max:50|unique:configs,name,'.(int) $configId,
             'slug' => 'required|string|max:50|unique:configs,slug,'.(int) $configId,
             'desc' => 'nullable|string|max:255',
-            'options' => 'nullable|string|max:255',
-            'value' => 'nullable|string|max:5000',
+            'options' => 'nullable|array',
+            'value' => 'nullable',
             'validation_rules' => 'nullable|string|max:255',
         ];
 
         if ($this->isMethod('put')) {
-            $rules = Arr::except($rules, ['type', 'slug']);
-            $rules['category_id'] = 'exists:config_categories,id';
-
             $rules = Arr::only($rules, $this->keys());
         }
 
@@ -41,10 +39,11 @@ class ConfigRequest extends FormRequest
     {
         return [
             'type' => '输入类型',
+            'category_id' => '分类',
             'name' => '名称',
-            'slug' => '字段名',
+            'slug' => '标识',
             'desc' => '描述',
-            'options' => '配置',
+            'options' => '选项',
             'value' => '值',
             'validation_rules' => '验证规则',
         ];

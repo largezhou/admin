@@ -2,7 +2,7 @@ import router from '@/router'
 import { fixedRoutes } from '@/router/routes'
 import { buildRoutes, makeRouteName } from '@/libs/utils'
 import _get from 'lodash/get'
-import { getVueRouters } from '@/api/admin-configs'
+import { getVueRouters } from '@/api/configs'
 
 export default {
   state: {

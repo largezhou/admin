@@ -27,3 +27,15 @@ export function getConfigs(params = {}) {
 export function updateConfig(id, data) {
   return axios.put(`configs/${id}`, data)
 }
+
+export function createConfig() {
+  return axios.get('configs/create')
+}
+
+export function editConfig(id) {
+  return axios.get(`configs/${id}/edit`)
+}
+
+export function storeConfig(data) {
+  return axios.post('configs', data)
+}
