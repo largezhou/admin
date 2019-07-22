@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Config;
+use App\Rules\ConfigOptions;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Arr;
 
@@ -23,7 +24,7 @@ class ConfigRequest extends FormRequest
             'name' => 'required|string|max:50|unique:configs,name,'.(int) $configId,
             'slug' => 'required|string|max:50|unique:configs,slug,'.(int) $configId,
             'desc' => 'nullable|string|max:255',
-            'options' => 'nullable|array',
+            'options' => new ConfigOptions($this->input('type')),
             'value' => 'nullable',
             'validation_rules' => 'nullable|string|max:255',
         ];

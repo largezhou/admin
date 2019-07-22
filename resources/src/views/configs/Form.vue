@@ -74,7 +74,7 @@ import FormHelper from '@c/LzForm/FormHelper'
 import _forIn from 'lodash/forIn'
 import TypeOptions from '@v/configs/TypeOptions'
 import TypeInput from '@v/configs/TypeInput'
-import {  getMessage } from '@/libs/utils'
+import { getMessage, toInt } from '@/libs/utils'
 import { CONFIG_TYPES } from '@/libs/constants'
 
 export default {
@@ -131,6 +131,8 @@ export default {
       if (this.editMode) {
         const { data: form } = await editConfig(this.resourceId)
         this.fillForm(form)
+      } else {
+        this.form.category_id = toInt(this.$route.query.category_id, '')
       }
     },
     async onSubmit() {

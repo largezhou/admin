@@ -114,9 +114,8 @@
   </el-card>
 </template>
 <script>
-import { nestedToSelectOptions, getMessage } from '@/libs/utils'
+import { nestedToSelectOptions, getMessage, toInt } from '@/libs/utils'
 import { editVueRouter, getVueRouters, storeVueRouter, updateVueRouter } from '@/api/vue-routers'
-import { isInt } from '@/libs/validates'
 import LzForm from '@c/LzForm'
 import { getAdminRoles } from '@/api/admin-roles'
 import { getAdminPerms } from '@/api/admin-perms'
@@ -164,8 +163,8 @@ export default {
   },
   methods: {
     queryParentId() {
-      const id = Number.parseInt(this.$route.query.parent_id)
-      if (isInt(id) && this.vueRouterOptions.some(i => i.id === id)) {
+      const id = toInt(this.$route.query.parent_id)
+      if (this.vueRouterOptions.some(i => i.id === id)) {
         return id
       } else {
         return 0

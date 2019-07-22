@@ -123,7 +123,6 @@ class ConfigControllerTest extends AdminTestCase
             'slug' => 'new slug',
             'category_id' => 1,
             'desc' => 'new desc',
-            'options' => [],
             'value' => 'new value',
             'validation_rules' => 'new rules',
         ];
@@ -133,7 +132,6 @@ class ConfigControllerTest extends AdminTestCase
         $expectData = array_merge($inputs, [
             'type' => Config::TYPE_TEXTAREA,
             'slug' => 'new slug',
-            'options' => json_encode([]),
             'value' => json_encode('new value'),
         ]);
         $this->assertDatabaseHas('configs', $expectData);
@@ -161,36 +159,32 @@ class ConfigControllerTest extends AdminTestCase
 
         // type, name, slug required
         // category_id required
-        // options array
         // desc, validation_rules string
         $res = $this->storeResource([
             'desc' => [],
-            'options' => 'not array',
             'validation_rules' => [],
         ]);
         $res->assertStatus(422)
             ->assertJsonValidationErrors([
-                'type', 'name', 'slug', 'desc', 'options',
+                'type', 'name', 'slug', 'desc',
                 'validation_rules', 'category_id',
             ]);
 
         // type in
         // category_id exists
         // name, slug string
-        // desc, options, validation_rules max:xx
+        // desc, validation_rules max:xx
         $res = $this->storeResource([
             'type' => 'not in',
             'category_id' => '-999',
             'name' => [],
             'slug' => [],
             'desc' => str_repeat('a', 256),
-            'options' => str_repeat('a', 256),
             'validation_rules' => str_repeat('a', 256),
         ]);
         $res->assertStatus(422)
             ->assertJsonValidationErrors([
-                'type', 'name', 'slug', 'desc',
-                'options', 'validation_rules',
+                'type', 'name', 'slug', 'desc', 'validation_rules',
             ]);
 
         // name, slug max:50
@@ -210,6 +204,75 @@ class ConfigControllerTest extends AdminTestCase
         ]);
         $res->assertStatus(422)
             ->assertJsonValidationErrors(['name', 'slug']);
+    }
+
+    public function testConfigOptionsValidation()
+    {
+        // type 字段无效时，不验证
+        $res = $this->storeResource([
+            'options' => null,
+        ]);
+        $res->assertJsonMissingValidationErrors(['options']);
+
+        // options 只能为空的类型
+        foreach ([Config::TYPE_INPUT, Config::TYPE_TEXTAREA, Config::TYPE_OTHER] as $type) {
+            $res = $this->storeResource([
+                'type' => $type,
+                'options' => 'not null',
+            ]);
+            $res->assertJsonValidationErrors(['options']);
+        }
+
+        /**
+         * type TYPE_FILE 的数据
+         * [
+         *     'max' => 'required|between:1,99',
+         *     'ext' => 'nullable',
+         * ]
+         */
+        $optionsInputs = [null, 'not number', '-1'];
+        foreach ($optionsInputs as $max) {
+            $res = $this->storeResource([
+                'type' => Config::TYPE_FILE,
+                'options' => [
+                    'max' => $max,
+                    'ext' => null,
+                ],
+            ]);
+            $res->assertStatus(422)
+                ->assertJsonValidationErrors('options');
+        }
+
+        /**
+         * type TYPE_SINGLE_SELECT 或 TYPE_MULTIPLE_SELECT 的数据
+         * [
+         *     'options' => 'required|ConfigSelectTypeOptions',
+         *     'type' => 'required|in:input,select',
+         * ]
+         */
+        foreach ([null, [], "=>\n=>"] as $options) {
+            $res = $this->storeResource([
+                'type' => Config::TYPE_SINGLE_SELECT,
+                'options' => [
+                    'options' => $options,
+                    'type' => 'input',
+                ],
+            ]);
+            $res->assertStatus(422)
+                ->assertJsonValidationErrors('options');
+        }
+
+        foreach ([null, 'not in'] as $type) {
+            $res = $this->storeResource([
+                'type' => Config::TYPE_SINGLE_SELECT,
+                'options' => [
+                    'options' => '1=>value1',
+                    'type' => $type,
+                ],
+            ]);
+            $res->assertStatus(422)
+                ->assertJsonValidationErrors('options');
+        }
     }
 
     public function testStore()

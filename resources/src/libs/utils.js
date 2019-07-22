@@ -9,6 +9,7 @@ import store from '@/store'
 import _get from 'lodash/get'
 import { PERMISSION_PASS_ALL, ROLE_ADMIN } from '@/libs/constants'
 import _intersection from 'lodash/intersection'
+import { isInt } from '@/libs/validates'
 
 /**
  * 把 laravel 返回的错误消息，处理成只有一条
@@ -322,4 +323,19 @@ export const formatForFilePicker = (data) => {
   }
 
   return data
+}
+
+/**
+ * 严格的把字符串转换成整数，如果字符串不是整数，则返回一个默认值
+ *
+ * @param val
+ * @param defaultVal 无法解析为整数时，要返回的值
+ * @return {number}
+ */
+export function toInt(val, defaultVal = 0) {
+  if (isInt(val)) {
+    return Number(val)
+  } else {
+    return defaultVal
+  }
 }
