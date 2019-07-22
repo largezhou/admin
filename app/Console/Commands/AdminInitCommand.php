@@ -71,7 +71,7 @@ class AdminInitCommand extends Command
 
             [18, 0, '文件管理', 'system-media', 17, null, 1],
 
-            [19, 0, '系统配置', null, 18, null, 1],
+            [19, 0, '配置管理', null, 18, null, 1],
             [20, 19, '配置分类', 'config-categories', 19, null, 1],
 
             [99, 0, '权限测试', 'permission-test', 99, null, 1],

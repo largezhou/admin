@@ -4,6 +4,9 @@
  * @param names
  */
 export const mapConstants = (names) => {
+  if (typeof names === 'string') {
+    names = [names]
+  }
   const mapped = {}
   names.forEach((n) => {
     mapped[n] = () => {
@@ -40,4 +43,5 @@ export const CONFIG_TYPES = {
   FILE: 'file',
   SINGLE_SELECT: 'single_select',
   MULTIPLE_SELECT: 'multiple_select',
+  OTHER: 'other',
 }

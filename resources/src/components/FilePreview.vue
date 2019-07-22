@@ -80,7 +80,13 @@ export default {
 .file-preview {
   width: 100px;
   height: 100px;
+  min-width: 100px;
+  min-height: 100px;
   overflow: hidden;
+  border: $--border-base;
+  border-radius: $--border-radius-base;
+  margin: 0 5px 5px 0;
+  transition: all .3s;
 }
 
 img {
