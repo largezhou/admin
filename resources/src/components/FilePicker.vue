@@ -7,7 +7,7 @@
         :key="i"
         :file="item"
       >
-        <div class="actions flex-box">
+        <div class="actions flex-box" :title="item.path">
           <i class="el-icon-delete" @click="remove(i)"/>
         </div>
       </file-preview>

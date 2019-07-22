@@ -6,14 +6,13 @@
       :title="formattedFile.path"
       :src="formattedFile.url"
     >
-    <div class="ext" v-else :title="formattedFile.path">{{ upperCaseExt }}</div>
+    <div class="path" v-else :title="formattedFile.path">{{ formattedFile.path }}</div>
     <slot/>
   </div>
 </template>
 
 <script>
 import { isImage } from '@/libs/validates'
-import { getExt } from '@/libs/utils'
 
 export default {
   name: 'FilePreview',
@@ -29,35 +28,29 @@ export default {
     isImage() {
       return isImage(this.formattedFile.path)
     },
-    upperCaseExt() {
-      return (this.formattedFile.ext || 'file').toUpperCase()
-    },
   },
   methods: {
     toUpperCase(str) {
       return str.toUpperCase()
     },
     /**
-     * 把传入的 file 值，格式化为一个有几个必要字段（path, ext, url）的对象
+     * 把传入的 file 值，格式化为一个有几个必要字段（path, url）的对象
      */
     formatFile() {
       let f = this.file
       if (typeof f === 'string') {
         this.formattedFile = {
           path: f,
-          ext: getExt(f),
           url: f,
         }
       } else if (typeof f === 'object') {
         this.formattedFile = Object.assign({}, f, {
-          ext: f.ext || getExt(f.path),
           url: f.url || f.path,
         })
       } else {
         // 避免报错
         console.error('传入的值无效: ', f)
         this.formattedFile = {
-          ext: '',
           path: '',
         }
       }
@@ -95,12 +88,12 @@ img {
   word-break: break-all;
 }
 
-.ext {
+.path {
   overflow: hidden;
-  margin: 0 10px;
+  margin: 0 5px;
   color: $--color-info;
-  font-size: 20px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: 12px;
+  word-break: break-all;
+  line-height: initial;
 }
 </style>

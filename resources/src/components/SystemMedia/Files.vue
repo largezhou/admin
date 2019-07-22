@@ -82,10 +82,8 @@ export default {
 
 .file-preview {
   border: 3px solid $--color-info-light;
-  margin-right: 5px;
-  margin-bottom: 5px;
   cursor: pointer;
-  transition: all .2s;
+  border-radius: 0;
 
   &.selected {
     border-color: $--color-primary;
