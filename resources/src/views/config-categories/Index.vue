@@ -35,9 +35,10 @@
       </el-table-column>
       <el-table-column prop="created_at" label="添加时间" width="160"/>
       <el-table-column prop="updated_at" label="修改时间" width="160"/>
-      <el-table-column label="操作" width="160">
+      <el-table-column label="操作" width="240">
         <template #default="{ row }">
           <el-button-group>
+            <button-link size="small" :to="`/configs/create?category_id=${row.id}`">添加配置</button-link>
             <button-link size="small" :to="`/configs?category_id=${row.id}`">查看配置</button-link>
             <row-destroy notice="分类下的所有配置都会被删除"/>
           </el-button-group>

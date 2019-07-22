@@ -22,12 +22,14 @@ class ConfigResource extends JsonResource
             $storage = Storage::disk('uploads');
 
             if (Arr::get($model->options, 'max', 1) > 1) {
-                $model->value = array_map(function ($i) use ($storage) {
-                    return [
-                        'path' => $i,
-                        'url' => $storage->url($i),
-                    ];
-                }, $model->value);
+                $model->value = is_array($model->value)
+                    ? array_map(function ($i) use ($storage) {
+                        return [
+                            'path' => $i,
+                            'url' => $storage->url($i),
+                        ];
+                    }, $model->value)
+                    : [];
             } elseif ($model->value) {
                 $model->value = [
                     'path' => $model->value,

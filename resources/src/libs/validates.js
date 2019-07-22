@@ -12,12 +12,12 @@ export function isExternal(path) {
 }
 
 /**
- * 判断是不是正数
+ * 判断是不是整数
  * @param val
  * @returns {boolean}
  */
 export function isInt(val) {
-  return /^\d+$/.test(val)
+  return /^[+-]?\d+$/.test(val)
 }
 
 /**
