@@ -10,6 +10,7 @@
         :submit="onSubmit"
         :errors.sync="errors"
         :form.sync="form"
+        :edit-mode="editMode"
       >
         <el-form-item label="类型" required prop="type">
           <el-radio-group v-model="form.type">
@@ -74,7 +75,7 @@ import FormHelper from '@c/LzForm/FormHelper'
 import _forIn from 'lodash/forIn'
 import TypeOptions from '@v/configs/TypeOptions'
 import TypeInput from '@v/configs/TypeInput'
-import { getMessage, toInt } from '@/libs/utils'
+import { toInt } from '@/libs/utils'
 import { CONFIG_TYPES } from '@/libs/constants'
 
 export default {
@@ -150,13 +151,9 @@ export default {
 
       if (this.editMode) {
         await updateConfig(this.resourceId, form)
-        this.$router.back()
       } else {
         await storeConfig(form)
-        this.$router.push('/configs')
       }
-
-      this.$message.success(getMessage('saved'))
     },
   },
 }

@@ -10,6 +10,7 @@
         :submit="onSubmit"
         :form.sync="form"
         :errors.sync="errors"
+        :edit-mode="editMode"
       >
         <el-form-item label="标识" required prop="slug">
           <el-input v-model="form.slug"/>
@@ -44,7 +45,6 @@
 import { editAdminPerm, storeAdminPerm, updateAdminPerm } from '@/api/admin-perms'
 import LzForm from '@c/LzForm'
 import FormHelper from '@c/LzForm/FormHelper'
-import { getMessage } from '@/libs/utils'
 
 export default {
   name: 'Form',
@@ -77,13 +77,9 @@ export default {
     async onSubmit() {
       if (this.editMode) {
         await updateAdminPerm(this.resourceId, this.form)
-        this.$router.back()
       } else {
         await storeAdminPerm(this.form)
-        this.$router.push('/admin-permissions')
       }
-
-      this.$message.success(getMessage('saved'))
     },
   },
 }

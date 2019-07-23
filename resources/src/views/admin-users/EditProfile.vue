@@ -10,6 +10,9 @@
         :submit="onSubmit"
         :errors.sync="errors"
         :form.sync="form"
+        disable-redirect
+        disable-stay
+        edit-mode
       >
         <el-form-item label="账号">
           <el-input :value="getInfo('username')" readonly/>
@@ -65,7 +68,7 @@
 import LzForm from '@c/LzForm'
 import FormHelper from '@c/LzForm/FormHelper'
 import { editUser, updateUser } from '@/api/admin-users'
-import { formatForFilePicker, getMessage } from '@/libs/utils'
+import { formatForFilePicker } from '@/libs/utils'
 import FilePicker from '@c/FilePicker'
 import _get from 'lodash/get'
 
@@ -106,7 +109,6 @@ export default {
           {}, this.form,
           { avatar: _get(this.form, 'avatar.path', null) }),
       )
-      this.$message.success(getMessage('updated'))
       this.$store.commit('SET_USER', data)
       this.form = Object.assign({}, this.form, {
         password: '',
