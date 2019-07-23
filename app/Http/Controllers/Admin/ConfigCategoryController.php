@@ -43,12 +43,4 @@ class ConfigCategoryController extends AdminBaseController
         $configCategory->delete();
         return $this->noContent();
     }
-
-    public function storeConfig(ConfigRequest $request, ConfigCategory $configCategory)
-    {
-        $inputs = $request->validated();
-        $config = $configCategory->configs()->create($inputs);
-
-        return $this->created(ConfigResource::make($config));
-    }
 }

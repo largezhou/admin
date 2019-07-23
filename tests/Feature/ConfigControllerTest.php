@@ -29,11 +29,29 @@ class ConfigControllerTest extends AdminTestCase
         return $this->get(route("admin.configs.{$config}"));
     }
 
+    /**
+     * 构建一个简单的嵌套路由
+     * [
+     *     ['id' => 1],
+     *     [
+     *         'id' => 2,
+     *         'children' => ['id' => 3],
+     *     ],
+     *     [
+     *         'id' => 4,
+     *         'children' => ['id' => 5],
+     *     ],
+     * ]
+     *
+     * @return array $ids
+     */
     protected function prepareVueRouters()
     {
-        factory(VueRouter::class, 5)->create();
-        VueRouter::find(2)->children()->save(VueRouter::find(3));
-        VueRouter::find(4)->children()->save(VueRouter::find(5));
+        $ids = factory(VueRouter::class, 5)->create()->pluck('id');
+        VueRouter::find($ids[1])->children()->save(VueRouter::find($ids[2]));
+        VueRouter::find($ids[3])->children()->save(VueRouter::find($ids[4]));
+
+        return $ids;
     }
 
     public function testVueRoutersWithoutAuth()
@@ -47,20 +65,20 @@ class ConfigControllerTest extends AdminTestCase
 
     public function testVueRoutersUserNoAuth()
     {
-        $this->prepareVueRouters();
+        $ids = $this->prepareVueRouters();
 
         // 绑定角色
-        VueRouter::find(1)->roles()->create(
+        VueRouter::find($ids[0])->roles()->create(
             factory(AdminRole::class)->create(['slug' => 'role-router-1'])->toArray()
         );
         // 子菜单绑定权限
-        VueRouter::find(3)->update([
+        VueRouter::find($ids[2])->update([
             'permission' => factory(AdminPermission::class)->create(['slug' => 'perm-router-3'])->slug,
         ]);
         $res = $this->getConfig('vue-routers');
         $res->assertStatus(200)
             ->assertJsonCount(2)
-            ->assertJsonMissing(['id' => 3]);
+            ->assertJsonMissing(['id' => $ids[2]]);
     }
 
     public function testVueRoutersUserHasAuth()
@@ -87,30 +105,30 @@ class ConfigControllerTest extends AdminTestCase
 
     public function testEdit()
     {
-        factory(Config::class)->create();
+        $id = factory(Config::class)->create()->id;
 
-        $res = $this->editResource(1);
+        $res = $this->editResource($id);
         $res->assertStatus(200);
     }
 
     public function testUpdate()
     {
-        factory(ConfigCategory::class)->create();
-        factory(Config::class)->create([
+        $categoryId = factory(ConfigCategory::class)->create()->id;
+        $configId = factory(Config::class)->create([
             'name' => 'name',
             'slug' => 'slug',
             'type' => Config::TYPE_INPUT,
-        ]);
+        ])->id;
 
         // category_id exists
-        $res = $this->updateResource(1, [
+        $res = $this->updateResource($configId, [
             'category_id' => -1,
         ]);
         $res->assertStatus(422)
             ->assertJsonValidationErrors(['category_id']);
 
         // name unique 排除自身
-        $res = $this->updateResource(1, [
+        $res = $this->updateResource($configId, [
             'name' => 'name1',
         ]);
         $res->assertStatus(201)
@@ -121,12 +139,12 @@ class ConfigControllerTest extends AdminTestCase
             'name' => 'new name',
             'type' => Config::TYPE_TEXTAREA,
             'slug' => 'new slug',
-            'category_id' => 1,
+            'category_id' => $categoryId,
             'desc' => 'new desc',
             'value' => 'new value',
             'validation_rules' => 'new rules',
         ];
-        $res = $this->updateResource(1, $inputs);
+        $res = $this->updateResource($configId, $inputs);
         $res->assertStatus(201);
 
         $expectData = array_merge($inputs, [
@@ -277,17 +295,17 @@ class ConfigControllerTest extends AdminTestCase
 
     public function testStore()
     {
-        factory(ConfigCategory::class)->create();
+        $categoryId = factory(ConfigCategory::class)->create()->id;
 
         $inputs = factory(Config::class)->make()->toArray();
-        $inputs['category_id'] = 1;
+        $inputs['category_id'] = $categoryId;
 
         $res = $this->storeResource($inputs);
         $res->assertStatus(201);
 
         $this->assertDatabaseHas('configs', [
-            'id' => 1,
-            'category_id' => 1,
+            'id' => $this->getLastInsertId('configs'),
+            'category_id' => $categoryId,
         ]);
     }
 }

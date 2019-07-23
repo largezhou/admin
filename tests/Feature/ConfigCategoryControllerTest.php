@@ -63,7 +63,7 @@ class ConfigCategoryControllerTest extends AdminTestCase
         ]);
         $res->assertStatus(201);
         $this->assertDatabaseHas('config_categories', [
-            'id' => 1,
+            'id' => $this->getLastInsertId('config_categories'),
             'name' => 'name',
             'slug' => 'slug',
         ]);
@@ -71,19 +71,19 @@ class ConfigCategoryControllerTest extends AdminTestCase
 
     public function testUpdate()
     {
-        factory(ConfigCategory::class)->create(['name' => 'name']);
-        $res = $this->updateResource(1, [
+        $id = factory(ConfigCategory::class)->create(['name' => 'name'])->id;
+        $res = $this->updateResource($id, [
             'name' => 'name',
         ]);
         $res->assertStatus(201);
 
-        $res = $this->updateResource(1, [
+        $res = $this->updateResource($id, [
             'name' => 'new',
             'slug' => 'new',
         ]);
         $res->assertStatus(201);
         $this->assertDatabaseHas('config_categories', [
-            'id' => 1,
+            'id' => $id,
             'name' => 'new',
             'slug' => 'new',
         ]);
@@ -91,35 +91,32 @@ class ConfigCategoryControllerTest extends AdminTestCase
 
     public function testDestroy()
     {
-        factory(ConfigCategory::class, 2)->create();
-        ConfigCategory::find(2)->configs()->createMany([factory(Config::class)->make()->toArray()]);
-
-        $res = $this->destroyResource(1);
-        $res->assertStatus(204);
-        $this->assertDatabaseMissing('config_categories', [
-            'id' => 1,
-        ]);
-        $this->assertDatabaseHas('configs', [
-            'id' => 1,
-            'category_id' => 2,
-        ]);
+        $categoryId1 = factory(ConfigCategory::class)->create()->id;
+        $categoryId2 = factory(ConfigCategory::class)->create()->id;
+        $configId = factory(Config::class)->make(['category_id' => $categoryId2])->id;
 
         // 关联删除
-        $res = $this->destroyResource(2);
+        $res = $this->destroyResource($categoryId2);
         $res->assertStatus(204);
         $this->assertDatabaseMissing('config_categories', [
-            'id' => 2,
+            'id' => $categoryId2,
         ]);
         $this->assertDatabaseMissing('configs', [
-            'id' => 1,
+            'id' => $configId,
+        ]);
+
+        $res = $this->destroyResource($categoryId1);
+        $res->assertStatus(204);
+        $this->assertDatabaseMissing('config_categories', [
+            'id' => $categoryId1,
         ]);
     }
 
     public function testIndex()
     {
         ConfigCategory::insert(factory(ConfigCategory::class, 20)->make()->toArray());
-        ConfigCategory::find(1)->update(['name' => 'test query name']);
-        ConfigCategory::find(2)->update(['name' => 'test query name 2']);
+        ConfigCategory::first()->update(['name' => 'test query name']);
+        ConfigCategory::offset(1)->first()->update(['name' => 'test query name 2']);
 
         // 查出所有
         $res = $this->getResources(['all' => 1]);

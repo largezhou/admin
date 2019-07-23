@@ -71,29 +71,30 @@ class VueRouterControllerTest extends AdminTestCase
 
     public function testStore()
     {
-        factory(VueRouter::class)->create();
-        factory(AdminPermission::class)->create(['slug' => 'slug']);
-        factory(AdminRole::class)->create();
+        $routerId1 = factory(VueRouter::class)->create()->id;
+        $permissionId = factory(AdminPermission::class)->create(['slug' => 'slug'])->id;
+        $roleId = factory(AdminRole::class)->create()->id;
         $inputs = factory(VueRouter::class)->make([
-            'parent_id' => 1,
+            'parent_id' => $routerId1,
             'path' => 'no/start/slash',
             'permission' => 'slug',
         ])->toArray();
 
-        $res = $this->storeResource($inputs + ['roles' => [1]]);
+        $res = $this->storeResource($inputs + ['roles' => [$roleId]]);
         $res->assertStatus(201);
 
+        $routerId2 = $this->getLastInsertId('vue_routers');
         $this->assertDatabaseHas(
             'vue_routers',
             array_merge($inputs, [
-                'id' => 2,
-                'parent_id' => 1,
+                'id' => $routerId2,
+                'parent_id' => $routerId1,
                 'permission' => 'slug',
             ])
         );
         $this->assertDatabaseHas('vue_router_role', [
-            'vue_router_id' => 2,
-            'role_id' => 1,
+            'vue_router_id' => $routerId2,
+            'role_id' => $roleId,
         ]);
 
         // 不传 parent_id 默认为 0
@@ -101,53 +102,49 @@ class VueRouterControllerTest extends AdminTestCase
         $res = $this->storeResource($inputs);
         $res->assertStatus(201);
         $this->assertDatabaseHas('vue_routers', [
-            'id' => 3,
+            'id' => $this->getLastInsertId('vue_routers'),
             'parent_id' => 0,
         ]);
     }
 
     public function testUpdate()
     {
-        $this->updateResource(999)->assertStatus(404);
-        factory(VueRouter::class, 2)->create();
-        factory(AdminRole::class, 2)->create();
-        VueRouter::find(1)->roles()->attach(1);
+        $routerIds = factory(VueRouter::class, 2)->create()->pluck('id');
+        $roleIds = factory(AdminRole::class, 2)->create()->pluck('id');
+        VueRouter::find($routerIds[1])->roles()->attach($roleIds[0]);
 
         $inputs = [
-            'parent_id' => 2,
+            'parent_id' => $routerIds[1],
             'title' => 'new title',
             'icon' => 'new icon',
             'path' => 'new/path',
             'order' => 99,
         ];
-        $res = $this->updateResource(1, $inputs + ['roles' => [2]]);
+        $res = $this->updateResource($routerIds[0], $inputs + ['roles' => [$roleIds[1]]]);
         $res->assertStatus(201);
 
-        $this->assertDatabaseHas('vue_routers', ['id' => 1] + $inputs);
+        $this->assertDatabaseHas('vue_routers', ['id' => $routerIds[0]] + $inputs);
         $this->assertDatabaseHas('vue_router_role', [
-            'vue_router_id' => 1,
-            'role_id' => 2,
+            'vue_router_id' => $routerIds[0],
+            'role_id' => $roleIds[1],
         ]);
         $this->assertDatabaseMissing('vue_router_role', [
-            'vue_router_id' => 1,
-            'role_id' => 1,
+            'vue_router_id' => $routerIds[0],
+            'role_id' => $roleIds[0],
         ]);
 
-        $res = $this->updateResource(1, ['roles' => []]);
+        $res = $this->updateResource($routerIds[0], ['roles' => []]);
         $res->assertStatus(201);
         $this->assertDatabaseMissing('vue_router_role', [
-            'vue_router_id' => 1,
-            'role_id' => 2,
+            'vue_router_id' => $routerIds[0],
+            'role_id' => $roleIds[1],
         ]);
     }
 
     public function testEdit()
     {
-        $res = $this->editResource(999);
-        $res->assertStatus(404);
-
         $router = factory(VueRouter::class)->create()->toArray();
-        $res = $this->editResource(1);
+        $res = $this->editResource($router['id']);
         $res->assertStatus(200)
             ->assertJsonFragment($router);
     }
@@ -196,24 +193,24 @@ class VueRouterControllerTest extends AdminTestCase
 
     public function testBatchUpdateOrder()
     {
-        factory(VueRouter::class, 3)->create();
+        $ids = factory(VueRouter::class, 3)->create()->pluck('id');
 
         $res = $this->put($this->route('vue-routers.batch.update'), [
             '_order' => [
                 [
-                    'id' => 3,
-                    'children' => [['id' => 1]],
+                    'id' => $ids[2],
+                    'children' => [['id' => $ids[0]]],
                 ],
                 [
-                    'id' => 2,
+                    'id' => $ids[1],
                 ],
             ],
         ]);
         $res->assertStatus(201);
 
         $this->assertDatabaseHas('vue_routers', [
-            'id' => 1,
-            'parent_id' => 3,
+            'id' => $ids[0],
+            'parent_id' => $ids[2],
             'order' => 2,
         ]);
     }

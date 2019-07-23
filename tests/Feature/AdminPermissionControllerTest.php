@@ -55,20 +55,21 @@ class AdminPermissionControllerTest extends AdminTestCase
         $this->assertStore($model);
 
         // http_method 和 http_path 为空
-        $model['http_method'] = null;
-        $model['http_path'] = null;
+        $model = factory(AdminPermission::class)->make([
+            'http_method' => null,
+            'http_path' => null,
+        ]);
         $this->assertStore($model);
     }
 
     protected function assertStore(AdminPermission $model)
     {
-        AdminPermission::truncate();
         $inputs = $model->toArray();
         $inputs['http_path'] = implode("\n", $inputs['http_path']);
         $res = $this->storeResource($inputs);
         $res->assertStatus(201);
 
-        $this->assertDatabaseHas('admin_permissions', array_merge($model->getAttributes(), ['id' => 1]));
+        $this->assertDatabaseHas('admin_permissions', array_merge($model->getAttributes()));
     }
 
     public function testIndex()
@@ -77,33 +78,32 @@ class AdminPermissionControllerTest extends AdminTestCase
 
         $res = $this->getResources();
         $res->assertStatus(200)
-            ->assertJsonFragment(['id' => 6])
             ->assertJsonFragment(['total' => 20])
             ->assertJsonFragment(['last_page' => 2]);
 
         // 筛选
-        factory(AdminPermission::class)->create([
+        $id = factory(AdminPermission::class)->create([
             'http_path' => 'path/to/query',
             'slug' => 'slug query',
             'name' => 'name query',
-        ]);
+        ])->id;
 
         $res = $this->getResources([
-            'id' => 21,
+            'id' => $id,
         ]);
         $res->assertStatus(200)
             ->assertJsonCount(1, 'data')
-            ->assertJsonFragment(['id' => 21]);
+            ->assertJsonFragment(['id' => $id]);
 
         $res = $this->getResources([
-            'id' => 21,
+            'id' => $id,
             'http_path' => 'to',
             'slug' => 'slug',
             'name' => 'name',
         ]);
         $res->assertStatus(200)
             ->assertJsonCount(1, 'data')
-            ->assertJsonFragment(['id' => 21]);
+            ->assertJsonFragment(['id' => $id]);
 
         // 测试不分页 和 只包含特定字段
         $res = $this->getResources([
@@ -115,26 +115,26 @@ class AdminPermissionControllerTest extends AdminTestCase
 
     public function testEdit()
     {
-        $res = $this->editResource(1);
+        $res = $this->editResource(99999);
         $res->assertStatus(404);
 
-        factory(AdminPermission::class)->create();
-        $res = $this->editResource(1);
+        $id = factory(AdminPermission::class)->create()->id;
+        $res = $this->editResource($id);
         $res->assertStatus(200)
-            ->assertJsonFragment(['id' => 1]);
+            ->assertJsonFragment(['id' => $id]);
     }
 
     public function testUpdate()
     {
         // id = 1
-        factory(AdminPermission::class)->create();
+        $id1 = factory(AdminPermission::class)->create()->id;
         // id = 2
-        factory(AdminPermission::class)->create([
+        $id2 = factory(AdminPermission::class)->create([
             'name' => 'name',
             'slug' => 'slug',
-        ]);
+        ])->id;
 
-        $res = $this->updateResource(1, [
+        $res = $this->updateResource($id1, [
             'name' => 'name',
             'slug' => 'slug',
         ]);
@@ -146,19 +146,19 @@ class AdminPermissionControllerTest extends AdminTestCase
             'http_path' => null,
             'http_method' => null,
         ];
-        $res = $this->updateResource(2, $inputs);
+        $res = $this->updateResource($id2, $inputs);
         $res->assertStatus(201);
 
-        $this->assertDatabaseHas('admin_permissions', $inputs + ['id' => 2, 'name' => 'name']);
+        $this->assertDatabaseHas('admin_permissions', $inputs + ['id' => $id2, 'name' => 'name']);
     }
 
     public function testDestroy()
     {
-        factory(AdminPermission::class)->create();
+        $id = factory(AdminPermission::class)->create()->id;
 
-        $res = $this->destroyResource(1);
+        $res = $this->destroyResource($id);
         $res->assertStatus(204);
 
-        $this->assertDatabaseMissing('admin_permissions', ['id' => 1]);
+        $this->assertDatabaseMissing('admin_permissions', ['id' => $id]);
     }
 }

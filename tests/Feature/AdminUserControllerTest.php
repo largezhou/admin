@@ -23,15 +23,25 @@ class AdminUserControllerTest extends AdminTestCase
         $this->login();
     }
 
-    protected function attachAuthToUser($user = null)
+    /**
+     * 给用户绑定一个角色，该角色有一个权限。并为用户绑定另一个单独的权限
+     *
+     * @param AdminUser|null $user
+     *
+     * @return array [roleId, permissionId1, permissionId2]
+     */
+    protected function attachAuthToUser(AdminUser $user = null)
     {
         $user = $user ?? $this->user;
 
-        factory(AdminPermission::class)->create(['slug' => 'perm1']);
-        factory(AdminPermission::class)->create(['slug' => 'perm2']);
-        factory(AdminRole::class)->create(['slug' => 'role'])->permissions()->attach(1);
-        $user->roles()->attach(1);
-        $user->permissions()->attach(2);
+        $permission1 = factory(AdminPermission::class)->create(['slug' => 'perm1'])->id;
+        $permission2 = factory(AdminPermission::class)->create(['slug' => 'perm2'])->id;
+        $role = factory(AdminRole::class)->create(['slug' => 'role']);
+        $role->permissions()->attach($permission1);
+        $user->roles()->attach($role->id);
+        $user->permissions()->attach($permission2);
+
+        return [$role->id, $permission1, $permission2];
     }
 
     public function testUser()
@@ -82,17 +92,17 @@ class AdminUserControllerTest extends AdminTestCase
     public function testIndex()
     {
         factory(AdminUser::class, 20)->create();
-        factory(AdminPermission::class, 20)->create();
-        factory(AdminRole::class, 10)->create();
+        $permissions = factory(AdminPermission::class, 20)->create();
+        $roles = factory(AdminRole::class, 10)->create();
 
-        $this->user->roles()->attach([1, 2, 3]);
-        $this->user->permissions()->attach([1, 2, 3]);
+        $this->user->roles()->attach($roles->take(3)->pluck('id'));
+        $this->user->permissions()->attach($permissions->take(3)->pluck('id'));
         $res = $this->getResources([
             'page' => 2,
         ]);
         $res->assertStatus(200)
-            ->assertJsonCount(6, 'data')
-            ->assertJsonCount(3, 'data.5.roles')
+            ->assertJsonCount(6, 'data') // 第二页有 6 个数据
+            ->assertJsonCount(3, 'data.5.roles') // 第二页第 5 个数据，即 $this->user
             ->assertJsonCount(3, 'data.5.permissions');
 
         // 只测试权限和角色名搜索
@@ -107,8 +117,8 @@ class AdminUserControllerTest extends AdminTestCase
         $res->assertStatus(200)
             ->assertJsonCount(0, 'data');
         $res = $this->getResources([
-            'role_name' => AdminRole::find(1)->value('name'),
-            'permission_name' => AdminPermission::find(1)->value('name'),
+            'role_name' => AdminRole::first()->value('name'),
+            'permission_name' => AdminPermission::first()->value('name'),
         ]);
         $res->assertStatus(200)
             ->assertJsonCount(1, 'data');
@@ -160,8 +170,8 @@ class AdminUserControllerTest extends AdminTestCase
 
     public function testStore()
     {
-        factory(AdminRole::class, 5)->create();
-        factory(AdminPermission::class, 5)->create();
+        $roles = factory(AdminRole::class, 5)->create();
+        $permissions = factory(AdminPermission::class, 5)->create();
         $pw = '000000';
 
         $userInputs = factory(AdminUser::class)->make([
@@ -170,25 +180,26 @@ class AdminUserControllerTest extends AdminTestCase
 
         $res = $this->storeResource($userInputs + [
                 'password_confirmation' => $pw,
-                'roles' => [1, 2, 3],
-                'permissions' => [4, 5],
+                'roles' => $roles->take(3)->pluck('id')->toArray(),
+                'permissions' => $permissions->take(-2)->pluck('id')->toArray(),
             ]);
         $res->assertStatus(201);
 
+        $userId = $this->getLastInsertId('admin_users');
         $this->assertDatabaseHas('admin_users', [
-            'id' => 2,
+            'id' => $userId,
             'username' => $userInputs['username'],
             'name' => $userInputs['name'],
         ]);
-        $this->assertTrue(Hash::check($pw, AdminUser::find(2)->password));
+        $this->assertTrue(Hash::check($pw, AdminUser::find($userId)->password));
 
         $this->assertDatabaseHas('admin_user_role', [
-            'user_id' => 2,
-            'role_id' => 1,
+            'user_id' => $userId,
+            'role_id' => $roles->take(3)->pluck('id')->first(),
         ]);
         $this->assertDatabaseHas('admin_user_permission', [
-            'user_id' => 2,
-            'permission_id' => 4,
+            'user_id' => $userId,
+            'permission_id' => $permissions->take(-2)->pluck('id')->first(),
         ]);
     }
 
@@ -197,7 +208,7 @@ class AdminUserControllerTest extends AdminTestCase
         $this->user->roles()->attach(factory(AdminRole::class, 3)->create()->pluck('id'));
         $this->user->permissions()->attach(factory(AdminPermission::class, 3)->create()->pluck('id'));
 
-        $res = $this->getResource(1);
+        $res = $this->getResource($this->user->id);
         $res->assertStatus(200)
             ->assertJsonCount(3, 'roles')
             ->assertJsonCount(3, 'permissions');
@@ -216,14 +227,17 @@ class AdminUserControllerTest extends AdminTestCase
 
         $this->user->roles()
             ->createMany(factory(AdminRole::class, 3)->make()->toArray());
+        $oldRoleId = $this->getLastInsertId('admin_roles');
         $this->user->permissions()
             ->createMany(factory(AdminPermission::class, 3)->make()->toArray());
+        $oldPermissionId = $this->getLastInsertId('admin_permissions');
 
         $newRoles = factory(AdminRole::class, 3)->create()->pluck('id')->toArray();
         $newPerms = factory(AdminPermission::class, 3)->create()->pluck('id')->toArray();
 
+        $userId = $this->user->id;
         $pw = 'new password';
-        $res = $this->updateResource(1, [
+        $res = $this->updateResource($userId, [
             'username' => 'admin',
             'name' => 'new name',
             'roles' => $newRoles,
@@ -233,51 +247,51 @@ class AdminUserControllerTest extends AdminTestCase
             'avatar' => $this->storage->url($this->user->avatar),
         ]);
         $res->assertStatus(201);
-        $this->assertTrue(Hash::check($pw, AdminUser::find(1)->password));
+        $this->assertTrue(Hash::check($pw, AdminUser::find($userId)->password));
         $this->assertDatabaseHas('admin_users', [
-            'id' => 1,
+            'id' => $userId,
             'username' => 'admin',
             'name' => 'new name',
             'avatar' => $this->user->avatar,
         ]);
         // 新角色
         $this->assertDatabaseHas('admin_user_role', [
-            'user_id' => 1,
+            'user_id' => $userId,
             'role_id' => $newRoles[0],
         ]);
         // 新权限
         $this->assertDatabaseMissing('admin_user_role', [
-            'user_id' => 1,
-            'role_id' => 1,
+            'user_id' => $userId,
+            'role_id' => $oldRoleId,
         ]);
         // 旧角色移除
         $this->assertDatabaseHas('admin_user_permission', [
-            'user_id' => 1,
+            'user_id' => $userId,
             'permission_id' => $newPerms[0],
         ]);
         // 旧权限移除
         $this->assertDatabaseMissing('admin_user_permission', [
-            'user_id' => 1,
-            'permission_id' => 1,
+            'user_id' => $userId,
+            'permission_id' => $oldPermissionId,
         ]);
 
         // 移除全部角色权限
-        $res = $this->updateResource(1, [
+        $res = $this->updateResource($userId, [
             'roles' => [],
             'permissions' => [],
         ]);
         $res->assertStatus(201);
         $this->assertDatabaseMissing('admin_user_role', [
-            'user_id' => 1,
+            'user_id' => $userId,
         ]);
 
         // 不填密码, 或者为空
-        $pw = AdminUser::find(1)->password;
-        $res = $this->updateResource(1, [
+        $pw = AdminUser::find($userId)->password;
+        $res = $this->updateResource($userId, [
             'password' => '',
         ]);
         $res->assertStatus(201);
-        $this->assertTrue($pw == AdminUser::find(1)->password);
+        $this->assertTrue($pw == AdminUser::find($userId)->password);
     }
 
     public function testDestroy()
@@ -285,21 +299,22 @@ class AdminUserControllerTest extends AdminTestCase
         $this->user->roles()->createMany(factory(AdminRole::class, 1)->make()->toArray());
         $this->user->permissions()->createMany(factory(AdminPermission::class, 1)->make()->toArray());
 
-        $res = $this->destroyResource(1);
+        $userId = $this->user->id;
+        $res = $this->destroyResource($userId);
         $res->assertStatus(204);
 
-        $this->assertDatabaseMissing('admin_users', ['id' => 1]);
-        $this->assertDatabaseMissing('admin_user_role', ['user_id' => 1]);
-        $this->assertDatabaseMissing('admin_user_permission', ['user_id' => 1]);
+        $this->assertDatabaseMissing('admin_users', ['id' => $userId]);
+        $this->assertDatabaseMissing('admin_user_role', ['user_id' => $userId]);
+        $this->assertDatabaseMissing('admin_user_permission', ['user_id' => $userId]);
     }
 
     public function testEdit()
     {
-        $this->user->roles()->attach(factory(AdminRole::class, 3)->create()->pluck('id'));
+        $this->user->roles()->attach($roleIds = factory(AdminRole::class, 3)->create()->pluck('id'));
         $this->user->permissions()->attach(factory(AdminPermission::class, 3)->create()->pluck('id'));
 
-        $res = $this->editResource(1);
+        $res = $this->editResource($this->user->id);
         $res->assertStatus(200)
-            ->assertJsonFragment(['roles' => [1, 2, 3]]);
+            ->assertJsonFragment(['roles' => $roleIds]);
     }
 }
