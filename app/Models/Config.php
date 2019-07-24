@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+
 class Config extends Model
 {
     const TYPE_INPUT = 'input';
@@ -35,5 +37,35 @@ class Config extends Model
     public function category()
     {
         return $this->belongsTo(ConfigCategory::class);
+    }
+
+    /**
+     * 通过配置分类标识，获取所有分类
+     *
+     * @param $categorySlug
+     *
+     * @return Config[]|\Illuminate\Database\Eloquent\Collection
+     */
+    public static function getByCategorySlug($categorySlug)
+    {
+        return static::whereHas('category', function (Builder $query) use ($categorySlug) {
+            $query->where('slug', $categorySlug);
+        })->get();
+    }
+
+    /**
+     * @param Config[]|\Illuminate\Database\Eloquent\Collection $configs
+     * @param array $inputs slug => value 键值对
+     *
+     * @return Config[]|\Illuminate\Database\Eloquent\Collection
+     */
+    public static function updateValues($configs, $inputs)
+    {
+        $configs->each(function (Config $config) use ($inputs) {
+            if (key_exists($config->slug, $inputs)) {
+                $config->update(['value' => $inputs[$config->slug]]);
+            }
+        });
+        return $configs;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Filters\ConfigFilter;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateConfigValuesRequest;
 use App\Http\Requests\ConfigRequest;
 use App\Http\Resources\ConfigResource;
 use App\Models\Config;
@@ -56,5 +57,17 @@ class ConfigController extends Controller
         $inputs = $request->validated();
         $config = Config::create($inputs);
         return $this->created(ConfigResource::make($config));
+    }
+
+    public function getByCategorySlug(string $categorySlug)
+    {
+        return $this->ok(ConfigResource::collection(Config::getByCategorySlug($categorySlug)));
+    }
+
+    public function updateValues(UpdateConfigValuesRequest $request)
+    {
+        $configs = $request->getConfigs();
+        $configs = Config::updateValues($configs, $request->validated());
+        return $this->created(ConfigResource::collection($configs));
     }
 }

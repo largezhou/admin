@@ -308,4 +308,47 @@ class ConfigControllerTest extends AdminTestCase
             'category_id' => $categoryId,
         ]);
     }
+
+    public function testGetByCategorySlug()
+    {
+        $category = factory(ConfigCategory::class)->create();
+        factory(Config::class, 2)->create(['category_id' => $category->id]);
+
+        $res = $this->get(route('admin.configs.by_category_slug', [
+            'categorySlug' => $category->slug,
+        ]));
+        $res->assertStatus(200)
+            ->assertJsonCount(2);
+
+        $res = $this->get(route('admin.configs.by_category_slug', [
+            'categorySlug' => 'not exists slug',
+        ]));
+        $res->assertStatus(200)
+            ->assertJsonCount(0);
+    }
+
+    public function testUpdateValues()
+    {
+        $category = factory(ConfigCategory::class)->create();
+        factory(Config::class)->create([
+            'slug' => 'field',
+            'validation_rules' => 'required|max:20',
+            'category_id' => $category->id,
+        ]);
+
+        $res = $this->put(route('admin.configs.update_values'), [
+            'field' => null,
+        ]);
+        $res->assertStatus(422)
+            ->assertJsonValidationErrors(['field']);
+
+        $res = $this->put(route('admin.configs.update_values'), [
+            'field' => 'new value',
+        ]);
+        $res->assertStatus(201);
+        $this->assertDatabaseHas('configs', [
+            'slug' => 'field',
+            'value' => json_encode('new value'),
+        ]);
+    }
 }
