@@ -83,60 +83,61 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
             'name' => 'level 0-1',
         ]);
         $res->assertStatus(201);
+        $id1 = $this->getLastInsertId('system_media_categories');
         $this->assertDatabaseHas('system_media_categories', [
-            'id' => 1,
+            'id' => $id1,
             'name' => 'level 0-1',
             'parent_id' => 0,
         ]);
 
         $res = $this->storeResource([
-            'parent_id' => 1,
+            'parent_id' => $id1,
             'name' => 'level 1-1',
         ]);
         $res->assertStatus(201);
-
+        $id2 = $this->getLastInsertId('system_media_categories');
         $this->assertDatabaseHas('system_media_categories', [
-            'id' => 2,
-            'parent_id' => 1,
+            'id' => $id2,
+            'parent_id' => $id1,
             'name' => 'level 1-1',
         ]);
     }
 
     public function testUpdate()
     {
-        factory(SystemMediaCategory::class)->create(['name' => 'level 0-1']);
-        factory(SystemMediaCategory::class)->create(['name' => 'level 0-2']);
+        $id1 = factory(SystemMediaCategory::class)->create(['name' => 'level 0-1'])->id;
+        $id2 = factory(SystemMediaCategory::class)->create(['name' => 'level 0-2'])->id;
 
         // name 同级 unique
-        $res = $this->updateResource(1, [
+        $res = $this->updateResource($id1, [
             'name' => 'level 0-2',
         ]);
         $res->assertJsonValidationErrors(['name']);
 
-        $res = $this->updateResource(1, [
-            'parent_id' => 2,
+        $res = $this->updateResource($id1, [
+            'parent_id' => $id2,
             'name' => 'level 0-2',
         ]);
         $res->assertStatus(201);
 
-        $res = $this->updateResource(1);
+        $res = $this->updateResource($id1);
         $res->assertStatus(201);
 
         $this->assertDatabaseHas('system_media_categories', [
-            'id' => 1,
-            'parent_id' => 2,
+            'id' => $id1,
+            'parent_id' => $id2,
             'name' => 'level 0-2',
         ]);
     }
 
     public function testEdit()
     {
-        factory(SystemMediaCategory::class)->create(['name' => 'level 0-1']);
+        $id = factory(SystemMediaCategory::class)->create(['name' => 'level 0-1'])->id;
 
-        $res = $this->editResource(1);
+        $res = $this->editResource($id);
         $res->assertStatus(200)
             ->assertJson([
-                'id' => 1,
+                'id' => $id,
                 'name' => 'level 0-1',
                 'parent_id' => 0,
             ]);
@@ -209,12 +210,12 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
     }
 
     /**
-     * @param array $data
      * @param int $cateId
+     * @param array $data
      *
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
-    protected function storeSystemMedia($data = [], $cateId = 1)
+    protected function storeSystemMedia($cateId, $data = [])
     {
         return $this->storeResource(
             $data,
@@ -225,19 +226,19 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
 
     public function testStoreSystemMedia()
     {
-        factory(SystemMediaCategory::class)->create();
+        $categoryId = factory(SystemMediaCategory::class)->create()->id;
 
         // file required
-        $res = $this->storeSystemMedia();
+        $res = $this->storeSystemMedia($categoryId);
         $res->assertJsonValidationErrors(['file']);
 
         // file file
-        $res = $this->storeSystemMedia(['file' => 'not a file']);
+        $res = $this->storeSystemMedia($categoryId, ['file' => 'not a file']);
         $res->assertJsonValidationErrors(['file']);
 
         $file = UploadedFile::fake()->image('avatar.jpg', 200, 200);
 
-        $res = $this->storeSystemMedia([
+        $res = $this->storeSystemMedia($categoryId, [
             'file' => $file,
             Controller::UPLOAD_FOLDER_FIELD => 'tests',
         ]);
@@ -246,8 +247,8 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
         $filename = md5_file($file).'.jpg';
         $path = Controller::UPLOAD_FOLDER_PREFIX.'/tests/'.$filename;
         $this->assertDatabaseHas('system_media', [
-            'id' => 1,
-            'category_id' => 1,
+            'id' => $this->getLastInsertId('system_media'),
+            'category_id' => $categoryId,
             'filename' => $filename,
             'size' => $file->getSize(),
             'ext' => 'jpg',
@@ -278,6 +279,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
                     'ext' => 'gif',
                 ])->toArray(),
             ]);
+        $categoryId1 = $this->getLastInsertId('system_media_categories');
 
         // 其他分类的图片
         factory(SystemMediaCategory::class)
@@ -287,7 +289,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
 
         // ext in 筛选
         $res = $this->systemMediaIndex([
-            'id' => 1,
+            'id' => $categoryId1,
             'ext' => ['jpg'],
         ]);
         $res->assertStatus(200)
@@ -295,7 +297,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
             ->assertJsonMissing(['ext' => 'gif']);
 
         $res = $this->systemMediaIndex([
-            'id' => 1,
+            'id' => $categoryId1,
             'ext' => 'jpg,gif',
         ]);
         $res->assertStatus(200)
@@ -303,7 +305,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
 
         // filename like
         $res = $this->systemMediaIndex([
-            'id' => 1,
+            'id' => $categoryId1,
             'filename' => 'ny',
         ]);
         $res->assertStatus(200)

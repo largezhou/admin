@@ -10,6 +10,7 @@
         :submit="onSubmit"
         :errors.sync="errors"
         :form.sync="form"
+        :edit-mode="editMode"
       >
         <el-form-item label="账号" required prop="username">
           <el-input v-model="form.username"/>
@@ -118,13 +119,9 @@ export default {
 
       if (this.editMode) {
         await updateAdminUser(this.resourceId, form)
-        this.$router.back()
       } else {
         await storeAdminUser(form)
-        this.$router.push('/admin-users')
       }
-
-      this.$message.success(getMessage('saved'))
     },
     async getData() {
       const [

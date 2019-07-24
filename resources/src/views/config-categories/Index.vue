@@ -63,6 +63,8 @@
         :form.sync="form"
         label-position="top"
         in-dialog
+        disable-redirect
+        disable-stay
       >
         <el-form-item label="名称" required prop="name">
           <el-input v-model="form.name" autofocus/>
@@ -129,7 +131,6 @@ export default {
       const { data } = await storeConfigCategory(this.form)
 
       this.createDialog = false
-      this.$message.success(getMessage('created'))
       this.cates.unshift(data)
     },
     updateConfigCategory,

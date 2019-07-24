@@ -16,6 +16,14 @@
         <loading-action type="primary" :action="onSubmit">{{ submitText }}</loading-action>
         <el-button @click="onReset">重置</el-button>
         <slot name="footer-append"/>
+        <flex-spacer/>
+        <el-checkbox
+          v-if="!disableStay"
+          v-model="stay"
+          title="表单提交后，留在此页"
+        >
+          留在此页
+        </el-checkbox>
       </el-form-item>
     </slot>
   </el-form>
@@ -25,10 +33,14 @@
 import _forIn from 'lodash/forIn'
 import _get from 'lodash/get'
 import Form from '@/plugins/element/components/Form'
-import { handleValidateErrors } from '@/libs/utils'
+import { getMessage, handleValidateErrors } from '@/libs/utils'
+import FlexSpacer from '@c/FlexSpacer'
 
 export default {
   name: 'LzForm',
+  components: {
+    FlexSpacer,
+  },
   inject: {
     // 使用 FormHelper 混入，会自动提供该注入
     view: {
@@ -39,6 +51,7 @@ export default {
   data() {
     return {
       loading: false,
+      stay: false,
     }
   },
   props: {
@@ -52,6 +65,22 @@ export default {
     },
     labelPosition: String,
     inDialog: Boolean,
+    createdRedirect: {
+      type: [String, Function],
+      default() {
+        const p = this.$route.path.split('/')
+        return '/' + (p[p.length - 2] || '')
+      },
+    },
+    updatedRedirect: {
+      type: [String, Function],
+      default() {
+        return this.$router.back.bind(this.$router)
+      },
+    },
+    disableRedirect: Boolean,
+    disableStay: Boolean,
+    editMode: Boolean,
   },
   computed: {
     realLabelPosition() {
@@ -93,6 +122,19 @@ export default {
       this.$emit('update:errors', {})
       try {
         this.submit && await this.submit()
+
+        this.$message.success(getMessage(this.editMode ? 'updated' : 'created'))
+
+        if (this.stay || this.disableRedirect) {
+          return
+        }
+
+        let redirect = this.editMode ? this.updatedRedirect : this.createdRedirect
+        if (typeof redirect === 'string') {
+          this.$router.push(redirect)
+        } else if (typeof redirect === 'function') {
+          redirect()
+        }
       } catch (e) {
         this.$emit('update:errors', handleValidateErrors(e.response))
         if (_get(e, 'response.status') !== 422) {
@@ -116,6 +158,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.footer {
+  /deep/ {
+    .el-form-item__content {
+      display: flex;
+    }
+  }
+}
+
 .in-dialog {
   .footer {
     text-align: right;

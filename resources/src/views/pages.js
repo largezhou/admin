@@ -19,6 +19,9 @@ export default {
   'system-media': () => import('@v/system-media/Index'),
 
   'config-categories': () => import('@v/config-categories/Index'),
+
+  'configs/system-basic': () => import('@v/configs/SystemBasic'),
+
   'configs': () => import('@v/configs/Index'),
   'configs/create': () => import('@v/configs/Form'),
   'configs/:id(\\d+)/edit': () => import('@v/configs/Form'),

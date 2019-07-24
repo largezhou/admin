@@ -39,3 +39,11 @@ export function editConfig(id) {
 export function storeConfig(data) {
   return axios.post('configs', data)
 }
+
+export function getConfigsByCategorySlug(categorySlug) {
+  return axios.get(`configs/${categorySlug}`)
+}
+
+export function updateConfigValues(data) {
+  return axios.put('configs/values', data)
+}

@@ -114,7 +114,7 @@
   </el-card>
 </template>
 <script>
-import { nestedToSelectOptions, getMessage, toInt } from '@/libs/utils'
+import { nestedToSelectOptions, toInt } from '@/libs/utils'
 import { editVueRouter, getVueRouters, storeVueRouter, updateVueRouter } from '@/api/vue-routers'
 import LzForm from '@c/LzForm'
 import { getAdminRoles } from '@/api/admin-roles'
@@ -173,13 +173,9 @@ export default {
     async onSubmit() {
       if (this.editMode) {
         await updateVueRouter(this.resourceId, this.form)
-        this.$router.back()
       } else {
         await storeVueRouter(this.form)
-        this.$router.push('/vue-routers')
       }
-
-      this.$message.success(getMessage('saved'))
     },
     async getData() {
       const [
