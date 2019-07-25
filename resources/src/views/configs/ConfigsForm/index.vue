@@ -1,7 +1,7 @@
 <template>
   <lz-form
     ref="form"
-    :get-data="getData || defaultGetDataFunction"
+    :get-data="getData"
     :submit="onSubmit"
     :errors.sync="errors"
     :form.sync="form"
@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import _last from 'lodash/last'
 import LzForm from '@c/LzForm'
 import {
   getConfigsByCategorySlug,
@@ -49,20 +48,14 @@ export default {
   },
   computed: {
     ...mapConstants('CONFIG_TYPES'),
-  },
-  props: {
-    category: {
-      type: String,
-      default() {
-        return _last(this.$route.path.split('/')).replace('-', '_')
-      },
+    category() {
+      return this.$route.params.categorySlug
     },
-    getData: Function,
   },
   methods: {
-    async defaultGetDataFunction() {
+    async getData() {
       if (!this.category) {
-        throw new Error('必须设置有效的配置分类名称 [ category ]')
+        throw new Error('无法获取到 [ category ]')
       }
 
       const { data } = await getConfigsByCategorySlug(this.category)

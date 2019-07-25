@@ -10,10 +10,10 @@
 </template>
 
 <script>
-import ConfigsForm from '@c/ConfigsForm'
+import ConfigsForm from '@v/configs/ConfigsForm'
 
 export default {
-  name: 'SystemBasic',
+  name: 'ConfigValuesForm',
   components: {
     ConfigsForm,
   },
