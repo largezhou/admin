@@ -10,6 +10,7 @@
         :submit="onSubmit"
         :errors.sync="errors"
         :form.sync="form"
+        :edit-mode="editMode"
       >
         <el-form-item label="父级路由" prop="parent_id">
           <el-select
