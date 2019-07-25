@@ -36,11 +36,15 @@ export const buildRoutes = (routers, homeName, level = 0) => {
   let homeRoute = null
   const handle = (routers, homeName, level = 0) => {
     const routes = []
-    routers.forEach(i => {
-      const pathNoSlash = _trim(i.path, '/')
+    routers.forEach((i) => {
+      i.path = i.path || ''
+
+      if (i.path.indexOf('/') === 0 && !hasChildren(i)) {
+        return
+      }
 
       let r = {
-        path: i.path ? `/${pathNoSlash}` : '',
+        path: i.path ? `/${i.path}` : '',
         name: makeRouteName(i.id),
         meta: {
           title: i.title,
@@ -56,14 +60,23 @@ export const buildRoutes = (routers, homeName, level = 0) => {
 
       // 父路由
       if (hasChildren(i)) {
-        // 跳转到他第一个子路由
-        r.redirect = r.children[0].path
+        // 如果子路由都是本站链接，则有可能有子路由配置，但是没有有效的子路由的情况
+        if (r.children.length) {
+          // 跳转到他第一个子路由
+          r.redirect = r.children[0].path
+        }
         // 使用过渡组件
         r.component = ParentView
         // 如果没有 path，则随机 path 避免匹配根路径
         r.path = r.path || ('/' + randomChars())
       } else {
-        r.component = pages[pathNoSlash] || Page404
+        // 如果 path 是以 / 开头的，则表示是本站的链接，会自动匹配其他路由
+        if (i.path.indexOf('/') === 0) {
+          r.path = r.path.slice(1)
+          r.component = null
+        } else {
+          r.component = pages[i.path] || Page404
+        }
       }
 
       if (r.name === homeName) {

@@ -19,6 +19,10 @@ export default new Vuex.Store({
     users,
     vueRouters,
     sideMenu,
+    /**
+     * 通过 path，query 来对比过后匹配到的菜单的菜单链
+     */
+    matchedMenusChain: [],
   },
   state: {
     miniWidth: window.innerWidth <= 768,
@@ -35,6 +39,9 @@ export default new Vuex.Store({
 
       cachedKeys[name] = true
       state.include.push(name)
+    },
+    SET_MATCHED_MENUS_CHAIN(state, menus) {
+      state.matchedMenusChain = menus
     },
   },
 })

@@ -3,17 +3,15 @@
     <transition-group name="breadcrumb">
       <el-breadcrumb-item
         v-for="i of breadCrumb"
-        :key="i.name"
-        :to="breadLink(i)"
+        :key="i.id"
       >
-        {{ i.meta.title }}
+        {{ i.title }}
       </el-breadcrumb-item>
     </transition-group>
   </el-breadcrumb>
 </template>
 
 <script>
-import ParentView from '@c/ParentView'
 import { mapState } from 'vuex'
 
 export default {
@@ -21,28 +19,27 @@ export default {
   computed: {
     ...mapState({
       homeRoute: (state) => state.vueRouters.homeRoute,
+      matchedMenusChain: (state) => state.matchedMenusChain,
     }),
     homeName() {
       return this.$store.getters.homeName
     },
     breadCrumb() {
-      const m = this.$route.matched.filter(i => {
-        i.c = i.components.default
-        return i.name
-      })
-      if (this.$route.name !== this.homeName) {
-        m.unshift(this.homeRoute)
+      // 如果是匹配了菜单，则用匹配的菜单来显示面包屑导航
+      const m = this.matchedMenusChain.length
+        ? [...this.matchedMenusChain].reverse()
+        : this.$route.matched
+          .filter((i) => i.name) // 一些过渡中间件，没有 name，也没有 meta 属性
+          .map((i) => ({
+            id: i.meta.id,
+            title: i.meta.title,
+          }))
+
+      if (m[m.length - 1].id !== this.homeRoute.meta.id) {
+        m.unshift(this.homeRoute.meta)
       }
+
       return m
-    },
-  },
-  methods: {
-    breadLink(route) {
-      if (route.c === ParentView) {
-        return ''
-      } else {
-        return route.path
-      }
     },
   },
 }
