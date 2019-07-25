@@ -149,7 +149,7 @@ export default {
   watch: {
     $route: {
       handler() {
-        this._getData()
+        this.$active && this._getData()
       },
       immediate: true,
     },
