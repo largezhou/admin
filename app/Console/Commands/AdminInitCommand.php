@@ -5,9 +5,12 @@ namespace App\Console\Commands;
 use App\Models\AdminPermission;
 use App\Models\AdminRole;
 use App\Models\AdminUser;
+use App\Models\Config;
+use App\Models\ConfigCategory;
 use App\Models\VueRouter;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use test\Mockery\MagicParams;
 
 class AdminInitCommand extends Command
 {
@@ -35,6 +38,7 @@ class AdminInitCommand extends Command
         if ($this->confirm(static::$initConfirmTip)) {
             $this->createVueRouters();
             $this->createUserRolePermission();
+            $this->createDefaultConfigs();
             $this->info('初始化完成，管理员为：admin，密码为：000000');
         } else {
             return 1;
@@ -73,17 +77,21 @@ class AdminInitCommand extends Command
             [21, 19, '所有配置', 'configs', 20, null, 1],
             [22, 19, '添加配置', 'configs/create', 21, null, 1],
             [23, 19, '编辑配置', 'configs/:id(\\d+)/edit', 22, null, 0],
+            [24, 19, '更新配置', 'configs/:categorySlug', 23, null, 0],
+
+            [25, 0, '系统设置', '/configs/system_basic', 24, null, 1],
         ];
 
-        $inserts = collect($inserts)->map(function ($i) {
-            $i = array_combine(['id', 'parent_id', 'title', 'path', 'order', 'icon', 'menu'], $i);
-            return array_merge($i, [
+        $inserts = $this->combineInserts(
+            ['id', 'parent_id', 'title', 'path', 'order', 'icon', 'menu'],
+            $inserts,
+            [
                 'cache' => 0,
                 'created_at' => now(),
                 'updated_at' => now(),
                 'permission' => null,
-            ]);
-        })->all();
+            ]
+        );
 
         VueRouter::truncate();
         VueRouter::insert($inserts);
@@ -118,5 +126,56 @@ class AdminInitCommand extends Command
                 'slug' => 'pass-all',
                 'http_path' => '*',
             ]);
+    }
+
+    protected function createDefaultConfigs()
+    {
+        $categories = [
+            [1, '系统设置', 'system_basic'],
+        ];
+        $categories = $this->combineInserts(
+            ['id', 'name', 'slug'],
+            $categories,
+            [
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+        $configs = [
+            [1, Config::TYPE_INPUT, '系统名称', 'app_name', null, json_encode('后台'), 'required|max:20'],
+            [1, Config::TYPE_FILE, '系统 LOGO', 'app_logo', '{"max":1,"ext":null}', null, 'nullable|string'],
+            [1, Config::TYPE_OTHER, '首页路由', 'home_route', null, json_encode('1'), 'required|exists:vue_routers,id'],
+        ];
+        $configs = $this->combineInserts(
+            ['category_id', 'type', 'name', 'slug', 'options', 'value', 'validation_rules'],
+            $configs,
+            [
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+
+        ConfigCategory::truncate();
+        ConfigCategory::insert($categories);
+
+        Config::truncate();
+        Config::insert($configs);
+    }
+
+    /**
+     * 组合字段和对应的值
+     *
+     * @param array $fields 字段
+     * @param array $inserts 值，不带字段的
+     * @param array $extra 每列都相同的数据，带字段
+     *
+     * @return array
+     */
+    protected function combineInserts(array $fields, array $inserts, array $extra): array
+    {
+        return array_map(function ($i) use ($fields, $extra) {
+            $i = array_combine($fields, $i);
+            return array_merge($i, $extra);
+        }, $inserts);
     }
 }
