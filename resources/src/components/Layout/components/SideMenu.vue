@@ -12,6 +12,7 @@
       :collapse="collapse"
       @select="onSelect"
     >
+      <side-menu-title class="px-2 pt-2" :collapse="collapse"/>
       <div class="pa-2">
         <el-input v-model="q" placeholder="搜索菜单"/>
       </div>
@@ -33,10 +34,12 @@ import { mapState } from 'vuex'
 import { hasChildren, makeRouteName } from '@/libs/utils'
 import _trimEnd from 'lodash/trimEnd'
 import _forIn from 'lodash/forIn'
+import SideMenuTitle from '@c/Layout/components/SideMenuTitle'
 
 export default {
   name: 'SideMenu',
   components: {
+    SideMenuTitle,
     SideMenuItem,
   },
   data() {

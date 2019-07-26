@@ -74,6 +74,7 @@ a {
 
     svg {
       width: 24px;
+      min-width: 24px;
       height: 16px;
     }
   }
