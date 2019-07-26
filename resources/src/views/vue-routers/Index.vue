@@ -26,7 +26,7 @@
             <span class="ml-2 path">{{ data.path }}</span>
           </div>
           <flex-spacer/>
-          <collapse-button-group>
+          <collapse-button-group min-width="166px">
             <button-link size="small" :to="`/vue-routers/create?parent_id=${data.id}`">添加</button-link>
             <button-link size="small" :to="`/vue-routers/${data.id}/edit`">编辑</button-link>
             <pop-confirm
@@ -139,6 +139,9 @@ export default {
 
   .drag-zone {
     cursor: move;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 }
 </style>
