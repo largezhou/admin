@@ -4,6 +4,7 @@
       <el-breadcrumb-item
         v-for="i of breadCrumb"
         :key="i.id"
+        :to="i.path"
       >
         {{ i.title }}
       </el-breadcrumb-item>
@@ -34,13 +35,17 @@ export default {
           .map((i) => ({
             id: i.meta.id || randomChars(), // 某些固定配置的路由，没有 ID，比如个人资料编辑页
             title: i.meta.title,
+            path: i.path,
           }))
 
       if (
         (m.length === 0) ||
         (m[m.length - 1].id !== this.homeRoute.meta.id)
       ) {
-        m.unshift(this.homeRoute.meta)
+        m.unshift({
+          ...this.homeRoute.meta,
+          path: this.homeRoute.path,
+        })
       }
 
       return m
@@ -68,5 +73,11 @@ export default {
 
 .breadcrumb-leave-active {
   position: absolute;
+}
+
+/deep/ {
+  .el-breadcrumb__item {
+    padding: 2px 0;
+  }
 }
 </style>

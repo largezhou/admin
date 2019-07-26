@@ -19,7 +19,7 @@
             :alt="user.name"
             :title="user.name"
           >
-          <span v-else>{{ user.name }}</span>
+          <span class="username" v-else>{{ user.name }}</span>
           <i class="el-icon-arrow-down el-icon--right"/>
         </div>
         <el-dropdown-menu slot="dropdown">
@@ -102,5 +102,9 @@ export default {
     max-width: 40px;
     max-height: 40px;
   }
+}
+
+.username {
+  white-space: nowrap;
 }
 </style>

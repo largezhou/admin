@@ -110,7 +110,6 @@ export default {
 
       try {
         this.getData && await this.getData()
-        await this.$nextTick()
         this.setInitialValues()
       } catch (e) {
         Promise.reject(e)
