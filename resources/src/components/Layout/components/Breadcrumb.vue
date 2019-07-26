@@ -35,7 +35,10 @@ export default {
             title: i.meta.title,
           }))
 
-      if (m[m.length - 1].id !== this.homeRoute.meta.id) {
+      if (
+        (m.length === 0) ||
+        (m[m.length - 1].id !== this.homeRoute.meta.id)
+      ) {
         m.unshift(this.homeRoute.meta)
       }
 

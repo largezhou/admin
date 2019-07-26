@@ -69,6 +69,8 @@ export default {
       const curPath = _trimEnd(current.path, '/')
       const curQuery = current.query
 
+      const notMatched = '-99999'
+
       // 所有匹配到的，数据结构为 { 权重: 菜单对象 }
       // 例如当前的 query 为 '?a=1&b=1'
       // 菜单中有 ['?', '?a=1', '?b=1', '?b=1&a=1', '?a=1&c=1']
@@ -85,8 +87,9 @@ export default {
           _forIn(query, (value, key) => {
             if (curQuery[key] === value) { // 键值相等，则 +1
               weight++
-            } else { // 如果当前 query 中没有键，或者有键但是值不相同，则不能匹配，减去足够大
-              weight -= 99999
+            } else { // 如果当前 query 中没有键，或者有键但是值不相同，则不能匹配，直接设为足够小，并中断
+              weight = notMatched
+              return false
             }
           })
 
@@ -98,7 +101,11 @@ export default {
 
       // 返回权重最大的，作为匹配值
       const maxWeight = Object.keys(weightMatchedMap).sort((a, b) => b - a)[0]
-      return weightMatchedMap[maxWeight]
+      if (maxWeight === notMatched) {
+        return null
+      } else {
+        return weightMatchedMap[maxWeight]
+      }
     },
     /**
      * 通过 path，query 来对比过后匹配到的菜单的菜单链

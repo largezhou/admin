@@ -2,6 +2,9 @@ import _get from 'lodash/get'
 
 export default {
   name: 'CollapseButtonGroup',
+  props: {
+    minWidth: String,
+  },
   computed: {
     miniWidth() {
       return this.$store.state.miniWidth
@@ -29,7 +32,7 @@ export default {
       )
     } else {
       return (
-        <el-button-group>{buttons}</el-button-group>
+        <el-button-group style={{ minWidth: this.minWidth }}>{buttons}</el-button-group>
       )
     }
   },

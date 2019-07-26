@@ -14,6 +14,7 @@
 import _get from 'lodash/get'
 import FlexSpacer from '@c/FlexSpacer'
 import CollapseButtonGroup from '@c/CollapseButtonGroup'
+import { mapState } from 'vuex'
 
 export default {
   name: 'ContentHeader',
@@ -22,8 +23,16 @@ export default {
     FlexSpacer,
   },
   computed: {
+    ...mapState({
+      matchedMenusChain: (state) => state.matchedMenusChain,
+    }),
     name() {
-      return _get(this.$route, 'meta.title', '')
+      let title = ''
+      if (this.matchedMenusChain.length) {
+        title = _get(this.matchedMenusChain, '0.title', '')
+      }
+
+      return title || _get(this.$route, 'meta.title', '')
     },
   },
 }
@@ -37,6 +46,7 @@ export default {
     padding: 0;
   }
 }
+
 .content-header {
   height: 60px;
   display: flex;
