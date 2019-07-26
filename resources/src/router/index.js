@@ -4,6 +4,7 @@ import routes from '@/router/routes'
 import { getToken, removeToken } from '@/libs/token'
 import store from '@/store'
 import _get from 'lodash/get'
+import { cancelAllRequest } from '@/plugins/axios'
 
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
@@ -50,6 +51,8 @@ const renameComponent = async (to) => {
 }
 
 router.beforeEach(async (to, from, next) => {
+  cancelAllRequest('页面切换，取消请求')
+
   await renameComponent(to)
 
   // 刷新页面, 往 query 中加入 _refresh 当前时间戳

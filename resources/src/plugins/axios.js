@@ -3,6 +3,7 @@ import { getToken } from '@/libs/token'
 import { Message } from 'element-ui'
 import _trimStart from 'lodash/trimStart'
 import { getFirstError, handleValidateErrors } from '@/libs/utils'
+import _forIn from 'lodash/forIn'
 
 let config = {
   baseURL: '/admin-api',
@@ -12,10 +13,11 @@ let config = {
 const _axios = axios.create(config)
 const CancelToken = axios.CancelToken
 
-const queue = {}
+export const requestQueue = {}
+window.rq = requestQueue
 const destroyUrlFromQueue = path => {
   path = path.slice('/admin-api/'.length)
-  delete queue[path]
+  delete requestQueue[path]
 }
 
 const showError = res => {
@@ -23,8 +25,12 @@ const showError = res => {
   msg && Message.error(msg)
 }
 
-const cancelAll = (msg = '') => {
-  Object.values(queue).forEach(i => i.source.cancel(msg))
+export const cancelAllRequest = (msg = '') => {
+  Object.values(requestQueue).forEach(i => i.source.cancel(msg))
+  _forIn(requestQueue, (value, url) => {
+    value.source.cancel(msg)
+    delete requestQueue[url]
+  })
 }
 
 _axios.interceptors.request.use(
@@ -34,7 +40,7 @@ _axios.interceptors.request.use(
     const source = CancelToken.source()
     config.cancelToken = source.token
 
-    queue[_trimStart(config.url, '/')] = {
+    requestQueue[_trimStart(config.url, '/')] = {
       source,
     }
 
@@ -60,14 +66,14 @@ _axios.interceptors.response.use(
           break
         case 401:
           Message.error('登录已失效，请重新登录')
-          cancelAll('登录失效: ' + res.config.url)
+          cancelAllRequest('登录失效: ' + res.config.url)
           break
         case 400:
           showError(res)
           break
         case 403:
           showError(res)
-          cancelAll('无权访问: ' + res.config.url)
+          cancelAllRequest('无权访问: ' + res.config.url)
           break
         case 422:
           if (config.showValidationMsg) { // 如果显示验证消息，则显示首条
@@ -80,14 +86,15 @@ _axios.interceptors.response.use(
           Message.error(`服务器异常(code: ${res.status})`)
           break
       }
-    } else {
-      if (err instanceof axios.Cancel) { // 手动取消时，err 为一个 Cancel 对象，有一个 message 属性
-        console.log(err.toString())
-      } else {
-        Message.error('网络异常')
-      }
     }
-    destroyUrlFromQueue(err.config.url)
+
+    if (err instanceof axios.Cancel) { // 手动取消时，err 为一个 Cancel 对象，有一个 message 属性
+      console.log(err.toString())
+    } else {
+      Message.error('网络异常')
+      destroyUrlFromQueue(err.config.url)
+    }
+
     return Promise.reject(err)
   },
 )
