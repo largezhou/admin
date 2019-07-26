@@ -4,43 +4,45 @@
       <content-header/>
     </template>
 
-    <el-button-group class="mb-3">
-      <el-button @click="onExpand">展开</el-button>
-      <el-button @click="onCollapse">收起</el-button>
-      <loading-action :action="onSaveOrder">保存</loading-action>
-    </el-button-group>
+    <el-row type="flex" justify="center">
+      <div style="overflow-x: auto;">
+        <el-button-group class="mb-3">
+          <el-button @click="onExpand">展开</el-button>
+          <el-button @click="onCollapse">收起</el-button>
+          <loading-action :action="onSaveOrder">保存</loading-action>
+        </el-button-group>
 
-    <div style="overflow-x: auto">
-      <nested-draggable
-        ref="routers"
-        :expand-keys="defaultExpanded"
-        class="vue-routers"
-        :list="vueRouters"
-        handle=".drag-zone"
-      >
-        <template #default="{ data }">
-          <div class="drag-zone">
-            <span class="id mr-1">{{ data.id }}</span>
-            <svg-icon :icon-class="data.icon || ''" class="mr-1"/>
-            <span>{{ data.title }}</span>
-            <span class="ml-2 path">{{ data.path }}</span>
-          </div>
-          <flex-spacer/>
-          <collapse-button-group min-width="166px">
-            <button-link size="small" :to="`/vue-routers/create?parent_id=${data.id}`">添加</button-link>
-            <button-link size="small" :to="`/vue-routers/${data.id}/edit`">编辑</button-link>
-            <pop-confirm
-              type="danger"
-              size="small"
-              :confirm="onDestroy(data)"
-              notice="所有子路由都会被删除！！！"
-            >
-              删除
-            </pop-confirm>
-          </collapse-button-group>
-        </template>
-      </nested-draggable>
-    </div>
+        <nested-draggable
+          ref="routers"
+          :expand-keys="defaultExpanded"
+          class="vue-routers"
+          :list="vueRouters"
+          handle=".drag-zone"
+        >
+          <template #default="{ data }">
+            <div class="drag-zone">
+              <span class="id mr-1">{{ data.id }}</span>
+              <svg-icon :icon-class="data.icon || ''" class="mr-1"/>
+              <span>{{ data.title }}</span>
+              <span class="ml-2 path">{{ data.path }}</span>
+            </div>
+            <flex-spacer/>
+            <collapse-button-group min-width="166px">
+              <button-link size="small" :to="`/vue-routers/create?parent_id=${data.id}`">添加</button-link>
+              <button-link size="small" :to="`/vue-routers/${data.id}/edit`">编辑</button-link>
+              <pop-confirm
+                type="danger"
+                size="small"
+                :confirm="onDestroy(data)"
+                notice="所有子路由都会被删除！！！"
+              >
+                删除
+              </pop-confirm>
+            </collapse-button-group>
+          </template>
+        </nested-draggable>
+      </div>
+    </el-row>
   </el-card>
 </template>
 
@@ -124,7 +126,7 @@ export default {
 @import '~element-ui/packages/theme-chalk/src/common/var';
 
 .vue-routers {
-  min-width: 600px;
+  width: 800px;
 
   .id {
     width: 40px;

@@ -4,7 +4,7 @@
       <content-header/>
     </template>
     <el-row type="flex" justify="center">
-      <system-media class="w-100"/>
+      <system-media/>
     </el-row>
   </el-card>
 </template>
@@ -21,9 +21,17 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import '~element-ui/packages/theme-chalk/src/common/var';
+
 /deep/ {
   .el-card__body {
     padding: 0;
+  }
+
+  .system-media {
+    width: 800px;
+    border: 1px solid $--color-info-light;
+    margin: 20px;
   }
 }
 </style>
