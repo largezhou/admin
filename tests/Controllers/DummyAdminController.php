@@ -27,4 +27,9 @@ class DummyAdminController extends Controller
     {
         return $this->ok();
     }
+
+    public function passThrough()
+    {
+        return $this->ok();
+    }
 }

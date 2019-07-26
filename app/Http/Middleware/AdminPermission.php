@@ -6,14 +6,12 @@ use App\Contracts\PermissionMiddleware;
 
 class AdminPermission extends PermissionMiddleware
 {
-    /**
-     * @var array 白名单
-     */
-    protected $excepts = [
+    protected $urlWhitelist = [
         '/auth/login',
         '/auth/logout',
         '/user',
         '/user/edit',
         '/configs/vue-routers',
+        '/configs/system_basic/values',
     ];
 }

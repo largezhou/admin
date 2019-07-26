@@ -13,6 +13,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { randomChars } from '@/libs/utils'
 
 export default {
   name: 'Breadcrumb',
@@ -31,7 +32,7 @@ export default {
         : this.$route.matched
           .filter((i) => i.name) // 一些过渡中间件，没有 name，也没有 meta 属性
           .map((i) => ({
-            id: i.meta.id,
+            id: i.meta.id || randomChars(), // 某些固定配置的路由，没有 ID，比如个人资料编辑页
             title: i.meta.title,
           }))
 

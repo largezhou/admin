@@ -11,6 +11,8 @@
 |
 */
 
+use Illuminate\Support\Facades\Route;
+
 if (config('app.env') == 'local') {
     Route::any('/test', 'TestSomethingController@index');
     Route::any('/{path}/test', 'TestSomethingController@index')->where('path', '.*');

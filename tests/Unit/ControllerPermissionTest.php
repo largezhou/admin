@@ -43,6 +43,7 @@ class ControllerPermissionTest extends AdminTestCase
                     });
 
                 Route::get('test-resources/check', 'Tests\Controllers\DummyAdminController@check');
+                Route::get('test-resources/pass-through', 'Tests\Controllers\DummyAdminController@passThrough');
                 Route::resource('test-resources', 'Tests\Controllers\DummyAdminController');
             });
     }
@@ -159,6 +160,12 @@ class ControllerPermissionTest extends AdminTestCase
         ]);
 
         $res = $this->get('/admin-api/test-resources/with-args');
+        $res->assertStatus(200);
+    }
+
+    public function testUseUrlWhitelist()
+    {
+        $res = $this->get('/admin-api/test-resources/pass-through');
         $res->assertStatus(200);
     }
 }

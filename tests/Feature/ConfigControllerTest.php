@@ -351,4 +351,23 @@ class ConfigControllerTest extends AdminTestCase
             'value' => json_encode('new value'),
         ]);
     }
+
+    public function testGetValuesByCategorySlug()
+    {
+        $category = factory(ConfigCategory::class)->create(['slug' => 'slug']);
+        factory(Config::class)->create([
+            'slug' => 'field',
+            'type' => Config::TYPE_FILE,
+            'category_id' => $category->id,
+            'value' => 'uploads/test/logo.png',
+        ]);
+
+        $res = $this->get(route('admin.configs.values.by_category_slug', [
+            'categorySlug' => 'slug',
+        ]));
+        $res->assertStatus(200)
+            ->assertJson([
+                'field' => $this->storage->url('uploads/test/logo.png'),
+            ]);
+    }
 }

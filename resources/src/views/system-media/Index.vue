@@ -29,7 +29,7 @@ export default {
   }
 
   .system-media {
-    width: 800px;
+    width: 825px;
     border: 1px solid $--color-info-light;
     margin: 20px;
   }

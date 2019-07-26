@@ -3,6 +3,7 @@ import { fixedRoutes } from '@/router/routes'
 import { buildRoutes, makeRouteName } from '@/libs/utils'
 import _get from 'lodash/get'
 import { getVueRouters } from '@/api/configs'
+import { SYSTEM_BASIC } from '@/libs/constants'
 
 export default {
   state: {
@@ -27,13 +28,13 @@ export default {
     },
   },
   actions: {
-    async getVueRouters({ commit }) {
+    async getVueRouters({ commit, getters }) {
       const { data } = await getVueRouters()
       commit('SET_VUE_ROUTERS', data)
       commit('SET_LOADED', true)
 
-      // 暂时写死 1 为首页
-      const { routes, homeRoute } = buildRoutes(data, makeRouteName(1))
+      const homeRouteId = getters.appConfigs(SYSTEM_BASIC.HOME_ROUTE_SLUG, SYSTEM_BASIC.DEFAULT_HOME_ROUTE)
+      const { routes, homeRoute } = buildRoutes(data, makeRouteName(homeRouteId))
       router.addRoutes(routes)
       router.addRoutes(fixedRoutes)
       commit('SET_HOME_ROUTE', homeRoute)

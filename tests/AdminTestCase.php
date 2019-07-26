@@ -51,6 +51,9 @@ class AdminTestCase extends TestCase
         if ($check) {
             $ins = new class extends AdminPermission
             {
+                protected $urlWhitelist = [
+                    '/test-resources/pass-through',
+                ];
             };
         } else {
             $ins = new class extends AdminPermission
