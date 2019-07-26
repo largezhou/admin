@@ -86,6 +86,12 @@ class AdminInitCommand extends Command
             [24, 19, '更新配置', 'configs/:categorySlug', 23, null, 0],
 
             [25, 0, '系统设置', '/configs/system_basic', 24, null, 1],
+
+            [100, 0, '菜单匹配测试', null, 100, null, 1],
+            [101, 100, '链接', 'https://www.baidu.com', 101, null, 1],
+            [102, 100, '编辑路由 3', '/vue-routers/3/edit', 102, null, 1],
+            [103, 100, '带 query a=1', '/admin-users?a=1', 103, null, 1],
+            [104, 100, '带 query b=1&a=1', '/admin-users?b=1&a=1', 104, null, 1],
         ];
 
         $inserts = $this->combineInserts(
