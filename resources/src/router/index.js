@@ -69,6 +69,14 @@ router.beforeEach(async (to, from, next) => {
 
   NProgress.start()
 
+  try {
+    !store.state.configs && await store.dispatch('getSystemBasicConfigs')
+  } catch (e) {
+    next(false)
+    NProgress.done()
+    throw e
+  }
+
   if (getToken()) { // 有 token 暂定为已登录
     if (to.name === 'login') { // 有 token，访问登录页，跳转到首页
       next('/')
@@ -108,6 +116,11 @@ router.beforeEach(async (to, from, next) => {
 
 router.afterEach(() => {
   NProgress.done()
+  Vue.nextTick(() => {
+    const { matchedMenu, appName } = store.getters
+    const title = matchedMenu ? matchedMenu.title : _get(router, 'currentRoute.meta.title')
+    document.title = `${title ? title + ' - ' : ''} ${appName}`
+  })
 })
 
 router.onError((e) => {

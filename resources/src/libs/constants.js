@@ -45,3 +45,20 @@ export const CONFIG_TYPES = {
   MULTIPLE_SELECT: 'multiple_select',
   OTHER: 'other',
 }
+
+/**
+ * 系统基础设置的相关常量
+ * @type {{}}
+ */
+export const SYSTEM_BASIC = {
+  /**
+   * 系统设置的分类 slug
+   */
+  SLUG: 'system_basic',
+  APP_NAME_SLUG: 'app_name',
+  APP_LOGO_SLUG: 'app_slug',
+  HOME_ROUTE_SLUG: 'home_route',
+
+  DEFAULT_APP_NAME: '管理后台',
+  DEFAULT_HOME_ROUTE: '1',
+}

@@ -47,3 +47,7 @@ export function getConfigsByCategorySlug(categorySlug) {
 export function updateConfigValues(data) {
   return axios.put('configs/values', data)
 }
+
+export function getConfigsValueByCategorySlug(categorySlug) {
+  return axios.get(`configs/${categorySlug}/values`)
+}

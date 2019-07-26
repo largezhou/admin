@@ -6,6 +6,7 @@
 namespace App\Contracts;
 
 use App\Models\AdminPermission;
+use App\Traits\UrlWhitelist;
 use App\Utils\Admin;
 use App\Utils\PermissionChecker;
 use Illuminate\Http\Request;
@@ -13,14 +14,15 @@ use Illuminate\Support\Str;
 
 abstract class PermissionMiddleware
 {
+    use UrlWhitelist;
     /**
      * @var string
      */
     protected $middlewarePrefix = 'admin.permission:';
     /**
-     * @var array 白名单
+     * @var array url 白名单
      */
-    protected $excepts = [];
+    protected $urlWhitelist = [];
 
     /**
      * Handle an incoming request.
@@ -33,12 +35,12 @@ abstract class PermissionMiddleware
      */
     public function handle(Request $request, \Closure $next, ...$args)
     {
-        if (!Admin::user()) {
-            PermissionChecker::error();
-        }
-
         if (!empty($args) || $this->shouldPassThrough($request)) {
             return $next($request);
+        }
+
+        if (!Admin::user()) {
+            PermissionChecker::error();
         }
 
         if ($this->checkRoutePermission($request)) {
@@ -82,19 +84,10 @@ abstract class PermissionMiddleware
         return true;
     }
 
-    /**
-     * 白名单检测
-     *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return bool
-     */
-    protected function shouldPassThrough($request)
+    protected function urlWhitelist(): array
     {
-        return collect($this->excepts)
-            ->contains(function ($except) use ($request) {
-                $except = Admin::url($except);
-                return $request->is($except);
-            });
+        return array_map(function ($url) {
+            return Admin::url($url);
+        }, $this->urlWhitelist);
     }
 }

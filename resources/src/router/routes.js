@@ -9,6 +9,9 @@ export const pageNotFoundRoute = {
   children: [
     {
       path: '*',
+      meta: {
+        title: '页面没有找到',
+      },
       component: Page404,
     },
   ],
@@ -35,6 +38,9 @@ export default [
   {
     path: '/login',
     name: 'login',
+    meta: {
+      title: '登录',
+    },
     component: () => import('@v/Login'),
   },
   {

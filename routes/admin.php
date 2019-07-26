@@ -30,6 +30,8 @@ Route::middleware([
     Route::put('configs/values', 'ConfigController@updateValues')->name('configs.update_values');
     Route::resource('configs', 'ConfigController')->except(['show']);
     Route::get('configs/{categorySlug}', 'ConfigController@getByCategorySlug')->name('configs.by_category_slug');
+    Route::get('configs/{categorySlug}/values', 'ConfigController@getValuesByCategorySlug')
+        ->name('configs.values.by_category_slug');
 
     Route::resource('system-media-categories', 'SystemMediaCategoryController')->except(['show', 'create']);
     // 在指定分类下，上传文件

@@ -3,7 +3,7 @@
     <div class="login-wrap">
       <el-card>
         <template #header>
-          <span>登录</span>
+          <span>{{ appName }}</span>
         </template>
         <LoginForm/>
       </el-card>
@@ -18,6 +18,11 @@ export default {
   name: 'Login',
   components: {
     LoginForm,
+  },
+  computed: {
+    appName() {
+      return this.$store.getters.appName
+    },
   },
 }
 </script>
