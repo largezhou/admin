@@ -59,6 +59,15 @@ _axios.interceptors.response.use(
   (err) => {
     const { response: res, config } = err
 
+    Object.assign(config, {
+      // 是否以 message 的方式显示第一条 422 错误消息
+      showValidationMsg: undefined,
+      // 请求时的表单所在的组件，配合 error key 使用，可以自动填充表单中的 errors 错误提示
+      validationForm: undefined,
+      // 页面中，存储错误的键，默认为 errors
+      validationErrorKey: 'errors',
+    })
+
     if (res) {
       switch (res.status) {
         case 404:
@@ -79,7 +88,7 @@ _axios.interceptors.response.use(
           if (config.showValidationMsg) { // 如果显示验证消息，则显示首条
             Message.error(getFirstError(res))
           } else if (config.validationForm) { // 如果传入了 Vue 实例，则维护实例中的 errors
-            config.validationForm[config.validationErrorKey || 'errors'] = handleValidateErrors(res)
+            config.validationForm[config.validationErrorKey] = handleValidateErrors(res)
           } // 否则不做处理
           break
         default:
