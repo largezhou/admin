@@ -9,7 +9,7 @@ import store from '@/store'
 import _get from 'lodash/get'
 import { PERMISSION_PASS_ALL, ROLE_ADMIN } from '@/libs/constants'
 import _intersection from 'lodash/intersection'
-import { isInt } from '@/libs/validates'
+import { isExternal, isInt } from '@/libs/validates'
 
 /**
  * 把 laravel 返回的错误消息，处理成只有一条
@@ -39,7 +39,13 @@ export const buildRoutes = (routers, homeName, level = 0) => {
     routers.forEach((i) => {
       i.path = i.path || ''
 
-      if (i.path.indexOf('/') === 0 && !hasChildren(i)) {
+      // 以 '/' 开头，会匹配到其他存在的路由
+      // 是完整的链接，则会直接打开链接
+      // 所以不需要生成路由
+      if (
+        (i.path.indexOf('/') === 0 && !hasChildren(i)) ||
+        isExternal(i.path)
+      ) {
         return
       }
 
