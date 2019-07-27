@@ -2,7 +2,7 @@ import axios from 'axios'
 import { getToken } from '@/libs/token'
 import { Message } from 'element-ui'
 import _trimStart from 'lodash/trimStart'
-import { getFirstError, handleValidateErrors } from '@/libs/utils'
+import { debounceMsg, getFirstError, handleValidateErrors } from '@/libs/utils'
 import _forIn from 'lodash/forIn'
 
 let config = {
@@ -15,7 +15,10 @@ const CancelToken = axios.CancelToken
 
 export const requestQueue = {}
 window.rq = requestQueue
-const destroyUrlFromQueue = path => {
+const destroyUrlFromQueue = (path) => {
+  if (!path) {
+    return
+  }
   path = path.slice('/admin-api/'.length)
   delete requestQueue[path]
 }
@@ -59,7 +62,7 @@ _axios.interceptors.response.use(
   (err) => {
     const { response: res, config } = err
 
-    Object.assign(config, {
+    config && Object.assign(config, {
       // 是否以 message 的方式显示第一条 422 错误消息
       showValidationMsg: undefined,
       // 请求时的表单所在的组件，配合 error key 使用，可以自动填充表单中的 errors 错误提示
@@ -96,14 +99,14 @@ _axios.interceptors.response.use(
           break
       }
     } else {
-      Message.error('网络异常')
+      if (err instanceof axios.Cancel) { // 手动取消时，err 为一个 Cancel 对象，有一个 message 属性
+        console.log(err.toString())
+      } else {
+        debounceMsg('请求失败')
+      }
     }
 
-    if (err instanceof axios.Cancel) { // 手动取消时，err 为一个 Cancel 对象，有一个 message 属性
-      console.log(err.toString())
-    } else {
-      destroyUrlFromQueue(err.config.url)
-    }
+    config && destroyUrlFromQueue(config.url)
 
     return Promise.reject(err)
   },
