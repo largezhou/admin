@@ -42,9 +42,7 @@
             v-model="form.path"
             :fetch-suggestions="pathSearch"
             clearable
-          >
-            <template slot="prepend">/admin/</template>
-          </el-autocomplete>
+          />
         </el-form-item>
         <el-form-item label="图标" prop="icon">
           <el-input v-model="form.icon" class="icon">
