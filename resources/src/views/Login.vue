@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
+  <div class="login" :style="styles">
     <div class="login-wrap">
       <el-card>
         <template #header>
@@ -22,6 +22,17 @@ export default {
   computed: {
     appName() {
       return this.$store.getters.appName
+    },
+    styles() {
+      const url = this.$store.getters.appConfigs('login_background')
+      if (!url) {
+        return null
+      }
+
+      return {
+        background: `url(${url}) no-repeat center center`,
+        backgroundSize: 'cover',
+      }
     },
   },
 }
