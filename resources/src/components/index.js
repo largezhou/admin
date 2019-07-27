@@ -1,4 +1,7 @@
 import Vue from 'vue'
 
-Vue.component('LoadingAction', require('./LoadingAction').default)
-Vue.component('ContentHeader', require('./ContentHeader').default)
+import LoadingAction from '@c/LoadingAction'
+import ContentHeader from '@c/ContentHeader'
+
+Vue.component('LoadingAction', LoadingAction)
+Vue.component('ContentHeader', ContentHeader)
