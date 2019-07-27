@@ -36,7 +36,7 @@
         >
           <el-input v-model="form.title"/>
         </el-form-item>
-        <el-form-item label="地址" prop="path">
+        <el-form-item label="地址" prop="path" :helper="pathHelper">
           <el-autocomplete
             class="w-100"
             v-model="form.path"
@@ -147,6 +147,12 @@ export default {
       vueRouters: [],
       roles: [],
       permissions: [],
+
+      pathHelper: '地址可以有三种：\n' +
+        '1：以 http 开头的完整 url，会在新窗口中打开；\n' +
+        '2：以斜杠 \'/\' 开头的，不会匹配生成路由配置，\n' +
+        '一般用于打开其他路由的不同参数的 url；\n' +
+        '3：其他则会去匹配组件，并生成路由配置。',
     }
   },
   computed: {

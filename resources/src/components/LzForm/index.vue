@@ -1,34 +1,3 @@
-<template>
-  <el-form
-    v-loading="loading"
-    ref="form"
-    :style="{ width: inDialog ? 'auto' : '800px' }"
-    :class="{ 'in-dialog': inDialog }"
-    v-bind="$attrs"
-    v-on="$listeners"
-    :model="form"
-    :errors="errors"
-    :label-position="realLabelPosition"
-  >
-    <slot/>
-    <slot name="footer">
-      <el-form-item class="footer">
-        <loading-action type="primary" :action="onSubmit">{{ submitText }}</loading-action>
-        <el-button @click="onReset">重置</el-button>
-        <slot name="footer-append"/>
-        <flex-spacer/>
-        <el-checkbox
-          v-if="!disableStay"
-          v-model="stay"
-          title="表单提交后，留在此页"
-        >
-          留在此页
-        </el-checkbox>
-      </el-form-item>
-    </slot>
-  </el-form>
-</template>
-
 <script>
 import _forIn from 'lodash/forIn'
 import _get from 'lodash/get'
@@ -86,6 +55,9 @@ export default {
     realLabelPosition() {
       return this.labelPosition || (this.$store.state.miniWidth ? 'top' : 'right')
     },
+    miniWidth() {
+      return this.$store.state.miniWidth
+    },
   },
   created() {
     this.copyMethods()
@@ -110,7 +82,10 @@ export default {
 
       try {
         this.getData && await this.getData()
-        this.setInitialValues()
+        // 在某些情况下，会出现方法未定义，所以放到 nextTick 中
+        this.$nextTick(() => {
+          this.setInitialValues()
+        })
       } catch (e) {
         Promise.reject(e)
       }
@@ -153,10 +128,91 @@ export default {
       immediate: true,
     },
   },
+  render(h) {
+    let defaultSlot = this.$slots.default
+    if (Array.isArray(defaultSlot)) {
+      defaultSlot = defaultSlot.map((formItem) => {
+        const options = formItem.componentOptions
+
+        // 如果有 helper props，则生成一个新的 FormItem 替换掉原来的
+        let { helper, label } = options.propsData
+        if (helper) {
+          helper = helper.replace(/\n/g, '<br>')
+          const labelSlot = h('template', {
+            slot: 'label',
+          }, [
+            (<span>{label}</span>),
+            (
+              <el-tooltip
+                effect="dark"
+                placement="top-start"
+                popper-class={`form-helper-popper ${this.miniWidth ? 'mini-width' : ''}`}
+              >
+                <div slot="content" domPropsInnerHTML={helper}/>
+                <i class="ml-1 el-icon-question helper"/>
+              </el-tooltip>
+            ),
+          ])
+          return h('el-form-item', {
+            props: options.propsData,
+          }, [labelSlot, ...options.children])
+        } else {
+          return formItem
+        }
+      })
+    }
+
+    const stayCheckbox = !this.disableStay && (
+      <el-checkbox
+        vModel={this.stay}
+        title="表单提交后，留在此页"
+      >
+        留在此页
+      </el-checkbox>
+    )
+
+    const footerSlot = this.$slots.footer || (
+      <el-form-item className="footer">
+        <loading-action type="primary" action={this.onSubmit}>{this.submitText}</loading-action>
+        <el-button vOn:click={this.onReset}>重置</el-button>
+        {this.$slots.footerAppend}
+        <flex-spacer/>
+        {stayCheckbox}
+      </el-form-item>
+    )
+
+    // 用 jsx，ElForm 组件的 model props 传不进去，，，
+    return h('el-form', {
+      props: {
+        model: this.form,
+        errors: this.errors,
+        labelPosition: this.realLabelPosition,
+        ...this.$attrs,
+      },
+      on: {
+        ...this.$listeners,
+      },
+      class: {
+        'in-dialog': this.inDialog,
+      },
+      style: {
+        width: this.inDialog ? 'auto' : '800px',
+      },
+      directives: [
+        {
+          name: 'loading',
+          value: this.loading,
+        },
+      ],
+      ref: 'form',
+    }, [defaultSlot, footerSlot])
+  },
 }
 </script>
 
 <style scoped lang="scss">
+@import '~element-ui/packages/theme-chalk/src/common/var';
+
 .footer {
   /deep/ {
     .el-form-item__content {
@@ -169,6 +225,27 @@ export default {
   .footer {
     text-align: right;
     margin-bottom: 0;
+  }
+}
+
+.helper {
+  color: $--color-primary;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  transition: border-color .3s;
+
+  &:hover {
+    border-color: $--color-primary-light-1;
+  }
+}
+</style>
+
+<style lang="scss">
+.form-helper-popper {
+  max-width: 400px;
+
+  &.mini-width {
+    max-width: 90%;
   }
 }
 </style>

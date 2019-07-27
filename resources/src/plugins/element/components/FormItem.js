@@ -21,6 +21,12 @@ FormItem.mounted = function () {
 
 export default {
   extends: FormItem,
+  props: {
+    /**
+     * 提示性文字
+     */
+    helper: String,
+  },
   methods: {
     setInitialValue() {
       // 简单的深拷贝一个值，避免值是对象时，里面的值会跟着变，导致不能重置
