@@ -172,7 +172,7 @@ export default {
     )
 
     const footerSlot = this.$slots.footer || (
-      <el-form-item className="footer">
+      <el-form-item class="footer">
         <loading-action type="primary" action={this.onSubmit}>{this.submitText}</loading-action>
         <el-button vOn:click={this.onReset}>重置</el-button>
         {this.$slots.footerAppend}
