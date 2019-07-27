@@ -78,7 +78,7 @@ class AdminInitCommand extends Command
             [19, 0, '配置管理', null, 18, null, 1],
             [20, 19, '配置分类', 'config-categories', 19, null, 1],
 
-            [99, 0, '权限测试', 'permission-test', 99, null, 1],
+            [99, 0, '权限测试', '/permission-test', 99, null, 1],
 
             [21, 19, '所有配置', 'configs', 20, null, 1],
             [22, 19, '添加配置', 'configs/create', 21, null, 1],
