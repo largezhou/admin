@@ -1,11 +1,11 @@
 <template>
   <router-link to="/" class="title" :title="appName">
-    <div v-if="appLogo" class="flex-box logo-wrapper">
+    <div v-if="appLogo" class="flex-box logo-wrapper mr-2">
       <img :src="appLogo" class="logo">
     </div>
     <span
       v-show="!collapse || !appLogo"
-      class="ml-2 app-name"
+      class="app-name"
     >{{ appName }}</span>
   </router-link>
 </template>
@@ -32,7 +32,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-$logo-width: 40px;
+$logo-width: 44px;
 
 .title {
   display: flex;

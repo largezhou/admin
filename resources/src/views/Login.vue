@@ -5,7 +5,7 @@
         <template #header>
           <span>{{ appName }}</span>
         </template>
-        <LoginForm/>
+        <login-form/>
       </el-card>
     </div>
   </div>
