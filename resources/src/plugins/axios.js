@@ -86,12 +86,13 @@ _axios.interceptors.response.use(
           Message.error(`服务器异常(code: ${res.status})`)
           break
       }
+    } else {
+      Message.error('网络异常')
     }
 
     if (err instanceof axios.Cancel) { // 手动取消时，err 为一个 Cancel 对象，有一个 message 属性
       console.log(err.toString())
     } else {
-      Message.error('网络异常')
       destroyUrlFromQueue(err.config.url)
     }
 

@@ -6,6 +6,7 @@
     v-on="$listeners"
     @click="onAction"
     :loading="actionLoading || loading"
+    :disabled="disabled"
   >
     <slot/>
   </component>
