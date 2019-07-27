@@ -19,7 +19,7 @@
     </template>
   </el-submenu>
   <a v-else-if="isExternal(menu.path)" :href="menu.path" target="_blank">
-    <el-menu-item v-show="filtered">
+    <el-menu-item v-show="filtered" :index="makeRouteName(menu.id)">
       <svg-icon :icon-class="icon(menu.icon)"/>
       <span slot="title">{{ menu.title }}</span>
     </el-menu-item>
