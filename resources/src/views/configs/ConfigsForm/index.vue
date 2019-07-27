@@ -14,6 +14,7 @@
       :key="i.id"
       :prop="i.slug"
       :label="i.name"
+      :helper="i.desc"
     >
       <type-input
         v-model="form[i.slug]"
