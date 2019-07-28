@@ -26,6 +26,7 @@
     "sass-loader": "^7.1.0",
     "svg-sprite-loader": "^4.1.6",
     "svgo": "^1.2.2",
+    "v-click-outside-x": "^4.0.14",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
     "vue-template-compiler": "^2.5.21",
