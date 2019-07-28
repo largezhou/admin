@@ -65,7 +65,7 @@ export default {
       (showIcon
         ? <svg-icon icon-class={icon}/>
         : <div class="icon-placeholder"/>),
-      (<span class="title" title={title}>{title}</span>),
+      (<span class="title" slot="title" title={title}>{title}</span>),
     ]
 
     const menuItem = (
