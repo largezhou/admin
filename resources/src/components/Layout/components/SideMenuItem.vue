@@ -100,5 +100,12 @@ a {
       height: 16px;
     }
   }
+
+  .is-active {
+    &.el-menu-item {
+      background-color: #409EFF !important;
+      color: #fff !important;
+    }
+  }
 }
 </style>

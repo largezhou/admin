@@ -94,6 +94,10 @@ _axios.interceptors.response.use(
             config.validationForm[config.validationErrorKey] = handleValidateErrors(res)
           } // 否则不做处理
           break
+        case 429:
+          Message.error('操作太频繁，请稍后再试')
+          cancelAllRequest('操作太频繁')
+          break
         default:
           Message.error(`服务器异常(code: ${res.status})`)
           break

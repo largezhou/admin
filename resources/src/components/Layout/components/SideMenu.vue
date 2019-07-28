@@ -244,8 +244,16 @@ export default {
 }
 
 /deep/ {
-  .el-submenu .el-menu-item {
-    padding-right: 20px;
+  .el-submenu {
+    .el-menu-item {
+      padding-right: 20px;
+    }
+
+    &.is-active {
+      .el-submenu__title {
+        color: #fff !important;
+      }
+    }
   }
 }
 </style>

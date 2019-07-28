@@ -106,6 +106,7 @@ export default {
 
   .el-button {
     padding: 9px;
+    height: 32px;
   }
 }
 

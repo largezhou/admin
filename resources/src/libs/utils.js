@@ -18,8 +18,11 @@ import { isExternal, isInt } from '@/libs/validates'
  */
 export const handleValidateErrors = (res) => {
   let errors = {}
-  if (res && res.status === 422) {
+  if (res && (res.status === 422 || res.status === 429)) {
     ({ errors } = res.data)
+    if (!errors) {
+      return {}
+    }
     Object.keys(errors).forEach((k) => {
       errors[k] = errors[k][0]
     })
