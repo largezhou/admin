@@ -36,7 +36,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import Hamburger from '@c/Hamburger'
+import Hamburger from './Hamburger'
 import NavbarItems from '@c/Layout/components/NavbarItems'
 import Refresh from '@c/Refresh'
 import ToTest from '@c/ToTest'
@@ -79,14 +79,12 @@ export default {
 @import '~element-ui/packages/theme-chalk/src/common/var';
 
 .header {
-  line-height: 60px;
   overflow: hidden;
-  position: relative;
+  z-index: 1;
   background: #fff;
   box-shadow: $--box-shadow-light;
-  padding-left: 0;
+  padding: 0;
   display: flex;
-  border-bottom: 1px solid #dcdfe6;
 }
 
 .avatar {

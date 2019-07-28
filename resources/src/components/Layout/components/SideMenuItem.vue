@@ -1,40 +1,3 @@
-<template>
-  <el-submenu
-    v-if="hasChildren"
-    v-show="filtered"
-    :index="routeName"
-  >
-    <template #title>
-      <svg-icon v-if="showIcon" :icon-class="icon"/>
-      <span slot="title">{{ menu.title }}</span>
-    </template>
-    <template v-for="sub of menu.children">
-      <side-menu-item
-        ref="children"
-        :q="q"
-        v-if="sub.menu"
-        :key="sub.id"
-        :menu="sub"
-        :level="level + 1"
-      />
-    </template>
-  </el-submenu>
-  <a v-else-if="isExternal" :href="menu.path" target="_blank">
-    <el-menu-item v-show="filtered" :index="routeName">
-      <svg-icon v-if="showIcon" :icon-class="icon"/>
-      <div v-else style="width: 24px;"/>
-      <span slot="title">{{ menu.title }}</span>
-    </el-menu-item>
-  </a>
-  <router-link v-else :to="path">
-    <el-menu-item v-show="filtered" :index="routeName">
-      <svg-icon v-if="showIcon" :icon-class="icon"/>
-      <div v-else style="width: 24px;"/>
-      <span slot="title">{{ menu.title }}</span>
-    </el-menu-item>
-  </router-link>
-</template>
-
 <script>
 import { hasChildren, makeRouteName, startSlash } from '@/libs/utils'
 import { isExternal } from '@/libs/validates'
@@ -74,11 +37,71 @@ export default {
     },
     path() {
       const { path } = this.menu
-      return path ? startSlash(path) : ''
+      if (this.isExternal) {
+        return path
+      } else {
+        return path ? startSlash(path) : ''
+      }
     },
     isExternal() {
       return isExternal(this.menu.path)
     },
+  },
+  render(h) {
+    const {
+      showIcon,
+      icon,
+      filtered,
+      routeName,
+      hasChildren,
+      isExternal,
+      q,
+      level,
+      path,
+      menu: { title, children },
+    } = this
+
+    const titleSlot = [
+      (showIcon
+        ? <svg-icon icon-class={icon}/>
+        : <div class="icon-placeholder"/>),
+      (<span class="title" title={title}>{title}</span>),
+    ]
+
+    const menuItem = (
+      <el-menu-item v-show={filtered} index={routeName}>
+        {titleSlot}
+      </el-menu-item>
+    )
+
+    const subMenus = children.map((i) => (
+      i.menu && (
+        <side-menu-item
+          ref="children"
+          q={q}
+          key={i.id}
+          menu={i}
+          level={level + 1}
+        />
+      )
+    ))
+
+    if (hasChildren) {
+      return (
+        <el-submenu v-show={filtered} index={routeName} popper-class="side-submenu">
+          <template slot="title">{titleSlot}</template>
+          {subMenus}
+        </el-submenu>
+      )
+    } else if (isExternal) {
+      return (
+        <a href={path} target="_blank">{menuItem}</a>
+      )
+    } else {
+      return (
+        <router-link to={path}>{menuItem}</router-link>
+      )
+    }
   },
 }
 </script>
@@ -86,6 +109,16 @@ export default {
 <style scoped lang="scss">
 a {
   text-decoration: none;
+}
+
+.icon-placeholder {
+  min-width: 24px;
+  width: 24px;
+}
+
+.title {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /deep/ {
@@ -107,5 +140,14 @@ a {
       color: #fff !important;
     }
   }
+}
+</style>
+
+<style lang="scss">
+.side-submenu {
+  max-width: 200px;
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 </style>

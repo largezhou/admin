@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%;">
-    <div v-if="miniWidth && !collapse" class="mask" @click="onCollapse"/>
+    <div v-show="miniWidth && !collapse" class="mask" @click="onCollapse"/>
     <el-menu
       ref="menu"
       :default-active="activeName"
@@ -234,8 +234,6 @@ export default {
 }
 
 .mask {
-  background: #000;
-  opacity: .3;
   width: 100%;
   top: 0;
   height: 100%;
@@ -247,6 +245,10 @@ export default {
   .el-submenu {
     .el-menu-item {
       padding-right: 20px;
+    }
+
+    .el-submenu__title {
+      padding-right: 34px;
     }
 
     &.is-active {

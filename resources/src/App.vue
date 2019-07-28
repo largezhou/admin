@@ -16,6 +16,7 @@ export default {
     onResize() {
       const mini = window.innerWidth <= 768
       if (mini !== this.miniWidth) {
+        mini && this.$store.commit('SET_OPENED', false)
         this.$store.commit('SET_MINI_WIDTH', mini)
       }
     },
