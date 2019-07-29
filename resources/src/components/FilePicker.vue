@@ -7,9 +7,12 @@
         :key="i"
         :file="item"
       >
-        <div class="actions flex-box" :title="item.path">
-          <i class="el-icon-delete" @click="remove(i)"/>
-        </div>
+        <pop-confirm
+          comp="i"
+          class="el-icon-delete remove"
+          notice="确认移除？"
+          :confirm="() => remove(i)"
+        />
       </file-preview>
 
       <div
@@ -51,10 +54,12 @@ import SystemMedia from '@c/SystemMedia/index'
 import _get from 'lodash/get'
 import FilePreview from '@c/FilePreview'
 import _pick from 'lodash/pick'
+import PopConfirm from '@c/PopConfirm'
 
 export default {
   name: 'FilePicker',
   components: {
+    PopConfirm,
     FilePreview,
     SystemMedia,
   },
@@ -174,6 +179,11 @@ export default {
       }
     },
   },
+  watch: {
+    '$slots.default'(newVal) {
+      log(newVal)
+    },
+  },
 }
 </script>
 
@@ -187,16 +197,6 @@ export default {
 
 .picker {
   cursor: pointer;
-}
-
-.preview {
-  position: relative;
-
-  &:hover {
-    .actions {
-      opacity: 1;
-    }
-  }
 }
 
 .file-item {
@@ -220,21 +220,8 @@ export default {
   }
 }
 
-.actions {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-  opacity: 0;
-  background: rgba(0, 0, 0, 0.6);
-  transition: all .3s;
-
-  i {
-    color: $--color-danger;
-    font-size: 30px;
-    cursor: pointer;
-  }
+.remove {
+  color: $--color-danger;
 }
 </style>
 
