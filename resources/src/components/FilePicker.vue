@@ -7,7 +7,12 @@
         :key="i"
         :file="item"
       >
-        <i class="el-icon-delete remove" @click="remove(i)"/>
+        <pop-confirm
+          comp="i"
+          class="el-icon-delete remove"
+          notice="确认移除？"
+          :confirm="() => remove(i)"
+        />
       </file-preview>
 
       <div
@@ -49,10 +54,12 @@ import SystemMedia from '@c/SystemMedia/index'
 import _get from 'lodash/get'
 import FilePreview from '@c/FilePreview'
 import _pick from 'lodash/pick'
+import PopConfirm from '@c/PopConfirm'
 
 export default {
   name: 'FilePicker',
   components: {
+    PopConfirm,
     FilePreview,
     SystemMedia,
   },
