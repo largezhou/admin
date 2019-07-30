@@ -24,7 +24,7 @@ export default {
       return this.$store.getters.appName
     },
     styles() {
-      const url = this.$store.getters.appConfigs('login_background')
+      const url = this.$store.getters.getConfig('system_basic.login_background')
       if (!url) {
         return null
       }
