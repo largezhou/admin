@@ -94,8 +94,8 @@ export default {
         message: this.$createElement('img', {
           domProps: {
             src: this.formattedFile.url,
-            width: `${width}`,
-            height: `${height}`,
+            width,
+            height,
           },
         }),
         showConfirmButton: false,

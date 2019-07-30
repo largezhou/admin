@@ -22,10 +22,10 @@ export default {
   computed: {
     ...mapGetters([
       'appName',
-      'appConfigs',
+      'getConfig',
     ]),
     appLogo() {
-      return this.appConfigs(SYSTEM_BASIC.APP_LOGO_SLUG)
+      return this.getConfig(SYSTEM_BASIC.SLUG + '.' + SYSTEM_BASIC.APP_LOGO_SLUG)
     },
   },
 }
