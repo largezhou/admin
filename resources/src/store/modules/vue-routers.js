@@ -33,7 +33,8 @@ export default {
       commit('SET_VUE_ROUTERS', data)
       commit('SET_LOADED', true)
 
-      const homeRouteId = getters.appConfigs(SYSTEM_BASIC.HOME_ROUTE_SLUG, SYSTEM_BASIC.DEFAULT_HOME_ROUTE)
+      const { SLUG, HOME_ROUTE_SLUG, DEFAULT_HOME_ROUTE } = SYSTEM_BASIC
+      const homeRouteId = getters.getConfig(`${SLUG}.${HOME_ROUTE_SLUG}`, DEFAULT_HOME_ROUTE)
       const { routes, homeRoute } = buildRoutes(data, makeRouteName(homeRouteId))
       router.addRoutes(routes)
       router.addRoutes(fixedRoutes)

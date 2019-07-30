@@ -68,7 +68,7 @@ class ConfigController extends Controller
     {
         $configs = $request->getConfigs();
         $configs = Config::updateValues($configs, $request->validated());
-        return $this->created(ConfigResource::collection($configs));
+        return $this->created($configs);
     }
 
     public function getValuesByCategorySlug(string $categorySlug)

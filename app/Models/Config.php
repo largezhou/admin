@@ -56,13 +56,7 @@ class Config extends Model
         })->get();
 
         if ($onlyValues) {
-            $slugValueMap = [];
-            foreach ($configs as $config) {
-                $config->handleFileTypeValue(true);
-                $slugValueMap[$config->slug] = $config->value;
-            }
-
-            return $slugValueMap;
+            return Config::toValues($configs);
         } else {
             return $configs;
         }
@@ -81,7 +75,8 @@ class Config extends Model
                 $config->update(['value' => $inputs[$config->slug]]);
             }
         });
-        return $configs;
+
+        return Config::toValues($configs);
     }
 
     /**
@@ -114,5 +109,22 @@ class Config extends Model
         } else {
             $this->value = Arr::first($value);
         }
+    }
+
+    /**
+     * 把配置集转成键值对，并处理文件值的 url
+     *
+     * @param Config[] $configs
+     *
+     * @return array
+     */
+    public static function toValues($configs): array
+    {
+        $updatedValues = [];
+        foreach ($configs as $config) {
+            $config->handleFileTypeValue(true);
+            $updatedValues[$config->slug] = $config->value;
+        }
+        return $updatedValues;
     }
 }

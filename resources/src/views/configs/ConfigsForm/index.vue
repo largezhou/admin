@@ -32,7 +32,7 @@ import {
   updateConfigValues,
 } from '@/api/configs'
 import TypeInput from '@v/configs/TypeInput'
-import { mapConstants } from '@/libs/constants'
+import { mapConstants, SYSTEM_BASIC } from '@/libs/constants'
 
 export default {
   name: 'ConfigsForm',
@@ -48,7 +48,7 @@ export default {
     }
   },
   computed: {
-    ...mapConstants('CONFIG_TYPES'),
+    ...mapConstants(['CONFIG_TYPES']),
     category() {
       return this.$route.params.categorySlug
     },
@@ -71,7 +71,11 @@ export default {
     },
     async onSubmit() {
       const form = this.handleFormData()
-      await updateConfigValues(form)
+      const { data } = await updateConfigValues(form)
+      this.$store.commit('SET_CONFIG', {
+        path: SYSTEM_BASIC.SLUG,
+        value: data,
+      })
     },
     handleFormData() {
       let form = { ...this.form }

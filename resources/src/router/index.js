@@ -8,6 +8,7 @@ import { cancelAllRequest } from '@/plugins/axios'
 
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
+import { SYSTEM_BASIC } from '@/libs/constants'
 
 NProgress.configure({ showSpinner: false })
 
@@ -73,7 +74,9 @@ router.beforeEach(async (to, from, next) => {
   NProgress.start()
 
   try {
-    !store.state.configs && await store.dispatch('getSystemBasicConfigs')
+    if (!store.getters.getConfig(SYSTEM_BASIC.SLUG)) {
+      await store.dispatch('getSystemBasicConfigs')
+    }
   } catch (e) {
     next(false)
     NProgress.done()
