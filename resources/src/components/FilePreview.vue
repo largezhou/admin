@@ -13,7 +13,7 @@
       <i
         v-if="isImage || disableView"
         class="el-icon-view view"
-        @click="onPreview"
+        @click.stop="onPreview"
       />
       <slot :file="formattedFile"/>
     </div>
