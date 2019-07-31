@@ -1,10 +1,14 @@
 import axios from 'axios'
-import { getToken, removeToken } from '@/libs/token'
-import { Message, MessageBox } from 'element-ui'
+import { getToken } from '@/libs/token'
+import { Message } from 'element-ui'
 import _trimStart from 'lodash/trimStart'
-import { debounceMsg, getFirstError, handleValidateErrors } from '@/libs/utils'
+import {
+  debounceMsg,
+  getFirstError,
+  handleValidateErrors,
+  showLoginDialog,
+} from '@/libs/utils'
 import _forIn from 'lodash/forIn'
-import router from '@/router'
 
 let config = {
   baseURL: '/admin-api',
@@ -74,7 +78,8 @@ _axios.interceptors.response.use(
       disableLoginDialog: undefined,
     }, config)
 
-    if (res) {
+    // 可通过 config.disableHandle错误码 来禁用该类型错误的默认处理
+    if (res && !config[`disableHandle${res.status}`]) {
       switch (res.status) {
         case 404:
           Message.error('请求的网址不存在')
@@ -82,11 +87,7 @@ _axios.interceptors.response.use(
         case 401:
           cancelAllRequest('登录失效: ' + config.url)
           if (!config.disableLoginDialog) {
-            MessageBox.confirm('登录已失效，是否重新登录？', '登录失效')
-              .then(() => {
-                removeToken()
-                window.location.href = router.resolve({ name: 'login' }).href
-              })
+            showLoginDialog()
           } else {
             Message.error('登录已失效，请重新登录')
           }

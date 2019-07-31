@@ -127,3 +127,9 @@ code {
     height: 10px !important;
   }
 }
+
+.login-dialog {
+  .el-dialog__body {
+    padding-bottom: 0;
+  }
+}
