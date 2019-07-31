@@ -8,7 +8,7 @@
       无效
     </div>
     <img
-      v-if="isImage"
+      v-else-if="isImage"
       class="img"
       :alt="path"
       :title="path"
