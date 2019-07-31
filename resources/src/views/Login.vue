@@ -5,21 +5,24 @@
         <template #header>
           <span>{{ appName }}</span>
         </template>
-        <login-form/>
+        <login-form @keydown.enter.native="$refs.submit.onAction" ref="form"/>
+        <loading-action
+          ref="submit"
+          class="login-btn"
+          type="primary"
+          :action="onLogin"
+        >
+          登录
+        </loading-action>
       </el-card>
     </div>
   </div>
 </template>
 
 <script>
-import LoginForm from '@c/LoginForm'
 import { getUrl } from '@/libs/utils'
-
 export default {
   name: 'Login',
-  components: {
-    LoginForm,
-  },
   computed: {
     appName() {
       return this.$store.getters.appName
@@ -36,6 +39,12 @@ export default {
       }
     },
   },
+  methods: {
+    async onLogin() {
+      await this.$refs.form.onSubmit()
+      this.$router.push(this.$route.query.redirect || '/')
+    },
+  },
 }
 </script>
 
@@ -49,6 +58,10 @@ export default {
   width: 350px;
   margin: auto;
   padding-top: 30vh;
+}
+
+.login-btn {
+  width: 100%;
 }
 
 /deep/ {
