@@ -1,5 +1,10 @@
 <script>
-import { hasChildren, makeRouteName, startSlash } from '@/libs/utils'
+import {
+  arrayWrap,
+  hasChildren,
+  makeRouteName,
+  startSlash,
+} from '@/libs/utils'
 import { isExternal } from '@/libs/validates'
 import icons from '@/icons'
 
@@ -17,7 +22,8 @@ export default {
     filtered() {
       return !this.q ||
         (this.menu.title.indexOf(this.q) !== -1) ||
-        (this.$refs.children && this.$refs.children.some((i) => i.filtered))
+        // 用渲染函数写的，在子元素只有一个时，children 不是数组，，，所以，包裹一下
+        (this.$refs.children && arrayWrap(this.$refs.children).some((i) => i.filtered))
     },
     hasChildren() {
       return hasChildren(this.menu)
