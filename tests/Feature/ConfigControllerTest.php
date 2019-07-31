@@ -359,6 +359,7 @@ class ConfigControllerTest extends AdminTestCase
             'slug' => 'field',
             'type' => Config::TYPE_FILE,
             'category_id' => $category->id,
+
             'value' => 'uploads/test/logo.png',
         ]);
 
@@ -367,7 +368,7 @@ class ConfigControllerTest extends AdminTestCase
         ]));
         $res->assertStatus(200)
             ->assertJson([
-                'field' => $this->storage->url('uploads/test/logo.png'),
+                'field' => 'uploads/test/logo.png',
             ]);
     }
 }

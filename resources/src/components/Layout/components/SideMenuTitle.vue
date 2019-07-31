@@ -13,6 +13,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { SYSTEM_BASIC } from '@/libs/constants'
+import { getUrl } from '@/libs/utils'
 
 export default {
   name: 'SideMenuTitle',
@@ -25,7 +26,7 @@ export default {
       'getConfig',
     ]),
     appLogo() {
-      return this.getConfig(SYSTEM_BASIC.SLUG + '.' + SYSTEM_BASIC.APP_LOGO_SLUG)
+      return getUrl(this.getConfig(SYSTEM_BASIC.SLUG + '.' + SYSTEM_BASIC.APP_LOGO_SLUG))
     },
   },
 }

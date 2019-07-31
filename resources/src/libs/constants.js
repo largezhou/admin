@@ -58,7 +58,9 @@ export const SYSTEM_BASIC = {
   APP_NAME_SLUG: 'app_name',
   APP_LOGO_SLUG: 'app_logo',
   HOME_ROUTE_SLUG: 'home_route',
+  CDN_DOMAIN_SLUG: 'cdn_domain',
 
   DEFAULT_APP_NAME: '管理后台',
   DEFAULT_HOME_ROUTE: '1',
+  DEFAULT_CDN_DOMAIN: '/',
 }

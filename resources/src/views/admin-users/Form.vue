@@ -22,7 +22,6 @@
           <file-picker
             v-model="form.avatar"
             ext="jpg,gif,png,jpeg"
-            value-fields="path"
           />
         </el-form-item>
         <el-form-item label="密码" :required="!editMode" prop="password">
@@ -82,9 +81,7 @@ import { editAdminUser, storeAdminUser, updateAdminUser } from '@/api/admin-user
 import { getAdminRoles } from '@/api/admin-roles'
 import { getAdminPerms } from '@/api/admin-perms'
 import FormHelper from '@c/LzForm/FormHelper'
-import { formatForFilePicker, getMessage } from '@/libs/utils'
 import FilePicker from '@c/FilePicker'
-import _get from 'lodash/get'
 
 export default {
   name: 'Form',
@@ -113,14 +110,10 @@ export default {
   },
   methods: {
     async onSubmit() {
-      const form = Object.assign(
-        {}, this.form,
-        { avatar: _get(this.form, 'avatar.path', null) })
-
       if (this.editMode) {
-        await updateAdminUser(this.resourceId, form)
+        await updateAdminUser(this.resourceId, this.form)
       } else {
-        await storeAdminUser(form)
+        await storeAdminUser(this.form)
       }
     },
     async getData() {
@@ -137,7 +130,6 @@ export default {
 
       if (this.editMode) {
         const { data } = await editAdminUser(this.resourceId)
-        data.avatar = formatForFilePicker(data.avatar)
         this.fillForm(data)
       }
     },

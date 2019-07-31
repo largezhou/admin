@@ -70,28 +70,11 @@ export default {
       this.form = form
     },
     async onSubmit() {
-      const form = this.handleFormData()
-      const { data } = await updateConfigValues(form)
+      const { data } = await updateConfigValues(this.form)
       this.$store.commit('SET_CONFIG', {
         path: SYSTEM_BASIC.SLUG,
         value: data,
       })
-    },
-    handleFormData() {
-      let form = { ...this.form }
-      this.configs.forEach((i) => {
-        // 如果是文件类型，要把值的对象处理成 path 字符串
-        if (i.type === this.CONFIG_TYPES.FILE) {
-          let value = form[i.slug]
-          if (i.options.max > 1) {
-            value = value.map((i) => i.path)
-          } else {
-            value = value ? value.path : null
-          }
-          form[i.slug] = value
-        }
-      })
-      return form
     },
   },
 }

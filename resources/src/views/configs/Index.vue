@@ -34,7 +34,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="type_text" label="类型" width="100"/>
-      <el-table-column prop="value" label="值" min-width="150">
+      <el-table-column prop="value" label="值" min-width="300">
         <template #default="{ row }">
           <div v-if="row.type === CONFIG_TYPES.FILE" style="display: flex; overflow-x: auto">
             <template v-if="Array.isArray(row.value)">

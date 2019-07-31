@@ -26,11 +26,7 @@ class AdminUserResource extends JsonResource
             'id' => $model->id,
             'username' => $model->username,
             'name' => $model->name,
-            'avatar' => $this->when(
-                $model->avatar,
-                Storage::disk('uploads')->url($model->avatar),
-                null
-            ),
+            'avatar' => $model->avatar,
             'roles' => $this->getRoles(),
             'permissions' => $this->getPermissions(),
             'created_at' => (string) $model->created_at,

@@ -154,10 +154,11 @@ class AdminInitCommand extends Command
             ]
         );
         $configs = [
-            [1, Config::TYPE_INPUT, '系统名称', 'app_name', null, null, json_encode('商城管理后台'), 'required|max:20'],
-            [1, Config::TYPE_FILE, '系统 LOGO', 'app_logo', null, '{"max":1,"ext":"jpg,png,jpeg"}', null, 'nullable|string'],
+            [1, Config::TYPE_INPUT, '系统名称', 'app_name', null, json_encode('后台'), 'required|string|max:20'],
+            [1, Config::TYPE_FILE, '系统 LOGO', 'app_logo', '{"max":1,"ext":"jpg,png,jpeg"}', null, 'nullable|string'],
             [1, Config::TYPE_FILE, '登录背景图', 'login_background', null, '{"max":1,"ext":"jpg,png,jpeg"}', null, 'nullable|string'],
-            [1, Config::TYPE_OTHER, '首页路由', 'home_route', "选择一个路由 ID。\n打开后台 /admin 时，跳转的链接，一般为后台首页 /admin/index", null, json_encode('1'), 'required|exists:vue_routers,id'],
+            [1, Config::TYPE_OTHER, '首页路由', 'home_route', null, json_encode('1'), 'required|exists:vue_routers,id'],
+            [1, Config::TYPE_INPUT, 'CDN 域名', 'cdn_domain', null, json_encode('/'), 'required|string'],
         ];
         $configs = $this->combineInserts(
             ['category_id', 'type', 'name', 'slug', 'desc', 'options', 'value', 'validation_rules'],

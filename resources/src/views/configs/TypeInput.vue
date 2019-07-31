@@ -133,7 +133,6 @@ export default {
           max: this.options.max,
           ext: this.options.ext,
           multiple: this.options.max > 1,
-          valueFields: 'path',
         })
         renderData.key = this.filePickerKey
         break
