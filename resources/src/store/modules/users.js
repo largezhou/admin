@@ -34,6 +34,7 @@ export default {
     async logout({ dispatch }) {
       try {
         await logout().config({ disableHandle401: true })
+        dispatch('frontendLogout')
       } catch (e) {
         const { response: res } = e
         // 如果退出时，返回 401，则直接前端退出就行
