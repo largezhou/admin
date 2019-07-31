@@ -5,7 +5,6 @@ import { Dialog } from 'element-ui'
 
 export default Vue.extend({
   store,
-  router,
   name: 'GlobalDialog',
   data() {
     return {
@@ -19,7 +18,15 @@ export default Vue.extend({
     on: Object,
   },
   mounted() {
+    const vm = new Vue({ router })
+    // 路由变化时，关掉弹窗
+    this.unwatchRoute = vm.$watch('$route', () => {
+      this.visible = false
+    })
     this.visible = true
+  },
+  beforeDestroy() {
+    this.unwatchRoute()
   },
   methods: {
     clean() {
