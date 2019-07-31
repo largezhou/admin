@@ -76,7 +76,6 @@ import _forIn from 'lodash/forIn'
 import TypeOptions from '@v/configs/TypeOptions'
 import TypeInput from '@v/configs/TypeInput'
 import { toInt } from '@/libs/utils'
-import { CONFIG_TYPES } from '@/libs/constants'
 
 export default {
   name: 'Form',
@@ -137,22 +136,10 @@ export default {
       }
     },
     async onSubmit() {
-      let form = this.form
-      // 把文件的对象数组，处理成 path 的数组
-      if (form.type === CONFIG_TYPES.FILE) {
-        // 复制一下 form，避免处理完文件路径后，预览区无法显示图片
-        form = { ...form }
-        if (form.options.max > 1) {
-          form.value = form.value.map((i) => i.path)
-        } else {
-          form.value = form.value ? form.value.path : null
-        }
-      }
-
       if (this.editMode) {
-        await updateConfig(this.resourceId, form)
+        await updateConfig(this.resourceId, this.form)
       } else {
-        await storeConfig(form)
+        await storeConfig(this.form)
       }
     },
   },

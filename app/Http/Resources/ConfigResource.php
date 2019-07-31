@@ -18,8 +18,6 @@ class ConfigResource extends JsonResource
             'category' => ConfigCategoryResource::make($this->whenLoaded('category')),
         ];
 
-        $model->handleFileTypeValue();
-
         return array_merge(parent::toArray($request), $data);
     }
 }

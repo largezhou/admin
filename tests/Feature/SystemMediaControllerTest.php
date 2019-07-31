@@ -73,7 +73,6 @@ class SystemMediaControllerTest extends AdminTestCase
             ->assertJsonFragment([
                 'id' => $id,
                 'category_id' => 0,
-                'url' => $this->storage->url($media->path),
             ]);
     }
 

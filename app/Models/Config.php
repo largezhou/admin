@@ -56,7 +56,7 @@ class Config extends Model
         })->get();
 
         if ($onlyValues) {
-            return Config::toValues($configs);
+            return $configs->pluck('value', 'slug');
         } else {
             return $configs;
         }
@@ -76,55 +76,6 @@ class Config extends Model
             }
         });
 
-        return Config::toValues($configs);
-    }
-
-    /**
-     * 处理文件类型的配置的值，加上 url
-     *
-     * @param bool $onlyUrl 是否只保留 url，去掉 path，只保留 url 时，为一维数组
-     */
-    public function handleFileTypeValue($onlyUrl = false)
-    {
-        if ($this->type != Config::TYPE_FILE) {
-            return;
-        }
-
-        $storage = Storage::disk('uploads');
-
-        $value = Arr::wrap($this->value);
-        $value = array_map(function ($i) use ($storage, $onlyUrl) {
-            $url = $storage->url($i);
-            if ($onlyUrl) {
-                return $url;
-            }
-            return [
-                'path' => $i,
-                'url' => $url,
-            ];
-        }, $value);
-
-        if (Arr::get($this->options, 'max', 1) > 1) {
-            $this->value = $value;
-        } else {
-            $this->value = Arr::first($value);
-        }
-    }
-
-    /**
-     * 把配置集转成键值对，并处理文件值的 url
-     *
-     * @param Config[] $configs
-     *
-     * @return array
-     */
-    public static function toValues($configs): array
-    {
-        $updatedValues = [];
-        foreach ($configs as $config) {
-            $config->handleFileTypeValue(true);
-            $updatedValues[$config->slug] = $config->value;
-        }
-        return $updatedValues;
+        return $configs->pluck('value', 'slug');
     }
 }

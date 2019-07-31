@@ -105,12 +105,19 @@ export default {
      */
     ext: String,
     /**
-     * 返回的数据对象中，只包含指定字段，url 字段会自动包含
+     * 返回的数据对象中，只包含指定字段，path 字段会自动包含
      * 不传则包含所有字段
      */
     valueFields: {
       type: String,
-      default: '',
+      default: 'path',
+    },
+    /**
+     * 在 valueFields 只返回一个字段时，是否直接返回该字段值，而非对象
+     */
+    flatValue: {
+      type: Boolean,
+      default: true,
     },
   },
   computed: {
@@ -159,16 +166,25 @@ export default {
       this.dialog = false
     },
     /**
-     * 根据 valueFields 和 flattenValue 格式化返回值
+     * 根据 valueFields 和 flatValue 格式化返回值
      */
     formatReturn(value) {
-      const fields = this.valueFields ? this.valueFields.split(',') : []
+      let fields = this.valueFields ? this.valueFields.split(',') : []
       if (fields.length === 0) { // 返回字段为空，返回所有字段
-        return { ...value }
+        value = { ...value }
       } else { // 否则返回指定字段
-        // 默认自动包含 url 字段
-        fields.push('url')
-        return _pick(value, fields)
+        // 默认自动包含 path 字段
+        fields.push('path')
+        value = _pick(value, fields)
+      }
+
+      // 去重
+      fields = [...new Set(fields)]
+      // 在只有一个字段时，如果需要平铺，则只返回该字段的值
+      if (this.flatValue && fields.length === 1) {
+        return value[fields[0]]
+      } else {
+        return value
       }
     },
     remove(index) {
@@ -177,11 +193,6 @@ export default {
       } else {
         this.$emit('input', null)
       }
-    },
-  },
-  watch: {
-    '$slots.default'(newVal) {
-      log(newVal)
     },
   },
 }

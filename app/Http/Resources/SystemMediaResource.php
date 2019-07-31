@@ -15,7 +15,6 @@ class SystemMediaResource extends JsonResource
         $data = parent::toArray($request);
         $data = array_merge($data, [
             'category' => $this->whenLoaded('category'),
-            'url' => Storage::disk('uploads')->url($model->path),
         ]);
 
         return $data;

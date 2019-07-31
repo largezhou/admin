@@ -7,9 +7,11 @@ import _debounce from 'lodash/debounce'
 import { Message } from 'element-ui'
 import store from '@/store'
 import _get from 'lodash/get'
-import { PERMISSION_PASS_ALL, ROLE_ADMIN } from '@/libs/constants'
+import { PERMISSION_PASS_ALL, ROLE_ADMIN, SYSTEM_BASIC } from '@/libs/constants'
 import _intersection from 'lodash/intersection'
 import { isExternal, isInt } from '@/libs/validates'
+import _trimStart from 'lodash/trimStart'
+import _trimEnd from 'lodash/trimEnd'
 
 /**
  * 把 laravel 返回的错误消息，处理成只有一条
@@ -318,36 +320,6 @@ export const roleIn = (roles) => {
 }
 
 /**
- * 格式化传入到 FilePicker 组件中的值
- * @param data
- */
-export const formatForFilePicker = (data) => {
-  if (!data) {
-    return data
-  }
-
-  if (typeof data !== 'object') {
-    return {
-      path: data,
-    }
-  }
-
-  if (Array.isArray(data)) {
-    return data.map((i) => {
-      if (typeof i !== 'object') {
-        return {
-          path: i,
-        }
-      } else {
-        return i
-      }
-    })
-  }
-
-  return data
-}
-
-/**
  * 严格的把字符串转换成整数，如果字符串不是整数，则返回一个默认值
  *
  * @param val
@@ -360,4 +332,18 @@ export function toInt(val, defaultVal = 0) {
   } else {
     return defaultVal
   }
+}
+
+/**
+ * 返回用 cdn domain 拼接后的完整 url
+ * @param path
+ * @return {string}
+ */
+export function getUrl(path) {
+  if (!path) {
+    return ''
+  }
+  const { SLUG, CDN_DOMAIN_SLUG, DEFAULT_CDN_DOMAIN } = SYSTEM_BASIC
+  const CDNDomain = store.getters.getConfig(SLUG + '.' + CDN_DOMAIN_SLUG, DEFAULT_CDN_DOMAIN)
+  return _trimEnd(CDNDomain, '/') + '/' + _trimStart(path, '/')
 }

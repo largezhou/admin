@@ -13,8 +13,8 @@
       <el-dropdown trigger="click">
         <div class="avatar flex-box">
           <img
-            v-if="user.avatar"
-            :src="user.avatar"
+            v-if="avatar"
+            :src="avatar"
             :alt="user.name"
             :title="user.name"
           >
@@ -43,6 +43,7 @@ import ToTest from '@c/ToTest'
 import FlexSpacer from '@c/FlexSpacer'
 import Breadcrumb from '@c/Layout/components/Breadcrumb'
 import ButtonLink from '@c/ButtonLink'
+import { getUrl } from '@/libs/utils'
 
 export default {
   name: 'Navbar',
@@ -66,9 +67,12 @@ export default {
     homeName() {
       return this.$store.getters.homeName
     },
+    avatar() {
+      return this.user.avatar && getUrl(this.user.avatar)
+    },
   },
   methods: {
-    async onLogout() {
+    onLogout() {
       this.$store.dispatch('logout')
     },
   },

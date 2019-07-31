@@ -1,13 +1,20 @@
 <template>
   <div class="file-preview flex-box">
+    <div
+      v-if="!path"
+      class="invalid"
+      :title="path"
+    >
+      无效
+    </div>
     <img
       v-if="isImage"
       class="img"
-      :alt="formattedFile.path"
-      :title="formattedFile.path"
-      :src="formattedFile.url"
+      :alt="path"
+      :title="path"
+      :src="url"
     >
-    <div class="path" v-else :title="formattedFile.path">{{ formattedFile.path }}</div>
+    <div class="path" v-else :title="path">{{ path }}</div>
 
     <div class="actions flex-box">
       <i
@@ -23,12 +30,16 @@
 <script>
 import { isImage } from '@/libs/validates'
 import { mapState } from 'vuex'
+import { getUrl } from '@/libs/utils'
 
 export default {
   name: 'FilePreview',
   data() {
     return {
-      formattedFile: null,
+      formattedFile: {
+        path: '',
+        url: '',
+      },
     }
   },
   props: {
@@ -40,6 +51,12 @@ export default {
     isImage() {
       return isImage(this.formattedFile.path)
     },
+    url() {
+      return this.formattedFile.url
+    },
+    path() {
+      return this.formattedFile.path
+    },
   },
   methods: {
     toUpperCase(str) {
@@ -50,21 +67,20 @@ export default {
      */
     formatFile() {
       let f = this.file
+      if (!f) {
+        return
+      }
+
       if (typeof f === 'string') {
         this.formattedFile = {
           path: f,
-          url: f,
+          url: getUrl(f),
         }
       } else if (typeof f === 'object') {
         this.formattedFile = Object.assign({}, f, {
-          url: f.url || f.path,
+          path: f.path || '',
+          url: f.url || getUrl(f.path),
         })
-      } else {
-        // 避免报错
-        console.error('传入的值无效: ', f)
-        this.formattedFile = {
-          path: '',
-        }
       }
     },
     onPreview() {
@@ -149,6 +165,11 @@ export default {
     font-size: 12px;
     word-break: break-all;
     line-height: initial;
+  }
+
+  .invalid {
+    font-size: 20px;
+    font-style: italic;
   }
 }
 
