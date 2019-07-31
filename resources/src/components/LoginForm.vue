@@ -37,14 +37,9 @@ export default {
   }),
   methods: {
     async onSubmit() {
-      this.errors = {}
-      try {
-        await this.$store.dispatch('login', this.form)
-        this.$message.success(getMessage('loggedIn'))
-        this.$router.push(this.$route.query.redirect || '/')
-      } catch (e) {
-        this.errors = handleValidateErrors(e.response)
-      }
+      await this.$store.dispatch('login', this)
+      this.$message.success(getMessage('loggedIn'))
+      this.$router.push(this.$route.query.redirect || '/')
     },
   },
 }

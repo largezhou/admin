@@ -25,8 +25,8 @@ export default {
     },
   },
   actions: {
-    async login({ commit }, payload) {
-      const { data } = await login(payload)
+    async login({ commit }, vm) {
+      const { data } = await login(vm.form).config({ validationForm: vm })
       const token = 'bearer ' + data.token
       setToken(token)
       commit('SET_TOKEN', token)
@@ -38,7 +38,7 @@ export default {
       window.location.href = router.resolve({ name: 'login' }).href
     },
     async getUser({ commit }) {
-      const { data } = await getUser()
+      const { data } = await getUser().config({ disableLoginDialog: true })
       commit('SET_USER', data)
     },
   },

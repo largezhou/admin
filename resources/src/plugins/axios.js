@@ -1,9 +1,10 @@
 import axios from 'axios'
-import { getToken } from '@/libs/token'
-import { Message } from 'element-ui'
+import { getToken, removeToken } from '@/libs/token'
+import { Message, MessageBox } from 'element-ui'
 import _trimStart from 'lodash/trimStart'
 import { debounceMsg, getFirstError, handleValidateErrors } from '@/libs/utils'
 import _forIn from 'lodash/forIn'
+import router from '@/router'
 
 let config = {
   baseURL: '/admin-api',
@@ -14,7 +15,6 @@ const _axios = axios.create(config)
 const CancelToken = axios.CancelToken
 
 export const requestQueue = {}
-window.rq = requestQueue
 const destroyUrlFromQueue = (path) => {
   if (!path) {
     return
@@ -60,16 +60,19 @@ _axios.interceptors.response.use(
     return res
   },
   (err) => {
-    const { response: res, config } = err
+    const { response: res } = err
+    let { config } = err
 
-    config && Object.assign(config, {
+    config = config && Object.assign({
       // 是否以 message 的方式显示第一条 422 错误消息
       showValidationMsg: undefined,
       // 请求时的表单所在的组件，配合 error key 使用，可以自动填充表单中的 errors 错误提示
       validationForm: undefined,
       // 页面中，存储错误的键，默认为 errors
       validationErrorKey: 'errors',
-    })
+      // 请求出现 401 时，默认会打开弹框要求登录，设置 true 来禁止
+      disableLoginDialog: undefined,
+    }, config)
 
     if (res) {
       switch (res.status) {
@@ -77,15 +80,23 @@ _axios.interceptors.response.use(
           Message.error('请求的网址不存在')
           break
         case 401:
-          Message.error('登录已失效，请重新登录')
-          cancelAllRequest('登录失效: ' + res.config.url)
+          cancelAllRequest('登录失效: ' + config.url)
+          if (!config.disableLoginDialog) {
+            MessageBox.confirm('登录已失效，是否重新登录？', '登录失效')
+              .then(() => {
+                removeToken()
+                window.location.href = router.resolve({ name: 'login' }).href
+              })
+          } else {
+            Message.error('登录已失效，请重新登录')
+          }
           break
         case 400:
           showError(res)
           break
         case 403:
           showError(res)
-          cancelAllRequest('无权访问: ' + res.config.url)
+          cancelAllRequest('无权访问: ' + config.url)
           break
         case 422:
           if (config.showValidationMsg) { // 如果显示验证消息，则显示首条
