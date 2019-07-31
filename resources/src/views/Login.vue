@@ -13,6 +13,7 @@
 
 <script>
 import LoginForm from '@c/LoginForm'
+import { getUrl } from '@/libs/utils'
 
 export default {
   name: 'Login',
@@ -30,7 +31,7 @@ export default {
       }
 
       return {
-        background: `url(${url}) no-repeat center center`,
+        background: `url(${getUrl(url)}) no-repeat center center`,
         backgroundSize: 'cover',
       }
     },
