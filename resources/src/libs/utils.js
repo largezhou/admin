@@ -414,3 +414,18 @@ export function showLoginDialog() {
 
   document.body.appendChild(vm.$mount().$el)
 }
+
+/**
+ * 把一个非数组值，放到数组中
+ * @param val
+ * @return {*[]|Array|*}
+ */
+export function arrayWrap(val) {
+  if (!val) {
+    return []
+  } else if (Array.isArray(val)) {
+    return val
+  } else {
+    return [val]
+  }
+}
