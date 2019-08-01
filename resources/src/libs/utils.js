@@ -13,6 +13,7 @@ import { isExternal, isInt } from '@/libs/validates'
 import _trimStart from 'lodash/trimStart'
 import _trimEnd from 'lodash/trimEnd'
 import GlobalDialog from '@c/GlobalDialog'
+import router from '@/router'
 
 /**
  * 把 laravel 返回的错误消息，处理成只有一条
@@ -356,6 +357,8 @@ export function getUrl(path) {
 export function showLoginDialog() {
   let vm
   vm = new GlobalDialog({
+    router,
+    store,
     propsData: {
       title: '登录',
       width: '350px',

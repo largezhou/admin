@@ -1,10 +1,7 @@
 import Vue from 'vue'
-import store from '@/store'
-import router from '@/router'
 import { Dialog } from 'element-ui'
 
 export default Vue.extend({
-  store,
   name: 'GlobalDialog',
   data() {
     return {
@@ -18,21 +15,18 @@ export default Vue.extend({
     on: Object,
   },
   mounted() {
-    const vm = new Vue({ router })
-    // 路由变化时，关掉弹窗
-    this.unwatchRoute = vm.$watch('$route', () => {
-      this.visible = false
-    })
     this.visible = true
-  },
-  beforeDestroy() {
-    this.unwatchRoute()
   },
   methods: {
     clean() {
       this.$destroy()
       const parentNode = this.$el.parentNode
       parentNode && parentNode.removeChild(this.$el)
+    },
+  },
+  watch: {
+    $route() {
+      this.visible = false
     },
   },
   render(h) {
