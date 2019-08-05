@@ -116,7 +116,7 @@ export default {
         }),
         showConfirmButton: false,
         callback: () => {}, // 避免取消的时候，控制台显示一个 reject 错误
-        customClass: `image-preview-dialog${this.miniWidth ? ' mini-width' : ''}`,
+        customClass: 'image-preview-dialog',
       })
     },
   },
