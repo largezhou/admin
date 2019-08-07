@@ -37,7 +37,7 @@
 import Draggable from 'vuedraggable'
 import { hasChildren } from '@/libs/utils'
 import _omit from 'lodash/omit'
-import Emitter from 'element-ui/src/mixins/emitter'
+import Emitter from 'element-ui/lib/mixins/emitter'
 
 const EXPAND_ALL_EVENT_KEY = 'nested-draggable.expand-all'
 const COLLAPSE_ALL_EVENT_KEY = 'nested-draggable.collapse-all'

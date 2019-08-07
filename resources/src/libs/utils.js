@@ -356,66 +356,60 @@ export function getUrl(path) {
  */
 export function showLoginDialog() {
   let vm
-  vm = new GlobalDialog({
-    router,
-    store,
-    propsData: {
-      title: '登录',
-      width: '350px',
-      customClass: 'login-dialog',
-      closeOnClickModal: false,
-      on: {
-        opened() {
-          vm.$message.error('登录已失效，请重新登录')
-        },
-      },
-      content(h) {
-        return h('login-form', {
-          nativeOn: {
-            keydown: (e) => {
-              if (e.key === 'Enter') {
-                vm.$refs.submit.onAction()
-              }
-            },
-          },
-          ref: 'form',
-        })
-      },
-      footer: (h) => {
-        return h('div', [
-          // 直接关闭弹框
-          h('el-button', {
-            on: {
-              click() {
-                vm.visible = false
-              },
-            },
-          }, '关闭'),
-          // 前端退出登录
-          h('el-button', {
-            on: {
-              click() {
-                vm.$store.dispatch('frontendLogout')
-              },
-            },
-          }, '退出'),
-          // 登录
-          h('loading-action', {
-            ref: 'submit',
-            props: {
-              type: 'primary',
-              action: async () => {
-                await vm.$refs.form.onSubmit()
-                vm.visible = false
-              },
-            },
-          }, '登录'),
-        ])
+  vm = GlobalDialog.new({
+    title: '登录',
+    width: '350px',
+    customClass: 'login-dialog',
+    closeOnClickModal: false,
+    on: {
+      opened() {
+        vm.$message.error('登录已失效，请重新登录')
       },
     },
+    content(h) {
+      return h('login-form', {
+        nativeOn: {
+          keydown: (e) => {
+            if (e.key === 'Enter') {
+              vm.$refs.submit.onAction()
+            }
+          },
+        },
+        ref: 'form',
+      })
+    },
+    footer: (h) => {
+      return h('div', [
+        // 直接关闭弹框
+        h('el-button', {
+          on: {
+            click() {
+              vm.visible = false
+            },
+          },
+        }, '关闭'),
+        // 前端退出登录
+        h('el-button', {
+          on: {
+            click() {
+              vm.$store.dispatch('frontendLogout')
+            },
+          },
+        }, '退出'),
+        // 登录
+        h('loading-action', {
+          ref: 'submit',
+          props: {
+            type: 'primary',
+            action: async () => {
+              await vm.$refs.form.onSubmit()
+              vm.visible = false
+            },
+          },
+        }, '登录'),
+      ])
+    },
   })
-
-  document.body.appendChild(vm.$mount().$el)
 }
 
 /**

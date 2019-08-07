@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import { Dialog } from 'element-ui'
+import store from '@/store'
+import router from '@/router'
 
-export default Vue.extend({
+const GlobalDialog = Vue.extend({
   name: 'GlobalDialog',
   data() {
     return {
@@ -13,6 +15,7 @@ export default Vue.extend({
     content: [String, Function],
     footer: Function,
     on: Object,
+    directives: Array,
   },
   mounted() {
     this.visible = true
@@ -48,7 +51,28 @@ export default Vue.extend({
         closed: this.clean,
         'update:visible': (val) => (this.visible = val),
       },
+      directives: this.directives,
       ref: 'globalDialog',
     }, [content, footer])
   },
 })
+
+/**
+ * 实例化组件
+ *
+ * @param propsData
+ * @returns {*}
+ */
+GlobalDialog.new = (propsData) => {
+  const vm = new GlobalDialog({
+    store,
+    router,
+    propsData,
+  })
+
+  document.body.appendChild(vm.$mount().$el)
+
+  return vm
+}
+
+export default GlobalDialog

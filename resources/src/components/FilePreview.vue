@@ -31,6 +31,8 @@
 import { isImage } from '@/libs/validates'
 import { mapState } from 'vuex'
 import { getUrl } from '@/libs/utils'
+import GlobalDialog from '@c/GlobalDialog'
+import _debounce from 'lodash/debounce'
 
 export default {
   name: 'FilePreview',
@@ -40,6 +42,9 @@ export default {
         path: '',
         url: '',
       },
+
+      width: 0,
+      height: 0,
     }
   },
   props: {
@@ -88,36 +93,47 @@ export default {
         return
       }
 
+      this.setImgSize()
+
+      let vm
+      vm = GlobalDialog.new({
+        customClass: 'image-preview-dialog',
+        directives: [
+          {
+            name: 'resize',
+            value: this.setImgSize,
+          },
+        ],
+        content: (h) => {
+          return h('img', {
+            domProps: {
+              src: this.formattedFile.url,
+              width: this.width,
+              height: this.height,
+            },
+          })
+        },
+      })
+      vm.$el.classList.add('image-preview-dialog-wrapper')
+    },
+    setImgSize() {
       const maxWidth = Math.min(1000, window.innerWidth * 0.9)
       const maxHeight = window.innerHeight * 0.9
 
       const imgEl = this.$el.querySelector('.img')
-      let width = imgEl.naturalWidth || 1
-      let height = imgEl.naturalHeight || 1
-      const ratio = width / height
+      this.width = imgEl.naturalWidth || 1
+      this.height = imgEl.naturalHeight || 1
+      const ratio = this.width / this.height
 
-      if (width > maxWidth) {
-        width = maxWidth
-        height = width / ratio
+      if (this.width > maxWidth) {
+        this.width = maxWidth
+        this.height = this.width / ratio
       }
 
-      if (height > maxHeight) {
-        height = maxHeight
-        width = height * ratio
+      if (this.height > maxHeight) {
+        this.height = maxHeight
+        this.width = this.height * ratio
       }
-
-      this.$msgbox({
-        message: this.$createElement('img', {
-          domProps: {
-            src: this.formattedFile.url,
-            width,
-            height,
-          },
-        }),
-        showConfirmButton: false,
-        callback: () => {}, // 避免取消的时候，控制台显示一个 reject 错误
-        customClass: `image-preview-dialog${this.miniWidth ? ' mini-width' : ''}`,
-      })
     },
   },
   watch: {
@@ -180,7 +196,7 @@ export default {
   left: 0;
   top: 0;
   opacity: 0;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.6);
   transition: all .3s;
 
   i {
@@ -195,22 +211,31 @@ export default {
 </style>
 
 <style lang="scss">
+@import '~element-ui/packages/theme-chalk/src/common/var';
+
+.image-preview-dialog-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .image-preview-dialog {
-  width: auto;
-  height: auto;
-  padding: 0;
-  border: none;
+  margin: 0 !important;
+  display: inline-block;
+  width: auto !important;
+  border-radius: $--border-radius-base;
 
-  .el-message-box__content {
-    padding: 0;
-  }
-
-  .el-message-box__btns {
+  .el-dialog__header {
     display: none;
   }
 
-  .el-message-box__message {
+  .el-dialog__body {
+    padding: 0;
     font-size: 0;
+  }
+
+  img {
+    border-radius: $--border-radius-base;
   }
 }
 </style>
