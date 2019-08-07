@@ -196,7 +196,7 @@ export default {
   left: 0;
   top: 0;
   opacity: 0;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.6);
   transition: all .3s;
 
   i {
