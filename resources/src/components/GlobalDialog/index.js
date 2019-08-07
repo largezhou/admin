@@ -15,6 +15,7 @@ const GlobalDialog = Vue.extend({
     content: [String, Function],
     footer: Function,
     on: Object,
+    directives: Array,
   },
   mounted() {
     this.visible = true
@@ -50,6 +51,7 @@ const GlobalDialog = Vue.extend({
         closed: this.clean,
         'update:visible': (val) => (this.visible = val),
       },
+      directives: this.directives,
       ref: 'globalDialog',
     }, [content, footer])
   },
