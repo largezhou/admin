@@ -4,13 +4,13 @@
     <el-menu
       ref="menu"
       :default-active="activeName"
-      :default-openeds="openedMenus"
       class="side-menu"
       :class="{ 'mini-width': miniWidth }"
       background-color="#304156"
       text-color="#bfcbd9"
       :collapse="collapse"
       @select="onSelect"
+      unique-opened
     >
       <side-menu-title class="px-2 pt-2" :collapse="collapse"/>
       <div class="pa-2">
@@ -164,38 +164,6 @@ export default {
     },
   },
   watch: {
-    $route: {
-      handler(newVal) {
-        // 如果直接用 matched 中的作为默认展开的菜单，
-        // 在路由切换时，其他打开的菜单全部会关掉，
-        // 所以手动处理一下
-        const t = new Set(this.openedMenus)
-        if (this.matchedMenu) {
-          this.matchedMenusChain.slice(1).forEach((i) => {
-            t.add(makeRouteName(i.id))
-          })
-        } else {
-          newVal.matched.slice(0, -1).forEach(i => {
-            i.name && t.add(i.name)
-          })
-        }
-
-        // this.openedMenus = [...t]
-        // 直接上面这样，在首次进入页面时，如果手动展开了一个菜单
-        // openedMenus 不会有改变，所以，，，没什么是一个 nextTick 解决不了的？
-        this.$nextTick(() => {
-          this.openedMenus = [...t]
-        })
-      },
-      immediate: true,
-    },
-    collapse(newVal) {
-      // 菜单从折叠状态展开时，如果没有激活的菜单，
-      // 无法根据 default-opened 自动展开菜单，所以手动处理一下
-      if (!newVal) {
-        this.openedMenus = [...this.openedMenus]
-      }
-    },
     matchedMenusChain: {
       handler(newVal) {
         this.$store.commit('SET_MATCHED_MENUS_CHAIN', newVal)
