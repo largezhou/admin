@@ -126,6 +126,9 @@ router.afterEach(() => {
     const { matchedMenu, appName } = store.getters
     const title = matchedMenu ? matchedMenu.title : _get(router, 'currentRoute.meta.title')
     document.title = `${title ? title + ' - ' : ''} ${appName}`
+
+    // 滚动到顶部
+    document.querySelector('#main').scrollTo({ left: 0, top: 0 })
   })
 })
 
