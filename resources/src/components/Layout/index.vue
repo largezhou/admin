@@ -5,7 +5,7 @@
     </el-aside>
     <el-container direction="vertical">
       <navbar/>
-      <el-main>
+      <el-main id="main">
         <div v-if="miniWidth" class="my-2">
           <breadcrumb/>
         </div>
