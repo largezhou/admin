@@ -30,7 +30,6 @@
           <file-picker
             v-model="files"
             ext="jpg,gif,png,jpeg"
-            value-fields="path,url"
             multiple
             max="4"
           />
@@ -117,7 +116,7 @@ export default {
         password_confirmation: '',
       })
 
-      this.files.length && alert('相册：\n' + this.files.map((i) => i.url).join('\n'))
+      this.files.length && alert('相册：\n' + this.files.join('\n'))
     },
   },
 }
