@@ -9,13 +9,7 @@
     />
     <el-button-group class="category-actions mb-2" :class="{ 'w-100': miniWidth }">
       <loading-action size="mini" :action="getCategories">刷新</loading-action>
-      <el-button
-        :disabled="currentId === 0"
-        size="mini"
-        @click="onOpenDialog(false)"
-      >
-        添加
-      </el-button>
+      <el-button size="mini" @click="onOpenDialog(false)">添加</el-button>
       <el-button
         :disabled="currentId <= 0"
         size="mini"
@@ -63,16 +57,34 @@
       @keydown.enter.native="$refs.saveConfirm.onAction"
       append-to-body
     >
-      <el-input
-        autofocus
-        v-model="inputName"
-        autocomplete="off"
-        placeholder="请输入分类名称"
-      />
+      <el-form :model="form" label-position="top">
+        <el-form-item :error="errors.parent_id" label="父级">
+          <el-select
+            v-model="form.parent_id"
+            filterable
+            clearable
+          >
+            <el-option
+              v-for="i of cateOptions"
+              :key="i.id"
+              :label="i.title"
+              :value="i.id"
+            >
+              <span>{{ i.text }}</span>
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item :error="errors.name" class="mb-0" label="名称">
+          <el-input
+            v-model="form.name"
+            autocomplete="off"
+            autofocus
+          />
+        </el-form-item>
+      </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialog = false">取消</el-button>
         <loading-action
-          :disabled="!inputName"
           ref="saveConfirm"
           type="primary"
           :action="onSave"
@@ -94,7 +106,7 @@ import {
 import _get from 'lodash/get'
 import PopConfirm from '@c/PopConfirm'
 import {
-  getMessage,
+  getMessage, nestedToSelectOptions,
 } from '@/libs/utils'
 
 export default {
@@ -116,9 +128,13 @@ export default {
       current: null,
 
       editMode: false, // 编辑或者添加时，用的同一个弹框
-      inputName: '',
-      parentId: 0, // 添加分类时，父级 id 快照
       dialog: false,
+
+      form: {
+        parent_id: 0,
+        name: '',
+      },
+      errors: {},
     }
   },
   computed: {
@@ -129,17 +145,13 @@ export default {
       return this.$store.state.miniWidth
     },
     canSave() {
-      const id = this.currentId
-      // 所有 和 无分类 不能编辑
-      if (this.editMode && id <= 0) {
-        return false
-      }
-      // 无分类 不能添加子分类
-      if (!this.editMode && id === 0) {
-        return false
-      }
-
-      return true
+      // 添加 或者 编辑时，ID 大于 0
+      return !this.editMode || this.currentId > 0
+    },
+    cateOptions() {
+      return nestedToSelectOptions(this.categories.slice(2), {
+        title: 'name',
+      })
     },
   },
   created() {
@@ -183,8 +195,12 @@ export default {
         return
       }
 
-      this.inputName = editMode ? this.current.name : ''
-      this.parentId = this.currentId // 快照
+      this.form = {
+        parent_id: editMode
+          ? this.current.parent_id
+          : (this.currentId < 0) ? 0 : this.currentId,
+        name: editMode ? this.current.name : '',
+      }
 
       this.dialog = true
     },
@@ -239,38 +255,44 @@ export default {
         id = target.parent_id
       }
 
-      this.updateCategory(source, {
-        parent_id: id,
-      })
+      this.updateCategory(source, { parent_id: id }, true)
     },
-    async updateCategory(category, data) {
+    async updateCategory(category, data, showValidationMsg = true) {
       const res = await updateCategory(category.id, data)
-        .config({ showValidationMsg: true })
-      category.name = res.data.name
+        .config({
+          showValidationMsg,
+          validationForm: showValidationMsg ? null : this,
+        })
       this.$message.success(getMessage('updated'))
+
+      category.name = res.data.name
+      category.parent_id = res.data.parent_id
     },
     async onSave() {
-      if (!this.canSave || !this.inputName) {
+      if (!this.canSave) {
         return
       }
 
+      const tree = this.$refs.tree
+      const newParentId = this.form.parent_id
+
+      this.errors = {}
       if (this.editMode) {
-        await this.updateCategory(this.current, {
-          name: this.inputName,
-        })
+        const oldParentId = this.current.parent_id
+        await this.updateCategory(this.current, this.form, false)
+        // 如果编辑后，父级分类改了，则要移动分类
+        if (oldParentId !== newParentId) {
+          tree.remove(this.current)
+          tree.append(this.current, newParentId)
+        }
       } else {
-        let parentId = this.parentId
-        // -1 为所有分类，其下级为 一级 分类
-        parentId = parentId === -1 ? 0 : parentId
-        const { data } = await storeCategory({
-          parent_id: parentId,
-          name: this.inputName,
-        }).config({ showValidationMsg: true })
+        const { data } = await storeCategory(this.form)
+          .config({ validationForm: this })
 
         // 手动先加一个 children 字段，不然后面给该节点添加子节点时，
         // el-tree 组件自动加的 children 属性，没有响应式
         data.children = []
-        this.$refs.tree.append(data, parentId)
+        tree.append(data, newParentId)
 
         this.$message.success(getMessage('created'))
       }
@@ -294,6 +316,15 @@ export default {
         this.$emit('categories-change', newVal.slice(2))
       },
       deep: true,
+    },
+    dialog(newVal) {
+      if (!newVal) {
+        this.errors = {}
+        this.form = {
+          parent_id: 0,
+          name: '',
+        }
+      }
     },
   },
 }
