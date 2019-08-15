@@ -105,29 +105,45 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
 
     public function testUpdate()
     {
-        $id1 = factory(SystemMediaCategory::class)->create(['name' => 'level 0-1'])->id;
-        $id2 = factory(SystemMediaCategory::class)->create(['name' => 'level 0-2'])->id;
+        $id1 = factory(SystemMediaCategory::class)->create(['name' => '分类'])->id;
+        $id2 = factory(SystemMediaCategory::class)
+            ->create([
+                'name' => '分类', // 不同父级分类下的同名分类
+                'parent_id' => $id1,
+            ])->id;
+        $id3 = factory(SystemMediaCategory::class)
+            ->create([
+                'name' => '又一个分类',
+                'parent_id' => $id1,
+            ])->id;
 
         // name 同级 unique
-        $res = $this->updateResource($id1, [
-            'name' => 'level 0-2',
+        $res = $this->updateResource($id2, [
+            'name' => '又一个分类',
         ]);
         $res->assertJsonValidationErrors(['name']);
 
-        $res = $this->updateResource($id1, [
-            'parent_id' => $id2,
-            'name' => 'level 0-2',
+        // 只修改父级时，判断 name 的 unique
+        $res = $this->updateResource($id2, [
+            'parent_id' => 0,
         ]);
-        $res->assertStatus(201);
+        $res->assertStatus(422)
+            ->assertJsonValidationErrors(['name']);
 
-        $res = $this->updateResource($id1);
+        $res = $this->updateResource($id2, [
+            'parent_id' => $id3,
+            'name' => '修改分类和父级',
+        ]);
         $res->assertStatus(201);
 
         $this->assertDatabaseHas('system_media_categories', [
-            'id' => $id1,
-            'parent_id' => $id2,
-            'name' => 'level 0-2',
+            'id' => $id2,
+            'parent_id' => $id3,
+            'name' => '修改分类和父级',
         ]);
+
+        $res = $this->updateResource($id2);
+        $res->assertStatus(201);
     }
 
     public function testEdit()

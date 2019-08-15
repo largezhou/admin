@@ -246,7 +246,7 @@ export default {
 
       return true
     },
-    onNodeDrop({ data: source }, { data: target }, type) {
+    async onNodeDrop({ data: source }, { data: target }, type) {
       // 目标分类 id
       let id = 0
       if (type === 'inner') { // 如果是放到目标内部，则 parent_id 为目标 id
@@ -255,7 +255,14 @@ export default {
         id = target.parent_id
       }
 
-      this.updateCategory(source, { parent_id: id }, true)
+      try {
+        await this.updateCategory(source, { parent_id: id }, true)
+      } catch (e) {
+        // 如果更新失败，则要恢复层次结构
+        const tree = this.$refs.tree
+        tree.remove(source)
+        tree.append(source, source.parent_id)
+      }
     },
     async updateCategory(category, data, showValidationMsg = true) {
       const res = await updateCategory(category.id, data)
