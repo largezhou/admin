@@ -32,7 +32,12 @@ class SystemMediaCategoryRequest extends FormRequest
         ];
 
         if ($this->isMethod('put')) {
-            $rules = Arr::only($rules, $this->keys());
+            $keys = $this->keys();
+            if ($this->onlyUpdateParentId()) {
+                $keys[] = 'name';
+            }
+
+            $rules = Arr::only($rules, $keys);
         }
 
         if ($this->input('parent_id') == 0) {
@@ -55,5 +60,22 @@ class SystemMediaCategoryRequest extends FormRequest
         return [
             'name.unique' => '同级下 :attribute 已经存在',
         ];
+    }
+
+    protected function onlyUpdateParentId()
+    {
+        return $this->isMethod('put') &&
+            ($this->has('parent_id') && !$this->has('name'));
+    }
+
+    protected function validationData()
+    {
+        $data = parent::validationData();
+
+        if ($this->onlyUpdateParentId()) {
+            $data['name'] = $this->route('system_media_category')->name;
+        }
+
+        return $data;
     }
 }

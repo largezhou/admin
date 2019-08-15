@@ -18,8 +18,10 @@ class SystemMediaCategoryController extends AdminBaseController
         return $this->created($cate);
     }
 
-    public function update(SystemMediaCategoryRequest $request, SystemMediaCategory $systemMediaCategory)
-    {
+    public function update(
+        SystemMediaCategoryRequest $request,
+        SystemMediaCategory $systemMediaCategory
+    ) {
         $inputs = $request->validated();
         $systemMediaCategory->update($inputs);
         return $this->created($systemMediaCategory);
