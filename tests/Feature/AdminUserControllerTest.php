@@ -317,4 +317,17 @@ class AdminUserControllerTest extends AdminTestCase
         $res->assertStatus(200)
             ->assertJsonFragment(['roles' => $roleIds]);
     }
+
+    public function testCreate()
+    {
+        factory(AdminRole::class)->create(['name' => 'role']);
+        factory(AdminPermission::class)->create(['slug' => 'permission']);
+
+        $res = $this->createResource();
+        $res->assertStatus(200)
+            ->assertJsonFragment([
+                'name' => 'role',
+                'slug' => 'permission',
+            ]);
+    }
 }
