@@ -114,7 +114,7 @@
 </template>
 <script>
 import { nestedToSelectOptions, toInt } from '@/libs/utils'
-import { editVueRouter, getVueRouters, storeVueRouter, updateVueRouter } from '@/api/vue-routers'
+import { createVueRouter, editVueRouter, getVueRouters, storeVueRouter, updateVueRouter } from '@/api/vue-routers'
 import LzForm from '@c/LzForm'
 import { getAdminRoles } from '@/api/admin-roles'
 import { getAdminPerms } from '@/api/admin-perms'
@@ -183,25 +183,18 @@ export default {
       }
     },
     async getData() {
-      const [
-        { data: vueRouters },
-        { data: roles },
-        { data: permissions },
-      ] = await Promise.all([
-        getVueRouters({ except: this.resourceId }),
-        getAdminRoles({ all: 1 }),
-        getAdminPerms({ all: 1 }),
-      ])
-
-      this.vueRouters = vueRouters
-      !this.editMode && (this.form.parent_id = this.queryParentId())
-      this.roles = roles
-      this.permissions = permissions
-
+      let data
       if (this.editMode) {
-        const { data } = await editVueRouter(this.resourceId)
-        this.fillForm(data)
+        ({ data } = await editVueRouter(this.resourceId))
+        this.fillForm(data.vue_router)
+      } else {
+        ({ data } = await createVueRouter())
       }
+
+      this.vueRouters = data.vue_routers
+      !this.editMode && (this.form.parent_id = this.queryParentId())
+      this.roles = data.roles
+      this.permissions = data.permissions
     },
     initPaths() {
       this.paths = Object.keys(pages).sort().map((i) => ({ value: i }))

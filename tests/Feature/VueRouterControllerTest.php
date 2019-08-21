@@ -214,4 +214,19 @@ class VueRouterControllerTest extends AdminTestCase
             'order' => 2,
         ]);
     }
+
+    public function testCreate()
+    {
+        factory(VueRouter::class)->create(['title' => 'title'])->id;
+        factory(AdminPermission::class)->create(['slug' => 'permission'])->id;
+        factory(AdminRole::class)->create(['name' => 'role'])->id;
+
+        $res = $this->createResource();
+        $res->assertStatus(200)
+            ->assertJsonFragment([
+                'title' => 'title',
+                'slug' => 'permission',
+                'name' => 'role',
+            ]);
+    }
 }

@@ -136,14 +136,13 @@ trait RequestActions
     /**
      * 请求创建一个资源
      *
-     * @param int    $id
      * @param string $name
      *
      * @return TestResponse
      */
-    protected function createResource(int $id, string $name = null): TestResponse
+    protected function createResource(string $name = null): TestResponse
     {
         $name = $name ?: $this->resourceName;
-        return $this->get($this->route("{$name}.create", [$this->varName($name) => $id]));
+        return $this->get($this->route("{$name}.create"));
     }
 }

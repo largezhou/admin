@@ -25,3 +25,7 @@ export function editVueRouter(id) {
 export function updateVueRouters(data) {
   return axios.put('vue-routers', data)
 }
+
+export function createVueRouter() {
+  return axios.get('vue-routers/create')
+}

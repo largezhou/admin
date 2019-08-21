@@ -15,7 +15,7 @@ Route::middleware([
     Route::resource('admin-users', 'AdminUserController');
 
     Route::put('vue-routers', 'VueRouterController@batchUpdate')->name('vue-routers.batch.update');
-    Route::resource('vue-routers', 'VueRouterController')->except(['show', 'create']);
+    Route::resource('vue-routers', 'VueRouterController')->except(['show']);
 
     Route::resource('admin-permissions', 'AdminPermissionController')->except(['show']);
     Route::resource('admin-roles', 'AdminRoleController')->except(['show']);
