@@ -371,4 +371,16 @@ class ConfigControllerTest extends AdminTestCase
                 'field' => 'uploads/test/logo.png',
             ]);
     }
+
+    public function testCreate()
+    {
+        factory(ConfigCategory::class)->create(['slug' => 'slug']);
+
+        $res = $this->createResource();
+        $res->assertStatus(200)
+            ->assertJsonFragment([
+                'slug' => 'slug',
+                'types_map' => Config::$typeMap,
+            ]);
+    }
 }

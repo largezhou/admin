@@ -23,7 +23,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column prop="slug" label="名称" min-width="150">
+      <el-table-column prop="slug" label="标识" min-width="150">
         <template #default="{ row }">
           <input-edit
             :id="row.id"
