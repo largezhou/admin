@@ -107,18 +107,18 @@ export default {
   },
   methods: {
     async getData() {
-      const [
-        { data: typeMap },
-        { data: cates },
-      ] = await Promise.all([
-        createConfig(),
-        getConfigCategories({ all: 1 }),
-      ])
+      let data
 
-      this.cates = cates
+      if (this.editMode) {
+        ({ data } = await editConfig(this.resourceId))
+      } else {
+        ({ data } = await createConfig())
+      }
+
+      this.cates = data.categories
 
       const types = []
-      _forIn(typeMap, (value, key) => {
+      _forIn(data.types_map, (value, key) => {
         types.push({
           value: key,
           label: value,
@@ -128,12 +128,9 @@ export default {
       // 表单中类型，默认选择第一个
       this.form.type = types[0].value
 
-      if (this.editMode) {
-        const { data: form } = await editConfig(this.resourceId)
-        this.fillForm(form)
-      } else {
-        this.form.category_id = toInt(this.$route.query.category_id, '')
-      }
+      this.editMode
+        ? this.fillForm(data.config)
+        : this.form.category_id = toInt(this.$route.query.category_id, '')
     },
     async onSubmit() {
       if (this.editMode) {

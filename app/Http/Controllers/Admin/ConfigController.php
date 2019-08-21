@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateConfigValuesRequest;
 use App\Http\Requests\ConfigRequest;
 use App\Http\Resources\ConfigResource;
 use App\Models\Config;
+use App\Models\ConfigCategory;
 use App\Models\VueRouter;
 use Illuminate\Http\Request;
 
@@ -24,9 +25,16 @@ class ConfigController extends Controller
         return $this->noContent();
     }
 
-    public function edit(Config $config)
+    public function edit(Request $request, Config $config)
     {
-        return $this->ok(ConfigResource::make($config));
+        $formData = $this->formData();
+        $configData = ConfigResource::make($config)
+            ->toResponse($request)
+            ->original;
+
+        return $this->ok(array_merge($formData, [
+            'config' => $configData,
+        ]));
     }
 
     public function update(ConfigRequest $request, Config $config)
@@ -47,9 +55,24 @@ class ConfigController extends Controller
         return $this->ok(ConfigResource::collection($configs));
     }
 
+    /**
+     * 添加和编辑表单所需数据
+     *
+     * @return array
+     */
+    protected function formData()
+    {
+        return [
+            'types_map' => Config::$typeMap,
+            'categories' => ConfigCategory::query()
+                ->orderByDesc('id')
+                ->get(),
+        ];
+    }
+
     public function create()
     {
-        return $this->ok(Config::$typeMap);
+        return $this->ok($this->formData());
     }
 
     public function store(ConfigRequest $request)
