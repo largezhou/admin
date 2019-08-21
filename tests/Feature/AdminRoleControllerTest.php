@@ -96,7 +96,7 @@ class AdminRoleControllerTest extends AdminTestCase
 
         $res = $this->editResource($roleId);
         $res->assertStatus(200)
-            ->assertJson(AdminRole::first()->toArray())
+            ->assertJsonFragment(AdminRole::first()->toArray())
             ->assertJsonCount(1, 'permissions');
     }
 
@@ -184,5 +184,16 @@ class AdminRoleControllerTest extends AdminTestCase
         $res->assertJsonCount(1, 'data');
         $res = $this->getResources(['permission_name' => 'nothing']);
         $res->assertJsonCount(0, 'data');
+    }
+
+    public function testCreate()
+    {
+        factory(AdminPermission::class)->create(['slug' => 'slug']);
+
+        $res = $this->createResource();
+        $res->assertStatus(200)
+            ->assertJsonFragment([
+                'slug' => 'slug',
+            ]);
     }
 }

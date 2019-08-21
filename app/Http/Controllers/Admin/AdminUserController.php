@@ -6,6 +6,8 @@ use App\Filters\AdminUserFilter;
 use App\Http\Requests\AdminUserProfileRequest;
 use App\Http\Requests\AdminUserRequest;
 use App\Http\Resources\AdminUserResource;
+use App\Models\AdminPermission;
+use App\Models\AdminRole;
 use App\Models\AdminUser;
 use App\Utils\Admin;
 use Illuminate\Http\Request;
@@ -88,10 +90,39 @@ class AdminUserController extends AdminBaseController
         return $this->noContent();
     }
 
-    public function edit(AdminUser $adminUser)
+    public function edit(Request $request, AdminUser $adminUser)
     {
-        $adminUser->load(['roles', 'permissions']);
+        $formData = $this->formData();
 
-        return $this->ok(AdminUserResource::make($adminUser)->onlyRolePermissionIds());
+        $adminUser->load(['roles', 'permissions']);
+        $adminUserData = AdminUserResource::make($adminUser)
+            ->onlyRolePermissionIds()
+            ->toArray($request);
+
+        return $this->ok(array_merge($formData, [
+            'admin_user' => $adminUserData,
+        ]));
+    }
+
+    /**
+     * 返回创建和编辑表单所需的选项数据
+     *
+     * @return array
+     */
+    protected function formData()
+    {
+        $roles = AdminRole::query()
+            ->orderByDesc('id')
+            ->get();
+        $permissions = AdminPermission::query()
+            ->orderByDesc('id')
+            ->get();
+
+        return compact('roles', 'permissions');
+    }
+
+    public function create()
+    {
+        return $this->ok($this->formData());
     }
 }

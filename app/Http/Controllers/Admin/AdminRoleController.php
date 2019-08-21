@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Filters\AdminRoleFilter;
 use App\Http\Requests\AdminRoleRequest;
 use App\Http\Resources\AdminRoleResource;
+use App\Models\AdminPermission;
 use App\Models\AdminRole;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -23,10 +24,15 @@ class AdminRoleController extends Controller
         return $this->created(AdminRoleResource::make($role));
     }
 
-    public function edit(AdminRole $adminRole)
+    public function edit(Request $request, AdminRole $adminRole)
     {
         $adminRole->load(['permissions']);
-        return $this->ok(AdminRoleResource::make($adminRole));
+        $roleData = AdminRoleResource::make($adminRole)->toArray($request);
+
+        return $this->ok([
+            'role' => $roleData,
+            'permissions' => $this->formData()['permissions'],
+        ]);
     }
 
     public function update(AdminRoleRequest $request, AdminRole $adminRole)
@@ -54,5 +60,24 @@ class AdminRoleController extends Controller
         $roles = $request->get('all') ? $roles->get() : $roles->paginate();
 
         return $this->ok(AdminRoleResource::collection($roles));
+    }
+
+    /**
+     * 返回添加和编辑表单所需的选项数据
+     *
+     * @return array
+     */
+    protected function formData()
+    {
+        $permissions = AdminPermission::query()
+            ->orderByDesc('id')
+            ->get();
+
+        return compact('permissions');
+    }
+
+    public function create()
+    {
+        return $this->ok($this->formData());
     }
 }

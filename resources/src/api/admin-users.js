@@ -35,3 +35,7 @@ export function editUser() {
 export function updateUser(data) {
   return axios.put('user', data)
 }
+
+export function createAdminUser() {
+  return axios.get('admin-users/create')
+}

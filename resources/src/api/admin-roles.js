@@ -19,3 +19,7 @@ export function updateAdminRole(id, data) {
 export function editAdminRole(id) {
   return axios.get(`admin-roles/${id}/edit`)
 }
+
+export function createAdminRole() {
+  return axios.get('admin-roles/create')
+}
