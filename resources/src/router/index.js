@@ -128,7 +128,8 @@ router.afterEach(() => {
     document.title = `${title ? title + ' - ' : ''} ${appName}`
 
     // 滚动到顶部
-    document.querySelector('#main').scrollTo({ left: 0, top: 0 })
+    const main = document.querySelector('#main')
+    main && main.scrollTo({ left: 0, top: 0 })
   })
 })
 
