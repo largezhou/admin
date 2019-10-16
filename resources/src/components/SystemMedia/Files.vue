@@ -1,7 +1,6 @@
 <template>
   <div class="file-wrapper">
     <file-preview
-      class="file-preview"
       v-for="(item, i) of media"
       :class="{ selected: isSelected(item) }"
       :key="item.id"
@@ -78,16 +77,16 @@ export default {
 .file-wrapper {
   display: flex;
   flex-wrap: wrap;
-}
 
-.file-preview {
-  border: 3px solid $--color-info-light;
-  cursor: pointer;
-  border-radius: 0;
+  .file-preview {
+    border: 3px solid $--color-info-light;
+    cursor: pointer;
+    border-radius: 0;
 
-  &.selected {
-    border-color: $--color-primary;
-    border-style: dashed;
+    &.selected {
+      border-color: $--color-primary;
+      border-style: dashed;
+    }
   }
 }
 </style>
