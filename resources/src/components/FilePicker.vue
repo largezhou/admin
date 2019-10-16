@@ -7,16 +7,22 @@
         :key="i"
         :file="item"
       >
+        <i
+          class="el-icon-refresh replace"
+          title="替换"
+          @click.stop="onReplace(i)"
+        />
         <pop-confirm
           comp="i"
           class="el-icon-delete remove"
           notice="确认移除？"
+          title="移除"
           :confirm="() => remove(i)"
         />
       </file-preview>
 
       <div
-        v-show="canPick"
+        v-show="!isMax"
         class="picker file-item flex-box"
         @click="onPick"
       >
@@ -32,7 +38,7 @@
     >
       <system-media
         ref="media"
-        :default-multiple="multiple"
+        :default-multiple="mediaMultiple"
         :default-ext="ext"
       >
         <template #actions="media">
@@ -76,6 +82,7 @@ export default {
     return {
       dialog: false,
       formattedValue: null,
+      pickIndex: -1,
     }
   },
   props: {
@@ -125,8 +132,18 @@ export default {
       return this.multiple ? 'multi-file' : 'single-file'
     },
     canPick() {
-      return (this.multiple && this.value.length < this.max) ||
-        (!this.multiple && !this.value)
+      // 没有达到最大可选数，或者是替换文件的情况下，可以打开文件选择器
+      return !this.isMax || this.isReplace
+    },
+    isMax() {
+      return (this.multiple && this.value.length >= this.max) ||
+        (!this.multiple && this.value)
+    },
+    /**
+     * 是否是处于替换文件的情况
+     */
+    isReplace() {
+      return this.pickIndex !== -1
     },
     miniWidth() {
       return this.$store.state.miniWidth
@@ -138,6 +155,10 @@ export default {
 
       return Array.isArray(this.value) ? this.value : [this.value]
     },
+    mediaMultiple() {
+      // 替换的情况下，只能单选
+      return this.isReplace ? false : this.multiple
+    },
   },
   methods: {
     onPick() {
@@ -148,17 +169,20 @@ export default {
       this.dialog = true
     },
     onPickConfirm(selected) {
+      selected = selected.map(this.formatReturn)
       let value
       // 复制并格式化 selected 中的对象的值
       if (this.multiple) {
-        value = this.value
-          .concat(
-            selected
-              .slice(0, this.max - this.value.length)
-              .map(this.formatReturn),
-          )
+        if (this.isReplace) {
+          value = this.value
+          value[this.pickIndex] = selected[0]
+        } else {
+          value = this
+            .value
+            .concat(selected.slice(0, this.max - this.value.length))
+        }
       } else {
-        value = this.formatReturn(selected[0])
+        value = selected[0]
       }
 
       this.$emit('input', value)
@@ -192,6 +216,17 @@ export default {
         this.value.splice(index, 1)
       } else {
         this.$emit('input', null)
+      }
+    },
+    onReplace(index) {
+      this.pickIndex = index
+      this.onPick()
+    },
+  },
+  watch: {
+    dialog(newVal) {
+      if (!newVal) {
+        this.pickIndex = -1
       }
     },
   },
@@ -233,6 +268,10 @@ export default {
 
 .remove {
   color: $--color-danger;
+}
+
+.replace {
+  color: $--color-primary;
 }
 </style>
 

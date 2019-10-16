@@ -479,6 +479,9 @@ export default {
         this.categoriesDialog = false
       }
     },
+    defaultMultiple(newVal) {
+      this.multiple = newVal
+    },
   },
 }
 </script>
