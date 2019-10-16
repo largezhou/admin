@@ -17,11 +17,21 @@
     <div class="path" v-else :title="path">{{ path }}</div>
 
     <div class="actions flex-box">
-      <i
-        v-if="isImage || disableView"
-        class="el-icon-view view"
-        @click.stop="onPreview"
-      />
+      <template v-if="!disableView">
+        <i
+          v-if="isImage"
+          class="el-icon-view"
+          @click.stop="onPreview"
+          title="查看"
+        />
+        <a
+          v-else
+          class="el-icon-view"
+          :href="url"
+          target="_blank"
+          title="查看"
+        />
+      </template>
       <slot :file="formattedFile"/>
     </div>
   </div>
@@ -32,7 +42,6 @@ import { isImage } from '@/libs/validates'
 import { mapState } from 'vuex'
 import { getUrl } from '@/libs/utils'
 import GlobalDialog from '@c/GlobalDialog'
-import _debounce from 'lodash/debounce'
 
 export default {
   name: 'FilePreview',
@@ -199,12 +208,10 @@ export default {
   background: rgba(0, 0, 0, 0.6);
   transition: all .3s;
 
-  i {
+  > * {
     font-size: 24px;
     cursor: pointer;
-  }
-
-  .view {
+    text-decoration: none;
     color: $--color-primary;
   }
 }
