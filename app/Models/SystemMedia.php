@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class SystemMedia extends Model
 {
@@ -26,29 +27,22 @@ class SystemMedia extends Model
         DB::beginTransaction();
 
         $deleted = parent::delete();
+        if (!$deleted) {
+            throw new FileException('文件记录删除失败');
+        }
 
-        // 记录删除成功，且数据库中没有相同的文件记录，则要删除对应的文件
-        $needDeletedFile = $deleted && !$this->hasSameFile();
-
-        $fileDeleted = false;
-        if ($needDeletedFile) {
+        // 如果数据库中没有其他相同的文件，则删除物理文件
+        if (!$this->hasSameFile()) {
             $storage = Storage::disk('uploads');
-            // 文件不存在，或者删除成功
-            if (!$storage->exists($this->path) || $storage->delete($this->path)) {
-                $fileDeleted = true;
+            // 如果文件存在，并且删除失败，则抛错
+            if ($storage->exists($this->path) && !$storage->delete($this->path)) {
+                DB::rollBack();
+                throw new FileException('物理文件删除失败');
             }
         }
 
-        if (
-            ($needDeletedFile && $fileDeleted) || // 需要删除物理文件，且删除成功，则提交事务
-            (!$needDeletedFile && $deleted) // 或不需要物理删除，且当前记录删除成功
-        ) {
-            DB::commit();
-            return true;
-        } else { // 删除失败
-            DB::rollBack();
-            return false;
-        }
+        DB::commit();
+        return true;
     }
 
     /**
