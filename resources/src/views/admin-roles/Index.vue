@@ -5,10 +5,8 @@
     </template>
 
     <el-button-group class="mb-3">
-      <el-button @click="() => $refs.searchForm.toggleShow()">筛选</el-button>
+      <search-form :fields="search"/>
     </el-button-group>
-
-    <search-form ref="searchForm" :fields="search"/>
 
     <el-table :data="roles" resource="admin-roles">
       <el-table-column prop="id" label="ID" width="60"/>

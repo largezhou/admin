@@ -5,11 +5,9 @@
     </template>
 
     <el-button-group class="mb-3">
-      <el-button @click="() => $refs.searchForm.toggleShow()">筛选</el-button>
+      <search-form :fields="search"/>
       <el-button @click="createDialog = true">添加</el-button>
     </el-button-group>
-
-    <search-form ref="searchForm" :fields="search"/>
 
     <el-table :data="cates" resource="config-categories">
       <el-table-column prop="id" label="ID" width="60"/>
