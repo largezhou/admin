@@ -1,5 +1,5 @@
 import { FormItem } from 'element-ui'
-import { getPropByPath } from 'element-ui/src/utils/util'
+import { getPropByPath } from 'element-ui/lib/utils/util'
 
 FormItem.mounted = function () {
   if (this.prop) {
