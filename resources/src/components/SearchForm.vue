@@ -7,6 +7,15 @@ export default {
       show: false,
     }
   },
+  computed: {
+    anyQuery() {
+      return this.fields.some(i => {
+        if (this.$route.query[i.field]) {
+          return true
+        }
+      })
+    },
+  },
   props: {
     fields: Array,
     /**
@@ -66,9 +75,6 @@ export default {
         this.$set(this.form, key, val)
       })
     },
-    toggleShow() {
-      this.show = !this.show
-    },
   },
   watch: {
     $route: {
@@ -81,8 +87,12 @@ export default {
 
   render(h) {
     return (
-      <el-collapse-transition>
-        <div v-show={this.show}>
+      <el-button type={this.anyQuery ? 'primary' : ''} class="search-button">
+        <el-popover
+          placement="bottom-start"
+          trigger="click"
+          popper-class="search-form-popover"
+        >
           <el-form
             class="pb-3"
             inline
@@ -137,31 +147,36 @@ export default {
               <el-button vOn:click={this.onReset}>重置</el-button>
             </el-form-item>
           </el-form>
-        </div>
-      </el-collapse-transition>
+          <span class="trigger" slot="reference"/>
+        </el-popover>
+        筛选
+      </el-button>
     )
   },
 }
 </script>
 
 <style scoped lang="scss">
-.search-toggle /deep/ {
-  border: none;
-  margin-top: -20px;
-
-  .el-collapse-item__header {
-    color: #409eff;
-    font-size: 16px;
-    border: none;
-  }
-
-  .el-collapse-item__arrow {
-    display: none;
-  }
+.search-button {
+  position: relative;
 }
 
 .actions {
   display: block;
   margin-bottom: 0;
+}
+
+.trigger {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+</style>
+
+<style>
+.search-form-popover {
+  max-width: 90%;
 }
 </style>
