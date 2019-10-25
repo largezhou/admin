@@ -33,11 +33,16 @@
 
 ## 安装
 
-- `Laravel` 安装流程先走一套
+- `git clone git@github.com:largezhou/admin.git`
+- `cd admin`
+- `composer install`
+- `cp .env.example .env`
+- 修改 `.env` 文件中数据库连接配置
+- `php artisan key:generate`
 - `php artisan jwt:secret`
-- `php artisan admin:init` 初始化数据库的数据（超管，角色，权限和路由）
-- `yarn && yarn build` 推荐使用 `yarn` 哦
-- 其他环境配置，看看 `.env.example` 中的注释
+- `php artisan migrate`
+- `php artisan admin:init`
+- `yarn && yarn build`
 
 ## nginx 配置
 
