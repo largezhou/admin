@@ -12,7 +12,7 @@
     </el-form-item>
     <el-form-item>
       <loading-action
-        class="login-btn"
+        class="login-btn w-100"
         type="danger"
         plain
         :action="onResetSystem"
