@@ -314,13 +314,13 @@ class ConfigControllerTest extends AdminTestCase
         $category = factory(ConfigCategory::class)->create();
         factory(Config::class, 2)->create(['category_id' => $category->id]);
 
-        $res = $this->get(route('admin.configs.by_category_slug', [
+        $res = $this->get(route('admin.configs.by-category-slug', [
             'categorySlug' => $category->slug,
         ]));
         $res->assertStatus(200)
             ->assertJsonCount(2);
 
-        $res = $this->get(route('admin.configs.by_category_slug', [
+        $res = $this->get(route('admin.configs.by-category-slug', [
             'categorySlug' => 'not exists slug',
         ]));
         $res->assertStatus(200)
@@ -336,13 +336,13 @@ class ConfigControllerTest extends AdminTestCase
             'category_id' => $category->id,
         ]);
 
-        $res = $this->put(route('admin.configs.update_values'), [
+        $res = $this->put(route('admin.configs.update-values'), [
             'field' => null,
         ]);
         $res->assertStatus(422)
             ->assertJsonValidationErrors(['field']);
 
-        $res = $this->put(route('admin.configs.update_values'), [
+        $res = $this->put(route('admin.configs.update-values'), [
             'field' => 'new value',
         ]);
         $res->assertStatus(201);
@@ -363,7 +363,7 @@ class ConfigControllerTest extends AdminTestCase
             'value' => 'uploads/test/logo.png',
         ]);
 
-        $res = $this->get(route('admin.configs.values.by_category_slug', [
+        $res = $this->get(route('admin.configs.values.by-category-slug', [
             'categorySlug' => 'slug',
         ]));
         $res->assertStatus(200)

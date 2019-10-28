@@ -8,7 +8,7 @@ use App\Models\AdminUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class AdminTestCase extends TestCase
+abstract class AdminTestCase extends TestCase
 {
     protected $routePrefix = 'admin';
     /**
