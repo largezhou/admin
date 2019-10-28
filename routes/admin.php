@@ -27,11 +27,11 @@ Route::middleware([
         ->group(function () {
             Route::get('vue-routers', 'ConfigController@vueRouters')->name('vue-routers');
         });
-    Route::put('configs/values', 'ConfigController@updateValues')->name('configs.update_values');
+    Route::put('configs/values', 'ConfigController@updateValues')->name('configs.update-values');
     Route::resource('configs', 'ConfigController')->except(['show']);
-    Route::get('configs/{categorySlug}', 'ConfigController@getByCategorySlug')->name('configs.by_category_slug');
+    Route::get('configs/{categorySlug}', 'ConfigController@getByCategorySlug')->name('configs.by-category-slug');
     Route::get('configs/{categorySlug}/values', 'ConfigController@getValuesByCategorySlug')
-        ->name('configs.values.by_category_slug');
+        ->name('configs.values.by-category-slug');
 
     Route::resource('system-media-categories', 'SystemMediaCategoryController')->except(['show', 'create']);
     // 在指定分类下，上传文件
