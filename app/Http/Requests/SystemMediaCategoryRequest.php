@@ -68,7 +68,7 @@ class SystemMediaCategoryRequest extends FormRequest
             ($this->has('parent_id') && !$this->has('name'));
     }
 
-    protected function validationData()
+    public function validationData()
     {
         $data = parent::validationData();
 

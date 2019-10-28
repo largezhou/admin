@@ -8,6 +8,15 @@ use Illuminate\Support\Str;
 trait RequestActions
 {
     /**
+     * 特殊的 复数 => 单数
+     *
+     * @var array
+     */
+    protected $specialPluralSingularMap = [
+        'system-media' => 'system-media',
+    ];
+
+    /**
      * 返回路由名前缀
      *
      * @return string
@@ -44,7 +53,13 @@ trait RequestActions
      */
     protected function varName(string $name): string
     {
-        return str_replace('-', '_', Str::singular($name));
+        if ($t = $this->specialPluralSingularMap[$name] ?? null) {
+            $name = $t;
+        } else {
+            $name = Str::singular($name);
+        }
+
+        return str_replace('-', '_', $name);
     }
 
     /**

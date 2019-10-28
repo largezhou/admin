@@ -34,7 +34,7 @@ class SystemMediaControllerTest extends AdminTestCase
                 Controller::UPLOAD_FOLDER_FIELD => 'tests',
             ],
             'system-media-categories.system-media',
-            ['id' => $categoryId]
+            ['system_media_category' => $categoryId]
         );
         $mediaId1 = $this->getLastInsertId('system_media');
 

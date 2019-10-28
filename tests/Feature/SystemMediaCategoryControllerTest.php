@@ -236,7 +236,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
         return $this->storeResource(
             $data,
             $this->resourceName.'.system-media',
-            ['id' => $cateId]
+            ['system_media_category' => $cateId]
         );
     }
 
@@ -305,7 +305,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
 
         // ext in 筛选
         $res = $this->systemMediaIndex([
-            'id' => $categoryId1,
+            'system_media_category' => $categoryId1,
             'ext' => ['jpg'],
         ]);
         $res->assertStatus(200)
@@ -313,7 +313,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
             ->assertJsonMissing(['ext' => 'gif']);
 
         $res = $this->systemMediaIndex([
-            'id' => $categoryId1,
+            'system_media_category' => $categoryId1,
             'ext' => 'jpg,gif',
         ]);
         $res->assertStatus(200)
@@ -321,7 +321,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
 
         // filename like
         $res = $this->systemMediaIndex([
-            'id' => $categoryId1,
+            'system_media_category' => $categoryId1,
             'filename' => 'ny',
         ]);
         $res->assertStatus(200)
