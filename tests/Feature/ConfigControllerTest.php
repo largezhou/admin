@@ -315,13 +315,13 @@ class ConfigControllerTest extends AdminTestCase
         factory(Config::class, 2)->create(['category_id' => $category->id]);
 
         $res = $this->get(route('admin.configs.by-category-slug', [
-            'categorySlug' => $category->slug,
+            'category_slug' => $category->slug,
         ]));
         $res->assertStatus(200)
             ->assertJsonCount(2);
 
         $res = $this->get(route('admin.configs.by-category-slug', [
-            'categorySlug' => 'not exists slug',
+            'category_slug' => 'not exists slug',
         ]));
         $res->assertStatus(200)
             ->assertJsonCount(0);
@@ -364,7 +364,7 @@ class ConfigControllerTest extends AdminTestCase
         ]);
 
         $res = $this->get(route('admin.configs.values.by-category-slug', [
-            'categorySlug' => 'slug',
+            'category_slug' => 'slug',
         ]));
         $res->assertStatus(200)
             ->assertJson([

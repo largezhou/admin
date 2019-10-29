@@ -22,15 +22,11 @@ Route::middleware([
 
     Route::resource('config-categories', 'ConfigCategoryController')->except(['show', 'create']);
 
-    Route::prefix('configs')
-        ->as('configs.')
-        ->group(function () {
-            Route::get('vue-routers', 'ConfigController@vueRouters')->name('vue-routers');
-        });
+    Route::get('configs/vue-routers', 'ConfigController@vueRouters')->name('configs.vue-routers');
     Route::put('configs/values', 'ConfigController@updateValues')->name('configs.update-values');
     Route::resource('configs', 'ConfigController')->except(['show']);
-    Route::get('configs/{categorySlug}', 'ConfigController@getByCategorySlug')->name('configs.by-category-slug');
-    Route::get('configs/{categorySlug}/values', 'ConfigController@getValuesByCategorySlug')
+    Route::get('configs/{category_slug}', 'ConfigController@getByCategorySlug')->name('configs.by-category-slug');
+    Route::get('configs/{category_slug}/values', 'ConfigController@getValuesByCategorySlug')
         ->name('configs.values.by-category-slug');
 
     Route::resource('system-media-categories', 'SystemMediaCategoryController')->except(['show', 'create']);
