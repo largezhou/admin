@@ -44,7 +44,7 @@ export default [
     component: () => import('@v/Login'),
   },
   {
-    path: randomChars(),
+    path: '/' + randomChars(),
     component: Layout,
     children: [
       {
