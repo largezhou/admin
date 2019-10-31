@@ -23,8 +23,6 @@ class ConfigCategoryControllerTest extends AdminTestCase
 
     public function testStoreValidation()
     {
-        // slug 和 name 验证规则一样，验证一个即可
-
         // name required
         $res = $this->storeResource([
             'name' => '',
@@ -53,6 +51,14 @@ class ConfigCategoryControllerTest extends AdminTestCase
         ]);
         $res->assertStatus(422)
             ->assertJsonValidationErrors(['name']);
+
+        // slug 和 name 验证规则只有这一个不一样，其他可以不验证了
+        // slug not_in
+        $res = $this->storeResource([
+            'slug' => 'test',
+        ]);
+        $res->assertStatus(422)
+            ->assertJsonValidationErrors(['slug']);
     }
 
     public function testStore()
