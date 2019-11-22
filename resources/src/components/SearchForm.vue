@@ -30,7 +30,7 @@ export default {
     this.initFormShow()
   },
   methods: {
-    onSubmit() {
+    async onSubmit() {
       const query = { ...this.$route.query }
       if (this.resetCurrentPage) {
         delete query.page
@@ -50,10 +50,16 @@ export default {
         }
       })
 
-      this.$router.push({
-        path: this.$route.path,
-        query,
-      })
+      try {
+        await this.$router.push({
+          path: this.$route.path,
+          query,
+        })
+      } catch (e) {
+        if (e.name !== 'NavigationDuplicated') {
+          throw e
+        }
+      }
     },
     onReset() {
       this.form = {}
