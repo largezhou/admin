@@ -36,5 +36,5 @@ export function isImage(file, isExt = false) {
     ext = getExt(file)
   }
 
-  return IMAGE_EXTS.indexOf(ext) !== -1
+  return IMAGE_EXTS.indexOf(ext.toLowerCase()) !== -1
 }
