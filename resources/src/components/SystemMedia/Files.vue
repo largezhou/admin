@@ -31,7 +31,10 @@ export default {
   methods: {
     onSelect(media, index) {
       // 不是特定的类型，不能选择
-      if (this.ext && this.ext.split(',').indexOf(media.ext) === -1) {
+      if (
+        this.ext &&
+        this.ext.split(',').indexOf(media.ext ? media.ext.toLowerCase() : '') === -1
+      ) {
         return
       }
 
