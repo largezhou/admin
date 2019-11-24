@@ -11,9 +11,9 @@
         </div>
         <transition name="fade-transform" mode="out-in">
           <template v-if="$route.query._refresh"/>
-          <keep-alive v-else :include="$store.state.include">
+          <lz-keep-alive v-else>
             <router-view/>
-          </keep-alive>
+          </lz-keep-alive>
         </transition>
       </el-main>
     </el-container>
