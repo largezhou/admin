@@ -4,6 +4,7 @@
     <el-menu
       ref="menu"
       :default-active="activeName"
+      :default-openeds="activeNames"
       class="side-menu"
       :class="{ 'mini-width': miniWidth }"
       background-color="#304156"
@@ -56,10 +57,14 @@ export default {
       return this.$store.state.vueRouters.vueRouters
     },
     activeName() {
-      const exact = this.matchedMenu
-      return exact
-        ? makeRouteName(exact.id)
-        : this.$route.name
+      return this.activeNames[this.activeNames.length - 1] || null
+    },
+    activeNames() {
+      return this.matchedMenu
+        ? this.matchedMenusChain.map((i) => makeRouteName(i.id))
+        : this.$route.matched
+          .filter((i) => i.meta && i.meta.id)
+          .map((i) => makeRouteName(i.meta.id))
     },
     ...mapState({
       miniWidth: (state) => state.miniWidth,
@@ -107,7 +112,7 @@ export default {
       if (maxWeight === notMatched) {
         return null
       } else {
-        return weightMatchedMap[maxWeight]
+        return weightMatchedMap[maxWeight] || null
       }
     },
     /**
@@ -117,7 +122,7 @@ export default {
       const t = []
       let menu = this.matchedMenu
       while (menu) {
-        t.push(menu)
+        t.unshift(menu)
         menu = menu.parent
       }
       return t
