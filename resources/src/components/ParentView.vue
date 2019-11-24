@@ -1,7 +1,7 @@
 <template>
-  <keep-alive :include="$store.state.include">
+  <lz-keep-alive>
     <router-view/>
-  </keep-alive>
+  </lz-keep-alive>
 </template>
 
 <script>
