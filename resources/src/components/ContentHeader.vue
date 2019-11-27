@@ -15,6 +15,7 @@ import _get from 'lodash/get'
 import FlexSpacer from '@c/FlexSpacer'
 import CollapseButtonGroup from '@c/CollapseButtonGroup'
 import { mapState } from 'vuex'
+import _last from 'lodash/last'
 
 export default {
   name: 'ContentHeader',
@@ -29,7 +30,7 @@ export default {
     name() {
       let title = ''
       if (this.matchedMenusChain.length) {
-        title = _get(this.matchedMenusChain, '0.title', '')
+        title = _last(this.matchedMenusChain).title
       }
 
       return title || _get(this.$route, 'meta.title', '')

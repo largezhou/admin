@@ -6,6 +6,8 @@ import vueRouters from './modules/vue-routers'
 import sideMenu from './modules/side-menu'
 import config from './modules/config'
 
+import _last from 'lodash/last'
+
 Vue.use(Vuex)
 
 /**
@@ -52,7 +54,7 @@ export default new Vuex.Store({
   },
   getters: {
     matchedMenu(state) {
-      return state.matchedMenusChain[0] || null
+      return _last(state.matchedMenusChain) || null
     },
   },
 })
