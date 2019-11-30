@@ -3,7 +3,7 @@
 /* @var $factory \Illuminate\Database\Eloquent\Factory */
 
 use Faker\Generator as Faker;
-use App\Models\AdminUser;
+use App\Admin\Models\AdminUser;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 

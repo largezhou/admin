@@ -2,7 +2,7 @@
 
 /* @var $factory \Illuminate\Database\Eloquent\Factory */
 
-use App\Models\SystemMedia;
+use App\Admin\Models\SystemMedia;
 use Faker\Generator as Faker;
 
 $factory->define(SystemMedia::class, function (Faker $faker) {

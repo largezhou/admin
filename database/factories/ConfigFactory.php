@@ -2,7 +2,7 @@
 
 /* @var $factory \Illuminate\Database\Eloquent\Factory */
 
-use App\Models\Config;
+use App\Admin\Models\Config;
 use Faker\Generator as Faker;
 
 $factory->define(Config::class, function (Faker $faker) {

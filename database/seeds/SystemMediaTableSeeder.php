@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\SystemMedia;
-use App\Models\SystemMediaCategory;
+use App\Admin\Models\SystemMedia;
+use App\Admin\Models\SystemMediaCategory;
 use Illuminate\Database\Seeder;
 
 class SystemMediaTableSeeder extends Seeder

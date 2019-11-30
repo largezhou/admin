@@ -2,7 +2,7 @@
 
 /* @var $factory \Illuminate\Database\Eloquent\Factory */
 
-use App\Models\SystemMediaCategory;
+use App\Admin\Models\SystemMediaCategory;
 use Faker\Generator as Faker;
 
 $factory->define(SystemMediaCategory::class, function (Faker $faker) {
