@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\ConfigCategory;
+use App\Admin\Models\ConfigCategory;
 use Illuminate\Database\Seeder;
 
 class ConfigCategoriesTableSeeder extends Seeder

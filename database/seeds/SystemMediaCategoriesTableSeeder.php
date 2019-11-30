@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\SystemMediaCategory;
+use App\Admin\Models\SystemMediaCategory;
 use Illuminate\Database\Seeder;
 
 class SystemMediaCategoriesTableSeeder extends Seeder

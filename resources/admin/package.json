@@ -1,0 +1,37 @@
+{
+  "name": "admin-template",
+  "private": true,
+  "scripts": {
+    "dev": "vue-cli-service build --mode development",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "watch": "vue-cli-service build --mode development --watch",
+    "poll": "vue-cli-service build --mode development --watch --poll",
+    "svgo": "svgo -f resources/src/icons/svg --config=resources/src/icons/svgo.yml"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.7.0",
+    "@vue/cli-plugin-eslint": "^3.7.0",
+    "@vue/cli-service": "^3.7.0",
+    "@vue/eslint-config-standard": "^4.0.0",
+    "axios": "^0.18.0",
+    "babel-eslint": "^10.0.1",
+    "core-js": "^2.6.5",
+    "element-ui": "^2.9.1",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "lodash": "^4.17.11",
+    "node-sass": "^4.9.0",
+    "nprogress": "^0.2.0",
+    "sass-loader": "^7.1.0",
+    "svg-sprite-loader": "^4.1.6",
+    "svgo": "^1.2.2",
+    "v-click-outside-x": "^4.0.14",
+    "vue": "^2.6.10",
+    "vue-router": "^3.0.3",
+    "vue-template-compiler": "^2.5.21",
+    "vuedraggable": "^2.23.0",
+    "vuex": "^3.0.1",
+    "webpack-livereload-plugin": "^2.2.0"
+  }
+}
