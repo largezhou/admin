@@ -2,7 +2,7 @@
 
 /* @var $factory \Illuminate\Database\Eloquent\Factory */
 
-use App\Models\AdminPermission;
+use App\Admin\Models\AdminPermission;
 use Faker\Generator as Faker;
 
 $factory->define(AdminPermission::class, function (Faker $faker) {

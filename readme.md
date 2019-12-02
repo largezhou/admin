@@ -42,7 +42,7 @@
 - `php artisan jwt:secret`
 - `php artisan migrate`
 - `php artisan admin:init`
-- `yarn && yarn build`
+- `cd resources/admin && yarn && yarn build`
 
 ## nginx 配置
 
@@ -56,6 +56,7 @@ location /admin/ {
 location /admin-dev/ {
     try_files $uri $uri/ /admin-dev/index.html;
 }
+# 上面两条配置可选
 
 # Laravel
 location / {
