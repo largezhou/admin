@@ -214,7 +214,7 @@ export default {
   z-index: 2001;
 }
 
-/deep/ {
+::v-deep {
   .el-submenu {
     .el-menu-item {
       padding-right: 20px;

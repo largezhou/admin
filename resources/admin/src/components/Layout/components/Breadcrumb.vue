@@ -74,7 +74,7 @@ export default {
   position: absolute;
 }
 
-/deep/ {
+::v-deep {
   .el-breadcrumb__item {
     padding: 2px 0;
   }

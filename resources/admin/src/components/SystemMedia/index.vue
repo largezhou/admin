@@ -524,7 +524,7 @@ $padding-width: 15px;
   border-top: $border;
 }
 
-/deep/ {
+::v-deep {
   .el-scrollbar__wrap {
     height: calc(100% + 17px);
   }
@@ -539,7 +539,7 @@ $padding-width: 15px;
 }
 
 .categories-dialog {
-  /deep/ {
+  ::v-deep {
     .el-dialog__body {
       height: 400px;
     }

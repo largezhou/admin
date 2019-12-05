@@ -23,7 +23,7 @@ export default {
 <style scoped lang="scss">
 @import '~element-ui/packages/theme-chalk/src/common/var';
 
-/deep/ {
+::v-deep {
   .el-card__body {
     padding: 0;
   }

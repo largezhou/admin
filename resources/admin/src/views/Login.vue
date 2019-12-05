@@ -52,7 +52,7 @@ export default {
   width: 100%;
 }
 
-/deep/ {
+::v-deep {
   .el-card__header {
     text-align: center;
   }

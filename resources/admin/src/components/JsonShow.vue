@@ -49,7 +49,7 @@ pre {
   overflow-x: auto;
 }
 
-/deep/ {
+::v-deep {
   .string {
     color: green;
   }
