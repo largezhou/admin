@@ -2,9 +2,12 @@
 
 namespace App\Admin\Models;
 
+use App\Admin\Exceptions\VueRouterException;
 use App\Admin\Traits\ModelTree;
 use App\Admin\Utils\Admin;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 
 class VueRouter extends Model
 {
@@ -78,5 +81,22 @@ class VueRouter extends Model
         } else {
             return true;
         }
+    }
+
+    public function replaceFromFile(UploadedFile $file): array
+    {
+        $tree = json_decode(file_get_contents($file->getRealPath()), true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new VueRouterException(sprintf('JSON 数据解析错误 [ %s ]', json_last_error()));
+        }
+
+        $flatten = $this->flatten($tree);
+
+        DB::beginTransaction();
+        $this->truncate();
+        $this->insert($flatten);
+        DB::commit();
+
+        return $tree;
     }
 }

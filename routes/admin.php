@@ -28,6 +28,7 @@ Route::prefix('admin-api')
 
             Route::resource('admin-users', 'AdminUserController');
 
+            Route::post('vue-routers/by-import', 'VueRouterController@importVueRouters')->name('vue-routers.by-import');
             Route::put('vue-routers', 'VueRouterController@batchUpdate')->name('vue-routers.batch.update');
             Route::resource('vue-routers', 'VueRouterController')->except(['show']);
 

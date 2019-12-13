@@ -9,6 +9,8 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Admin\Tests\AdminTestCase;
 use App\Admin\Tests\Traits\RequestActions;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class VueRouterControllerTest extends AdminTestCase
 {
@@ -228,5 +230,36 @@ class VueRouterControllerTest extends AdminTestCase
                 'slug' => 'permission',
                 'name' => 'role',
             ]);
+    }
+
+    public function testImportVueRouters()
+    {
+        $url = $this->route('vue-routers.by-import');
+        Storage::fake('local');
+        $disk = Storage::disk('local');
+
+        $res = $this->post($url);
+        $res->assertStatus(422)
+            ->assertJsonValidationErrors(['file']);
+
+        // 测试错误的文件内容
+        $res = $this->post($url, ['file' => UploadedFile::fake()->create('tree.json', 10)]);
+        $res->assertStatus(400);
+
+        $item1 = factory(VueRouter::class)->make(['id' => 1]);
+        $item2 = factory(VueRouter::class)->make([
+            'id' => 2,
+            'children' => [
+                factory(VueRouter::class)->make(['id' => 3, 'parent_id' => 2]),
+            ],
+        ]);
+
+        $content = json_encode([$item1, $item2]);
+        $disk->put('tree.json', $content);
+        UploadedFile::fake()->create('test');
+        $file = new UploadedFile($disk->path('tree.json'), 'tree.json', null, null, true);
+        $res = $this->post($url, ['file' => $file]);
+        $res->assertStatus(201)
+            ->assertJson(json_decode($content, true));
     }
 }
