@@ -22,6 +22,7 @@ class AdminServiceProvider extends ServiceProvider
     ];
     protected $commands = [
         Console\Commands\AdminInitCommand::class,
+        Console\Commands\ResourceMakeCommand::class,
     ];
 
     /**
