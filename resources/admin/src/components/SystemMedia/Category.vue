@@ -359,7 +359,7 @@ export default {
   display: inline-block;
 }
 
-/deep/ {
+::v-deep {
   .scroll-wrapper {
     height: calc(100% - 60px);
   }

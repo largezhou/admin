@@ -1,0 +1,19 @@
+<?php
+
+namespace DummyNamespace;
+
+class DummyClass extends Filter
+{
+    protected $simpleFilters = [
+        'id',
+    ];
+
+    protected $filters = [
+        'some_field',
+    ];
+
+    protected function someField($val)
+    {
+        $this->builder->where('some_field', $val);
+    }
+}

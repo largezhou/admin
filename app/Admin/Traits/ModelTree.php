@@ -172,4 +172,24 @@ trait ModelTree
             }
         }
     }
+
+    /**
+     * toTree 的反向操作
+     *
+     * @param array $tree
+     *
+     * @return array
+     */
+    public function flatten(array $tree): array
+    {
+        $flatten = [];
+
+        foreach ($tree as $item) {
+            $children = Arr::pull($item, 'children', []);
+            $flatten[] = $item;
+            $flatten = array_merge($flatten, $this->flatten($children));
+        }
+
+        return $flatten;
+    }
 }

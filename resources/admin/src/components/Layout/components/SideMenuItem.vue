@@ -127,7 +127,7 @@ a {
   text-overflow: ellipsis;
 }
 
-/deep/ {
+::v-deep {
   .el-menu-item,
   .el-submenu__title {
     display: flex;

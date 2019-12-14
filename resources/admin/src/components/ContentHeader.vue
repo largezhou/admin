@@ -1,7 +1,7 @@
 <template>
   <div class="content-header">
     <slot name="title">
-      <span>{{ name }}</span>
+      <span>{{ realName }}</span>
     </slot>
     <flex-spacer/>
     <collapse-button-group>
@@ -23,11 +23,18 @@ export default {
     CollapseButtonGroup,
     FlexSpacer,
   },
+  props: {
+    name: String,
+  },
   computed: {
     ...mapState({
       matchedMenusChain: (state) => state.matchedMenusChain,
     }),
-    name() {
+    realName() {
+      if (this.name) {
+        return this.name
+      }
+
       let title = ''
       if (this.matchedMenusChain.length) {
         title = _last(this.matchedMenusChain).title

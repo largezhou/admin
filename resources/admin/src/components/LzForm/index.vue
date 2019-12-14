@@ -214,7 +214,7 @@ export default {
 @import '~element-ui/packages/theme-chalk/src/common/var';
 
 .footer {
-  /deep/ {
+  ::v-deep {
     .el-form-item__content {
       display: flex;
     }

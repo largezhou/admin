@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Exceptions\VueRouterException;
 use App\Admin\Requests\VueRouterRequest;
 use App\Admin\Resources\VueRouterResource;
 use App\Admin\Models\AdminPermission;
@@ -97,5 +98,16 @@ class VueRouterController extends Controller
     public function create()
     {
         return $this->ok($this->formData());
+    }
+
+    public function importVueRouters(VueRouterRequest $request, VueRouter $vueRouter)
+    {
+        $file = $request->file('file');
+        try {
+            $vueRouters = $vueRouter->replaceFromFile($file);
+            return $this->created($vueRouters);
+        } catch (VueRouterException $e) {
+            return $this->error($e->getMessage());
+        }
     }
 }

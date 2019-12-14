@@ -52,7 +52,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-/deep/ {
+::v-deep {
   .el-input-group__prepend {
     padding: 0 12px;
   }

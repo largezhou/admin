@@ -10,8 +10,18 @@
           <el-button @click="onExpand">展开</el-button>
           <el-button @click="onCollapse">收起</el-button>
           <loading-action :action="onSaveOrder">保存</loading-action>
+          <el-button class="ml-1 pa-0">
+            <el-upload
+              action=""
+              :show-file-list="false"
+              :http-request="importVueRouters"
+              :before-upload="confirmImport"
+            >
+              <el-button style="border: none;">导入</el-button>
+            </el-upload>
+          </el-button>
+          <el-button @click="onExport">导出</el-button>
         </el-button-group>
-
         <nested-draggable
           ref="routers"
           :expand-keys="defaultExpanded"
@@ -47,7 +57,12 @@
 </template>
 
 <script>
-import { destroyVueRouter, getVueRouters, updateVueRouters } from '@/api/vue-routers'
+import {
+  destroyVueRouter,
+  getVueRouters,
+  updateVueRouters,
+  importVueRouters,
+} from '@/api/vue-routers'
 import PopConfirm from '@c/PopConfirm'
 import { getMessage, hasChildren, removeFromNested } from '@/libs/utils'
 import NestedDraggable from '@c/NestedDraggable'
@@ -117,6 +132,32 @@ export default {
         _order: this.getVueRouterStruct(this.vueRouters),
       })
       this.$message.success(getMessage('updated'))
+    },
+    onExport() {
+      const blob = new Blob(
+        [JSON.stringify(this.vueRouters, null, 2)],
+        { type: 'application/json' },
+      )
+
+      const link = document.createElement('a')
+      link.href = window.URL.createObjectURL(blob)
+      link.download = '路由配置'
+      link.click()
+
+      window.URL.revokeObjectURL(link.href)
+    },
+    async importVueRouters({ file }) {
+      const fd = new FormData()
+      fd.append('file', file)
+
+      const { data } = await importVueRouters(fd)
+      this.vueRouters = data
+    },
+    confirmImport() {
+      return this.$confirm('是否替换所有路由配置？', '提示', {
+        confirmButtonText: '替换',
+        type: 'warning',
+      })
     },
   },
 }

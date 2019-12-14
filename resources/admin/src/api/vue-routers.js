@@ -29,3 +29,7 @@ export function updateVueRouters(data) {
 export function createVueRouter() {
   return axios.get('vue-routers/create')
 }
+
+export function importVueRouters(data) {
+  return axios.post('vue-routers/by-import', data)
+}

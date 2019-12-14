@@ -4,9 +4,10 @@ namespace App\Admin;
 
 use App\Admin\Middleware\AdminPermission;
 use App\Admin\Utils\Admin;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
-class AdminProvider extends ServiceProvider
+class AdminServiceProvider extends ServiceProvider
 {
     protected $middlewareMap = [
         'force-json' => \App\Admin\Middleware\ForceJson::class,
@@ -21,6 +22,7 @@ class AdminProvider extends ServiceProvider
     ];
     protected $commands = [
         Console\Commands\AdminInitCommand::class,
+        Console\Commands\ResourceMakeCommand::class,
     ];
 
     /**
@@ -51,6 +53,7 @@ class AdminProvider extends ServiceProvider
             app('router')->middlewareGroup($key, $middleware);
         }
 
-        $this->loadRoutesFrom(Admin::path('routes.php'));
+        Route::namespace('App\Admin\Controllers')
+            ->group(base_path('routes/admin.php'));
     }
 }

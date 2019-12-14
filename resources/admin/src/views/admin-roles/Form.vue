@@ -89,7 +89,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-/deep/ {
+::v-deep {
   .el-transfer-panel__body {
     height: 300px;
   }

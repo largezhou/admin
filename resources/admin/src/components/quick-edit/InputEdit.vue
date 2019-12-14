@@ -92,7 +92,7 @@ export default {
   cursor: pointer;
 }
 
-/deep/ {
+::v-deep {
   .el-input {
     width: calc(100% - 62px);
     max-width: 300px;
