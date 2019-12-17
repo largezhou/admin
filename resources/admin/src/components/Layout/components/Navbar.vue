@@ -11,6 +11,12 @@
     </navbar-items>
     <flex-spacer/>
     <navbar-items>
+      <a
+        class="el-button el-button--default"
+        target="_blank"
+        href="https://github.com/largezhou/admin"
+        style="font-weight: bolder; text-decoration: none;"
+      >GITHUB</a>
       <el-dropdown trigger="click">
         <div class="avatar flex-box">
           <img
