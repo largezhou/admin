@@ -1,0 +1,72 @@
+<template>
+  <el-card>
+    <template #header>
+      <content-header/>
+    </template>
+    <el-row type="flex" justify="center">
+      <lz-form
+        ref="form"
+        :get-data="getData"
+        :submit="onSubmit"
+        :form.sync="form"
+        :errors.sync="errors"
+        :edit-mode="editMode"
+      >
+        <el-form-item label="字段名" required prop="field_name">
+          <el-input v-model="form.field_name"/>
+        </el-form-item>
+      </lz-form>
+    </el-row>
+  </el-card>
+</template>
+
+<script>
+import LzForm from '@c/LzForm'
+import {
+  editDummyResource,
+  updateDummyResource,
+  storeDummyResource,
+  createDummyResource,
+} from '@/api/dummy-resources'
+import FormHelper from '@c/LzForm/FormHelper'
+
+export default {
+  name: 'Form',
+  components: {
+    LzForm,
+  },
+  mixins: [
+    FormHelper,
+  ],
+  data() {
+    return {
+      form: {
+        field_name: '',
+      },
+      errors: {},
+    }
+  },
+  methods: {
+    async getData() {
+      let data
+
+      if (this.editMode) {
+        ({ data } = await editDummyResource(this.resourceId))
+        this.fillForm(data)
+      } else {
+        ({ data } = await createDummyResource())
+      }
+    },
+    async onSubmit() {
+      if (this.editMode) {
+        await updateDummyResource(this.resourceId, this.form)
+      } else {
+        await storeDummyResource(this.form)
+      }
+    },
+  },
+}
+</script>
+
+<style scoped lang="scss">
+</style>

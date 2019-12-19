@@ -12,6 +12,7 @@ class ResourceMakeCommandTest extends AdminTestCase
         parent::setUp();
         $this->storage = Storage::fake('local');
         $this->app->instance('path', storage_path('framework/testing/disks/local/app'));
+        $this->app->instance('path.resources', storage_path('framework/testing/disks/local/resources'));
     }
 
     protected function tearDown(): void
@@ -28,15 +29,18 @@ class ResourceMakeCommandTest extends AdminTestCase
             ->assertExitCode(1);
 
         $files = [
-            'Models/AdminBanner.php',
-            'Filters/AdminBannerFilter.php',
-            'Requests/AdminBannerRequest.php',
-            'Resources/AdminBannerResource.php',
-            'Controllers/AdminBannerController.php',
+            'app/Admin/Models/AdminBanner.php',
+            'app/Admin/Filters/AdminBannerFilter.php',
+            'app/Admin/Requests/AdminBannerRequest.php',
+            'app/Admin/Resources/AdminBannerResource.php',
+            'app/Admin/Controllers/AdminBannerController.php',
+            'resources/admin/src/api/admin-banners.js',
+            'resources/admin/src/views/admin-banners/Index.vue',
+            'resources/admin/src/views/admin-banners/Form.vue',
         ];
 
         foreach ($files as $file) {
-            $this->assertFileExists($this->storage->path('app/Admin/'.$file));
+            $this->assertFileExists($this->storage->path($file));
         }
         $this->assertFileNotExists($this->storage->path('app/Admin/Tests/Feature/AdminBannerControllerTest.php'));
 

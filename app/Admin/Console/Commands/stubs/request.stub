@@ -9,7 +9,7 @@ class DummyClass extends FormRequest
     public function rules()
     {
         $rules = [
-            //
+            'field_name' => 'required',
         ];
 
         if ($this->isMethod('put')) {
@@ -29,7 +29,7 @@ class DummyClass extends FormRequest
     public function attributes()
     {
         return [
-            //
+            'field_name' => '字段名',
         ];
     }
 }

@@ -40,11 +40,25 @@ class ResourceMakeCommand extends GeneratorCommand
      * @var array
      */
     protected $classes = [];
+    protected $frontendTypePathMap = [
+        'api' => 'api/dummy-resources.js',
+        'index' => 'views/dummy-resources/Index.vue',
+        'form' => 'views/dummy-resources/Form.vue',
+    ];
 
     /**
      * Execute the console command.
      */
     public function handle()
+    {
+        if (!$res = $this->makeBackend()) {
+            return $res;
+        }
+
+        return $this->makeFrontend();
+    }
+
+    protected function makeBackend()
     {
         foreach ($this->types as $type) {
             $this->nowType = $type;
@@ -138,5 +152,48 @@ class ResourceMakeCommand extends GeneratorCommand
         }
 
         return $stub;
+    }
+
+    protected function makeFrontend()
+    {
+        $name = trim($this->argument('name'));
+
+        $dummyResource = Str::camel($name);
+        $ucDummyResource = Str::ucfirst($dummyResource);
+        $pluralDummyResource = Str::plural($dummyResource);
+        $ucPluralDummyResource = Str::ucfirst($pluralDummyResource);
+        $pluralKebabDummyResource = Str::plural(Str::kebab($name));
+
+        $replaces = [
+            'PluralDummyResource' => $ucPluralDummyResource,
+            'dummy-resources' => $pluralKebabDummyResource,
+            'DummyResource' => $ucDummyResource,
+            'dummyResources' => $pluralDummyResource,
+        ];
+
+        foreach (['api', 'index', 'form'] as $type) {
+            $content = $this->files->get(__DIR__."/stubs/frontend/{$type}.stub");
+            foreach ($replaces as $search => $replace) {
+                $content = str_replace($search, $replace, $content);
+            }
+            $relativePath = $this->frontendTypePathMap[$type];
+            $path = $this->laravel['path.resources'].
+                '/admin/src/'.str_replace('dummy-resources', $pluralKebabDummyResource, $relativePath);
+
+            if (
+                !$this->option('force') &&
+                $this->files->exists($path)
+            ) {
+                $this->error($relativePath.' 已存在');
+                return 0;
+            }
+
+            $this->makeDirectory($path);
+            $this->files->put($path, $content);
+
+            $this->info($relativePath.' 创建成功');
+        }
+
+        return 1;
     }
 }

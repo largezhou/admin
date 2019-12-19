@@ -15,11 +15,11 @@ class AdminInitCommandTest extends AdminTestCase
     {
         $this->artisan('admin:init')
             ->expectsQuestion(AdminInitCommand::$initConfirmTip, false)
-            ->assertExitCode(1);
+            ->assertExitCode(0);
 
         $this->artisan('admin:init')
             ->expectsQuestion(AdminInitCommand::$initConfirmTip, true)
-            ->assertExitCode(0);
+            ->assertExitCode(1);
 
         $this->assertDatabaseHas('vue_routers', [
             'id' => 1,

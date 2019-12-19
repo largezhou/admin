@@ -9,11 +9,11 @@ class DummyClass extends Filter
     ];
 
     protected $filters = [
-        'some_field',
+        'field_name',
     ];
 
-    protected function someField($val)
+    protected function fieldName($val)
     {
-        $this->builder->where('some_field', $val);
+        $this->builder->where('field_name', $val);
     }
 }

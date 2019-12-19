@@ -1,0 +1,25 @@
+import axios from '@/plugins/axios'
+
+export function getPluralDummyResource(params) {
+  return axios.get('dummy-resources', { params })
+}
+
+export function createDummyResource() {
+  return axios.get(`dummy-resources/create`)
+}
+
+export function storeDummyResource(data) {
+  return axios.post('dummy-resources', data)
+}
+
+export function updateDummyResource(id, data) {
+  return axios.put(`dummy-resources/${id}`, data)
+}
+
+export function editDummyResource(id) {
+  return axios.get(`dummy-resources/${id}/edit`)
+}
+
+export function destroyDummyResource(id) {
+  return axios.delete(`dummy-resources/${id}`)
+}
