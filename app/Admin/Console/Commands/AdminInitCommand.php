@@ -42,8 +42,9 @@ class AdminInitCommand extends Command
             $this->createUserRolePermission();
             $this->createDefaultConfigs();
             $this->info('初始化完成，管理员为：admin，密码为：000000');
-        } else {
             return 1;
+        } else {
+            return 0;
         }
     }
 

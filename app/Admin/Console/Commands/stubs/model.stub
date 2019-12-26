@@ -5,6 +5,6 @@ namespace DummyNamespace;
 class DummyClass extends Model
 {
     protected $fillable = [
-        //
+        'field_name',
     ];
 }
