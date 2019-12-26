@@ -206,13 +206,16 @@ class ConfigControllerTest extends AdminTestCase
             ]);
 
         // name, slug max:50
+        // validation_rules ValidRules
         $res = $this->storeResource([
             'type' => Config::TYPE_INPUT,
             'name' => str_repeat('a', 51),
             'slug' => str_repeat('a', 51),
+            'validation_rules' => 'required|invalid_rule1|string|invalid_rule2',
         ]);
         $res->assertStatus(422)
-            ->assertJsonValidationErrors(['name', 'slug']);
+            ->assertJsonValidationErrors(['name', 'slug', 'validation_rules'])
+            ->assertSeeText('invalid_rule1, invalid_rule2');
 
         // name, slug unique
         $res = $this->storeResource([
