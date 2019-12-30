@@ -84,6 +84,7 @@ export default {
       i.menu && (
         <side-menu-item
           ref="children"
+          refInFor
           q={q}
           key={i.id}
           menu={i}
