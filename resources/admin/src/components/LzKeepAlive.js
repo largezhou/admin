@@ -2,7 +2,7 @@ export default {
   name: 'LzKeepAlive',
   methods: {
     match(name) {
-      return !!this.$store.state.include.some((i) => {
+      return this.$store.state.include.some((i) => {
         if (i instanceof RegExp) {
           return i.test(name)
         } else {
