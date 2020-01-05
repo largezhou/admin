@@ -138,11 +138,11 @@ class ConfigControllerTest extends AdminTestCase
         $inputs = [
             'name' => 'new name',
             'type' => Config::TYPE_TEXTAREA,
-            'slug' => 'new slug',
+            'slug' => 'new_slug',
             'category_id' => $categoryId,
             'desc' => 'new desc',
             'value' => 'new value',
-            'validation_rules' => 'new rules',
+            'validation_rules' => 'required',
         ];
         $res = $this->updateResource($configId, $inputs);
         $res->assertStatus(201);
