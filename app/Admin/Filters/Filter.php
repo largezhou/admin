@@ -9,11 +9,14 @@ use Illuminate\Support\Str;
 abstract class Filter
 {
     protected $request;
+
     /**
      * @var Builder
      */
     protected $builder;
+
     protected $filters = [];
+
     protected $simpleFilters = [];
 
     public function __construct(Request $request)
@@ -119,7 +122,7 @@ abstract class Filter
         }
 
         $this->filters = array_intersect($this->filters, $only);
-        $this->simpleFilters = array_intersect($this->simpleFilters, $only);
+        $this->simpleFilters = array_intersect_key($this->simpleFilters, array_flip($only));
 
         return $this;
     }

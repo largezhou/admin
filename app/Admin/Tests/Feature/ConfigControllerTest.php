@@ -149,7 +149,7 @@ class ConfigControllerTest extends AdminTestCase
 
         $expectData = array_merge($inputs, [
             'type' => Config::TYPE_TEXTAREA,
-            'slug' => 'new slug',
+            'slug' => 'new_slug',
             'value' => json_encode('new value'),
         ]);
         $this->assertDatabaseHas('configs', $expectData);
