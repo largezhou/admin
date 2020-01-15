@@ -1,41 +1,41 @@
-import axios from '@/plugins/axios'
+import Request from '@/plugins/request'
 
 export function getUser() {
-  return axios.get('user')
+  return Request.get('user')
 }
 
 export function getAdminUsers(params = {}) {
-  return axios.get('admin-users', { params })
+  return Request.get('admin-users', { params })
 }
 
 export function storeAdminUser(data) {
-  return axios.post('admin-users', data)
+  return Request.post('admin-users', data)
 }
 
 export function destroyAdminUser(id) {
-  return axios.delete(`admin-users/${id}`)
+  return Request.delete(`admin-users/${id}`)
 }
 
 export function updateAdminUser(id, data) {
-  return axios.put(`admin-users/${id}`, data)
+  return Request.put(`admin-users/${id}`, data)
 }
 
 export function showAdminUser(id) {
-  return axios.get(`admin-users/${id}`)
+  return Request.get(`admin-users/${id}`)
 }
 
 export function editAdminUser(id) {
-  return axios.get(`admin-users/${id}/edit`)
+  return Request.get(`admin-users/${id}/edit`)
 }
 
 export function editUser() {
-  return axios.get('user/edit')
+  return Request.get('user/edit')
 }
 
 export function updateUser(data) {
-  return axios.put('user', data)
+  return Request.put('user', data)
 }
 
 export function createAdminUser() {
-  return axios.get('admin-users/create')
+  return Request.get('admin-users/create')
 }

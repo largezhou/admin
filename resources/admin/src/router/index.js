@@ -4,7 +4,7 @@ import routes from '@/router/routes'
 import { getToken, removeToken } from '@/libs/token'
 import store from '@/store'
 import _get from 'lodash/get'
-import { cancelAllRequest } from '@/plugins/axios'
+import { cancelAllRequest } from '@/plugins/request'
 
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'

@@ -26,14 +26,14 @@ export default {
   },
   actions: {
     async login({ commit }, vm) {
-      const { data } = await login(vm.form).config({ validationForm: vm })
+      const { data } = await login(vm.form).setConfig({ validationForm: vm })
       const token = 'bearer ' + data.token
       setToken(token)
       commit('SET_TOKEN', token)
     },
     async logout({ dispatch }) {
       try {
-        await logout().config({ disableHandle401: true })
+        await logout().setConfig({ disableHandle401: true })
         dispatch('frontendLogout')
       } catch (e) {
         const { response: res } = e
@@ -46,7 +46,7 @@ export default {
       }
     },
     async getUser({ commit }) {
-      const { data } = await getUser().config({ disableLoginDialog: true })
+      const { data } = await getUser().setConfig({ disableLoginDialog: true })
       commit('SET_USER', data)
     },
     frontendLogout() {

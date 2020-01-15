@@ -1,25 +1,25 @@
-import axios from '@/plugins/axios'
+import Request from '@/plugins/request'
 
 export function getAdminRoles(params = {}) {
-  return axios.get('admin-roles', { params })
+  return Request.get('admin-roles', { params })
 }
 
 export function storeAdminRole(data) {
-  return axios.post('admin-roles', data)
+  return Request.post('admin-roles', data)
 }
 
 export function destroyAdminRole(id) {
-  return axios.delete(`admin-roles/${id}`)
+  return Request.delete(`admin-roles/${id}`)
 }
 
 export function updateAdminRole(id, data) {
-  return axios.put(`admin-roles/${id}`, data)
+  return Request.put(`admin-roles/${id}`, data)
 }
 
 export function editAdminRole(id) {
-  return axios.get(`admin-roles/${id}/edit`)
+  return Request.get(`admin-roles/${id}/edit`)
 }
 
 export function createAdminRole() {
-  return axios.get('admin-roles/create')
+  return Request.get('admin-roles/create')
 }
