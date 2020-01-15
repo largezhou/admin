@@ -29,7 +29,7 @@ export default {
   },
   actions: {
     async getVueRouters({ commit, getters }) {
-      const { data } = await getVueRouters().config({ disableLoginDialog: true })
+      const { data } = await getVueRouters().setConfig({ disableLoginDialog: true })
       commit('SET_VUE_ROUTERS', data)
       commit('SET_LOADED', true)
 

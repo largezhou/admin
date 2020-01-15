@@ -1,4 +1,4 @@
-import axios from 'axios'
+import Axios from 'axios'
 import { getToken } from '@/libs/token'
 import { Message } from 'element-ui'
 import _trimStart from 'lodash/trimStart'
@@ -15,8 +15,8 @@ let config = {
   timeout: 30 * 1000,
 }
 
-const _axios = axios.create(config)
-const CancelToken = axios.CancelToken
+const axios = Axios.create(config)
+const CancelToken = Axios.CancelToken
 
 export const requestQueue = {}
 const destroyUrlFromQueue = (path) => {
@@ -40,7 +40,7 @@ export const cancelAllRequest = (msg = '') => {
   })
 }
 
-_axios.interceptors.request.use(
+axios.interceptors.request.use(
   (config) => {
     config.headers.Authorization = getToken()
 
@@ -58,7 +58,7 @@ _axios.interceptors.request.use(
   },
 )
 
-_axios.interceptors.response.use(
+axios.interceptors.response.use(
   (res) => {
     destroyUrlFromQueue(res.config.url)
     return res
@@ -66,17 +66,6 @@ _axios.interceptors.response.use(
   (err) => {
     const { response: res } = err
     let { config } = err
-
-    config = config && Object.assign({
-      // 是否以 message 的方式显示第一条 422 错误消息
-      showValidationMsg: undefined,
-      // 请求时的表单所在的组件，配合 error key 使用，可以自动填充表单中的 errors 错误提示
-      validationForm: undefined,
-      // 页面中，存储错误的键，默认为 errors
-      validationErrorKey: 'errors',
-      // 请求出现 401 时，默认会打开弹框要求登录，设置 true 来禁止
-      disableLoginDialog: undefined,
-    }, config)
 
     // 可通过 config.disableHandle错误码 来禁用该类型错误的默认处理
     if (res && !config[`disableHandle${res.status}`]) {
@@ -114,8 +103,8 @@ _axios.interceptors.response.use(
           Message.error(`服务器异常(code: ${res.status})`)
           break
       }
-    } else {
-      if (err instanceof axios.Cancel) { // 手动取消时，err 为一个 Cancel 对象，有一个 message 属性
+    } else if (!res) {
+      if (err instanceof Axios.Cancel) { // 手动取消时，err 为一个 Cancel 对象，有一个 message 属性
         console.log(err.toString())
       } else {
         debounceMsg('请求失败')
@@ -128,67 +117,106 @@ _axios.interceptors.response.use(
   },
 )
 
-class Request {
+export default class Request {
   method
+  args = []
+  config = {}
+  defaultConfig = {
+    showValidationMsg: false,
+    validationForm: null,
+    validationErrorKey: 'errors',
+    disableLoginDialog: false,
+  }
 
-  url
-  data
-  _config
-
+  /**
+   * 请求方法中，有 data 参数的，config 需要放到第三个位置
+   * @type {string[]}
+   */
   methodsWithData = [
     'put', 'patch', 'post',
   ]
 
-  withData() {
-    return this.methodsWithData.indexOf(this.method) !== -1
-  }
-
-  config(config = {}) {
-    this._config = Object.assign({}, this._config, config)
-    return this
-  }
-
-  async request() {
-    let args = []
-    if (this.withData()) {
-      args = [this.url, this.data, this._config]
-    } else {
-      args = [this.url, this._config]
-    }
-    return _axios[this.method](...args)
+  /**
+   * @param {string} method
+   * @param {IArguments} args
+   */
+  constructor(method, args) {
+    this.method = method
+    this.args = Array.from(args)
   }
 
   then(resolve, reject) {
     try {
-      resolve(this.request())
+      const configPos = (this.methodsWithData.indexOf(this.method) !== -1) ? 2 : 1
+
+      let args = this.args
+      args[configPos] = Object.assign(
+        {},
+        args[configPos],
+        this.defaultConfig,
+        this.config,
+      )
+
+      resolve(axios[this.method](...args))
     } catch (e) {
       reject(e)
     }
   }
 
-  static create(method) {
-    return class extends Request {
-      constructor(url, data, config) {
-        super()
-        this.method = method
-        this.url = url
-        if (this.withData()) {
-          this.data = data
-          this._config = config
-        } else {
-          this._config = data
-        }
-      }
-    }
+  /**
+   * @param {AxiosRequestConfig} config
+   * @return {Request}
+   */
+  setConfig(config) {
+    this.config = config
+    return this
+  }
+
+  /**
+   * @param {string} url
+   * @param {AxiosRequestConfig} [config]
+   * @return {Request}
+   */
+  static get(url, config) {
+    return new Request('get', arguments)
+  }
+
+  /**
+   * @param {string} url
+   * @param {AxiosRequestConfig} [config]
+   * @return {Request}
+   */
+  static delete(url, config) {
+    return new Request('delete', arguments)
+  }
+
+  /**
+   * @param {string} url
+   * @param {*} [data]
+   * @param {AxiosRequestConfig} [config]
+   * @return {Request}
+   */
+  static post(url, data, config) {
+    return new Request('post', arguments)
+  }
+
+  /**
+   * @param {string} url
+   * @param {*} [data]
+   * @param {AxiosRequestConfig} [config]
+   * @return {Request}
+   */
+  static put(url, data, config) {
+    return new Request('put', arguments)
+  }
+
+  /**
+   * @param {string} url
+   * @param {*} [data]
+   * @param {AxiosRequestConfig} [config]
+   * @return {Request}
+   */
+  static patch(url, data, config) {
+    return new Request('patch', arguments)
   }
 }
-
-const requestMethods = ['request', 'delete', 'get', 'head', 'options', 'post', 'put', 'patch']
-const requests = {}
-requestMethods.forEach((method) => {
-  requests[method] = function () {
-    return new (Request.create(method))(...arguments)
-  }
-})
-
-export default requests

@@ -1,53 +1,53 @@
-import axios from '@/plugins/axios'
+import Request from '@/plugins/request'
 
 export function getVueRouters() {
-  return axios.get('configs/vue-routers')
+  return Request.get('configs/vue-routers')
 }
 
 export function getConfigCategories(params = {}) {
-  return axios.get('config-categories', { params })
+  return Request.get('config-categories', { params })
 }
 
 export function storeConfigCategory(data) {
-  return axios.post('config-categories', data)
+  return Request.post('config-categories', data)
 }
 
 export function destroyConfigCategory(id) {
-  return axios.delete(`config-categories/${id}`)
+  return Request.delete(`config-categories/${id}`)
 }
 
 export function updateConfigCategory(id, data) {
-  return axios.put(`config-categories/${id}`, data)
+  return Request.put(`config-categories/${id}`, data)
 }
 
 export function getConfigs(params = {}) {
-  return axios.get('configs', { params })
+  return Request.get('configs', { params })
 }
 
 export function updateConfig(id, data) {
-  return axios.put(`configs/${id}`, data)
+  return Request.put(`configs/${id}`, data)
 }
 
 export function createConfig() {
-  return axios.get('configs/create')
+  return Request.get('configs/create')
 }
 
 export function editConfig(id) {
-  return axios.get(`configs/${id}/edit`)
+  return Request.get(`configs/${id}/edit`)
 }
 
 export function storeConfig(data) {
-  return axios.post('configs', data)
+  return Request.post('configs', data)
 }
 
 export function getConfigsByCategorySlug(categorySlug) {
-  return axios.get(`configs/${categorySlug}`)
+  return Request.get(`configs/${categorySlug}`)
 }
 
 export function updateConfigValues(data) {
-  return axios.put('configs/values', data)
+  return Request.put('configs/values', data)
 }
 
 export function getConfigsValueByCategorySlug(categorySlug) {
-  return axios.get(`configs/${categorySlug}/values`)
+  return Request.get(`configs/${categorySlug}/values`)
 }
