@@ -347,7 +347,7 @@ export default {
       })
     },
     async batchUpdateMedia(data) {
-      await batchUpdateMedia(data).config({
+      await batchUpdateMedia(data).setConfig({
         showValidationMsg: true,
       })
       this.movingDialog = false
@@ -396,7 +396,7 @@ export default {
         return
       }
       const { data } = await storeMedia(id, file)
-        .config({ showValidationMsg: true })
+        .setConfig({ showValidationMsg: true })
       // 如果上传完后，没有切换分类，或者是所有分类
       // 则把数据怼到当前的文件列表前面
       if (id === this.currentCategoryId || this.currentCategoryId === -1) {

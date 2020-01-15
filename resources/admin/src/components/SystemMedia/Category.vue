@@ -266,7 +266,7 @@ export default {
     },
     async updateCategory(category, data, showValidationMsg = true) {
       const res = await updateCategory(category.id, data)
-        .config({
+        .setConfig({
           showValidationMsg,
           validationForm: showValidationMsg ? null : this,
         })
@@ -294,7 +294,7 @@ export default {
         }
       } else {
         const { data } = await storeCategory(this.form)
-          .config({ validationForm: this })
+          .setConfig({ validationForm: this })
 
         // 手动先加一个 children 字段，不然后面给该节点添加子节点时，
         // el-tree 组件自动加的 children 属性，没有响应式

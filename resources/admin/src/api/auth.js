@@ -1,9 +1,9 @@
-import axios from '@/plugins/axios'
+import Request from '@/plugins/request'
 
 export function login(data) {
-  return axios.post('auth/login', data)
+  return Request.post('auth/login', data)
 }
 
 export function logout() {
-  return axios.post('auth/logout')
+  return Request.post('auth/logout')
 }
