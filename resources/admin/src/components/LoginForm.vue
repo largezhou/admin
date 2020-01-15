@@ -25,7 +25,7 @@
 
 <script>
 import { getMessage } from '@/libs/utils'
-import axios from '@/plugins/axios'
+import Request from '@/plugins/request'
 
 export default {
   name: 'LoginForm',
@@ -43,7 +43,7 @@ export default {
     },
     async onResetSystem() {
       if (confirm('确认重置？')) {
-        await axios.post('/demo/reset-system')
+        await Request.post('/demo/reset-system')
         this.$message.success('已重置，admin 密码为 000000')
       }
     },

@@ -3,14 +3,14 @@
 </template>
 
 <script>
-import axios from '@/plugins/axios'
+import Request from '@/plugins/request'
 
 export default {
   name: 'ResetSystem',
   methods: {
     async onReset() {
       if (confirm('确认重置？')) {
-        await axios.post('/demo/reset-system')
+        await Request.post('/demo/reset-system')
         location.reload()
       }
     },
