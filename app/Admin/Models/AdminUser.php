@@ -6,24 +6,14 @@ use App\Admin\Traits\ModelHelpers;
 use App\Admin\Utils\HasPermissions;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class AdminUser extends Authenticatable implements JWTSubject
+class AdminUser extends Authenticatable
 {
     use HasPermissions;
     use Notifiable;
     use ModelHelpers;
+
     protected $fillable = ['username', 'password', 'name', 'avatar'];
-
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
-
-    public function getJWTCustomClaims()
-    {
-        return [];
-    }
 
     public function roles()
     {

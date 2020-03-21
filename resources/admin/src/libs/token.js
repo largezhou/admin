@@ -1,13 +1,13 @@
-const key = 'admin-token'
+const key = 'admin-logged-in'
 
-export function getToken() {
-  return localStorage.getItem(key)
+export function loggedIn() {
+  return localStorage.getItem(key) === '1'
 }
 
-export function setToken(token) {
-  return localStorage.setItem(key, token)
+export function setLoggedIn() {
+  return localStorage.setItem(key, '1')
 }
 
-export function removeToken() {
+export function removeLoggedIn() {
   return localStorage.removeItem(key)
 }

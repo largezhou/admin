@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import routes from '@/router/routes'
-import { getToken, removeToken } from '@/libs/token'
+import { loggedIn, removeLoggedIn } from '@/libs/token'
 import store from '@/store'
 import _get from 'lodash/get'
 import { cancelAllRequest } from '@/plugins/request'
@@ -83,8 +83,8 @@ router.beforeEach(async (to, from, next) => {
     throw e
   }
 
-  if (getToken()) { // 有 token 暂定为已登录
-    if (to.name === 'login') { // 有 token，访问登录页，跳转到首页
+  if (loggedIn()) { // 前端判定为已登录
+    if (to.name === 'login') { // 已登录的情况下，访问登录页，跳转到首页
       next('/')
     } else { // 否则应该获取用户信息和路由配置
       const requests = []
@@ -105,7 +105,7 @@ router.beforeEach(async (to, from, next) => {
         }
       } catch ({ response: res }) {
         if (res && res.status === 401) {
-          removeToken()
+          removeLoggedIn()
           location.href = router.resolve(loginRoute(to)).href
         } else {
           NProgress.done()
@@ -113,9 +113,9 @@ router.beforeEach(async (to, from, next) => {
         }
       }
     }
-  } else if (to.name !== 'login') { // 没 token 访问后台，跳到登录页
+  } else if (to.name !== 'login') { // 没有登录，访问后台，跳到登录页
     next(loginRoute(to))
-  } else { // 没 token 访问登录页，通过
+  } else { // 没有登录，访问登录页，通过
     next()
   }
 })
