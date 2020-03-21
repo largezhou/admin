@@ -3,11 +3,6 @@
 
 define('LARAVEL_START', microtime(true));
 
-// 避免 phpstorm 刷新命令报错
-if (isset($argv[1]) && $argv[1] === '-V') {
-    die('Symfony version 3.4.21');
-}
-
 /*
 |--------------------------------------------------------------------------
 | Register The Auto Loader

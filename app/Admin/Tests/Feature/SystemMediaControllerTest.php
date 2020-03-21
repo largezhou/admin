@@ -15,6 +15,7 @@ class SystemMediaControllerTest extends AdminTestCase
 {
     use RequestActions;
     use RefreshDatabase;
+
     protected $resourceName = 'system-media';
 
     protected function setUp(): void
@@ -42,7 +43,7 @@ class SystemMediaControllerTest extends AdminTestCase
         $this->assertTrue($this->storage->exists($path));
         // 复制一条记录
         $mediaId2 = factory(SystemMedia::class)
-            ->create(tap(SystemMedia::first())->addHidden(['id'])->toArray())
+            ->create(tap(SystemMedia::first())->makeHidden(['id'])->toArray())
             ->id;
 
         $res = $this->destroyResource($mediaId1);

@@ -2,7 +2,7 @@
 
 namespace App\Admin\Tests\Traits;
 
-use Illuminate\Foundation\Testing\TestResponse;
+use Illuminate\Testing\TestResponse;
 use Illuminate\Support\Str;
 
 trait RequestActions
