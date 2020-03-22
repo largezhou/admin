@@ -48,7 +48,7 @@ class Admin
     }
 
     /**
-     * @return \Illuminate\Contracts\Auth\Guard|\Tymon\JWTAuth\JWTGuard|\Tymon\JWTAuth\JWT
+     * @return \Illuminate\Contracts\Auth\Guard
      */
     public static function guard()
     {

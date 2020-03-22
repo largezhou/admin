@@ -16,15 +16,19 @@ abstract class AdminTestCase extends TestCase
      * @var string
      */
     protected $token;
+
     protected $routePrefix = 'admin';
+
     /**
      * @var AdminUser
      */
     protected $user;
+
     /**
      * @var \Illuminate\Contracts\Filesystem\Filesystem|\Illuminate\Contracts\Filesystem\Cloud
      */
     protected $storage;
+
     protected $filesystem = 'uploads';
 
     protected function login(AdminUser $user = null)
@@ -32,10 +36,7 @@ abstract class AdminTestCase extends TestCase
         $user = $user ?: factory(AdminUser::class)->create(['username' => 'admin']);
         $this->actingAs($user, 'admin');
 
-        $auth = auth('admin');
         $this->user = $user;
-        $this->token = $auth->tokenById($user->id);
-        $auth->setToken($this->token);
     }
 
     protected function setUp(): void
@@ -55,15 +56,13 @@ abstract class AdminTestCase extends TestCase
     protected function checkPermission($check)
     {
         if ($check) {
-            $ins = new class extends AdminPermission
-            {
+            $ins = new class extends AdminPermission {
                 protected $urlWhitelist = [
                     '/test-resources/pass-through',
                 ];
             };
         } else {
-            $ins = new class extends AdminPermission
-            {
+            $ins = new class extends AdminPermission {
                 public function handle(Request $request, \Closure $next, ...$args)
                 {
                     return $next($request);

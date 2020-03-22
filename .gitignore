@@ -4,6 +4,7 @@
 /storage/*.key
 /vendor
 .env
+.env.backup
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
@@ -13,5 +14,5 @@ yarn-error.log
 .phpstorm.meta.php
 _ide_helper.php
 _ide_helper_models.php
-public/admin-dev
+/public/admin-dev
 /public/uploads

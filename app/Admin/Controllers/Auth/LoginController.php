@@ -16,13 +16,9 @@ class LoginController extends Controller
         return 'username';
     }
 
-    protected function sendLoginResponse(Request $request)
+    protected function authenticated(Request $request, $user)
     {
-        return $this->created([
-            'token' => $this->guard()->getToken()->get(),
-            'token_type' => 'bearer',
-            'expired_in' => $this->guard()->factory()->getTTL() * 60,
-        ]);
+        return $this->created();
     }
 
     protected function attemptLogin(Request $request)
@@ -37,7 +33,7 @@ class LoginController extends Controller
     }
 
     /**
-     * @return \Illuminate\Contracts\Auth\Guard|\Tymon\JWTAuth\JWTGuard|\Tymon\JWTAuth\JWT
+     * @return \Illuminate\Contracts\Auth\Guard
      */
     protected function guard()
     {

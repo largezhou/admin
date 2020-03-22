@@ -1,5 +1,4 @@
 import Axios from 'axios'
-import { getToken } from '@/libs/token'
 import { Message } from 'element-ui'
 import _trimStart from 'lodash/trimStart'
 import {
@@ -42,8 +41,6 @@ export const cancelAllRequest = (msg = '') => {
 
 axios.interceptors.request.use(
   (config) => {
-    config.headers.Authorization = getToken()
-
     const source = CancelToken.source()
     config.cancelToken = source.token
 

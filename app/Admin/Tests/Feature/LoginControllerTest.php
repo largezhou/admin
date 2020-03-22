@@ -30,13 +30,7 @@ class LoginControllerTest extends AdminTestCase
             'username' => 'admin',
             'password' => '000000',
         ]);
-        $guard = Admin::guard();
-        $res->assertStatus(201)
-            ->assertJson([
-                'token' => $guard->getToken()->get(),
-                'token_type' => 'bearer',
-                'expired_in' => $guard->factory()->getTTL() * 60,
-            ]);
+        $res->assertStatus(201);
     }
 
     public function testLogout()

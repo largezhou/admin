@@ -10,16 +10,20 @@ use Illuminate\Support\ServiceProvider;
 class AdminServiceProvider extends ServiceProvider
 {
     protected $middlewareMap = [
-        'force-json' => \App\Admin\Middleware\ForceJson::class,
         'admin.permission' => \App\Admin\Contracts\PermissionMiddleware::class,
         'admin.auth' => \App\Admin\Middleware\Authenticate::class,
     ];
+
     protected $middlewareGroups = [
         'admin' => [
-            'force-json',
-            'bindings',
+            \App\Admin\Middleware\ForceJson::class,
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
+
     protected $commands = [
         Console\Commands\AdminInitCommand::class,
         Console\Commands\ResourceMakeCommand::class,
