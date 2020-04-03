@@ -39,7 +39,6 @@
 - `cp .env.example .env`
 - 修改 `.env` 文件中数据库连接配置
 - `php artisan key:generate`
-- `php artisan jwt:secret`
 - `php artisan migrate`
 - `php artisan admin:init`
 - `cd resources/admin && yarn && yarn build`

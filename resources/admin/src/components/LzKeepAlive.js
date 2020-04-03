@@ -1,38 +1,19 @@
-export default {
-  name: 'LzKeepAlive',
-  methods: {
-    match(name) {
-      return this.$store.state.include.some((i) => {
-        if (i instanceof RegExp) {
-          return i.test(name)
-        } else {
-          return i === name
-        }
-      })
+import Vue from 'vue'
+
+let cache = {}
+let keys = []
+
+// 只有在生产环境下，才重写该组件
+// 因为重写后，无法在 vue devtools 中的组件数中看到该组件下缓存的组件，，，
+let overwrite = process.env.NODE_ENV === 'production'
+  ? {
+    name: 'LzKeepAlive',
+    created() {
+      this.cache = cache
+      this.keys = keys
     },
-  },
-  render(h) {
-    const slot = this.$slots.default
-    const vnode = slot[0]
+    destroyed() {},
+  }
+  : {}
 
-    const componentOptions = vnode.componentOptions
-
-    if (componentOptions) {
-      const name = componentOptions.Ctor.options.name
-      if (!this.match(name)) {
-        return vnode
-      }
-
-      const cache = this.$store.state.cache
-      if (cache[name]) {
-        vnode.componentInstance = cache[name].componentInstance
-      } else {
-        this.$store.commit('ADD_CACHE', { name, vnode })
-      }
-
-      vnode.data.keepAlive = true
-    }
-
-    return vnode
-  },
-}
+export default Object.assign({}, Vue.options.components.KeepAlive, overwrite)

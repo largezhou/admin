@@ -11,7 +11,7 @@
         </div>
         <transition name="fade-transform" mode="out-in">
           <template v-if="$route.query._refresh"/>
-          <lz-keep-alive v-else>
+          <lz-keep-alive v-else :include="$store.state.include">
             <router-view/>
           </lz-keep-alive>
         </transition>
@@ -24,6 +24,7 @@ import SideMenu from './components/SideMenu'
 import Navbar from './components/Navbar'
 import { mapState } from 'vuex'
 import Breadcrumb from '@c/Layout/components/Breadcrumb'
+import LzKeepAlive from '@c/LzKeepAlive'
 
 export default {
   name: 'Layout',
@@ -31,6 +32,7 @@ export default {
     Breadcrumb,
     Navbar,
     SideMenu,
+    LzKeepAlive,
   },
   computed: {
     ...mapState({
