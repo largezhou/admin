@@ -1,11 +1,16 @@
 <template>
-  <keep-alive :include="$store.state.include">
+  <lz-keep-alive :include="$store.state.include">
     <router-view/>
-  </keep-alive>
+  </lz-keep-alive>
 </template>
 
 <script>
+import LzKeepAlive from '@c/LzKeepAlive'
+
 export default {
   name: 'ParentView',
+  components: {
+    LzKeepAlive,
+  },
 }
 </script>
