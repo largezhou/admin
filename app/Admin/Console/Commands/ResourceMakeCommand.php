@@ -176,9 +176,9 @@ class ResourceMakeCommand extends GeneratorCommand
             foreach ($replaces as $search => $replace) {
                 $content = str_replace($search, $replace, $content);
             }
-            $relativePath = $this->frontendTypePathMap[$type];
+            $relativePath = str_replace('dummy-resources', $pluralKebabDummyResource, $this->frontendTypePathMap[$type]);
             $path = $this->laravel['path.resources'].
-                '/admin/src/'.str_replace('dummy-resources', $pluralKebabDummyResource, $relativePath);
+                '/admin/src/'.$relativePath;
 
             if (
                 !$this->option('force') &&
