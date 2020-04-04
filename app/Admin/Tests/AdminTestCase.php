@@ -2,7 +2,6 @@
 
 namespace App\Admin\Tests;
 
-use App\Admin\Contracts\PermissionMiddleware;
 use App\Admin\Middleware\AdminPermission;
 use App\Admin\Models\AdminUser;
 use Illuminate\Http\Request;
@@ -70,7 +69,7 @@ abstract class AdminTestCase extends TestCase
             };
         }
 
-        $this->app->singleton(PermissionMiddleware::class, function () use ($ins) {
+        $this->app->singleton(AdminPermission::class, function () use ($ins) {
             return $ins;
         });
     }

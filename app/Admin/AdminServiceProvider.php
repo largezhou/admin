@@ -2,15 +2,13 @@
 
 namespace App\Admin;
 
-use App\Admin\Middleware\AdminPermission;
-use App\Admin\Utils\Admin;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class AdminServiceProvider extends ServiceProvider
 {
     protected $middlewareMap = [
-        'admin.permission' => \App\Admin\Contracts\PermissionMiddleware::class,
+        'admin.permission' => \App\Admin\Middleware\AdminPermission::class,
         'admin.auth' => \App\Admin\Middleware\Authenticate::class,
     ];
 
@@ -46,10 +44,6 @@ class AdminServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->singleton(Contracts\PermissionMiddleware::class, function () {
-            return new AdminPermission();
-        });
-
         foreach ($this->middlewareMap as $key => $middleware) {
             app('router')->aliasMiddleware($key, $middleware);
         }
