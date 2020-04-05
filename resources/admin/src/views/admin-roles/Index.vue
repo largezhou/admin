@@ -16,10 +16,10 @@
         <template #default="{ row }">
           <el-tag
             v-for="i of row.permissions"
-            :key="i.id"
+            :key="i"
             class="mr-1"
           >
-            {{ i.name }}
+            {{ i }}
           </el-tag>
         </template>
       </el-table-column>

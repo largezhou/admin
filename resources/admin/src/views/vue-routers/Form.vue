@@ -186,7 +186,7 @@ export default {
       let data
       if (this.editMode) {
         ({ data } = await editVueRouter(this.resourceId))
-        this.fillForm(data.vue_router)
+        this.fillForm(data.data)
       } else {
         ({ data } = await createVueRouter())
       }

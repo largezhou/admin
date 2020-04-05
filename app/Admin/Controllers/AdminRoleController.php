@@ -25,13 +25,11 @@ class AdminRoleController extends Controller
 
     public function edit(Request $request, AdminRole $adminRole)
     {
-        $adminRole->load(['permissions']);
-        $roleData = AdminRoleResource::make($adminRole)->toArray($request);
-
-        return $this->ok([
-            'role' => $roleData,
-            'permissions' => $this->formData()['permissions'],
-        ]);
+        return $this->ok(
+            AdminRoleResource::make($adminRole)
+                ->for(AdminRoleResource::FOR_EDIT)
+                ->additional($this->formData())
+        );
     }
 
     public function update(AdminRoleRequest $request, AdminRole $adminRole)
@@ -58,7 +56,7 @@ class AdminRoleController extends Controller
             ->orderByDesc('id');
         $roles = $request->get('all') ? $roles->get() : $roles->paginate();
 
-        return $this->ok(AdminRoleResource::collection($roles));
+        return $this->ok(AdminRoleResource::forCollection(AdminRoleResource::FOR_INDEX, $roles));
     }
 
     /**
@@ -69,6 +67,7 @@ class AdminRoleController extends Controller
     protected function formData()
     {
         $permissions = AdminPermission::query()
+            ->select(['id', 'name'])
             ->orderByDesc('id')
             ->get();
 

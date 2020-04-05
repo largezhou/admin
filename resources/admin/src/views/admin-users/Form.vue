@@ -121,7 +121,7 @@ export default {
 
       if (this.editMode) {
         ({ data } = await editAdminUser(this.resourceId))
-        this.fillForm(data.admin_user)
+        this.fillForm(data.data)
       } else {
         ({ data } = await createAdminUser())
       }

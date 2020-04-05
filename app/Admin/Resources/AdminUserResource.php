@@ -2,12 +2,15 @@
 
 namespace App\Admin\Resources;
 
-use App\Admin\Traits\ResourceRolePermissionHelpers;
-use App\Admin\Models\AdminUser;
-
+/**
+ * @mixin \App\Admin\Models\AdminUser
+ */
 class AdminUserResource extends JsonResource
 {
-    use ResourceRolePermissionHelpers;
+    public const FOR_INFO = 'info';
+    public const FOR_EDIT_INFO = 'edit_info';
+    public const FOR_EDIT = 'edit';
+    public const FOR_INDEX = 'index';
 
     /**
      * Transform the resource into an array.
@@ -18,18 +21,37 @@ class AdminUserResource extends JsonResource
      */
     public function toArray($request)
     {
-        /** @var AdminUser $model */
-        $model = $this->resource;
-
         return [
-            'id' => $model->id,
-            'username' => $model->username,
-            'name' => $model->name,
-            'avatar' => $model->avatar,
-            'roles' => $this->getRoles(),
-            'permissions' => $this->getPermissions(),
-            'created_at' => (string) $model->created_at,
-            'updated_at' => (string) $model->updated_at,
+            'id' => $this->id,
+            'username' => $this->username,
+            'name' => $this->name,
+            'avatar' => $this->avatar,
+            $this->mergeFor(static::FOR_INFO, function () {
+                return [
+                    'roles' => $this->roles()->pluck('slug'),
+                    'permissions' => $this->allPermissions()->pluck('slug'),
+                ];
+            }),
+            $this->mergeFor(static::FOR_EDIT, function () {
+                return [
+                    'roles' => $this->roles()->pluck('id'),
+                    'permissions' => $this->permissions()->pluck('id'),
+                ];
+            }),
+            $this->mergeFor(static::FOR_EDIT_INFO, function () {
+                return [
+                    'roles' => $this->roles()->pluck('name'),
+                    'permissions' => $this->permissions()->pluck('name'),
+                ];
+            }),
+            $this->mergeFor(static::FOR_INDEX, function () {
+                return [
+                    'roles' => $this->roles->pluck('name'),
+                    'permissions' => $this->permissions->pluck('name'),
+                ];
+            }),
+            'created_at' => (string) $this->created_at,
+            'updated_at' => (string) $this->updated_at,
         ];
     }
 }

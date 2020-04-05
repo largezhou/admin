@@ -43,19 +43,19 @@
         <el-form-item label="角色">
           <el-tag
             v-for="i of getInfo('roles', [])"
-            :key="i.id"
+            :key="i"
             class="mr-1"
           >
-            {{ i.name }}
+            {{ i }}
           </el-tag>
         </el-form-item>
         <el-form-item label="权限">
           <el-tag
             v-for="i of getInfo('permissions', [])"
-            :key="i.id"
+            :key="i"
             class="mr-1"
           >
-            {{ i.name }}
+            {{ i }}
           </el-tag>
         </el-form-item>
       </lz-form>

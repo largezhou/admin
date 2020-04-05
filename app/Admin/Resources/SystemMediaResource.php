@@ -2,8 +2,9 @@
 
 namespace App\Admin\Resources;
 
-use App\Admin\Models\SystemMedia;
-
+/**
+ * @mixin \App\Admin\Models\SystemMedia
+ */
 class SystemMediaResource extends JsonResource
 {
     public function toArray($request)

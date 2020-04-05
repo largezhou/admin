@@ -37,8 +37,12 @@
 
 <script>
 import LzForm from '@c/LzForm'
-import { editAdminRole, updateAdminRole, storeAdminRole, createAdminRole } from '@/api/admin-roles'
-import { getAdminPerms } from '@/api/admin-perms'
+import {
+  editAdminRole,
+  updateAdminRole,
+  storeAdminRole,
+  createAdminRole,
+} from '@/api/admin-roles'
 import FormHelper from '@c/LzForm/FormHelper'
 
 export default {
@@ -66,8 +70,8 @@ export default {
 
       if (this.editMode) {
         ({ data } = await editAdminRole(this.resourceId))
-        data.role.permissions = data.role.permissions.map(i => i.id)
-        this.fillForm(data.role)
+        data.data.permissions = data.data.permissions.map(i => i.id)
+        this.fillForm(data.data)
       } else {
         ({ data } = await createAdminRole())
       }
