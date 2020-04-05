@@ -61,5 +61,7 @@ module.exports = {
         symbolId: 'icon-[name]',
       })
       .end()
+
+    config.plugins.delete('prefetch')
   },
 }

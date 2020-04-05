@@ -55,10 +55,6 @@ export default {
   },
   methods: {
     async getData() {
-      if (!this.category) {
-        throw new Error('无法获取到 [ category ]')
-      }
-
       const { data } = await getConfigsByCategorySlug(this.category)
 
       this.configs = data
@@ -71,10 +67,12 @@ export default {
     },
     async onSubmit() {
       const { data } = await updateConfigValues(this.form)
-      this.$store.commit('SET_CONFIG', {
-        path: SYSTEM_BASIC.SLUG,
-        value: data,
-      })
+      if (this.category === SYSTEM_BASIC.SLUG) {
+        this.$store.commit('SET_CONFIG', {
+          path: SYSTEM_BASIC.SLUG,
+          value: data,
+        })
+      }
     },
   },
 }

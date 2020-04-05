@@ -44,7 +44,7 @@
             clearable
           />
         </el-form-item>
-        <el-form-item label="图标" prop="icon">
+        <el-form-item label="图标" prop="icon" helper="只有顶级菜单才会显示图标">
           <el-input v-model="form.icon" class="icon">
             <el-select v-model="form.icon" slot="prepend" placeholder="图标">
               <el-option
