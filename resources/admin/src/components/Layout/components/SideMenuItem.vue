@@ -2,7 +2,7 @@
   <div v-if="hasChildren" :class="{ collapse: collapse && topLevel }">
     <el-submenu v-if="hasChildren" v-show="filtered" :index="routeName">
       <template #title>
-        <svg-icon v-if="showIcon" class="el-icon-menu" :icon-class="icon"/>
+        <svg-icon v-if="topLevel" class="el-icon-menu" :icon-class="icon"/>
         <span>{{ menu.title }}</span>
       </template>
       <template v-for="subMenu of menu.children">
@@ -20,13 +20,13 @@
   </div>
   <a v-else-if="isExternal" :href="path" target="_blank">
     <el-menu-item v-show="filtered" :index="routeName">
-      <svg-icon v-if="showIcon" class="el-icon-menu" :icon-class="icon"/>
+      <svg-icon v-if="topLevel" class="el-icon-menu" :icon-class="icon"/>
       <template #title>{{ menu.title }}</template>
     </el-menu-item>
   </a>
   <router-link v-else :to="path">
     <el-menu-item v-show="filtered" :index="routeName">
-      <svg-icon v-if="showIcon" class="el-icon-menu" :icon-class="icon"/>
+      <svg-icon v-if="topLevel" class="el-icon-menu" :icon-class="icon"/>
       <template #title>{{ menu.title }}</template>
     </el-menu-item>
   </router-link>
@@ -75,9 +75,6 @@ export default {
     },
     topLevel() {
       return this.level === 1
-    },
-    showIcon() {
-      return this.topLevel || this.validIcon
     },
     path() {
       const { path } = this.menu
