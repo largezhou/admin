@@ -1,47 +1,43 @@
 <template>
-  <div style="height: 100%;">
-    <div v-show="miniWidth && !collapse" class="mask" @click="onCollapse"/>
-    <el-menu
-      ref="menu"
-      :default-active="activeName"
-      :default-openeds="activeNames"
-      class="side-menu"
-      :class="{ 'mini-width': miniWidth }"
-      background-color="#304156"
-      text-color="#bfcbd9"
-      :collapse="collapse"
-      @select="onSelect"
-      unique-opened
-    >
-      <side-menu-title class="px-2 pt-2" :collapse="collapse"/>
-      <div class="pa-2">
-        <el-input v-model="q" placeholder="搜索菜单"/>
-      </div>
-      <template v-for="menu of menus">
-        <side-menu-item
-          :q="q"
-          v-if="menu.menu"
-          :menu="menu"
-          :key="menu.id"
-        />
-      </template>
-    </el-menu>
-  </div>
+  <el-menu
+    ref="menu"
+    :default-active="activeName"
+    :class="{ 'mini-width': miniWidth }"
+    background-color="#304156"
+    text-color="#bfcbd9"
+    class="side-menu"
+    :collapse="collapse"
+    v-click-outside="onCollapse"
+  >
+    <side-menu-title class="px-2 pt-2" :collapse="collapse"/>
+    <div class="pa-2">
+      <el-input v-model="q" placeholder="搜索菜单"/>
+    </div>
+    <template v-for="menu of menus">
+      <side-menu-item
+        :q="q"
+        v-if="menu.menu"
+        :menu="menu"
+        :key="menu.id"
+        :collapse="collapse"
+      />
+    </template>
+  </el-menu>
 </template>
 
 <script>
-import SideMenuItem from './SideMenuItem'
-import { mapState } from 'vuex'
+import SideMenuTitle from './SideMenuTitle'
 import { hasChildren, makeRouteName } from '@/libs/utils'
+import { mapState } from 'vuex'
 import _trimEnd from 'lodash/trimEnd'
 import _forIn from 'lodash/forIn'
-import SideMenuTitle from '@c/Layout/components/SideMenuTitle'
+import SideMenuItem from '@c/Layout/components/SideMenuItem'
 
 export default {
   name: 'SideMenu',
   components: {
-    SideMenuTitle,
     SideMenuItem,
+    SideMenuTitle,
   },
   data() {
     return {
@@ -136,10 +132,7 @@ export default {
   },
   methods: {
     onCollapse() {
-      this.$store.commit('SET_OPENED', false)
-    },
-    onSelect() {
-      this.miniWidth && this.onCollapse()
+      this.miniWidth && this.$store.commit('SET_OPENED', false)
     },
     /**
      * 获取所有 path 以 '/' 开头的菜单
@@ -202,32 +195,6 @@ export default {
 
     > * {
       display: none;
-    }
-  }
-}
-
-.mask {
-  width: 100%;
-  top: 0;
-  height: 100%;
-  position: absolute;
-  z-index: 2001;
-}
-
-::v-deep {
-  .el-submenu {
-    .el-menu-item {
-      padding-right: 20px;
-    }
-
-    .el-submenu__title {
-      padding-right: 34px;
-    }
-
-    &.is-active {
-      .el-submenu__title {
-        color: #fff !important;
-      }
     }
   }
 }

@@ -1,3 +1,37 @@
+<template>
+  <div v-if="hasChildren" :class="{ collapse: collapse && topLevel }">
+    <el-submenu v-if="hasChildren" v-show="filtered" :index="routeName">
+      <template #title>
+        <svg-icon v-if="showIcon" class="el-icon-menu" :icon-class="icon"/>
+        <span>{{ menu.title }}</span>
+      </template>
+      <template v-for="subMenu of menu.children">
+        <side-menu-item
+          ref="children"
+          :q="q"
+          v-if="subMenu.menu"
+          :menu="subMenu"
+          :key="subMenu.id"
+          :level="level + 1"
+          :collapse="collapse"
+        />
+      </template>
+    </el-submenu>
+  </div>
+  <a v-else-if="isExternal" :href="path" target="_blank">
+    <el-menu-item v-show="filtered" :index="routeName">
+      <svg-icon v-if="showIcon" class="el-icon-menu" :icon-class="icon"/>
+      <template #title>{{ menu.title }}</template>
+    </el-menu-item>
+  </a>
+  <router-link v-else :to="path">
+    <el-menu-item v-show="filtered" :index="routeName">
+      <svg-icon v-if="showIcon" class="el-icon-menu" :icon-class="icon"/>
+      <template #title>{{ menu.title }}</template>
+    </el-menu-item>
+  </router-link>
+</template>
+
 <script>
 import {
   arrayWrap,
@@ -5,8 +39,8 @@ import {
   makeRouteName,
   startSlash,
 } from '@/libs/utils'
-import { isExternal } from '@/libs/validates'
 import icons from '@/icons'
+import { isExternal } from '@/libs/validates'
 
 export default {
   name: 'SideMenuItem',
@@ -17,6 +51,7 @@ export default {
       type: [Number],
       default: 1,
     },
+    collapse: Boolean,
   },
   computed: {
     filtered() {
@@ -38,8 +73,11 @@ export default {
       const { icon } = this.menu
       return icon && (icons.indexOf(icon) !== -1)
     },
+    topLevel() {
+      return this.level === 1
+    },
     showIcon() {
-      return (this.level === 1) || this.validIcon
+      return this.topLevel || this.validIcon
     },
     path() {
       const { path } = this.menu
@@ -53,63 +91,6 @@ export default {
       return isExternal(this.menu.path)
     },
   },
-  render(h) {
-    const {
-      showIcon,
-      icon,
-      filtered,
-      routeName,
-      hasChildren,
-      isExternal,
-      q,
-      level,
-      path,
-      menu: { title, children },
-    } = this
-
-    const titleSlot = [
-      (showIcon
-        ? <svg-icon icon-class={icon}/>
-        : <div class="icon-placeholder"/>),
-      (<span class="title" slot="title" title={title}>{title}</span>),
-    ]
-
-    const menuItem = (
-      <el-menu-item v-show={filtered} index={routeName}>
-        {titleSlot}
-      </el-menu-item>
-    )
-
-    const subMenus = children.map((i) => (
-      i.menu && (
-        <side-menu-item
-          ref="children"
-          refInFor
-          q={q}
-          key={i.id}
-          menu={i}
-          level={level + 1}
-        />
-      )
-    ))
-
-    if (hasChildren) {
-      return (
-        <el-submenu v-show={filtered} index={routeName} popper-class="side-submenu">
-          <template slot="title">{titleSlot}</template>
-          {subMenus}
-        </el-submenu>
-      )
-    } else if (isExternal) {
-      return (
-        <a href={path} target="_blank">{menuItem}</a>
-      )
-    } else {
-      return (
-        <router-link to={path}>{menuItem}</router-link>
-      )
-    }
-  },
 }
 </script>
 
@@ -118,48 +99,17 @@ a {
   text-decoration: none;
 }
 
-.icon-placeholder {
-  min-width: 24px;
-  width: 24px;
-}
-
-.title {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-::v-deep {
-  .el-menu-item,
-  .el-submenu__title {
-    display: flex;
-    align-items: center;
-
-    .el-tooltip {
-      display: inline-flex !important;
-      align-items: center;
-    }
-
-    svg {
-      width: 24px;
-      min-width: 24px;
-      height: 16px;
+.collapse {
+  ::v-deep {
+    .el-submenu__title {
+      span {
+        overflow: hidden;
+        visibility: hidden;
+        display: inline-block;
+        width: 0;
+        height: 0;
+      }
     }
   }
-
-  .is-active {
-    &.el-menu-item {
-      background-color: #409EFF !important;
-      color: #fff !important;
-    }
-  }
-}
-</style>
-
-<style lang="scss">
-.side-submenu {
-  max-width: 200px;
-  max-height: 400px;
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 </style>
