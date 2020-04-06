@@ -129,7 +129,7 @@ export default {
       this.form.type = types[0].value
 
       this.editMode
-        ? this.fillForm(data.config)
+        ? this.fillForm(data.data)
         : this.form.category_id = toInt(this.$route.query.category_id, '')
     },
     async onSubmit() {

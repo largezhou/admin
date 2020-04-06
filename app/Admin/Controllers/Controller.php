@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Storage;
 
 class Controller extends BaseController
 {
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+    use RestfulResponse;
     /**
      * 传入上传目录的字段
      */
@@ -21,8 +23,6 @@ class Controller extends BaseController
      * 上传根目录
      */
     const UPLOAD_FOLDER_PREFIX = 'uploads';
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-    use RestfulResponse;
 
     /**
      * 保存请求中的文件到 storage，并返回各文件相关的信息

@@ -1,51 +1,53 @@
 <template>
-  <div
-    v-click-outside="onCancel"
-    @keydown.esc="onCancel"
-    class="input-edit"
+  <el-popover
+    ref="popover"
+    placement="top"
+    trigger="click"
+    @after-enter="onAfterEnter"
+    v-model="editMode"
   >
-    <span
-      class="value"
-      @click="editMode = true"
-      v-show="!editMode"
-    >
-      {{ $attrs.value }}
-      <i v-show="!$attrs.value" class="el-icon-edit"/>
-    </span>
-
-    <el-input
-      v-show="editMode"
-      ref="input"
-      v-bind="$attrs"
-      v-on="$listeners"
-      :disabled="loading"
-      size="small"
-      @keydown.enter.native="onSubmit"
-    />
-    <el-button-group v-show="editMode">
-      <el-button
-        class="cancel"
-        size="mini"
-        icon="el-icon-close"
-        @click="onCancel"
-      />
-      <el-button
-        :loading="loading"
+    <div @keydown.esc="onCancel">
+      <el-input
+        ref="input"
+        v-bind="$attrs"
+        v-on="$listeners"
         :disabled="loading"
-        @click="onSubmit"
-        size="mini"
-        type="primary"
-        icon="el-icon-check"
+        size="small"
+        @keydown.enter.native="onEnterKeydown"
       />
-    </el-button-group>
-  </div>
+      <div class="mt-1" style="text-align: right;">
+        <el-button-group>
+          <el-button
+            class="cancel"
+            size="mini"
+            @click="onCancel"
+          >
+            取消
+          </el-button>
+          <loading-action
+            ref="confirm"
+            :action="onSubmit"
+            size="mini"
+            type="primary"
+          >
+            确定
+          </loading-action>
+        </el-button-group>
+      </div>
+    </div>
+    <span slot="reference" class="value">{{ $attrs.value }}</span>
+  </el-popover>
 </template>
 
 <script>
 import Mixin from './Mixin'
+import LoadingAction from '@c/LoadingAction'
 
 export default {
   name: 'InputEdit',
+  components: {
+    LoadingAction,
+  },
   mixins: [
     Mixin,
   ],
@@ -58,21 +60,18 @@ export default {
   methods: {
     onCancel() {
       this.editMode = false
+      this.changeVal(this.oldVal)
     },
     onSuccess() {
       this.setOldVal()
-      this.onCancel()
+      this.editMode = false
     },
-  },
-  watch: {
-    editMode(newVal) {
-      if (!newVal) {
-        this.changeVal(this.oldVal)
-      } else {
-        this.$nextTick(() => {
-          this.focus()
-        })
-      }
+    onAfterEnter() {
+      this.$refs.input.focus()
+    },
+    async onEnterKeydown() {
+      await this.$refs.confirm.onAction()
+      this.editMode = false
     },
   },
 }
@@ -81,38 +80,11 @@ export default {
 <style scoped lang="scss">
 @import '~element-ui/packages/theme-chalk/src/common/var';
 
-.input-edit {
-  display: flex;
-  align-items: center;
-}
-
 .value {
+  padding-bottom: 2px;
   color: $--color-primary;
   border-bottom: dashed 2px $--color-primary;
   cursor: pointer;
-}
-
-::v-deep {
-  .el-input {
-    width: calc(100% - 62px);
-    max-width: 300px;
-  }
-
-  .el-input__inner {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    padding: 0 10px;
-  }
-
-  .el-button {
-    padding: 9px;
-    height: 32px;
-  }
-}
-
-.cancel {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  border-left: none;
+  line-height: 26px;
 }
 </style>

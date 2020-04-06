@@ -26,14 +26,7 @@ class ConfigController extends Controller
 
     public function edit(Request $request, Config $config)
     {
-        $formData = $this->formData();
-        $configData = ConfigResource::make($config)
-            ->toResponse($request)
-            ->original;
-
-        return $this->ok(array_merge($formData, [
-            'config' => $configData,
-        ]));
+        return $this->ok(ConfigResource::make($config)->additional($this->formData()));
     }
 
     public function update(ConfigRequest $request, Config $config)

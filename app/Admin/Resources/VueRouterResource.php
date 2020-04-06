@@ -2,35 +2,32 @@
 
 namespace App\Admin\Resources;
 
-use App\Admin\Traits\ResourceRolePermissionHelpers;
-use App\Admin\Models\VueRouter;
-
+/**
+ * @mixin \App\Admin\Models\VueRouter
+ */
 class VueRouterResource extends JsonResource
 {
-    use ResourceRolePermissionHelpers;
+    public const FOR_EDIT = 'edit';
 
     public function toArray($request)
     {
-        /** @var VueRouter $model */
-        $model = $this->resource;
-
         return [
-            'id' => $model->id,
-            'parent_id' => $model->parent_id,
-            'title' => $model->title,
-            'icon' => $model->icon,
-            'path' => $model->path,
-            'order' => $model->order,
-            'cache' => $model->cache,
-            'menu' => $model->menu,
-            'roles' => $this->when(
-                $this->onlyRolePermissionIds,
-                $model->roles()->pluck('id'),
-                AdminRoleResource::collection($this->whenLoaded('roles'))
-            ),
-            'permission' => $model->permission,
-            'created_at' => (string) $model->created_at,
-            'updated_at' => (string) $model->updated_at,
+            'id' => $this->id,
+            'parent_id' => $this->parent_id,
+            'title' => $this->title,
+            'icon' => $this->icon,
+            'path' => $this->path,
+            'order' => $this->order,
+            'cache' => $this->cache,
+            'menu' => $this->menu,
+            $this->mergeFor(static::FOR_EDIT, function () {
+                return [
+                    'roles' => $this->roles()->pluck('id'),
+                ];
+            }),
+            'permission' => $this->permission,
+            'created_at' => (string) $this->created_at,
+            'updated_at' => (string) $this->updated_at,
         ];
     }
 }

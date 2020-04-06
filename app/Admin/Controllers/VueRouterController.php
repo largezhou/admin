@@ -35,16 +35,11 @@ class VueRouterController extends Controller
 
     public function edit(Request $request, VueRouter $vueRouter)
     {
-        $formData = $this->formData($vueRouter->id);
-
-        $vueRouter->load('roles');
-        $vueRouterData = VueRouterResource::make($vueRouter)
-            ->onlyRolePermissionIds()
-            ->toArray($request);
-
-        return $this->ok(array_merge($formData, [
-            'vue_router' => $vueRouterData,
-        ]));
+        return $this->ok(
+            VueRouterResource::make($vueRouter)
+                ->for(VueRouterResource::FOR_EDIT)
+                ->additional($this->formData($vueRouter->id))
+        );
     }
 
     public function index(Request $request, VueRouter $vueRouter)
@@ -76,14 +71,12 @@ class VueRouterController extends Controller
     {
         $model = app(VueRouter::class);
 
-        if ($exceptRouterId) {
-            $vueRouters = $model->treeExcept($exceptRouterId)->toTree();
-        } else {
-            $vueRouters = $model->toTree();
-        }
+        $vueRouters = $model->treeExcept($exceptRouterId ?? 0)->toTree();
+
         $roles = AdminRole::query()
             ->orderByDesc('id')
             ->get();
+
         $permissions = AdminPermission::query()
             ->orderByDesc('id')
             ->get();

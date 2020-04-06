@@ -8,7 +8,6 @@ use App\Admin\Models\Config;
 use App\Admin\Models\ConfigCategory;
 use App\Admin\Models\VueRouter;
 use App\Admin\Tests\AdminTestCase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Admin\Tests\Traits\RequestActions;
 
@@ -16,6 +15,7 @@ class ConfigControllerTest extends AdminTestCase
 {
     use RefreshDatabase;
     use RequestActions;
+
     protected $resourceName = 'configs';
 
     protected function setUp(): void

@@ -17,25 +17,20 @@ class AdminUserController extends Controller
     public function user()
     {
         $user = Admin::user();
-        return $this->ok(
-            AdminUserResource::make($user)
-                ->gatherAllPermissions()
-                ->onlyRolePermissionSlugs()
-        );
+        return $this->ok(AdminUserResource::make($user)->for(AdminUserResource::FOR_INFO));
     }
 
     public function editUser()
     {
         $user = Admin::user();
-        $user->load(['roles', 'permissions']);
-        return $this->ok(AdminUserResource::make($user));
+        return $this->ok(AdminUserResource::make($user)->for(AdminUserResource::FOR_EDIT_INFO));
     }
 
     public function updateUser(AdminUserProfileRequest $request)
     {
         $inputs = $request->validated();
         Admin::user()->updateUser($inputs);
-        return $this->callAction('user', [])->setStatusCode(201);
+        return $this->created(AdminUserResource::make(Admin::user()));
     }
 
     public function index(AdminUserFilter $filter)
@@ -46,7 +41,7 @@ class AdminUserController extends Controller
             ->orderByDesc('id')
             ->paginate();
 
-        return $this->ok(AdminUserResource::collection($users));
+        return $this->ok(AdminUserResource::forCollection(AdminUserResource::FOR_INDEX, $users));
     }
 
     public function store(AdminUserRequest $request, AdminUser $user)
@@ -61,7 +56,7 @@ class AdminUserController extends Controller
             $user->permissions()->attach($q);
         }
 
-        return $this->created(AdminUserResource::make($user));
+        return $this->created();
     }
 
     public function show(AdminUser $adminUser)
@@ -81,7 +76,7 @@ class AdminUserController extends Controller
         if (isset($inputs['permissions'])) {
             $adminUser->permissions()->sync($inputs['permissions']);
         }
-        return $this->created(AdminUserResource::make($adminUser));
+        return $this->created(AdminUserResource::make($adminUser)->for(AdminUserResource::FOR_EDIT));
     }
 
     public function destroy(AdminUser $adminUser)
@@ -92,16 +87,11 @@ class AdminUserController extends Controller
 
     public function edit(Request $request, AdminUser $adminUser)
     {
-        $formData = $this->formData();
-
-        $adminUser->load(['roles', 'permissions']);
-        $adminUserData = AdminUserResource::make($adminUser)
-            ->onlyRolePermissionIds()
-            ->toArray($request);
-
-        return $this->ok(array_merge($formData, [
-            'admin_user' => $adminUserData,
-        ]));
+        return $this->ok(
+            AdminUserResource::make($adminUser)
+                ->for(AdminUserResource::FOR_EDIT)
+                ->additional($this->formData())
+        );
     }
 
     /**
