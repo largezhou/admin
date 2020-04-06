@@ -14,6 +14,7 @@ class ControllerPermissionTest extends AdminTestCase
 {
     use RefreshDatabase;
     use RequestActions;
+
     protected $resourceName = 'test-resources';
 
     protected function setUp(): void
@@ -37,14 +38,20 @@ class ControllerPermissionTest extends AdminTestCase
             ])
             ->as('admin.')
             ->group(function () {
+                $controller = 'App\Admin\Tests\Controllers\DummyAdminController';
+
                 Route::middleware('admin.permission:check,with-args')
-                    ->group(function () {
-                        Route::get('test-resources/with-args', 'App\Admin\Tests\Controllers\DummyAdminController@withArgs');
+                    ->group(function () use ($controller) {
+                        Route::get('test-resources/with-args', [$controller, 'withArgs']);
                     });
 
-                Route::get('test-resources/check', 'App\Admin\Tests\Controllers\DummyAdminController@check');
-                Route::get('test-resources/pass-through', 'App\Admin\Tests\Controllers\DummyAdminController@passThrough');
-                Route::resource('test-resources', 'App\Admin\Tests\Controllers\DummyAdminController');
+                Route::get('test-resources/check', [$controller, 'check']);
+                Route::get('test-resources/pass-through', [$controller, 'passThrough']);
+
+                Route::get('test-resources/pass-through-get-put', [$controller, 'passThroughGet']);
+                Route::put('test-resources/pass-through-get-put', [$controller, 'cannotPassThroughPut']);
+
+                Route::resource('test-resources', $controller);
             });
     }
 
@@ -167,5 +174,11 @@ class ControllerPermissionTest extends AdminTestCase
     {
         $res = $this->get('/admin-api/test-resources/pass-through');
         $res->assertStatus(200);
+
+        $res = $this->get('/admin-api/test-resources/pass-through-get-put');
+        $res->assertStatus(200);
+
+        $res = $this->put('/admin-api/test-resources/pass-through-get-put');
+        $res->assertStatus(403);
     }
 }

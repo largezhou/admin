@@ -58,6 +58,7 @@ abstract class AdminTestCase extends TestCase
             $ins = new class extends AdminPermission {
                 protected $urlWhitelist = [
                     '/test-resources/pass-through',
+                    'get:/test-resources/pass-through-get-put',
                 ];
             };
         } else {

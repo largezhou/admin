@@ -21,7 +21,7 @@ class AdminPermission
         '/user',
         '/user/edit',
         '/configs/vue-routers',
-        '/configs/system_basic/values',
+        'GET:/configs/system_basic/values',
     ];
 
     /**
@@ -92,7 +92,7 @@ class AdminPermission
     protected function urlWhitelist(): array
     {
         return array_map(function ($url) {
-            return Admin::url($url);
+            return Admin::urlWithMethod($url);
         }, $this->urlWhitelist);
     }
 }

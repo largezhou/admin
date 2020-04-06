@@ -66,7 +66,7 @@ export default {
       this.form = form
     },
     async onSubmit() {
-      const { data } = await updateConfigValues(this.form)
+      const { data } = await updateConfigValues(this.category, this.form)
       if (this.category === SYSTEM_BASIC.SLUG) {
         this.$store.commit('SET_CONFIG', {
           path: SYSTEM_BASIC.SLUG,

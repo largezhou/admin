@@ -77,9 +77,8 @@ class AdminInitCommand extends Command
             [21, 19, '所有配置', 'configs', 20, null, 1],
             [22, 19, '添加配置', 'configs/create', 21, null, 1],
             [23, 19, '编辑配置', 'configs/:id(\\d+)/edit', 22, null, 0],
-            [24, 19, '更新配置', 'configs/:categorySlug', 23, null, 0],
 
-            [25, 0, '系统设置', '/configs/system_basic', 24, null, 1],
+            [24, 0, '系统设置', '/configs/system_basic', 23, null, 1],
         ];
 
         $inserts = $this->combineInserts(

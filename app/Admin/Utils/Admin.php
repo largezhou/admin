@@ -66,4 +66,14 @@ class Admin
     {
         return app_path('Admin'.($path ? (DIRECTORY_SEPARATOR.ltrim($path, '\/')) : ''));
     }
+
+    public static function urlWithMethod(string $path = ''): string
+    {
+        if (Str::contains($path, ':')) {
+            [$method, $path] = explode(':', $path);
+            return $method.':'.static::url($path);
+        } else {
+            return static::url($path);
+        }
+    }
 }

@@ -339,13 +339,13 @@ class ConfigControllerTest extends AdminTestCase
             'category_id' => $category->id,
         ]);
 
-        $res = $this->put(route('admin.configs.update-values'), [
+        $res = $this->put(route('admin.configs.update-values', ['category_slug' => $category->slug]), [
             'field' => null,
         ]);
         $res->assertStatus(422)
             ->assertJsonValidationErrors(['field']);
 
-        $res = $this->put(route('admin.configs.update-values'), [
+        $res = $this->put(route('admin.configs.update-values', ['category_slug' => $category->slug]), [
             'field' => 'new value',
         ]);
         $res->assertStatus(201);
