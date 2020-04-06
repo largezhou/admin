@@ -40,11 +40,12 @@ Route::prefix('admin-api')
             Route::resource('config-categories', 'ConfigCategoryController')->except(['show', 'create']);
 
             Route::get('configs/vue-routers', 'ConfigController@vueRouters')->name('configs.vue-routers');
-            Route::put('configs/values', 'ConfigController@updateValues')->name('configs.update-values');
             Route::resource('configs', 'ConfigController')->except(['show']);
             Route::get('configs/{category_slug}', 'ConfigController@getByCategorySlug')->name('configs.by-category-slug');
             Route::get('configs/{category_slug}/values', 'ConfigController@getValuesByCategorySlug')
                 ->name('configs.values.by-category-slug');
+            Route::put('configs/{category_slug}/values', 'ConfigController@updateValues')
+                ->name('configs.update-values');
 
             Route::resource('system-media-categories', 'SystemMediaCategoryController')->except(['show', 'create']);
             // 在指定分类下，上传文件

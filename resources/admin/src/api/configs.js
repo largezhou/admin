@@ -44,8 +44,8 @@ export function getConfigsByCategorySlug(categorySlug) {
   return Request.get(`configs/${categorySlug}`)
 }
 
-export function updateConfigValues(data) {
-  return Request.put('configs/values', data)
+export function updateConfigValues(categorySlug, data) {
+  return Request.put(`configs/${categorySlug}/values`, data)
 }
 
 export function getConfigsValueByCategorySlug(categorySlug) {

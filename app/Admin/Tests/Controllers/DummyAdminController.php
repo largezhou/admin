@@ -32,4 +32,14 @@ class DummyAdminController extends Controller
     {
         return $this->ok();
     }
+
+    public function passThroughGet()
+    {
+        return $this->ok();
+    }
+
+    public function cannotPassThroughPut()
+    {
+        return $this->created();
+    }
 }

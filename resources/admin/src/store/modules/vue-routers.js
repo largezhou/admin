@@ -1,5 +1,5 @@
 import router from '@/router'
-import { fixedRoutes } from '@/router/routes'
+import { appendRoutes } from '@/router/routes'
 import { buildRoutes, makeRouteName } from '@/libs/utils'
 import _get from 'lodash/get'
 import { getVueRouters } from '@/api/configs'
@@ -37,7 +37,7 @@ export default {
       const homeRouteId = getters.getConfig(`${SLUG}.${HOME_ROUTE_SLUG}`, DEFAULT_HOME_ROUTE)
       const { routes, homeRoute } = buildRoutes(data, makeRouteName(homeRouteId))
       router.addRoutes(routes)
-      router.addRoutes(fixedRoutes)
+      router.addRoutes(appendRoutes)
       commit('SET_HOME_ROUTE', homeRoute)
     },
   },

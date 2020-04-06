@@ -67,7 +67,7 @@ class AdminUserControllerTest extends AdminTestCase
 
     public function testUpdateUser()
     {
-        $this->attachAuthToUser();
+        [$roleId, $perm1Id, $perm2Id] = $this->attachAuthToUser();
 
         $res = $this->put(route('admin.user.update'), [
             'name' => 'new name',
@@ -78,12 +78,23 @@ class AdminUserControllerTest extends AdminTestCase
             'permissions' => [],
         ]);
 
-        $res->assertStatus(201)
-            ->assertSeeText('new name')
-            // 账号没变
-            ->assertDontSee('can not update')
-            // 权限没变
-            ->assertJsonFragment(['permissions' => ['perm1', 'perm2']]);
+        $res->assertStatus(201);
+
+        // 验证昵称修改成功，帐号无法修改
+        $this->assertDatabaseHas('admin_users', [
+            'name' => 'new name',
+            'username' => $this->user->username,
+        ]);
+        // 验证权限无法修改
+        $this->assertDatabaseHas('admin_user_permission', [
+            'user_id' => $this->user->id,
+            'permission_id' => $perm2Id,
+        ]);
+        // 验证角色无法修改
+        $this->assertDatabaseHas('admin_user_role', [
+            'user_id' => $this->user->id,
+            'role_id' => $roleId,
+        ]);
 
         // 密码变了
         $this->assertTrue(Hash::check('123456', $this->user->password));

@@ -83,9 +83,8 @@ class AdminInitCommand extends Command
             [21, 19, '所有配置', 'configs', 20, null, 1, 0],
             [22, 19, '添加配置', 'configs/create', 21, null, 1, 0],
             [23, 19, '编辑配置', 'configs/:id(\\d+)/edit', 22, null, 0, 0],
-            [24, 19, '更新配置', 'configs/:categorySlug', 23, null, 0, 0],
 
-            [25, 0, '系统设置', '/configs/system_basic', 24, null, 1, 0],
+            [24, 0, '系统设置', '/configs/system_basic', 23, null, 1, 0],
 
             [100, 0, '菜单匹配测试', null, 100, null, 1, 0],
             [101, 100, '链接', 'https://www.baidu.com', 101, null, 1, 0],

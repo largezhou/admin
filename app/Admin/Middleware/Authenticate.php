@@ -25,7 +25,7 @@ class Authenticate extends Middleware
     protected function urlWhitelist(): array
     {
         return array_map(function ($url) {
-            return Admin::url($url);
+            return Admin::urlWithMethod($url);
         }, $this->urlWhitelist);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Admin\Requests;
 
 use App\Admin\Models\Config;
+use App\Admin\Models\ConfigCategory;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -17,7 +18,13 @@ class UpdateConfigValuesRequest extends FormRequest
      */
     protected $configs;
 
+    /**
+     * @var ConfigCategory
+     */
+    protected $category;
+
     protected $validationRules = [];
+
     protected $validationAttributes = [];
 
     /**
@@ -34,8 +41,11 @@ class UpdateConfigValuesRequest extends FormRequest
 
     public function getConfigs()
     {
+        $category = $this->getCategory();
+
         if (!$this->configs) {
-            $this->configs = Config::query()
+            $this->configs = $category
+                ->configs()
                 ->whereIn('slug', $this->keys())
                 ->get();
         }
@@ -65,5 +75,16 @@ class UpdateConfigValuesRequest extends FormRequest
     public function attributes()
     {
         return $this->validationAttributes;
+    }
+
+    public function getCategory()
+    {
+        if (!$this->category) {
+            $this->category = ConfigCategory::query()
+                ->where('slug', $this->route('category_slug'))
+                ->firstOrFail();
+        }
+
+        return $this->category;
     }
 }

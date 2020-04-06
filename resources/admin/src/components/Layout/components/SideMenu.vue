@@ -43,15 +43,13 @@ export default {
     return {
       openedMenus: [],
       q: '',
+      menus: this.$store.state.vueRouters.vueRouters,
     }
   },
   props: {
     collapse: Boolean,
   },
   computed: {
-    menus() {
-      return this.$store.state.vueRouters.vueRouters
-    },
     activeName() {
       return this.activeNames[this.activeNames.length - 1] || null
     },
