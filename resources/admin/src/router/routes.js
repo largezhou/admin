@@ -74,12 +74,6 @@ export default [
         },
         component: () => import('@v/admin-users/EditProfile'),
       },
-    ],
-  },
-  {
-    path: randomChars(),
-    component: Layout,
-    children: [
       {
         path: '/permission-test',
         name: 'permissionTest',
