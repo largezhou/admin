@@ -289,6 +289,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
             'ext' => 'jpg',
             'mime_type' => $file->getMimeType(),
             'path' => $path,
+            'path_key' => md5($path),
         ]);
         $this->storage->exists($path);
         $this->storage->delete($path);
