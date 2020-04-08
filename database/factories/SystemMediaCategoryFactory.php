@@ -9,5 +9,6 @@ $factory->define(SystemMediaCategory::class, function (Faker $faker) {
     return [
         'parent_id' => 0,
         'name' => 'cate_'.$faker->unique()->word,
+        'folder' => implode('/', $faker->words(2)),
     ];
 });
