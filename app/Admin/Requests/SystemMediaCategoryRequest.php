@@ -29,6 +29,7 @@ class SystemMediaCategoryRequest extends FormRequest
                     ->ignore($id),
             ],
             'parent_id' => 'exists:system_media_categories,id',
+            'folder' => 'bail|nullable|regex:/^[a-z_\/\d]+$/i|max:50',
         ];
 
         if ($this->isMethod('put')) {
@@ -52,13 +53,15 @@ class SystemMediaCategoryRequest extends FormRequest
         return [
             'parent_id' => '父级分类',
             'name' => '名称',
+            'folder' => '文件夹',
         ];
     }
 
     public function messages()
     {
         return [
-            'name.unique' => '同级下 :attribute 已经存在',
+            'name.unique' => '同级下 :attribute 已经存在。',
+            'folder.regex' => ':attribute 格式不符合规定。',
         ];
     }
 

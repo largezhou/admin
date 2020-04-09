@@ -114,10 +114,13 @@
 </template>
 <script>
 import { nestedToSelectOptions, toInt } from '@/libs/utils'
-import { createVueRouter, editVueRouter, getVueRouters, storeVueRouter, updateVueRouter } from '@/api/vue-routers'
+import {
+  createVueRouter,
+  editVueRouter,
+  storeVueRouter,
+  updateVueRouter,
+} from '@/api/vue-routers'
 import LzForm from '@c/LzForm'
-import { getAdminRoles } from '@/api/admin-roles'
-import { getAdminPerms } from '@/api/admin-perms'
 import FormHelper from '@c/LzForm/FormHelper'
 import icons from '@/icons'
 import pages from '@v/pages'

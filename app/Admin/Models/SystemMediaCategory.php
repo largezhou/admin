@@ -9,7 +9,9 @@ class SystemMediaCategory extends Model
     use ModelTree {
         delete as modelTreeDelete;
     }
-    protected $fillable = ['parent_id', 'name'];
+
+    protected $fillable = ['parent_id', 'name', 'folder'];
+
     protected $casts = [
         'parent_id' => 'integer',
     ];
@@ -35,5 +37,17 @@ class SystemMediaCategory extends Model
         $this->media()->update(['category_id' => 0]);
 
         return $res;
+    }
+
+    /**
+     * 格式化 folder 的值
+     *
+     * @param $value
+     */
+    public function setFolderAttribute($value)
+    {
+        $value = strtolower(implode('/', array_filter(explode('/', (string) $value))));
+
+        $this->attributes['folder'] = $value ?: null;
     }
 }

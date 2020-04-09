@@ -15,6 +15,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
 {
     use RefreshDatabase;
     use RequestActions;
+
     protected $resourceName = 'system-media-categories';
 
     protected function setUp(): void
@@ -55,32 +56,40 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
 
         // parent_id exists
         // name max:20
+        // folder nullable
         $res = $this->storeResource([
             'parent_id' => 111,
             'name' => str_repeat('a', 21),
+            'folder' => null,
         ]);
         $res->assertJsonValidationErrors(['parent_id', 'name']);
 
         // name 同级 unique
+        // folder regexp
         $res = $this->storeResource([
             'parent_id' => 3,
             'name' => 'level 3-1',
+            'folder' => '1212/*/',
         ]);
-        $res->assertJsonValidationErrors(['name']);
+        $res->assertJsonValidationErrors(['name', 'folder']);
 
         // parent_id 0
         // name 不同级重复
+        // folder max:50
         $res = $this->storeResource([
             'parent_id' => 0,
             'name' => 'level 3-1',
+            'folder' => str_repeat('a', 51),
         ]);
-        $res->assertJsonMissingValidationErrors(['parent_id', 'name']);
+        $res->assertJsonMissingValidationErrors(['parent_id', 'name'])
+            ->assertJsonValidationErrors(['folder']);
     }
 
     public function testStore()
     {
         $res = $this->storeResource([
             'name' => 'level 0-1',
+            'folder' => '///////////',
         ]);
         $res->assertStatus(201);
         $id1 = $this->getLastInsertId('system_media_categories');
@@ -88,11 +97,13 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
             'id' => $id1,
             'name' => 'level 0-1',
             'parent_id' => 0,
+            'folder' => null,
         ]);
 
         $res = $this->storeResource([
             'parent_id' => $id1,
             'name' => 'level 1-1',
+            'folder' => '//user////avatars//////',
         ]);
         $res->assertStatus(201);
         $id2 = $this->getLastInsertId('system_media_categories');
@@ -100,6 +111,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
             'id' => $id2,
             'parent_id' => $id1,
             'name' => 'level 1-1',
+            'folder' => 'user/avatars',
         ]);
     }
 
@@ -148,7 +160,11 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
 
     public function testEdit()
     {
-        $id = factory(SystemMediaCategory::class)->create(['name' => 'level 0-1'])->id;
+        $id = factory(SystemMediaCategory::class)
+            ->create([
+                'name' => 'level 0-1',
+                'folder' => 'user/avatars',
+            ])->id;
 
         $res = $this->editResource($id);
         $res->assertStatus(200)
@@ -156,6 +172,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
                 'id' => $id,
                 'name' => 'level 0-1',
                 'parent_id' => 0,
+                'folder' => 'user/avatars',
             ]);
     }
 
@@ -229,7 +246,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
      * @param int $cateId
      * @param array $data
      *
-     * @return \Illuminate\Foundation\Testing\TestResponse
+     * @return \Illuminate\Testing\TestResponse
      */
     protected function storeSystemMedia($cateId, $data = [])
     {
@@ -242,7 +259,10 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
 
     public function testStoreSystemMedia()
     {
-        $categoryId = factory(SystemMediaCategory::class)->create()->id;
+        $folder = 'users/avatars';
+        $categoryId = factory(SystemMediaCategory::class)
+            ->create(['folder' => $folder])
+            ->id;
 
         // file required
         $res = $this->storeSystemMedia($categoryId);
@@ -256,12 +276,11 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
 
         $res = $this->storeSystemMedia($categoryId, [
             'file' => $file,
-            Controller::UPLOAD_FOLDER_FIELD => 'tests',
         ]);
         $res->assertStatus(201);
 
         $filename = md5_file($file).'.jpg';
-        $path = Controller::UPLOAD_FOLDER_PREFIX.'/tests/'.$filename;
+        $path = Controller::UPLOAD_FOLDER_PREFIX.'/'.$folder.'/'.$filename;
         $this->assertDatabaseHas('system_media', [
             'id' => $this->getLastInsertId('system_media'),
             'category_id' => $categoryId,
@@ -270,6 +289,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
             'ext' => 'jpg',
             'mime_type' => $file->getMimeType(),
             'path' => $path,
+            'path_key' => md5($path),
         ]);
         $this->storage->exists($path);
         $this->storage->delete($path);

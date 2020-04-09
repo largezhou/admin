@@ -26,13 +26,16 @@ class SystemMediaControllerTest extends AdminTestCase
 
     public function testDestroy()
     {
-        $categoryId = factory(SystemMediaCategory::class)->create()->id;
+        $categoryId = factory(SystemMediaCategory::class)
+            ->create([
+                'folder' => 'tests',
+            ])
+            ->id;
         $file = UploadedFile::fake()->image('avatar.jpg', 200, 200);
 
         $this->storeResource(
             [
                 'file' => $file,
-                Controller::UPLOAD_FOLDER_FIELD => 'tests',
             ],
             'system-media-categories.system-media',
             ['system_media_category' => $categoryId]

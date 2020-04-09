@@ -53,7 +53,7 @@ class SystemMediaCategoryController extends Controller
      */
     public function storeSystemMedia(SystemMediaRequest $request, SystemMediaCategory $systemMediaCategory)
     {
-        $files = $this->saveFiles($request);
+        $files = $this->saveFiles($request, $systemMediaCategory->folder);
         $media = $systemMediaCategory->media()->create($files['file']);
         return $this->created(SystemMediaResource::make($media));
     }

@@ -16,10 +16,6 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
     use RestfulResponse;
     /**
-     * 传入上传目录的字段
-     */
-    const UPLOAD_FOLDER_FIELD = '_upload_dir';
-    /**
      * 上传根目录
      */
     const UPLOAD_FOLDER_PREFIX = 'uploads';
@@ -28,6 +24,7 @@ class Controller extends BaseController
      * 保存请求中的文件到 storage，并返回各文件相关的信息
      *
      * @param Request $request
+     * @param string $folder 存储的文件夹
      *
      * @return array
      *
@@ -43,12 +40,11 @@ class Controller extends BaseController
      *     'other' => [...],
      * ]
      */
-    protected function saveFiles(Request $request): array
+    protected function saveFiles(Request $request, string $folder = null): array
     {
         $files = $request->file();
         $driver = Storage::disk('uploads');
 
-        $folder = $request->input(static::UPLOAD_FOLDER_FIELD);
         $folder = static::UPLOAD_FOLDER_PREFIX.($folder ? '/'.trim($folder, '/') : '');
 
         $files = array_map(function (UploadedFile $file) use ($driver, $folder) {

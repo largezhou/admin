@@ -74,11 +74,19 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :error="errors.name" class="mb-0" label="名称">
+        <el-form-item :error="errors.name" required label="名称">
           <el-input
             v-model="form.name"
             autocomplete="off"
             autofocus
+          />
+        </el-form-item>
+        <el-form-item :error="errors.folder" class="mb-0" label="文件夹">
+          <el-input
+            v-model="form.folder"
+            autocomplete="off"
+            autofocus
+            placeholder="只能包含字母和数字，不区分大小写"
           />
         </el-form-item>
       </el-form>
@@ -133,6 +141,7 @@ export default {
       form: {
         parent_id: 0,
         name: '',
+        folder: '',
       },
       errors: {},
     }
@@ -200,6 +209,7 @@ export default {
           ? this.current.parent_id
           : (this.currentId < 0) ? 0 : this.currentId,
         name: editMode ? this.current.name : '',
+        folder: editMode ? this.current.folder : '',
       }
 
       this.dialog = true

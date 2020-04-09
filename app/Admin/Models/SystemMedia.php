@@ -9,12 +9,14 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 class SystemMedia extends Model
 {
     protected $fillable = [
-        'filename', 'ext', 'category_id', 'path', 'size', 'mime_type',
+        'filename', 'ext', 'category_id', 'path', 'path_key', 'size', 'mime_type',
     ];
+
     protected $casts = [
         'category_id' => 'integer',
         'size' => 'integer',
     ];
+
     protected $perPage = 30;
 
     public function category()
@@ -53,8 +55,19 @@ class SystemMedia extends Model
     protected function hasSameFile()
     {
         return !!static::query()
-            ->where('filename', $this->filename)
+            ->where('path_key', $this->path_key)
             ->where('id', '<>', $this->id)
             ->first();
+    }
+
+    /**
+     * 设置 path 的时候，同时设置 path_key 为 path 的 md5 值
+     *
+     * @param $value
+     */
+    public function setPathAttribute($value)
+    {
+        $this->attributes['path'] = $value;
+        $this->attributes['path_key'] = md5($value);
     }
 }
