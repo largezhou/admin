@@ -14,10 +14,23 @@ NProgress.configure({ showSpinner: false })
 
 Vue.use(Router)
 
+let scrollEl
+const setWindowPageOffset = () => {
+  scrollEl = scrollEl || document.querySelector('#main')
+  scrollEl && (window.pageYOffset = scrollEl.scrollTop)
+}
+
 const router = new Router({
   mode: 'history',
   base: process.env.NODE_ENV === 'development' ? 'admin-dev' : 'admin',
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      Vue.nextTick(() => {
+        scrollEl && (scrollEl.scrollTop = savedPosition.y)
+      })
+    }
+  },
 })
 
 const loginRoute = to => ({
@@ -52,6 +65,9 @@ const renameComponent = async (to) => {
 }
 
 router.beforeEach(async (to, from, next) => {
+  // 设置 window.pageYOffset 的值，为滚动行为提供滚动的位置
+  // 如果有其他影响可去掉
+  setWindowPageOffset()
   cancelAllRequest('页面切换，取消请求')
 
   await renameComponent(to)
