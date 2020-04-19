@@ -1,9 +1,9 @@
 <template>
-  <a-layout class="h-100">
+  <a-layout>
     <a-layout-sider
-      width="220"
+      :width="fullWidth"
       breakpoint="lg"
-      :collapsed-width="miniWidth ? 0 : 80"
+      :collapsed-width="collapsedWith"
       :collapsible="true"
       :collapsed="collapsed"
       :trigger="null"
@@ -15,57 +15,20 @@
         <span v-if="appLogo" class="flex-box logo-wrapper">
           <img :src="appLogo" class="logo-img">
         </span>
-        <span v-show="!collapsed" class="app-name ml-2">{{ appName }}</span>
+        <span v-show="appLogo && !collapsed" class="ml-2 h-100"/>
+        <span v-show="!appLogo || !collapsed" class="app-name">{{ appName }}</span>
       </router-link>
       <side-menu/>
     </a-layout-sider>
-    <a-layout>
+    <a-layout class="layout-main" :style="{ paddingLeft: `${layoutWidth}px`}">
       <navbar/>
-      <a-layout-content
-        :style="{
-          margin: '24px 16px 0'
-        }"
-      >
-        <div
-          :style="{
-            padding: '24px',
-            background: '#fff',
-            minHeight: '360px',
-          }"
-        >
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
-          <h1>content</h1>
+      <breadcrumb class="mx-2 my-1"/>
+      <a-layout-content class="mb-3 mx-2">
+        <div class="pa-2" style="background: #fff">
+          <router-view/>
         </div>
       </a-layout-content>
+      <a-layout-footer style="text-align: center;">Footer</a-layout-footer>
     </a-layout>
   </a-layout>
 </template>
@@ -76,12 +39,14 @@ import { mapGetters, mapState } from 'vuex'
 import Navbar from './components/Navbar'
 import { getUrl } from '@/libs/utils'
 import { SYSTEM_BASIC } from '@/libs/constants'
+import Breadcrumb from './components/Breadcrumb'
 
 export default {
   name: 'Layout',
   components: {
     Navbar,
     SideMenu,
+    Breadcrumb,
   },
   computed: {
     ...mapState({
@@ -94,6 +59,15 @@ export default {
     ]),
     appLogo() {
       return getUrl(this.getConfig(SYSTEM_BASIC.SLUG + '.' + SYSTEM_BASIC.APP_LOGO_SLUG))
+    },
+    collapsedWith() {
+      return this.miniWidth ? 0 : 80
+    },
+    fullWidth() {
+      return 220
+    },
+    layoutWidth() {
+      return this.miniWidth ? 0 : (this.collapsed ? this.collapsedWith : this.fullWidth)
     },
   },
   methods: {
@@ -112,11 +86,16 @@ export default {
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
+  position: fixed;
 }
 
 .sider-mini-width {
-  position: fixed;
   z-index: 1;
+}
+
+.layout-main {
+  transition: all 0.2s;
+  min-height: 100vh;
 }
 
 .logo {
@@ -129,7 +108,7 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #bfcbd9;
+  color: #fff;
   font-size: 16px;
   line-height: 36px;
   display: inline-block;

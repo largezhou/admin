@@ -187,8 +187,8 @@ export const nestedToSelectOptions = (items, props = {}) => {
  */
 export const assignExists = (target, source, force = false) => {
   const res = {}
-  for (let k of Object.keys(target)) {
-    if (source.hasOwnProperty(k) || force) {
+  for (const k of Object.keys(target)) {
+    if (Object.prototype.hasOwnProperty.call(source, k) || force) {
       res[k] = source[k]
     } else {
       res[k] = target[k]
@@ -233,7 +233,7 @@ export const getMessage = key => {
  * @returns {boolean}
  */
 export const removeFromNested = (items, identify, identifyKey = 'id', childrenKey = 'children') => {
-  for (let i in items) {
+  for (const i in items) {
     const item = items[i]
     if (item[identifyKey] === identify) {
       items.splice(i, 1)
@@ -354,8 +354,7 @@ export function getUrl(path) {
  * @return {*}
  */
 export function showLoginDialog() {
-  let vm
-  vm = GlobalDialog.new({
+  const vm = GlobalDialog.new({
     title: '登录',
     width: '350px',
     customClass: 'login-dialog',

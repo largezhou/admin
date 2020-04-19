@@ -16,6 +16,9 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.NODE_ENV === 'development' ? 'antd-dev' : 'antd',
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    return savedPosition || { x: 0, y: 0 }
+  },
 })
 
 const loginRoute = to => ({

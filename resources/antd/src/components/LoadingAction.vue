@@ -63,10 +63,9 @@ export default {
       try {
         await this.action()
         this.handleDisableOnSuccess()
-      } catch (e) {
-        Promise.reject(e)
+      } finally {
+        this.actionLoading = false
       }
-      this.actionLoading = false
     },
     handleDisableOnSuccess() {
       if (this.disableOnSuccess > 0) {

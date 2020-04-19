@@ -2,6 +2,8 @@ import Page404 from '@v/errors/Page404'
 import { randomChars } from '@/libs/utils'
 import Layout from '@c/Layout'
 
+const randomPath = '/' + randomChars()
+
 /**
  * 前置路由，会添加到后端路由前面
  */
@@ -13,6 +15,20 @@ export default [
       title: '登录',
     },
     component: () => import('@v/Login'),
+  },
+  {
+    path: randomPath,
+    component: Layout,
+    children: [
+      {
+        path: '/user/edit',
+        name: 'editMyProfile',
+        meta: {
+          title: '编辑资料',
+        },
+        component: () => import('@v/admin-users/EditProfile'),
+      },
+    ],
   },
 ]
 

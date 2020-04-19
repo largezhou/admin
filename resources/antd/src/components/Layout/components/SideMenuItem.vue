@@ -34,49 +34,40 @@ export default {
       ? rawPath
       : rawPath ? startSlash(rawPath) : ''
 
-    const svgEl = topLevel
-      ? (<i class="anticon anticon-desktop">
-        <svg-icon iconClass={icon}/>
-      </i>)
+    const svgNode = topLevel
+      ? (<i class="anticon anticon-desktop"><svg-icon iconClass={icon}/></i>)
       : null
+    const titleNodes = [svgNode, <span>{menu.title}</span>]
 
     if (hasChildren) {
+      const childrenNodes = menu.children.map((sub) => sub.menu
+        ? (
+          <side-menu-item
+            key={menu.id}
+            menu={sub}
+            q={q}
+            level={level + 1}
+          />
+        )
+        : null,
+      )
+
       return (
         <a-sub-menu key={routeName}>
-          <span slot="title">
-            {svgEl}
-            <span>{menu.title}</span>
-          </span>
-          {
-            menu.children.map((subMenu) => subMenu.menu
-              ? (
-                <side-menu-item
-                  key={menu.id}
-                  menu={subMenu}
-                  q={q}
-                  level={level + 1}
-                />
-              )
-              : null,
-            )
-          }
+          <span slot="title">{titleNodes}</span>
+          {childrenNodes}
         </a-sub-menu>
       )
     } else if (isExternal) {
       return (
         <a-menu-item key={routeName}>
-          <a href={path} target="_blank">
-            {svgEl}
-            <span>{menu.title}</span>
-          </a>
+          <a href={path} target="_blank">{titleNodes}</a>
         </a-menu-item>
       )
     } else {
       return (
         <a-menu-item key={routeName}>
-          <router-link to={path}>  {svgEl}
-            <span>{menu.title}</span>
-          </router-link>
+          <router-link to={path}>{titleNodes}</router-link>
         </a-menu-item>
       )
     }

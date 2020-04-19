@@ -25,6 +25,13 @@ module.exports = {
       ignored: /node_modules/,
     },
   },
+  css: {
+    loaderOptions: {
+      less: {
+        javascriptEnabled: true,
+      },
+    },
+  },
   chainWebpack(config) {
     config
       .plugin('html')

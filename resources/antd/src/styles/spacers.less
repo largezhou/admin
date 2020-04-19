@@ -1,7 +1,5 @@
-@levels: 0, 5, 10, 20, 24, 30;
-
 .spacers(@i) {
-  @space: extract(@levels, @i + 1);
+  @space: @i * 8;
   @space-px: @{space}px !important;
 
   .ma-@{i} {
@@ -65,7 +63,7 @@
   }
 }
 
-.loop(@i) when (@i < 6) {
+.loop(@i) when (@i < 5) {
   .spacers(@i);
   .loop(@i + 1);
 }
