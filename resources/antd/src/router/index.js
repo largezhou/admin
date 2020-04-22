@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import routes from './routes'
 import _get from 'lodash/get'
+import _last from 'lodash/last'
 import store from '@/store'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
@@ -17,7 +18,17 @@ const router = new VueRouter({
   base: process.env.NODE_ENV === 'development' ? 'antd-dev' : 'antd',
   routes,
   scrollBehavior(to, from, savedPosition) {
-    return savedPosition || { x: 0, y: 0 }
+    const delayScroll = _last(to.matched)?.components?.default?.scroll
+
+    const pos = savedPosition || { x: 0, y: 0 }
+
+    return delayScroll
+      ? new Promise((resolve) => {
+        Vue.prototype.$scrollResolve = () => {
+          resolve(pos)
+        }
+      })
+      : pos
   },
 })
 

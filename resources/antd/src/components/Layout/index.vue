@@ -1,5 +1,5 @@
 <template>
-  <a-layout>
+  <a-layout class="h-100">
     <a-layout-sider
       :width="fullWidth"
       breakpoint="lg"
@@ -7,8 +7,7 @@
       :collapsible="true"
       :collapsed="collapsed"
       :trigger="null"
-      class="sider"
-      :class="{ 'sider-mini-width': miniWidth }"
+      :class="{ sider: true, 'sider-mini-width': miniWidth }"
       v-click-outside="onClickOutside"
     >
       <router-link to="/" class="flex-box logo" :title="appName">
@@ -20,15 +19,23 @@
       </router-link>
       <side-menu/>
     </a-layout-sider>
-    <a-layout class="layout-main" :style="{ paddingLeft: `${layoutWidth}px`}">
-      <navbar/>
-      <breadcrumb class="mx-2 my-1"/>
-      <a-layout-content class="mb-3 mx-2">
-        <div class="pa-2" style="background: #fff">
-          <router-view/>
-        </div>
-      </a-layout-content>
-      <a-layout-footer style="text-align: center;">Footer</a-layout-footer>
+    <a-layout
+      :class="{ 'layout-main': true, 'scroll-x': scrollX }"
+      :style="{ paddingLeft: `${siderWidth}px`}"
+    >
+      <navbar :sider-width="siderWidth"/>
+      <div class="content-main">
+        <breadcrumb class="px-2 py-1"/>
+        <a-layout-content class="py-1 px-2">
+          <div class="pa-2" style="background: #fff">
+            <transition name="fade-transform" mode="out-in">
+              <router-view/>
+            </transition>
+          </div>
+        </a-layout-content>
+        <div class="flex-spacer"/>
+        <a-layout-footer style="text-align: left;">LZ - admin</a-layout-footer>
+      </div>
     </a-layout>
   </a-layout>
 </template>
@@ -40,6 +47,7 @@ import Navbar from './components/Navbar'
 import { getUrl } from '@/libs/utils'
 import { SYSTEM_BASIC } from '@/libs/constants'
 import Breadcrumb from './components/Breadcrumb'
+import Vue from 'vue'
 
 export default {
   name: 'Layout',
@@ -47,6 +55,15 @@ export default {
     Navbar,
     SideMenu,
     Breadcrumb,
+  },
+  data: () => ({
+    /**
+     * 如果是表格页，需要显示横向滚动条
+     */
+    scrollX: false,
+  }),
+  beforeCreate() {
+    Vue.prototype.$layout = this
   },
   computed: {
     ...mapState({
@@ -66,7 +83,7 @@ export default {
     fullWidth() {
       return 220
     },
-    layoutWidth() {
+    siderWidth() {
       return this.miniWidth ? 0 : (this.collapsed ? this.collapsedWith : this.fullWidth)
     },
   },
@@ -87,15 +104,24 @@ export default {
   overflow-y: auto;
   overflow-x: hidden;
   position: fixed;
+  z-index: 2;
 }
 
 .sider-mini-width {
-  z-index: 1;
+  z-index: 2;
 }
 
 .layout-main {
   transition: all 0.2s;
-  min-height: 100vh;
+
+  &.scroll-x {
+    overflow-x: initial !important;
+  }
+}
+
+.ant-layout-content {
+  min-height: initial;
+  background: #f0f2f5;
 }
 
 .logo {
@@ -126,5 +152,28 @@ export default {
   width: 52px;
   height: 64px;
   min-height: 64px;
+}
+
+.content-main {
+  padding-top: 64px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* fade-transform */
+.fade-transform-leave-active,
+.fade-transform-enter-active {
+  transition: all .3s;
+}
+
+.fade-transform-enter {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+.fade-transform-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
 }
 </style>

@@ -1,6 +1,11 @@
 <script>
 import _get from 'lodash/get'
-import { assignExists, getMessage, handleValidateErrors } from '@/libs/utils'
+import {
+  assignExists,
+  getMessage,
+  handleValidateErrors,
+  jsonParse,
+} from '@/libs/utils'
 import LoadingAction from '@c/LoadingAction'
 import LzFormItem from './LzFormItem'
 
@@ -17,19 +22,20 @@ export default {
       /**
        * 备份表单数据，用来重置表单
        */
-      formBak: '',
+      formBak: JSON.stringify(this.form),
     }
-  },
-  computed: {
-    tinyWidth() {
-      return this.$store.state.tinyWidth
-    },
   },
   props: {
     getData: Function,
     submit: Function,
-    errors: Object,
-    form: Object,
+    errors: {
+      type: Object,
+      default: () => ({}),
+    },
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
     submitText: {
       type: String,
       default: '保存',
@@ -50,7 +56,29 @@ export default {
     },
     disableRedirect: Boolean,
     disableStay: Boolean,
-    editMode: Boolean,
+    editMode: {
+      type: Boolean,
+      default: undefined,
+    },
+    /**
+     * 路由配置中的动态 id 参数
+     * 用来自动设置是不是编辑模式
+     */
+    idField: {
+      type: [Number, String],
+      default: 'id',
+    },
+  },
+  computed: {
+    tinyWidth() {
+      return this.$store.state.tinyWidth
+    },
+    realEditMode() {
+      return this.editMode === undefined ? !!this.resourceId : this.editMode
+    },
+    resourceId() {
+      return this.$route.params[this.idField]
+    },
   },
   methods: {
     async _getData() {
@@ -59,8 +87,10 @@ export default {
       try {
         if (this.getData) {
           const data = await this.getData()
-          this.$emit('update:form', assignExists(this.form, data))
-          this.formBak = JSON.stringify(data)
+          if (data !== undefined) {
+            this.$emit('update:form', assignExists(this.form, data))
+            this.formBak = JSON.stringify(data)
+          }
         }
       } finally {
         this.loading = false
@@ -71,13 +101,13 @@ export default {
       try {
         this.submit && await this.submit()
 
-        this.$message.success(getMessage(this.editMode ? 'updated' : 'created'))
+        this.$message.success(getMessage(this.realEditMode ? 'updated' : 'created'))
 
         if (this.stay || this.disableRedirect) {
           return
         }
 
-        const redirect = this.editMode ? this.updatedRedirect : this.createdRedirect
+        const redirect = this.realEditMode ? this.updatedRedirect : this.createdRedirect
         if (typeof redirect === 'string') {
           this.$router.push(redirect)
         } else if (typeof redirect === 'function') {
@@ -93,14 +123,16 @@ export default {
       }
     },
     onReset() {
-      this.$emit('update:form', JSON.parse(this.formBak))
+      this.$emit('update:form', jsonParse(this.formBak))
       this.$emit('update:errors', {})
     },
   },
   watch: {
     $route: {
       handler() {
-        this.$active && this._getData()
+        this.$nextTick(() => {
+          this.$active && this._getData()
+        })
       },
       immediate: true,
     },
@@ -110,9 +142,9 @@ export default {
     if (Array.isArray(defaultSlot)) {
       defaultSlot = defaultSlot.map((formItem) => {
         const options = formItem.componentOptions
-        const attrs = formItem.data.attrs
+        const props = options.propsData
 
-        const error = this.errors[attrs.prop]
+        const error = this.errors[props.prop]
         if (error) {
           options.propsData.help = error
           options.propsData.validateStatus = 'error'
@@ -123,12 +155,10 @@ export default {
     }
 
     const stayCheckbox = !this.disableStay && (
-      <el-checkbox
-        vModel={this.stay}
-        title="表单提交后，留在此页"
-      >
-        留在此页
-      </el-checkbox>
+      <a-tooltip placement="topRight">
+        <span slot="title">表单提交后，留在此页</span>
+        <a-checkbox class="stay" vModel={this.stay}>留在此页</a-checkbox>
+      </a-tooltip>
     )
 
     const colSpan = {
@@ -137,13 +167,19 @@ export default {
     }
 
     const footerSlot = this.$slots.footer || (
-      <a-form-item wrapperCol={{ offset: this.tinyWidth ? 0 : colSpan.labelCol.span }}>
+      <lz-form-item
+        wrapperCol={{
+          offset: this.tinyWidth ? 0 : colSpan.labelCol.span,
+          span: colSpan.wrapperCol.span,
+        }}
+        class="actions"
+      >
         <loading-action type="primary" action={this.onSubmit}>{this.submitText}</loading-action>
         <a-button class="ml-1" vOn:click={this.onReset}>重置</a-button>
         {this.$slots.footerAppend}
         <div class="flex-spacer"/>
         {stayCheckbox}
-      </a-form-item>
+      </lz-form-item>
     )
 
     return (
@@ -167,3 +203,15 @@ export default {
   },
 }
 </script>
+
+<style scoped lang="less">
+.actions {
+  ::v-deep .ant-form-item-children {
+    display: flex;
+  }
+}
+
+.stay {
+  line-height: 32px;
+}
+</style>

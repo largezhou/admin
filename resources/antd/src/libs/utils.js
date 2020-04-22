@@ -424,3 +424,34 @@ export function arrayWrap(val) {
     return [val]
   }
 }
+
+/**
+ * 解析 json，出错时，返回默认值
+ *
+ * @param {string} str
+ * @param {any} defaultValue
+ * @return {any}
+ */
+export function jsonParse(str, defaultValue = undefined) {
+  try {
+    return JSON.parse(str)
+  } catch (e) {
+    return defaultValue
+  }
+}
+
+/**
+ * 从 array 中移除 callback 为真的值，并返回数组
+ *
+ * @param {array} array
+ * @param {function} callback
+ * @return {[]}
+ */
+export function removeWhile(array, callback) {
+  const res = []
+  array.forEach((i) => {
+    !callback(i) && res.push(i)
+  })
+
+  return res
+}

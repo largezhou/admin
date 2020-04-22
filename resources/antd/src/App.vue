@@ -1,12 +1,19 @@
 <template>
-  <div id="admin-app" class="h-100" v-resize="onResize">
-    <router-view/>
-  </div>
+  <a-config-provider :locale="locale">
+    <div id="admin-app" class="h-100" v-resize="onResize">
+      <router-view/>
+    </div>
+  </a-config-provider>
 </template>
 
 <script>
+import zhCN from 'ant-design-vue/es/locale/zh_CN'
+
 export default {
   name: 'App',
+  data: () => ({
+    locale: zhCN,
+  }),
   computed: {
     miniWidth() {
       return this.$store.state.miniWidth

@@ -32,6 +32,9 @@ Vue.config.productionTip = false
 Vue.use(Antd)
 
 const app = new Vue({
+  inject: {
+    layout: { default: null },
+  },
   router,
   store,
   render: h => h(App),

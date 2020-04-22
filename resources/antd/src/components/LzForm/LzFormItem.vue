@@ -9,6 +9,10 @@ export default {
      * 以 tooltip 的形式展示提示文字
      */
     tip: String,
+    /**
+     * 表单中的 name 值
+     */
+    prop: String,
   },
   methods: {
     renderLabel() {
@@ -31,7 +35,12 @@ export default {
 @import "~ant-design-vue/lib/style/color/colors.less";
 
 .ant-form-item-label {
-  margin-right: 8px;
+  &::after {
+    content: '';
+    position: relative;
+    top: -0.5px;
+    margin: 0 8px 0 2px;
+  }
 
   .anticon {
     color: @blue-6;
