@@ -13,6 +13,14 @@ export default {
      * 表单中的 name 值
      */
     prop: String,
+    /**
+     * 编辑模式下必填，会在 LzForm 中，自动修改 required 为 true
+     */
+    requiredWhenEdit: Boolean,
+    /**
+     * 添加模式下必填
+     */
+    requiredWhenCreate: Boolean,
   },
   methods: {
     renderLabel() {

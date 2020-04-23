@@ -1,7 +1,6 @@
 <template>
   <page-content center>
     <lz-form
-      ref="form"
       :get-data="getData"
       :submit="onSubmit"
       :form.sync="form"
@@ -55,16 +54,16 @@ export default {
     }
   },
   methods: {
-    async getData() {
-      if (this.$refs.form.realEditMode) {
-        const { data } = await editAdminPerm(this.$refs.form.resourceId)
+    async getData($form) {
+      if ($form.realEditMode) {
+        const { data } = await editAdminPerm($form.resourceId)
         data.http_path = data.http_path.join('\n')
         return data
       }
     },
-    async onSubmit() {
-      if (this.$refs.form.realEditMode) {
-        await updateAdminPerm(this.$refs.form.resourceId, this.form)
+    async onSubmit($form) {
+      if ($form.realEditMode) {
+        await updateAdminPerm($form.resourceId, this.form)
       } else {
         await storeAdminPerm(this.form)
       }

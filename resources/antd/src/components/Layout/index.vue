@@ -29,7 +29,7 @@
         <a-layout-content class="py-1 px-2">
           <div class="pa-2" style="background: #fff">
             <transition name="fade-transform" mode="out-in">
-              <router-view/>
+              <router-view :key="$route.name"/>
             </transition>
           </div>
         </a-layout-content>

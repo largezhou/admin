@@ -1,7 +1,6 @@
 <template>
   <page-content center>
     <lz-form
-      ref="form"
       :get-data="getData"
       :submit="onSubmit"
       :form.sync="form"
@@ -55,11 +54,11 @@ export default {
     }
   },
   methods: {
-    async getData() {
+    async getData($form) {
       let data
 
-      if (this.$refs.form.realEditMode) {
-        ({ data } = await editAdminRole(this.$refs.form.resourceId))
+      if ($form.realEditMode) {
+        ({ data } = await editAdminRole($form.resourceId))
         data.data.permissions = data.data.permissions.map(i => i.id)
       } else {
         ({ data } = await createAdminRole())
@@ -69,9 +68,9 @@ export default {
 
       return data.data
     },
-    async onSubmit() {
-      if (this.$refs.form.realEditMode) {
-        await updateAdminRole(this.$refs.form.resourceId, this.form)
+    async onSubmit($form) {
+      if ($form.realEditMode) {
+        await updateAdminRole($form.resourceId, this.form)
       } else {
         await storeAdminRole(this.form)
       }

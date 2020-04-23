@@ -188,7 +188,7 @@ export const nestedToSelectOptions = (items, props = {}) => {
 export const assignExists = (target, source, force = false) => {
   const res = {}
   for (const k of Object.keys(target)) {
-    if (Object.prototype.hasOwnProperty.call(source, k) || force) {
+    if (hasOwnProperty(source, k) || force) {
       res[k] = source[k]
     } else {
       res[k] = target[k]
@@ -454,4 +454,13 @@ export function removeWhile(array, callback) {
   })
 
   return res
+}
+
+/**
+ * @param {any} obj
+ * @param {string} key
+ * @return {boolean}
+ */
+export function hasOwnProperty(obj, key) {
+  return Object.prototype.hasOwnProperty.call(obj, key)
 }

@@ -5,6 +5,7 @@ import {
   getMessage,
   handleValidateErrors,
   jsonParse,
+  hasOwnProperty,
 } from '@/libs/utils'
 import LoadingAction from '@c/LoadingAction'
 import LzFormItem from './LzFormItem'
@@ -86,7 +87,7 @@ export default {
 
       try {
         if (this.getData) {
-          const data = await this.getData()
+          const data = await this.getData(this)
           if (data !== undefined) {
             this.$emit('update:form', assignExists(this.form, data))
             this.formBak = JSON.stringify(data)
@@ -99,7 +100,7 @@ export default {
     async onSubmit() {
       this.$emit('update:errors', {})
       try {
-        this.submit && await this.submit()
+        this.submit && await this.submit(this)
 
         this.$message.success(getMessage(this.realEditMode ? 'updated' : 'created'))
 
@@ -148,6 +149,14 @@ export default {
         if (error) {
           options.propsData.help = error
           options.propsData.validateStatus = 'error'
+        }
+
+        if (this.realEditMode && hasOwnProperty(props, 'requiredWhenEdit')) {
+          props.required = true
+        }
+
+        if (!this.realEditMode && hasOwnProperty(props, 'requiredWhenCreate')) {
+          props.required = true
         }
 
         return formItem
