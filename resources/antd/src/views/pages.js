@@ -12,4 +12,6 @@ export default {
   'admin-users': () => import('@v/admin-users/Index'),
   'admin-users/create': () => import('@v/admin-users/Form'),
   'admin-users/:id(\\d+)/edit': () => import('@v/admin-users/Form'),
+
+  'config-categories': () => import('@v/config-categories/Index'),
 }

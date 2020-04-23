@@ -170,16 +170,23 @@ export default {
       </a-tooltip>
     )
 
-    const colSpan = {
-      labelCol: Object.assign({ span: 5 }, this.$attrs['label-col']),
-      wrapperCol: Object.assign({ span: 15 }, this.$attrs['wrapper-col']),
+    // 如果没有指定布局，并且是在弹框中，则默认为 vertical
+    if (this.inDialog && !hasOwnProperty(this.$attrs, 'layout')) {
+      this.$attrs.layout = 'vertical'
     }
+
+    const colSpan = this.$attrs.layout === 'vertical'
+      ? {}
+      : {
+        labelCol: Object.assign({ span: 5 }, this.$attrs['label-col']),
+        wrapperCol: Object.assign({ span: 19 }, this.$attrs['wrapper-col']),
+      }
 
     const footerSlot = this.$slots.footer || (
       <lz-form-item
         wrapperCol={{
-          offset: this.tinyWidth ? 0 : colSpan.labelCol.span,
-          span: colSpan.wrapperCol.span,
+          offset: this.tinyWidth ? 0 : (colSpan?.labelCol?.span || 0),
+          span: colSpan?.wrapperCol?.span || 24,
         }}
         class="actions"
       >
@@ -222,5 +229,11 @@ export default {
 
 .stay {
   line-height: 32px;
+}
+
+.in-dialog {
+  .actions {
+    margin-bottom: 0;
+  }
 }
 </style>
