@@ -13,8 +13,26 @@
       :pagination="false"
     >
       <a-table-column title="ID" data-index="id" :width="60"/>
-      <a-table-column title="名称" data-index="name" :width="150"/>
-      <a-table-column title="标识" data-index="slug"/>
+      <a-table-column title="名称" :width="150">
+        <template #default="record">
+          <quick-edit
+            :id="record.id"
+            field="name"
+            :update="updateConfigCategory"
+            v-model="record.name"
+          />
+        </template>
+      </a-table-column>
+      <a-table-column title="标识">
+        <template #default="record">
+          <quick-edit
+            :id="record.id"
+            field="slug"
+            :update="updateConfigCategory"
+            v-model="record.slug"
+          />
+        </template>
+      </a-table-column>
       <a-table-column title="添加时间" data-index="created_at" :width="180"/>
       <a-table-column title="修改时间" data-index="updated_at" :width="180"/>
       <a-table-column title="操作" :width="200">
@@ -72,11 +90,13 @@ import LzPopconfirm from '@c/LzPopconfirm'
 import { removeWhile } from '@/libs/utils'
 import LzForm from '@c/LzForm/index'
 import LzFormItem from '@c/LzForm/LzFormItem'
+import QuickEdit from '@c/QuickEdit'
 
 export default {
   name: 'Index',
   scroll: true,
   components: {
+    QuickEdit,
     LzFormItem,
     LzForm,
     LzPopconfirm,

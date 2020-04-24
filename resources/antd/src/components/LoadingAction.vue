@@ -80,5 +80,10 @@ export default {
       this.recoverDisabledTimeout && clearTimeout(this.recoverDisabledTimeout)
     },
   },
+  watch: {
+    actionLoading(newVal) {
+      this.$emit('action-loading', newVal)
+    },
+  },
 }
 </script>
