@@ -29,7 +29,7 @@ export default {
     },
     maxWidth: {
       type: String,
-      default: '680px',
+      default: '700px',
     },
   },
   methods: {
@@ -96,7 +96,7 @@ export default {
         <template slot="content">
           <a-form
             layout="inline"
-            vOn:keydown_enter_native_prevent={this.onSubmit}
+            v-on:keydown_enter_native_prevent={this.onSubmit}
           >
             {
               this.fields.map((item) => {
@@ -105,7 +105,6 @@ export default {
                   case 'select':
                     c = (
                       <a-select
-                        style="width: 202.5px;"
                         default-valut={this.form[item.field]}
                         v-model={this.form[item.field]}
                         placeholder={item.label}
@@ -140,7 +139,7 @@ export default {
             }
             <a-form-item class="actions">
               <space>
-                <a-button type="primary" vOn:click={this.onSubmit}>查询</a-button>
+                <a-button type="primary" vOn:click={this.onSubmit}>搜索</a-button>
                 <a-button vOn:click={this.onReset}>重置</a-button>
               </space>
             </a-form-item>
@@ -157,5 +156,15 @@ export default {
 .actions {
   display: block;
   margin-bottom: 0;
+}
+
+.ant-form-item {
+  width: 200px;
+}
+
+::v-deep {
+  .ant-form-item-control-wrapper {
+    width: 100%;
+  }
 }
 </style>

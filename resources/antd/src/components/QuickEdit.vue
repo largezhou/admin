@@ -68,6 +68,7 @@ export default {
               listeners: this.$listeners,
             }}
             ref="input"
+            v-on:keydown_enter_navite={this.$refs.confirm.onAction}
             disabled={this.loading}
             v-model={this.formValue}
           />
@@ -104,6 +105,5 @@ export default {
   color: @blue-6;
   border-bottom: dashed 2px @blue-6;
   cursor: pointer;
-  line-height: 26px;
 }
 </style>
