@@ -49,7 +49,7 @@
     </a-table>
     <lz-pagination :page="page"/>
 
-    <a-modal
+    <lz-modal
       title="添加分类"
       v-model="createDialog"
       :footer="null"
@@ -65,13 +65,13 @@
         layout="vertical"
       >
         <lz-form-item label="名称" required prop="name">
-          <a-input v-model="form.name"/>
+          <a-input v-model="form.name" focus/>
         </lz-form-item>
         <lz-form-item label="标识" required prop="slug">
           <a-input v-model="form.slug"/>
         </lz-form-item>
       </lz-form>
-    </a-modal>
+    </lz-modal>
   </page-content>
 </template>
 
@@ -91,12 +91,14 @@ import { removeWhile } from '@/libs/utils'
 import LzForm from '@c/LzForm/index'
 import LzFormItem from '@c/LzForm/LzFormItem'
 import QuickEdit from '@c/QuickEdit'
+import LzModal from '@c/LzModal'
 
 export default {
   name: 'Index',
   scroll: true,
   components: {
     QuickEdit,
+    LzModal,
     LzFormItem,
     LzForm,
     LzPopconfirm,
