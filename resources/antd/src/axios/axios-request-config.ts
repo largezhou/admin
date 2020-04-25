@@ -21,5 +21,5 @@ export interface AxiosRequestConfig {
      * 请求出现 401 时，默认会打开弹框要求登录，设置 true 来禁止
      * @default false
      */
-    disableLoginDialog?: Boolean,
+    disableLoginModal?: Boolean,
 }

@@ -40,7 +40,7 @@ export default {
       }
     },
     async getUser({ commit }) {
-      const { data } = await getUser().setConfig({ disableLoginDialog: true })
+      const { data } = await getUser().setConfig({ disableLoginModal: true })
       commit('SET_USER', data)
     },
     frontendLogout() {

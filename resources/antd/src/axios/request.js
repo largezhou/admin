@@ -5,7 +5,7 @@ import {
   debounceMsg,
   getFirstError,
   handleValidateErrors,
-  showLoginDialog,
+  showLoginModal,
 } from '@/libs/utils'
 import _forIn from 'lodash/forIn'
 
@@ -77,11 +77,11 @@ axios.interceptors.response.use(
           break
         case 401:
           cancelAllRequest('登录失效: ' + config.url)
-          if (!config.disableLoginDialog) {
-            showLoginDialog()
-          } else {
-            message.error('登录已失效，请重新登录')
+          message.error('登录已失效，请重新登录')
+          if (!config.disableLoginModal) {
+            showLoginModal()
           }
+
           break
         case 400:
           showError(res)
@@ -127,7 +127,7 @@ export default class Request {
     showValidationMsg: false,
     validationForm: null,
     validationErrorKey: 'errors',
-    disableLoginDialog: false,
+    disableLoginModal: false,
   }
 
   /**

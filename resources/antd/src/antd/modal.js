@@ -17,8 +17,10 @@ options.mixins.push({
             : this.$slots.default
 
           defaultSlots.some((i) => {
-            const focusEl = i.elm.querySelector('[focus]')
-            focusEl && focusEl.focus()
+            const focusEl = i.elm.getAttribute('focus')
+              ? i.elm
+              : i.elm.querySelector('[focus]')
+            focusEl?.focus && focusEl.focus()
             return !!focusEl
           })
         })

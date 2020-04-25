@@ -1,38 +1,42 @@
 <template>
-  <a-form>
-    <a-form-item
-      :help="errors.username"
-      :validate-status="errorStatus('username')"
-    >
+  <lz-form
+    :form.sync="form"
+    :errors.sync="errors"
+    in-dialog
+    :footer="false"
+  >
+    <lz-form-item prop="username">
       <a-input
-        autocomplete="off"
+        ref="username"
         v-model="form.username"
         placeholder="帐号"
       >
         <svg-icon slot="prefix" icon-class="user"/>
       </a-input>
-    </a-form-item>
-    <a-form-item
-      :help="errors.password"
-      :validate-status="errorStatus('password')"
-    >
+    </lz-form-item>
+    <lz-form-item prop="password">
       <a-input
-        autocomplete="off"
         type="password"
         v-model="form.password"
         placeholder="密码"
       >
         <svg-icon slot="prefix" icon-class="password"/>
       </a-input>
-    </a-form-item>
-  </a-form>
+    </lz-form-item>
+  </lz-form>
 </template>
 
 <script>
 import { getMessage } from '@/libs/utils'
+import LzForm from '@c/LzForm/index'
+import LzFormItem from '@c/LzForm/LzFormItem'
 
 export default {
   name: 'LoginForm',
+  components: {
+    LzFormItem,
+    LzForm,
+  },
   data: () => ({
     form: {
       username: '',
@@ -40,13 +44,13 @@ export default {
     },
     errors: {},
   }),
+  mounted() {
+    this.$refs.username.focus()
+  },
   methods: {
     async onSubmit() {
       await this.$store.dispatch('login', this)
       this.$message.success(getMessage('loggedIn'))
-    },
-    errorStatus(key) {
-      return this.errors[key] ? 'error' : null
     },
   },
 }

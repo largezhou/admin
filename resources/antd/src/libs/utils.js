@@ -12,7 +12,10 @@ import _intersection from 'lodash/intersection'
 import { isExternal, isInt } from '@/libs/validates'
 import _trimStart from 'lodash/trimStart'
 import _trimEnd from 'lodash/trimEnd'
-// import GlobalDialog from '@c/GlobalDialog'
+import GlobalModal from '@c/GlobalModal'
+import LoadingAction from '@c/LoadingAction'
+import LoginForm from '@c/LoginForm'
+import Space from '@c/Space'
 
 /**
  * 把 laravel 返回的错误消息，处理成只有一条
@@ -353,59 +356,40 @@ export function getUrl(path) {
  * 打开登录弹框
  * @return {*}
  */
-export function showLoginDialog() {
-  const vm = GlobalDialog.new({
-    title: '登录',
-    width: '350px',
-    customClass: 'login-dialog',
-    closeOnClickModal: false,
-    on: {
-      opened() {
-        vm.$message.error('登录已失效，请重新登录')
+export function showLoginModal() {
+  GlobalModal.new({
+    components: {
+      LoadingAction,
+      LoginForm,
+      Space,
+    },
+    propsData: {
+      title: '登录',
+      width: '350px',
+      bodyStyle: {
+        paddingBottom: '8px',
       },
-    },
-    content(h) {
-      return h('login-form', {
-        nativeOn: {
-          keydown: (e) => {
-            if (e.key === 'Enter') {
-              vm.$refs.submit.onAction()
-            }
-          },
-        },
-        ref: 'form',
-      })
-    },
-    footer: (h) => {
-      return h('div', [
-        // 直接关闭弹框
-        h('el-button', {
-          on: {
-            click() {
-              vm.visible = false
-            },
-          },
-        }, '关闭'),
-        // 前端退出登录
-        h('el-button', {
-          on: {
-            click() {
-              vm.$store.dispatch('frontendLogout')
-            },
-          },
-        }, '退出'),
-        // 登录
-        h('loading-action', {
-          ref: 'submit',
-          props: {
-            type: 'primary',
-            action: async () => {
-              await vm.$refs.form.onSubmit()
-              vm.visible = false
-            },
-          },
-        }, '登录'),
-      ])
+      content(h) {
+        return <login-form ref="form"/>
+      },
+      lzFooter(h) {
+        return (
+          <div>
+            <a-button v-on:click={this.close}>关闭</a-button>
+            <a-button v-on:click={() => {
+              this.$store.dispatch('frontendLogout')
+              this.close()
+            }}>退出
+            </a-button>
+            <loading-action type="primary" action={async () => {
+              await this.$refs.form.onSubmit()
+              this.close()
+            }}>
+              登录
+            </loading-action>
+          </div>
+        )
+      },
     },
   })
 }

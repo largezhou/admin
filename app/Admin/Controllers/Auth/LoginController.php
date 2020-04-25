@@ -21,11 +21,6 @@ class LoginController extends Controller
         return $this->created();
     }
 
-    protected function attemptLogin(Request $request)
-    {
-        return $this->guard()->attempt($this->credentials($request));
-    }
-
     public function logout()
     {
         $this->guard()->logout();

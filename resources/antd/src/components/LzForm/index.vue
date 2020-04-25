@@ -69,6 +69,13 @@ export default {
       type: [Number, String],
       default: 'id',
     },
+    /**
+     * 是否显示表单底部操作栏
+     */
+    footer: {
+      type: Boolean,
+      default: true,
+    },
   },
   computed: {
     tinyWidth() {
@@ -182,7 +189,7 @@ export default {
         wrapperCol: Object.assign({ span: 19 }, this.$attrs['wrapper-col']),
       }
 
-    const footerSlot = this.$slots.footer || (
+    const footerSlot = this.$slots.footer || (this.footer && (
       <lz-form-item
         wrapperCol={{
           offset: this.tinyWidth ? 0 : (colSpan?.labelCol?.span || 0),
@@ -196,7 +203,7 @@ export default {
         <div class="flex-spacer"/>
         {stayCheckbox}
       </lz-form-item>
-    )
+    ))
 
     return (
       <a-spin

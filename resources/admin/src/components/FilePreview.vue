@@ -41,7 +41,7 @@
 import { isImage } from '@/libs/validates'
 import { mapState } from 'vuex'
 import { getUrl } from '@/libs/utils'
-import GlobalDialog from '@c/GlobalDialog'
+import GlobalModal from '@c/GlobalDialog'
 
 export default {
   name: 'FilePreview',
@@ -105,7 +105,7 @@ export default {
       this.setImgSize()
 
       let vm
-      vm = GlobalDialog.new({
+      vm = GlobalModal.new({
         customClass: 'image-preview-dialog',
         directives: [
           {
