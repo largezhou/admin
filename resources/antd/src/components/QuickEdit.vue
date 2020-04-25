@@ -48,9 +48,10 @@ export default {
     editMode(newVal) {
       if (newVal) {
         this.formValue = this.value
+        // 更好的方式拿到 input 元素，很麻烦
         window.setTimeout(() => {
           this.focus()
-        }, 300)
+        }, 100)
       }
     },
   },
