@@ -4,7 +4,6 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import Antd from 'ant-design-vue'
 
 import 'ant-design-vue/dist/antd.css'
 
@@ -12,6 +11,7 @@ import '@/directives'
 import '@/styles/app.less'
 import '@/icons'
 import '@/libs/error-handle'
+import '@/antd'
 
 // 手动维护的该字段，在 activated 中变为 true 的时机，
 // 会比 watch 执行的时机要晚，所以可以在组件被缓存时，不执行特定的 watch
@@ -29,7 +29,6 @@ Vue.mixin({
 })
 
 Vue.config.productionTip = false
-Vue.use(Antd)
 
 const app = new Vue({
   inject: {

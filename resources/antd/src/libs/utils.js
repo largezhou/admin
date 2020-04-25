@@ -464,3 +464,13 @@ export function removeWhile(array, callback) {
 export function hasOwnProperty(obj, key) {
   return Object.prototype.hasOwnProperty.call(obj, key)
 }
+
+/**
+ * 批量引入
+ *
+ * @param requireContext
+ * @return {*}
+ */
+export function requireAll(requireContext) {
+  return requireContext.keys().map(requireContext)
+}
