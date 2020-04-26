@@ -1,55 +1,47 @@
 <template>
-  <page-content class="vue-routers-index">
-    <space class="my-1 actions">
-      <a-button @click="onExpand">展开</a-button>
-      <a-button @click="onCollapse">收起</a-button>
-      <loading-action :action="onSaveOrder">保存</loading-action>
-      <a-button @click="onReset">重置</a-button>
-      <a-upload
-        name="file"
-        :custom-request="importVueRouters"
-        :show-upload-list="false"
-        :before-upload="confirmImport"
-      >
-        <a-button>导入</a-button>
-      </a-upload>
-      <!--<a-button class="ml-1 pa-0">-->
-      <!--  <el-upload-->
-      <!--    action=""-->
-      <!--    :show-file-list="false"-->
-      <!--    :http-request="importVueRouters"-->
-      <!--    :before-upload="confirmImport"-->
-      <!--  >-->
-      <!--    <a-button style="border: none;">导入</a-button>-->
-      <!--  </el-upload>-->
-      <!--</a-button>-->
-      <a-button @click="onExport">导出</a-button>
-    </space>
+  <page-content center scroll-x>
+    <div>
+      <space class="my-1">
+        <a-button @click="onExpand">展开</a-button>
+        <a-button @click="onCollapse">收起</a-button>
+        <loading-action :action="onSaveOrder">保存</loading-action>
+        <a-button @click="onReset">重置</a-button>
+        <a-upload
+          name="file"
+          :custom-request="importVueRouters"
+          :show-upload-list="false"
+          :before-upload="confirmImport"
+        >
+          <a-button>导入</a-button>
+        </a-upload>
+        <a-button @click="onExport">导出</a-button>
+      </space>
 
-    <nested-draggable
-      ref="routers"
-      :expand-keys="defaultExpanded"
-      class="vue-routers"
-      :list="vueRouters"
-      handle=".drag-zone"
-    >
-      <template #default="{ data }">
-        <div class="drag-zone">
-          <span class="id mr-1">{{ data.id }}</span>
-          <svg-icon :icon-class="data.icon || ''" class="mr-1"/>
-          <span>{{ data.title }}</span>
-          <span class="ml-2 path">{{ data.path }}</span>
-        </div>
-        <div class="flex-spacer"/>
-        <space style="min-width: 100px;">
-          <router-link :to="`/vue-routers/create?parent_id=${data.id}`">添加</router-link>
-          <router-link :to="`/vue-routers/${data.id}/edit`">编辑</router-link>
-          <lz-popconfirm :confirm="onDestroy(data)" title="所有子路由都会被删除！！！">
-            <a class="red-6" href="javascript:void(0);">删除</a>
-          </lz-popconfirm>
-        </space>
-      </template>
-    </nested-draggable>
+      <nested-draggable
+        ref="routers"
+        :expand-keys="defaultExpanded"
+        class="vue-routers"
+        :list="vueRouters"
+        handle=".drag"
+      >
+        <template #default="{ data }">
+          <div class="item-wrap">
+            <span class="id mr-1 drag">{{ data.id }}</span>
+            <svg-icon :icon-class="data.icon || ''" class="mr-1"/>
+            <span>{{ data.title }}</span>
+            <span class="ml-2 path">{{ data.path }}</span>
+          </div>
+          <div class="flex-spacer"/>
+          <space style="width: 100px;">
+            <router-link :to="`/vue-routers/create?parent_id=${data.id}`">添加</router-link>
+            <router-link :to="`/vue-routers/${data.id}/edit`">编辑</router-link>
+            <lz-popconfirm :confirm="onDestroy(data)" title="所有子路由都会被删除！！！">
+              <a class="red-6" href="javascript:void(0);">删除</a>
+            </lz-popconfirm>
+          </space>
+        </template>
+      </nested-draggable>
+    </div>
   </page-content>
 </template>
 
@@ -73,6 +65,7 @@ import LoadingAction from '@c/LoadingAction'
 
 export default {
   name: 'Index',
+  scroll: true,
   components: {
     Space,
     NestedDraggable,
@@ -98,6 +91,10 @@ export default {
       this.vueRouters = data
       this.vueRoutersBak = JSON.stringify(this.vueRouters)
       this.defaultExpanded = this.vueRouters.filter(i => hasChildren(i)).map(i => i.id)
+
+      this.$nextTick(() => {
+        this.$scrollResolve()
+      })
     },
     onDestroy(row) {
       return async () => {
@@ -180,7 +177,7 @@ export default {
 @import "~ant-design-vue/lib/style/color/colors";
 
 .vue-routers {
-  width: 800px;
+  width: 600px;
 
   .id {
     width: 40px;
@@ -189,20 +186,18 @@ export default {
     font-weight: bolder;
   }
 
+  .drag {
+    cursor: move;
+  }
+
   .path {
     color: @blue-6;
   }
 
-  .drag-zone {
-    cursor: move;
+  .item-wrap {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
-}
-
-.actions {
-  overflow-x: auto;
-  max-width: 100%;
 }
 </style>

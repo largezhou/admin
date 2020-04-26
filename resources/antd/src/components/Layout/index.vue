@@ -113,9 +113,11 @@ export default {
 
 .layout-main {
   transition: all 0.2s;
+  overflow-x: initial !important;
+  width: 100%;
 
   &.scroll-x {
-    overflow-x: initial !important;
+    width: auto;
   }
 }
 

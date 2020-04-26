@@ -54,7 +54,6 @@ export default {
   data() {
     return {
       expanded: [],
-      collapseComponent: 'el-collapse-transition',
     }
   },
   props: {
