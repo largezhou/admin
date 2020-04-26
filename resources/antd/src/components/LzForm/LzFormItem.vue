@@ -28,7 +28,7 @@ export default {
       if (this.tip) {
         vnode.componentOptions.children.push((
           <a-tooltip placement="topLeft" class="ml-1">
-            <span slot="title" domPropsInnerHTML={this.tip.replace('\n', '<br>')}/>
+            <span slot="title" domPropsInnerHTML={this.tip.replace(/\n/g, '<br>')}/>
             <a-icon type="question-circle"/>
           </a-tooltip>
         ))

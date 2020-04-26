@@ -16,4 +16,7 @@ export default {
   'config-categories': () => import('@v/config-categories/Index'),
 
   configs: () => import('@v/configs/Index'),
+
+  'vue-routers/create': () => import('@v/vue-routers/Form'),
+  'vue-routers/:id(\\d+)/edit': () => import('@v/vue-routers/Form'),
 }

@@ -446,7 +446,7 @@ export function removeWhile(array, callback) {
  * @return {boolean}
  */
 export function hasOwnProperty(obj, key) {
-  return Object.prototype.hasOwnProperty.call(obj, key)
+  return obj === undefined ? false : Object.prototype.hasOwnProperty.call(obj, key)
 }
 
 /**
