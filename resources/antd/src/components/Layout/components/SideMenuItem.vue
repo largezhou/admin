@@ -74,3 +74,9 @@ export default {
   },
 }
 </script>
+
+<style scoped lang="less">
+.anticon {
+  vertical-align: initial;
+}
+</style>

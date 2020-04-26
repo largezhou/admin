@@ -36,8 +36,7 @@
       >
         <a-input v-model="form.icon">
           <a-select
-            :value="form.icon || 'cog-fill'"
-            @change="(v) => form.icon = v"
+            v-model="form.icon"
             slot="addonBefore"
             style="width: 60px;"
           >
@@ -199,12 +198,3 @@ export default {
   },
 }
 </script>
-
-<style scoped lang="less">
-.icon-item {
-  svg {
-    display: inline-block;
-    vertical-align: -0.150em;
-  }
-}
-</style>
