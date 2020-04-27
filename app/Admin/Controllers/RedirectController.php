@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 
 class RedirectController extends Controller
 {
-    protected function getIndex(bool $isDev = false): string
+    protected function getIndex(string $path, bool $isDev = false): string
     {
-        $folder = $isDev ? 'admin-dev' : 'admin';
+        $folder = $path.($isDev ? '-dev' : '');
         $path = public_path("{$folder}/index.html");
         if (!file_exists($path)) {
             abort(404);
@@ -20,11 +20,21 @@ class RedirectController extends Controller
 
     public function index()
     {
-        return $this->getIndex();
+        return $this->getIndex('admin');
     }
 
     public function indexDev()
     {
-        return $this->getIndex(true);
+        return $this->getIndex('admin', true);
+    }
+
+    public function antd()
+    {
+        return $this->getIndex('antd');
+    }
+
+    public function antdDev()
+    {
+        return $this->getIndex('antd', true);
     }
 }

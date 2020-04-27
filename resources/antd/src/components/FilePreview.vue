@@ -1,5 +1,5 @@
 <template>
-  <div class="file-preview flex-box">
+  <div class="file-preview flex-box" v-resize="setImgSize">
     <div
       v-if="!path"
       class="invalid"
@@ -18,19 +18,20 @@
 
     <div class="actions flex-box">
       <template v-if="!disableView">
-        <i
+        <a-icon
           v-if="isImage"
-          class="el-icon-view"
+          type="eye"
           @click.stop="onPreview"
           title="查看"
         />
         <a
           v-else
-          class="el-icon-view"
           :href="url"
           target="_blank"
           title="查看"
-        />
+        >
+          <a-icon type="eye"/>
+        </a>
       </template>
       <slot :file="formattedFile"/>
     </div>
@@ -41,7 +42,7 @@
 import { isImage } from '@/libs/validates'
 import { mapState } from 'vuex'
 import { getUrl } from '@/libs/utils'
-import GlobalModal from '@c/GlobalDialog'
+import GlobalModal from '@c/GlobalModal'
 
 export default {
   name: 'FilePreview',
@@ -80,7 +81,7 @@ export default {
      * 把传入的 file 值，格式化为一个有几个必要字段（path, url）的对象
      */
     formatFile() {
-      let f = this.file
+      const f = this.file
       if (!f) {
         return
       }
@@ -104,26 +105,21 @@ export default {
 
       this.setImgSize()
 
-      let vm
-      vm = GlobalModal.new({
-        customClass: 'image-preview-dialog',
-        directives: [
-          {
-            name: 'resize',
-            value: this.setImgSize,
+      GlobalModal.new({
+        propsData: {
+          wrapClassName: 'image-preview-dialog',
+          width: 'auto',
+          content: (h) => {
+            return (
+              <img
+                src={this.formattedFile.url}
+                width={this.width}
+                height={this.height}
+              />
+            )
           },
-        ],
-        content: (h) => {
-          return h('img', {
-            domProps: {
-              src: this.formattedFile.url,
-              width: this.width,
-              height: this.height,
-            },
-          })
         },
       })
-      vm.$el.classList.add('image-preview-dialog-wrapper')
     },
     setImgSize() {
       const maxWidth = Math.min(1000, window.innerWidth * 0.9)
@@ -156,8 +152,8 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-@import '~element-ui/packages/theme-chalk/src/common/var';
+<style scoped lang="less">
+@import "~ant-design-vue/lib/style/color/colors";
 
 .file-preview {
   width: 100px;
@@ -165,8 +161,8 @@ export default {
   min-width: 100px;
   min-height: 100px;
   overflow: hidden;
-  border: $--border-base;
-  border-radius: $--border-radius-base;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
   margin: 0 5px 5px 0;
   transition: all .3s;
   position: relative;
@@ -186,7 +182,6 @@ export default {
   .path {
     overflow: hidden;
     margin: 0 5px;
-    color: $--color-info;
     font-size: 12px;
     word-break: break-all;
     line-height: initial;
@@ -212,37 +207,30 @@ export default {
     font-size: 24px;
     cursor: pointer;
     text-decoration: none;
-    color: $--color-primary;
+    color: @blue-6;
   }
 }
 </style>
 
-<style lang="scss">
-@import '~element-ui/packages/theme-chalk/src/common/var';
-
-.image-preview-dialog-wrapper {
+<style lang="less">
+.image-preview-dialog {
   display: flex;
   align-items: center;
   justify-content: center;
-}
 
-.image-preview-dialog {
-  margin: 0 !important;
-  display: inline-block;
-  width: auto !important;
-  border-radius: $--border-radius-base;
-
-  .el-dialog__header {
-    display: none;
+  .ant-modal {
+    width: auto;
+    display: inline-block;
+    top: initial;
   }
 
-  .el-dialog__body {
+  .ant-modal-body {
     padding: 0;
-    font-size: 0;
+    border-radius: 4px;
   }
 
   img {
-    border-radius: $--border-radius-base;
+    border-radius: 4px;
   }
 }
 </style>
