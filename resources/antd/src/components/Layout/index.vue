@@ -122,7 +122,7 @@ export default {
 }
 
 .ant-layout-content {
-  min-height: initial;
+  min-height: auto;
   background: #f0f2f5;
 }
 
