@@ -1,4 +1,4 @@
-// import { getExt } from '@/libs/utils'
+import { getExt } from '@/libs/utils'
 import { IMAGE_EXTS } from '@/libs/constants'
 
 /**
@@ -25,16 +25,16 @@ export function isInt(val) {
  * @param file
  * @param isExt 传入的 file 是不是后缀
  */
-// export function isImage(file, isExt = false) {
-//   let ext
-//
-//   if (isExt) {
-//     ext = file
-//   } else if (file instanceof File) {
-//     ext = getExt(file.name)
-//   } else {
-//     ext = getExt(file)
-//   }
-//
-//   return IMAGE_EXTS.indexOf(ext.toLowerCase()) !== -1
-// }
+export function isImage(file, isExt = false) {
+  let ext
+
+  if (isExt) {
+    ext = file
+  } else if (file instanceof File) {
+    ext = getExt(file.name)
+  } else {
+    ext = getExt(file)
+  }
+
+  return IMAGE_EXTS.indexOf(ext.toLowerCase()) !== -1
+}

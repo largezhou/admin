@@ -8,13 +8,14 @@
       row-key="id"
       :data-source="configs"
       bordered
-      style="min-width: 1200px;"
+      style="min-width: 1500px;"
       :pagination="false"
+      table-layout="fixed"
     >
       <a-table-column title="ID" data-index="id" :width="60"/>
       <a-table-column title="分类" data-index="category.name" :width="180"/>
 
-      <a-table-column title="名称" :width="180">
+      <a-table-column title="名称">
         <template #default="record">
           <quick-edit
             :id="record.id"
@@ -24,7 +25,7 @@
           />
         </template>
       </a-table-column>
-      <a-table-column title="标识" :width="180">
+      <a-table-column title="标识">
         <template #default="record">
           <quick-edit
             :id="record.id"
@@ -35,7 +36,18 @@
         </template>
       </a-table-column>
       <a-table-column title="类型" data-index="type_text" :width="100"/>
-      <a-table-column title="值" data-index="value"/>
+      <a-table-column title="值" :width="450">
+        <template #default="record">
+          <div v-if="record.type === CONFIG_TYPES.FILE" style="display: flex; overflow-x: auto">
+            <file-preview
+              v-for="(item, index) of arrayWrap(record.value)"
+              :key="index"
+              :file="item"
+            />
+          </div>
+          <span v-else>{{ record.value }}</span>
+        </template>
+      </a-table-column>
       <a-table-column title="添加时间" data-index="created_at" :width="180"/>
       <a-table-column title="修改时间" data-index="updated_at" :width="180"/>
       <a-table-column title="操作" :width="100">
@@ -65,8 +77,10 @@ import LzPagination from '@c/LzPagination'
 import PageContent from '@c/PageContent'
 import SearchForm from '@c/SearchForm'
 import LzPopconfirm from '@c/LzPopconfirm'
-import { removeWhile } from '@/libs/utils'
+import { arrayWrap, removeWhile } from '@/libs/utils'
 import QuickEdit from '@c/QuickEdit'
+import FilePreview from '@c/FilePreview'
+import { mapConstants } from '@/libs/constants'
 
 export default {
   name: 'Index',
@@ -78,6 +92,7 @@ export default {
     LzPagination,
     Space,
     SearchForm,
+    FilePreview,
   },
   data() {
     return {
@@ -104,10 +119,14 @@ export default {
       ],
     }
   },
+  computed: {
+    ...mapConstants('CONFIG_TYPES'),
+  },
   created() {
     this.getConfigCategories()
   },
   methods: {
+    arrayWrap,
     destroyConfig(id) {
       return async () => {
         await destroyConfig(id)
