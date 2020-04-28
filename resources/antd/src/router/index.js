@@ -11,6 +11,7 @@ import { loggedIn, removeLoggedIn } from '@/libs/token'
 import { cancelAllRequest } from '@/axios/request'
 
 Vue.use(VueRouter)
+Vue.prototype.$scrollResolve = () => {}
 NProgress.configure({ showSpinner: false })
 
 const router = new VueRouter({

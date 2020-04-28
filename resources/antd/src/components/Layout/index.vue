@@ -30,7 +30,9 @@
         <breadcrumb class="px-2 py-1"/>
         <div class="pa-2" style="background: #fff">
           <transition name="fade-transform" mode="out-in">
-            <router-view :key="$route.name"/>
+            <lz-keep-alive :include="$store.state.include">
+              <router-view :key="$route.name"/>
+            </lz-keep-alive>
           </transition>
         </div>
       </a-layout-content>
@@ -46,7 +48,7 @@ import Navbar from './components/Navbar'
 import { getUrl } from '@/libs/utils'
 import { SYSTEM_BASIC } from '@/libs/constants'
 import Breadcrumb from './components/Breadcrumb'
-import Vue from 'vue'
+import LzKeepAlive from '@c/LzKeepAlive'
 
 export default {
   name: 'Layout',
@@ -54,6 +56,7 @@ export default {
     Navbar,
     SideMenu,
     Breadcrumb,
+    LzKeepAlive,
   },
   computed: {
     ...mapState({

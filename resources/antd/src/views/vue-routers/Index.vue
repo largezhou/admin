@@ -77,13 +77,16 @@ export default {
     return {
       vueRouters: [],
       vueRoutersBak: '',
-      visible: false,
       // 默认展开第二级路由
       defaultExpanded: [],
     }
   },
   created() {
     this.getVueRouters()
+  },
+  activated() {
+    // 缓存的页面，由于不会执行 created 方法，所以滚动行为，放在该钩子里
+    this.$scrollResolve()
   },
   methods: {
     async getVueRouters() {
