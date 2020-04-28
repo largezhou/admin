@@ -92,9 +92,7 @@ export default {
       this.vueRoutersBak = JSON.stringify(this.vueRouters)
       this.defaultExpanded = this.vueRouters.filter(i => hasChildren(i)).map(i => i.id)
 
-      this.$nextTick(() => {
-        this.$scrollResolve()
-      })
+      this.$scrollResolve()
     },
     onDestroy(row) {
       return async () => {

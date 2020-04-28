@@ -101,7 +101,6 @@ export default {
         this.perms = data
         this.page = meta
 
-        await this.$nextTick()
         this.$scrollResolve()
       },
       immediate: true,

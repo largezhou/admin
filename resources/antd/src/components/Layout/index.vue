@@ -103,6 +103,8 @@ export default {
 
 .layout-main {
   transition: all 0.2s;
+  width: 100%;
+  overflow-x: visible !important;
 }
 
 .ant-layout-content {

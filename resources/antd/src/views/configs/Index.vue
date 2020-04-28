@@ -146,7 +146,6 @@ export default {
         this.configs = data
         this.page = meta
 
-        await this.$nextTick()
         this.$scrollResolve()
       },
       immediate: true,
