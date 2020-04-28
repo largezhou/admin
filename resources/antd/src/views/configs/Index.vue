@@ -1,5 +1,5 @@
 <template>
-  <page-content scroll-x>
+  <page-content>
     <space class="my-1">
       <search-form :fields="search"/>
     </space>
@@ -8,14 +8,14 @@
       row-key="id"
       :data-source="configs"
       bordered
-      style="min-width: 1500px;"
+      :scroll="{ x: 1600 }"
       :pagination="false"
       table-layout="fixed"
     >
       <a-table-column title="ID" data-index="id" :width="60"/>
       <a-table-column title="分类" data-index="category.name" :width="180"/>
 
-      <a-table-column title="名称">
+      <a-table-column title="名称" :width="180">
         <template #default="record">
           <quick-edit
             :id="record.id"
@@ -25,7 +25,7 @@
           />
         </template>
       </a-table-column>
-      <a-table-column title="标识">
+      <a-table-column title="标识" :width="180">
         <template #default="record">
           <quick-edit
             :id="record.id"
@@ -36,7 +36,7 @@
         </template>
       </a-table-column>
       <a-table-column title="类型" data-index="type_text" :width="100"/>
-      <a-table-column title="值" :width="450">
+      <a-table-column title="值">
         <template #default="record">
           <div v-if="record.type === CONFIG_TYPES.FILE" style="display: flex; overflow-x: auto">
             <file-preview
