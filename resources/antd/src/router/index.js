@@ -25,7 +25,9 @@ const router = new VueRouter({
     return delayScroll
       ? new Promise((resolve) => {
         Vue.prototype.$scrollResolve = () => {
-          resolve(pos)
+          Vue.nextTick(() => {
+            resolve(pos)
+          })
         }
       })
       : pos

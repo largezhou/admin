@@ -23,10 +23,6 @@ export default {
   props: {
     title: String,
     center: Boolean,
-    scrollX: Boolean,
-  },
-  created() {
-    this.$layout.scrollX = this.scrollX
   },
   computed: {
     ...mapState({

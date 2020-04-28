@@ -1,5 +1,5 @@
 <template>
-  <page-content scroll-x>
+  <page-content>
     <space class="my-1">
       <search-form :fields="search"/>
     </space>
@@ -8,7 +8,7 @@
       row-key="id"
       :data-source="roles"
       bordered
-      style="min-width: 1200px;"
+      :scroll="{ x: 1200 }"
       :pagination="false"
     >
       <a-table-column title="ID" data-index="id" :width="60"/>
@@ -95,7 +95,6 @@ export default {
         this.roles = data
         this.page = meta
 
-        await this.$nextTick()
         this.$scrollResolve()
       },
       immediate: true,

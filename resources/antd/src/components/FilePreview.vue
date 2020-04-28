@@ -122,6 +122,10 @@ export default {
       })
     },
     setImgSize() {
+      if (!this.isImage) {
+        return
+      }
+
       const maxWidth = Math.min(1000, window.innerWidth * 0.9)
       const maxHeight = window.innerHeight * 0.9
 
@@ -184,7 +188,7 @@ export default {
     margin: 0 5px;
     font-size: 12px;
     word-break: break-all;
-    line-height: initial;
+    line-height: normal;
   }
 
   .invalid {
@@ -221,7 +225,8 @@ export default {
   .ant-modal {
     width: auto;
     display: inline-block;
-    top: initial;
+    top: auto;
+    padding: 0;
   }
 
   .ant-modal-body {

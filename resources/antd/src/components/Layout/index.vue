@@ -20,22 +20,21 @@
       <side-menu/>
     </a-layout-sider>
     <a-layout
-      :class="{ 'layout-main': true, 'scroll-x': scrollX }"
+      :class="{ 'layout-main': true }"
       :style="{ paddingLeft: `${siderWidth}px`}"
     >
-      <navbar :sider-width="siderWidth"/>
-      <div class="content-main">
+      <a-layout-header class="pa-0">
+        <navbar/>
+      </a-layout-header>
+      <a-layout-content class="py-1 px-2">
         <breadcrumb class="px-2 py-1"/>
-        <a-layout-content class="py-1 px-2">
-          <div class="pa-2" style="background: #fff">
-            <transition name="fade-transform" mode="out-in">
-              <router-view :key="$route.name"/>
-            </transition>
-          </div>
-        </a-layout-content>
-        <div class="flex-spacer"/>
-        <a-layout-footer style="text-align: left;">LZ - admin</a-layout-footer>
-      </div>
+        <div class="pa-2" style="background: #fff">
+          <transition name="fade-transform" mode="out-in">
+            <router-view :key="$route.name"/>
+          </transition>
+        </div>
+      </a-layout-content>
+      <a-layout-footer style="text-align: left;">LZ - admin</a-layout-footer>
     </a-layout>
   </a-layout>
 </template>
@@ -55,15 +54,6 @@ export default {
     Navbar,
     SideMenu,
     Breadcrumb,
-  },
-  data: () => ({
-    /**
-     * 如果是表格页，需要显示横向滚动条
-     */
-    scrollX: false,
-  }),
-  beforeCreate() {
-    Vue.prototype.$layout = this
   },
   computed: {
     ...mapState({
@@ -113,16 +103,12 @@ export default {
 
 .layout-main {
   transition: all 0.2s;
-  overflow-x: initial !important;
   width: 100%;
-
-  &.scroll-x {
-    width: auto;
-  }
+  overflow-x: visible !important;
 }
 
 .ant-layout-content {
-  min-height: initial;
+  min-height: auto;
   background: #f0f2f5;
 }
 

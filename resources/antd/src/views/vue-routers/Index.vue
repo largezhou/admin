@@ -1,7 +1,7 @@
 <template>
-  <page-content center scroll-x>
-    <div>
-      <space class="my-1">
+  <page-content center>
+    <div style="overflow-x: auto;">
+      <space class="my-1 header-actions">
         <a-button @click="onExpand">展开</a-button>
         <a-button @click="onCollapse">收起</a-button>
         <loading-action :action="onSaveOrder">保存</loading-action>
@@ -32,7 +32,7 @@
             <span class="ml-2 path">{{ data.path }}</span>
           </div>
           <div class="flex-spacer"/>
-          <space style="width: 100px;">
+          <space style="min-width: 100px;">
             <router-link :to="`/vue-routers/create?parent_id=${data.id}`">添加</router-link>
             <router-link :to="`/vue-routers/${data.id}/edit`">编辑</router-link>
             <lz-popconfirm :confirm="onDestroy(data)" title="所有子路由都会被删除！！！">
@@ -92,9 +92,7 @@ export default {
       this.vueRoutersBak = JSON.stringify(this.vueRouters)
       this.defaultExpanded = this.vueRouters.filter(i => hasChildren(i)).map(i => i.id)
 
-      this.$nextTick(() => {
-        this.$scrollResolve()
-      })
+      this.$scrollResolve()
     },
     onDestroy(row) {
       return async () => {
@@ -177,7 +175,7 @@ export default {
 @import "~ant-design-vue/lib/style/color/colors";
 
 .vue-routers {
-  width: 600px;
+  width: 800px;
 
   .id {
     width: 40px;
@@ -199,5 +197,10 @@ export default {
     white-space: nowrap;
     text-overflow: ellipsis;
   }
+}
+
+.header-actions {
+  width: 100%;
+  overflow-x: auto;
 }
 </style>

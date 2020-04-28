@@ -1,5 +1,5 @@
 <template>
-  <page-content scroll-x>
+  <page-content>
     <space class="my-1">
       <search-form :fields="search"/>
       <a-button @click="createDialog = true">添加</a-button>
@@ -9,11 +9,11 @@
       row-key="id"
       :data-source="cates"
       bordered
-      style="min-width: 950px;"
+      :scroll="{ x: 950 }"
       :pagination="false"
     >
       <a-table-column title="ID" data-index="id" :width="60"/>
-      <a-table-column title="名称" :width="150">
+      <a-table-column title="名称">
         <template #default="record">
           <quick-edit
             :id="record.id"
@@ -157,7 +157,6 @@ export default {
         this.cates = data
         this.page = meta
 
-        await this.$nextTick()
         this.$scrollResolve()
       },
       immediate: true,

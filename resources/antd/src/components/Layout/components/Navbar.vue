@@ -1,8 +1,5 @@
 <template>
-  <a-layout-header
-    class="pa-0 header"
-    :style="{ width: `calc(100% - ${siderWidth}px)` }"
-  >
+  <div class="header">
     <a-button @click.stop="$store.dispatch('toggleOpened')">
       <a-icon :type="collapsed ? 'menu-unfold' : 'menu-fold'"/>
     </a-button>
@@ -23,7 +20,7 @@
         <a-menu-item @click="onLogout">退出登录</a-menu-item>
       </a-menu>
     </a-dropdown>
-  </a-layout-header>
+  </div>
 </template>
 
 <script>
@@ -32,9 +29,6 @@ import { getUrl } from '@/libs/utils'
 
 export default {
   name: 'Navbar',
-  props: {
-    siderWidth: Number,
-  },
   computed: {
     ...mapState({
       miniWidth: (state) => state.miniWidth,
@@ -67,8 +61,5 @@ button {
   display: flex;
   background: #fff;
   align-items: center;
-  position: fixed;
-  transition: width 0.2s;
-  z-index: 1;
 }
 </style>
