@@ -40,7 +40,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "~ant-design-vue/lib/style/color/colors.less";
+@import "~@/styles/app";
 
 .ant-form-item-label {
   &::after {
@@ -51,7 +51,7 @@ export default {
   }
 
   .anticon {
-    color: @blue-6;
+    color: @primary-color;
   }
 }
 

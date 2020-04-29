@@ -157,7 +157,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "~ant-design-vue/lib/style/color/colors";
+@import "~@/styles/app";
 
 .file-preview {
   width: 100px;
@@ -165,7 +165,7 @@ export default {
   min-width: 100px;
   min-height: 100px;
   overflow: hidden;
-  border: 1px solid #e8e8e8;
+  border: @border-base;
   border-radius: 4px;
   margin: 0 5px 5px 0;
   transition: all .3s;

@@ -99,12 +99,12 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "~ant-design-vue/lib/style/color/colors.less";
+@import "~@/styles/app";
 
 .value {
   padding-bottom: 2px;
   color: @blue-6;
-  border-bottom: dashed 2px @blue-6;
+  border-bottom: 2px dashed @primary-color;
   cursor: pointer;
 }
 </style>

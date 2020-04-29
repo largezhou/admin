@@ -36,7 +36,7 @@
             <router-link :to="`/vue-routers/create?parent_id=${data.id}`">添加</router-link>
             <router-link :to="`/vue-routers/${data.id}/edit`">编辑</router-link>
             <lz-popconfirm :confirm="onDestroy(data)" title="所有子路由都会被删除！！！">
-              <a class="red-6" href="javascript:void(0);">删除</a>
+              <a class="error-color" href="javascript:void(0);">删除</a>
             </lz-popconfirm>
           </space>
         </template>
@@ -175,7 +175,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "~ant-design-vue/lib/style/color/colors";
+@import "~@/styles/app";
 
 .vue-routers {
   width: 800px;
@@ -192,7 +192,7 @@ export default {
   }
 
   .path {
-    color: @blue-6;
+    color: @primary-color;
   }
 
   .item-wrap {

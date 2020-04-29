@@ -55,7 +55,7 @@
           <space>
             <router-link :to="`/configs/${record.id}/edit`">编辑</router-link>
             <lz-popconfirm :confirm="destroyConfig(record.id)">
-              <a class="red-6" href="javascript:void(0);">删除</a>
+              <a class="error-color" href="javascript:void(0);">删除</a>
             </lz-popconfirm>
           </space>
         </template>

@@ -92,6 +92,8 @@ export default {
 </script>
 
 <style scoped lang="less">
+@import "~@/styles/app";
+
 .sider {
   height: 100vh;
   overflow-y: auto;
@@ -112,7 +114,7 @@ export default {
 
 .ant-layout-content {
   min-height: auto;
-  background: #f0f2f5;
+  background: @layout-body-background;
 }
 
 .logo {

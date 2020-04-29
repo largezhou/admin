@@ -127,7 +127,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "~ant-design-vue/lib/style/color/colors";
+@import "~@/styles/app";
 
 .item-wrapper {
   max-width: 100%;
@@ -139,7 +139,7 @@ export default {
   display: flex;
   padding: 0 15px 0 5px;
   align-items: center;
-  border: 1px solid #e8e8e8;
+  border: @border-base;
   transition: background-color .25s ease;
   margin-bottom: 8px;
 
@@ -154,7 +154,7 @@ export default {
 
 .sortable-ghost {
   background-color: @blue-1;
-  border: 2px dashed @blue-6;
+  border: 2px dashed @primary-color;
 }
 
 .expand-icon {
