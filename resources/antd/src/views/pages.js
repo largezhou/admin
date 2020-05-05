@@ -20,4 +20,6 @@ export default {
   'vue-routers': () => import('@v/vue-routers/Index'),
   'vue-routers/create': () => import('@v/vue-routers/Form'),
   'vue-routers/:id(\\d+)/edit': () => import('@v/vue-routers/Form'),
+
+  'system-media': () => import('@v/system-media/Index'),
 }

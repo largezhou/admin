@@ -76,6 +76,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    /**
+     * 当 input 框聚焦时，按 enter 是否自动提交
+     */
+    enterToSubmit: Boolean,
   },
   computed: {
     tinyWidth() {
@@ -133,6 +137,15 @@ export default {
     onReset() {
       this.$emit('update:form', jsonParse(this.formBak))
       this.$emit('update:errors', {})
+    },
+    onEnter(e) {
+      if (
+        this.enterToSubmit &&
+        e.target?.tagName.toLowerCase() === 'input' &&
+        this.$refs.confirm
+      ) {
+        this.$refs.confirm.onAction()
+      }
     },
   },
   watch: {
@@ -197,7 +210,7 @@ export default {
         }}
         class="actions"
       >
-        <loading-action type="primary" action={this.onSubmit}>{this.submitText}</loading-action>
+        <loading-action ref="confirm" type="primary" action={this.onSubmit}>{this.submitText}</loading-action>
         <a-button class="ml-1" vOn:click={this.onReset}>重置</a-button>
         {this.$slots.footerAppend}
         <div class="flex-spacer"/>
@@ -218,6 +231,7 @@ export default {
             listeners: this.$listeners,
           }}
           class={{ 'in-dialog': this.inDialog }}
+          v-on:keydown_enter_native={this.onEnter}
         >
           {[defaultSlot, footerSlot]}
         </a-form>

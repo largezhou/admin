@@ -1,17 +1,3 @@
-<template>
-  <component
-    :is="comp"
-    :type="type"
-    v-bind="$attrs"
-    v-on="$listeners"
-    @click="onAction"
-    :loading="actionLoading || loading"
-    :disabled="disabled"
-  >
-    <slot/>
-  </component>
-</template>
-
 <script>
 export default {
   name: 'LoadingAction',
@@ -50,6 +36,12 @@ export default {
       type: [String, Number],
       default: 500,
     },
+    disableTextWhenLoading: Boolean,
+  },
+  computed: {
+    readLoading() {
+      return this.loading || this.actionLoading
+    },
   },
   beforeDestroy() {
     this.clearRecoverDisabledTimeout()
@@ -84,6 +76,24 @@ export default {
     actionLoading(newVal) {
       this.$emit('action-loading', newVal)
     },
+  },
+  render(h) {
+    return (
+      <this.comp
+        type={this.type}
+        {...{
+          attrs: this.$attrs,
+          listeners: this.$listeners,
+        }}
+        v-on:click={this.onAction}
+        loading={this.readLoading}
+        disabled={this.disabled}
+      >
+        {(!this.disableTextWhenLoading || !this.readLoading)
+          ? this.$slots.default
+          : null}
+      </this.comp>
+    )
   },
 }
 </script>
