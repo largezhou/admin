@@ -17,23 +17,25 @@
     <div class="path" v-else :title="path">{{ path }}</div>
 
     <div class="actions flex-box">
-      <template v-if="!disableView">
-        <a-icon
-          v-if="isImage"
-          type="eye"
-          @click.stop="onPreview"
-          title="查看"
-        />
-        <a
-          v-else
-          :href="url"
-          target="_blank"
-          title="查看"
-        >
-          <a-icon type="eye"/>
-        </a>
-      </template>
-      <slot :file="formattedFile"/>
+      <space size="4">
+        <template v-if="!disableView">
+          <a-icon
+            v-if="isImage"
+            type="eye"
+            @click.stop="onPreview"
+            title="查看"
+          />
+          <a
+            v-else
+            :href="url"
+            target="_blank"
+            title="查看"
+          >
+            <a-icon type="eye"/>
+          </a>
+        </template>
+        <slot :file="formattedFile"/>
+      </space>
     </div>
   </div>
 </template>
@@ -43,9 +45,13 @@ import { isImage } from '@/libs/validates'
 import { mapState } from 'vuex'
 import { getUrl } from '@/libs/utils'
 import GlobalModal from '@c/GlobalModal'
+import Space from '@c/Space'
 
 export default {
   name: 'FilePreview',
+  components: {
+    Space,
+  },
   data() {
     return {
       formattedFile: {
