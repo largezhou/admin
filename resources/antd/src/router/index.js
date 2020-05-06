@@ -66,6 +66,33 @@ const renameComponent = async (to) => {
   }
 }
 
+/**
+ * 处理刷新页面的情况
+ *
+ * 刷新页面, 往 query 中加入 _refresh 当前时间戳
+ * 然后立马用原页面 replace 掉
+ *
+ * @param to
+ * @param next
+ * @return {boolean}
+ */
+const handleRefresh = (to, next) => {
+  if (to.query._refresh !== undefined) {
+    const query = {
+      ...to.query,
+    }
+    delete query._refresh
+    next()
+    router.replace({
+      path: to.path,
+      query,
+    })
+    return true
+  }
+
+  return false
+}
+
 router.beforeEach(async (to, from, next) => {
   cancelAllRequest('页面切换，取消请求')
 

@@ -75,7 +75,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "~@/styles/app";
+@import "~@/styles/vars";
 
 .file-wrapper {
   display: flex;

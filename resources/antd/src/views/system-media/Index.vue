@@ -18,7 +18,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "~@/styles/app";
+@import "~@/styles/vars";
 
 .system-media {
   width: 800px;

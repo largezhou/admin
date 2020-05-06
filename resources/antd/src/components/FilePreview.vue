@@ -163,7 +163,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "~@/styles/app";
+@import "~@/styles/vars";
 
 .file-preview {
   width: 100px;

@@ -45,7 +45,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "~@/styles/app";
+@import "~@/styles/vars";
 
 .ant-form-item-label {
   &::after {

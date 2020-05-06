@@ -127,7 +127,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "~@/styles/app";
+@import "~@/styles/vars";
 
 .item-wrapper {
   max-width: 100%;

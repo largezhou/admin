@@ -99,7 +99,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "~@/styles/app";
+@import "~@/styles/vars";
 
 .value {
   padding-bottom: 2px;

@@ -26,7 +26,11 @@
         <a-input v-model="form.title"/>
       </lz-form-item>
       <lz-form-item label="地址" prop="path" :tip="pathTip">
-        <a-auto-complete :data-source="pathOptions" @search="onPathSearch"/>
+        <a-auto-complete
+          v-model="form.path"
+          :data-source="pathOptions"
+          @search="onPathSearch"
+        />
       </lz-form-item>
       <lz-form-item
         class="icon-item"

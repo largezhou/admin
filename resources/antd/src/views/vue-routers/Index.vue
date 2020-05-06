@@ -175,7 +175,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "~@/styles/app";
+@import "~@/styles/vars";
 
 .vue-routers {
   width: 800px;

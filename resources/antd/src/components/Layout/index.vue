@@ -26,11 +26,12 @@
       <a-layout-header class="pa-0">
         <navbar/>
       </a-layout-header>
-      <a-layout-content class="py-1 px-2">
-        <breadcrumb class="px-2 py-1"/>
+      <a-layout-content class="pa-2">
+        <breadcrumb class="pb-2"/>
         <div class="pa-2" style="background: #fff">
           <transition name="fade-transform" mode="out-in">
-            <lz-keep-alive :include="$store.state.include">
+            <template v-if="$route.query._refresh"/>
+            <lz-keep-alive v-else :include="$store.state.include">
               <router-view :key="$route.name"/>
             </lz-keep-alive>
           </transition>
@@ -92,7 +93,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "~@/styles/app";
+@import "~@/styles/vars";
 
 .sider {
   height: 100vh;
