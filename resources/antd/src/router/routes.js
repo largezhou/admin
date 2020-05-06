@@ -44,5 +44,16 @@ export const pageNotFoundRoute = {
  * 后置路由，会添加到后端路由的后面
  */
 export const appendRoutes = [
+  {
+    path: randomPath,
+    component: Layout,
+    children: [
+      {
+        path: '/configs/:categorySlug',
+        name: 'updateConfigForm',
+        component: () => import('@v/configs/ConfigValuesForm'),
+      },
+    ],
+  },
   pageNotFoundRoute,
 ]
