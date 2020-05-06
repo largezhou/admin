@@ -17,7 +17,10 @@
         <span v-show="appLogo && !collapsed" class="ml-2 h-100"/>
         <span v-show="!appLogo || !collapsed" class="app-name">{{ appName }}</span>
       </router-link>
-      <side-menu/>
+      <div class="ma-1">
+        <a-input v-model="q" placeholder="搜索菜单"/>
+      </div>
+      <side-menu :q="q"/>
     </a-layout-sider>
     <a-layout
       :class="{ 'layout-main': true }"
@@ -59,6 +62,9 @@ export default {
     Breadcrumb,
     LzKeepAlive,
   },
+  data: () => ({
+    q: '',
+  }),
   computed: {
     ...mapState({
       miniWidth: (state) => state.miniWidth,

@@ -32,9 +32,11 @@ export default {
     return {
       openedMenusBak: [],
       openedMenus: [],
-      q: '',
       menus: this.$store.state.vueRouters.vueRouters,
     }
+  },
+  props: {
+    q: String,
   },
   computed: {
     ...mapState({
