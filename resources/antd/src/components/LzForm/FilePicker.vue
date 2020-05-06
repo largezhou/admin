@@ -27,7 +27,7 @@
         class="picker file-item flex-box"
         @click="onPick"
       >
-        <svg-icon :icon-class="pickerIcon"/>
+        <svg-icon class="file-icon" :icon-class="pickerIcon"/>
       </div>
     </div>
 
@@ -258,7 +258,7 @@ export default {
     color: @info-color;
   }
 
-  svg {
+  .file-icon {
     width: 50px;
     height: 50px;
   }

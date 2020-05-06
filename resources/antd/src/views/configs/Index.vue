@@ -8,7 +8,7 @@
       row-key="id"
       :data-source="configs"
       bordered
-      :scroll="{ x: 1600 }"
+      :scroll="{ x: 1650 }"
       :pagination="false"
       table-layout="fixed"
     >
