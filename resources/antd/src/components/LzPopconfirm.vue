@@ -1,5 +1,10 @@
 <template>
-  <a-popover trigger="click" v-model="visible">
+  <a-popover
+    trigger="click"
+    :visible="visible"
+    v-bind="$attrs"
+    @visibleChange="onVisibleChange"
+  >
     <template #content>
       <div class="mb-2">
         <span v-if="title">{{ title }}</span>
@@ -16,7 +21,7 @@
         </loading-action>
       </space>
     </template>
-    <slot/>
+    <slot v-bind:pop="this"/>
   </a-popover>
 </template>
 
@@ -50,6 +55,7 @@ export default {
      * 传入异步函数，就会有 loading 效果
      */
     confirm: Function,
+    disabled: Boolean,
   },
   methods: {
     onCancel() {
@@ -60,6 +66,12 @@ export default {
       this.confirm && await this.confirm()
       this.$emit('confirm')
       this.visible = false
+    },
+    onVisibleChange(visible) {
+      if (this.disabled) {
+        return
+      }
+      this.visible = visible
     },
   },
 }

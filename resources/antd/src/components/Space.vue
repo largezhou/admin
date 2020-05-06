@@ -3,7 +3,7 @@ export default {
   name: 'Space',
   props: {
     size: {
-      type: Number,
+      type: [Number, String],
       default: 8,
     },
     direction: {

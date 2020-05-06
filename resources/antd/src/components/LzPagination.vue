@@ -3,11 +3,12 @@
     ref="page"
     v-if="page"
     v-model="currentPage"
+    v-bind="$attrs"
     :page-size-options="pageSizes"
     class="my-1 pagination"
     :total="page.total"
-    show-size-changer
-    show-quick-jumper
+    :show-size-changer="showSizeChanger"
+    :show-quick-jumper="showQuickJumper"
     :show-total="total => `共 ${total} 条`"
     :page-size.sync="perPage"
     @change="onChange"
@@ -30,6 +31,14 @@ export default {
      * 分页改变时，是否自动改变地址栏的 query string
      */
     autoPush: {
+      type: Boolean,
+      default: true,
+    },
+    showSizeChanger: {
+      type: Boolean,
+      default: true,
+    },
+    showQuickJumper: {
       type: Boolean,
       default: true,
     },

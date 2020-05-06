@@ -16,6 +16,12 @@
       <lz-form-item label="姓名" required prop="name">
         <a-input v-model="form.name"/>
       </lz-form-item>
+      <lz-form-item label="头像" prop="avatar">
+        <file-picker
+          v-model="form.avatar"
+          ext="jpg,gif,png,jpeg"
+        />
+      </lz-form-item>
       <lz-form-item label="密码" prop="password">
         <a-input type="password" v-model="form.password"/>
       </lz-form-item>
@@ -37,9 +43,11 @@ import { editUser, updateUser } from '@/api/admin-users'
 import LzForm from '@c/LzForm'
 import LzFormItem from '@c/LzForm/LzFormItem'
 import PageContent from '@c/PageContent'
+import FilePicker from '@c/LzForm/FilePicker'
 
 export default {
   components: {
+    FilePicker,
     PageContent,
     LzForm,
     LzFormItem,

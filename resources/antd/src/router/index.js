@@ -11,6 +11,7 @@ import { loggedIn, removeLoggedIn } from '@/libs/token'
 import { cancelAllRequest } from '@/axios/request'
 
 Vue.use(VueRouter)
+Vue.prototype.$scrollResolve = () => {}
 NProgress.configure({ showSpinner: false })
 
 const router = new VueRouter({
@@ -63,6 +64,33 @@ const renameComponent = async (to) => {
 
     store.commit('ADD_INCLUDE', c.name)
   }
+}
+
+/**
+ * 处理刷新页面的情况
+ *
+ * 刷新页面, 往 query 中加入 _refresh 当前时间戳
+ * 然后立马用原页面 replace 掉
+ *
+ * @param to
+ * @param next
+ * @return {boolean}
+ */
+const handleRefresh = (to, next) => {
+  if (to.query._refresh !== undefined) {
+    const query = {
+      ...to.query,
+    }
+    delete query._refresh
+    next()
+    router.replace({
+      path: to.path,
+      query,
+    })
+    return true
+  }
+
+  return false
 }
 
 router.beforeEach(async (to, from, next) => {

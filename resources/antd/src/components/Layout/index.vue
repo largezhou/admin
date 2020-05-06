@@ -17,7 +17,10 @@
         <span v-show="appLogo && !collapsed" class="ml-2 h-100"/>
         <span v-show="!appLogo || !collapsed" class="app-name">{{ appName }}</span>
       </router-link>
-      <side-menu/>
+      <div class="ma-1">
+        <a-input v-model="q" placeholder="搜索菜单"/>
+      </div>
+      <side-menu :q="q"/>
     </a-layout-sider>
     <a-layout
       :class="{ 'layout-main': true }"
@@ -26,11 +29,14 @@
       <a-layout-header class="pa-0">
         <navbar/>
       </a-layout-header>
-      <a-layout-content class="py-1 px-2">
-        <breadcrumb class="px-2 py-1"/>
+      <a-layout-content class="pa-2">
+        <breadcrumb class="pb-2"/>
         <div class="pa-2" style="background: #fff">
           <transition name="fade-transform" mode="out-in">
-            <router-view :key="$route.name"/>
+            <template v-if="$route.query._refresh"/>
+            <lz-keep-alive v-else :include="$store.state.include">
+              <router-view :key="$route.name"/>
+            </lz-keep-alive>
           </transition>
         </div>
       </a-layout-content>
@@ -46,7 +52,7 @@ import Navbar from './components/Navbar'
 import { getUrl } from '@/libs/utils'
 import { SYSTEM_BASIC } from '@/libs/constants'
 import Breadcrumb from './components/Breadcrumb'
-import Vue from 'vue'
+import LzKeepAlive from '@c/LzKeepAlive'
 
 export default {
   name: 'Layout',
@@ -54,7 +60,11 @@ export default {
     Navbar,
     SideMenu,
     Breadcrumb,
+    LzKeepAlive,
   },
+  data: () => ({
+    q: '',
+  }),
   computed: {
     ...mapState({
       miniWidth: (state) => state.miniWidth,
@@ -89,6 +99,8 @@ export default {
 </script>
 
 <style scoped lang="less">
+@import "~@/styles/vars";
+
 .sider {
   height: 100vh;
   overflow-y: auto;
@@ -109,7 +121,7 @@ export default {
 
 .ant-layout-content {
   min-height: auto;
-  background: #f0f2f5;
+  background: @layout-body-background;
 }
 
 .logo {

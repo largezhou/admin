@@ -36,7 +36,7 @@
             <router-link :to="`/vue-routers/create?parent_id=${data.id}`">添加</router-link>
             <router-link :to="`/vue-routers/${data.id}/edit`">编辑</router-link>
             <lz-popconfirm :confirm="onDestroy(data)" title="所有子路由都会被删除！！！">
-              <a class="red-6" href="javascript:void(0);">删除</a>
+              <a class="error-color" href="javascript:void(0);">删除</a>
             </lz-popconfirm>
           </space>
         </template>
@@ -77,13 +77,16 @@ export default {
     return {
       vueRouters: [],
       vueRoutersBak: '',
-      visible: false,
       // 默认展开第二级路由
       defaultExpanded: [],
     }
   },
   created() {
     this.getVueRouters()
+  },
+  activated() {
+    // 缓存的页面，由于不会执行 created 方法，所以滚动行为，放在该钩子里
+    this.$scrollResolve()
   },
   methods: {
     async getVueRouters() {
@@ -172,7 +175,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "~ant-design-vue/lib/style/color/colors";
+@import "~@/styles/vars";
 
 .vue-routers {
   width: 800px;
@@ -189,7 +192,7 @@ export default {
   }
 
   .path {
-    color: @blue-6;
+    color: @primary-color;
   }
 
   .item-wrap {

@@ -3,13 +3,22 @@
     <a-button @click.stop="$store.dispatch('toggleOpened')">
       <a-icon :type="collapsed ? 'menu-unfold' : 'menu-fold'"/>
     </a-button>
+    <refresh/>
     <div class="flex-spacer"/>
     <a-dropdown
       :trigger="['click']"
       placement="bottomRight"
       class="mr-2"
     >
-      <a class="ant-dropdown-link" @click="e => e.preventDefault()">{{ user.name }}
+      <a class="ant-dropdown-link" @click="e => e.preventDefault()">
+        <img
+          v-if="avatar"
+          class="avatar"
+          :src="avatar"
+          :alt="user.name"
+          :title="user.name"
+        >
+        <span v-else>{{ user.name }}</span>
         <a-icon type="down"/>
       </a>
       <a-menu slot="overlay">
@@ -26,9 +35,11 @@
 <script>
 import { mapState } from 'vuex'
 import { getUrl } from '@/libs/utils'
+import Refresh from '@c/Refresh'
 
 export default {
   name: 'Navbar',
+  components: { Refresh },
   computed: {
     ...mapState({
       miniWidth: (state) => state.miniWidth,
@@ -48,6 +59,8 @@ export default {
 </script>
 
 <style scoped lang="less">
+@import "~@/styles/vars";
+
 button {
   line-height: 64px;
   height: 100%;
@@ -61,5 +74,11 @@ button {
   display: flex;
   background: #fff;
   align-items: center;
+}
+
+.avatar {
+  border-radius: @border-radius-base;
+  max-width: 40px;
+  max-height: 40px;
 }
 </style>

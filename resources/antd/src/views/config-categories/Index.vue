@@ -41,7 +41,7 @@
             <router-link :to="`/configs/create?category_id=${record.id}`">添加配置</router-link>
             <router-link :to="`/configs?category_id=${record.id}`">查看配置</router-link>
             <lz-popconfirm :confirm="destroyConfigCategory(record.id)">
-              <a class="red-6" href="javascript:void(0);">删除</a>
+              <a class="error-color" href="javascript:void(0);">删除</a>
             </lz-popconfirm>
           </space>
         </template>

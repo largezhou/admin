@@ -4,6 +4,11 @@ import { Form } from 'ant-design-vue'
 export default {
   name: 'LzFormItem',
   extends: Form.Item,
+  provide() {
+    return {
+      lzFormItem: this,
+    }
+  },
   props: {
     /**
      * 以 tooltip 的形式展示提示文字
@@ -40,7 +45,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "~ant-design-vue/lib/style/color/colors.less";
+@import "~@/styles/vars";
 
 .ant-form-item-label {
   &::after {
@@ -51,7 +56,7 @@ export default {
   }
 
   .anticon {
-    color: @blue-6;
+    color: @primary-color;
   }
 }
 

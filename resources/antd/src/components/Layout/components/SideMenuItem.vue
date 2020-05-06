@@ -1,4 +1,27 @@
 <script>
+import {
+  arrayWrap,
+  hasChildren as uHasChildren,
+  makeRouteName,
+  startSlash,
+} from '@/libs/utils'
+import icons from '@/icons'
+import { isExternal as vIsExternal } from '@/libs/validates'
+
+/**
+ * 是否没有被过滤掉
+ *
+ * @param {{}} menu
+ * @param {string} q
+ *
+ * @return {boolean}
+ */
+const checkNotFiltered = (menu, q) => {
+  return !q ||
+    (menu.title.indexOf(q) !== -1) ||
+    arrayWrap(menu.children).some((i) => checkNotFiltered(i, q))
+}
+
 export default {
   functional: true,
   name: 'SideMenuItem',
@@ -12,18 +35,10 @@ export default {
     collapse: Boolean,
   },
   render(h, context) {
-    const {
-      arrayWrap,
-      hasChildren: utilsHasChildren,
-      makeRouteName,
-      startSlash,
-    } = require('@/libs/utils')
-    const icons = require('@/icons').default
-    const { isExternal: vIsExternal } = require('@/libs/validates')
-
     const { props: { menu, level, q } } = context
 
-    const hasChildren = utilsHasChildren(menu)
+    const notFiltered = checkNotFiltered(menu, q)
+    const hasChildren = uHasChildren(menu)
     const routeName = makeRouteName(menu.id)
     const validIcon = icons.indexOf(menu.icon) !== -1
     const icon = validIcon ? menu.icon : 'cog-fill'
@@ -35,7 +50,11 @@ export default {
       : rawPath ? startSlash(rawPath) : ''
 
     const svgNode = topLevel
-      ? (<i class="anticon anticon-desktop"><svg-icon iconClass={icon}/></i>)
+      ? (
+        <i class="anticon anticon-desktop">
+          <svg-icon iconClass={icon}/>
+        </i>
+      )
       : null
     const titleNodes = [svgNode, <span>{menu.title}</span>]
 
@@ -53,20 +72,20 @@ export default {
       )
 
       return (
-        <a-sub-menu key={routeName}>
+        <a-sub-menu v-show={notFiltered} key={routeName}>
           <span slot="title">{titleNodes}</span>
           {childrenNodes}
         </a-sub-menu>
       )
     } else if (isExternal) {
       return (
-        <a-menu-item key={routeName}>
+        <a-menu-item v-show={notFiltered} key={routeName}>
           <a href={path} target="_blank">{titleNodes}</a>
         </a-menu-item>
       )
     } else {
       return (
-        <a-menu-item key={routeName}>
+        <a-menu-item v-show={notFiltered} key={routeName}>
           <router-link to={path}>{titleNodes}</router-link>
         </a-menu-item>
       )

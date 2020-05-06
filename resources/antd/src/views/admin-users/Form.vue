@@ -13,7 +13,7 @@
         <a-input v-model="form.name"/>
       </lz-form-item>
       <lz-form-item label="头像" prop="avatar">
-        <a-input v-model="form.avatar"/>
+        <file-picker v-model="form.avatar" ext="jpg,gif,png,jpeg"/>
       </lz-form-item>
       <lz-form-item label="密码" required-when-create prop="password">
         <a-input v-model="form.password" type="password"/>
@@ -67,10 +67,12 @@ import {
 import LzForm from '@c/LzForm'
 import LzFormItem from '@c/LzForm/LzFormItem'
 import PageContent from '@c/PageContent'
+import FilePicker from '@c/LzForm/FilePicker'
 
 export default {
   name: 'Form',
   components: {
+    FilePicker,
     PageContent,
     LzForm,
     LzFormItem,

@@ -1,5 +1,5 @@
 <template>
-  <a-breadcrumb class="breadcrumb">
+  <a-breadcrumb>
     <a-breadcrumb-item v-for="i of breadCrumb" :key="i.id">
       <router-link v-if="i.path" :to="i.path">{{ i.title }}</router-link>
       <span v-else>{{ i.title }}</span>
@@ -48,7 +48,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style lang="less">
 /* breadcrumb transition */
 .breadcrumb-enter-active,
 .breadcrumb-leave-active {
@@ -67,11 +67,5 @@ export default {
 
 .breadcrumb-leave-active {
   position: absolute;
-}
-
-::v-deep {
-  .el-breadcrumb__item {
-    padding: 2px 0;
-  }
 }
 </style>

@@ -19,7 +19,7 @@ import { mapState } from 'vuex'
 import _last from 'lodash/last'
 
 export default {
-  name: 'TableContent',
+  name: 'PageContent',
   props: {
     title: String,
     center: Boolean,
