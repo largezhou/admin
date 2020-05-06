@@ -10,6 +10,7 @@
         type="primary"
         class="w-100"
         :action="onLogin"
+        disable-on-success="2000"
       >
         <span>登录</span>
       </loading-action>
