@@ -8,14 +8,14 @@
       row-key="id"
       :data-source="configs"
       bordered
-      :scroll="{ x: 1650 }"
+      :scroll="{ x: 1600 }"
       :pagination="false"
       table-layout="fixed"
     >
       <a-table-column title="ID" data-index="id" :width="60"/>
-      <a-table-column title="分类" data-index="category.name" :width="180"/>
+      <a-table-column title="分类" data-index="category.name" :width="150"/>
 
-      <a-table-column title="名称" :width="180">
+      <a-table-column title="名称" :width="150">
         <template #default="record">
           <quick-edit
             :id="record.id"
@@ -25,7 +25,7 @@
           />
         </template>
       </a-table-column>
-      <a-table-column title="标识" :width="180">
+      <a-table-column title="标识" :width="150">
         <template #default="record">
           <quick-edit
             :id="record.id"
