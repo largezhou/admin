@@ -4,7 +4,14 @@
       <a-icon :type="collapsed ? 'menu-unfold' : 'menu-fold'"/>
     </a-button>
     <refresh/>
+    <reset-system/>
     <div class="flex-spacer"/>
+    <a
+      class="px-3"
+      target="_blank"
+      href="https://github.com/largezhou/admin"
+      style="font-weight: bolder; text-decoration: none;"
+    >GITHUB</a>
     <a-dropdown
       :trigger="['click']"
       placement="bottomRight"
@@ -36,10 +43,11 @@
 import { mapState } from 'vuex'
 import { getUrl } from '@/libs/utils'
 import Refresh from '@c/Refresh'
+import ResetSystem from '@c/ResetSystem'
 
 export default {
   name: 'Navbar',
-  components: { Refresh },
+  components: { ResetSystem, Refresh },
   computed: {
     ...mapState({
       miniWidth: (state) => state.miniWidth,

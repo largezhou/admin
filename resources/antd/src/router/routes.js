@@ -28,6 +28,14 @@ export default [
         },
         component: () => import('@v/admin-users/EditProfile'),
       },
+      {
+        path: '/permission-test',
+        name: 'permissionTest',
+        meta: {
+          title: '权限测试',
+        },
+        component: () => import('@v/PermissionTest'),
+      },
     ],
   },
 ]
