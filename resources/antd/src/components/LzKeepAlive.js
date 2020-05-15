@@ -15,6 +15,9 @@ export const removeCacheByName = (name) => {
   }
 
   const key = findKeyByName(name)
+  if (!key) {
+    return
+  }
 
   cache[key].componentInstance.$destroy()
 
