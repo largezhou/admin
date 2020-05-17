@@ -12,9 +12,6 @@ Route::get('/admin-dev/{path?}', 'RedirectController@indexDev')->where('path', '
 
 Route::post('/admin-api/demo/reset-system', 'DemoController@resetSystem');
 
-Route::get('/antd/{path?}', 'RedirectController@antd')->where('path', '.*')->name('redirect.antd');
-Route::get('/antd-dev/{path?}', 'RedirectController@antdDev')->where('path', '.*')->name('redirect.antd-dev');
-
 Route::prefix('admin-api')
     ->middleware('admin')
     ->as('admin.')

@@ -1,38 +1,46 @@
 <script>
-import _forIn from 'lodash/forIn'
 import _get from 'lodash/get'
-import Form from '@/plugins/element/components/Form'
-import { getMessage, handleValidateErrors } from '@/libs/utils'
-import FlexSpacer from '@c/FlexSpacer'
+import {
+  assignExists,
+  getMessage,
+  handleValidateErrors,
+  jsonParse,
+  hasOwnProperty,
+} from '@/libs/utils'
+import LoadingAction from '@c/LoadingAction'
+import LzFormItem from './LzFormItem'
 
 export default {
   name: 'LzForm',
   components: {
-    FlexSpacer,
-  },
-  inject: {
-    // 使用 FormHelper 混入，会自动提供该注入
-    view: {
-      from: 'view',
-      default: null,
-    },
+    LoadingAction,
+    LzFormItem,
   },
   data() {
     return {
       loading: false,
       stay: false,
+      /**
+       * 备份表单数据，用来重置表单
+       */
+      formBak: JSON.stringify(this.form),
     }
   },
   props: {
     getData: Function,
     submit: Function,
-    errors: Object,
-    form: Object,
+    errors: {
+      type: Object,
+      default: () => ({}),
+    },
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
     submitText: {
       type: String,
       default: '保存',
     },
-    labelPosition: String,
     inDialog: Boolean,
     createdRedirect: {
       type: [String, Function],
@@ -49,81 +57,103 @@ export default {
     },
     disableRedirect: Boolean,
     disableStay: Boolean,
-    editMode: Boolean,
+    editMode: {
+      type: Boolean,
+      default: undefined,
+    },
+    /**
+     * 路由配置中的动态 id 参数
+     * 用来自动设置是不是编辑模式
+     */
+    idField: {
+      type: [Number, String],
+      default: 'id',
+    },
+    /**
+     * 是否显示表单底部操作栏
+     */
+    footer: {
+      type: Boolean,
+      default: true,
+    },
+    /**
+     * 当 input 框聚焦时，按 enter 是否自动提交
+     */
+    enterToSubmit: Boolean,
   },
   computed: {
-    realLabelPosition() {
-      return this.labelPosition || (this.$store.state.miniWidth ? 'top' : 'right')
+    tinyWidth() {
+      return this.$store.state.tinyWidth
     },
-    miniWidth() {
-      return this.$store.state.miniWidth
+    realEditMode() {
+      return this.editMode === undefined ? !!this.resourceId : this.editMode
     },
-  },
-  created() {
-    this.copyMethods()
+    resourceId() {
+      return this.$route.params[this.idField]
+    },
   },
   methods: {
-    /**
-     * 复制实际 Form 组件的方法, 给外部调用, 并把 this 指向 ElForm 实例
-     */
-    copyMethods() {
-      // 原始 ElForm 和 重写的 Form
-      [Form.extends.methods, Form.methods].forEach(methods => {
-        _forIn(methods, (m, k) => {
-          this[k] = function () {
-            m.apply(this.$refs.form, arguments)
-          }
-        })
-      })
-    },
     async _getData() {
       this.loading = true
-      this.view && this.$emit('update:form', this.view.formBak)
 
       try {
-        this.getData && await this.getData()
-        // 在某些情况下，会出现方法未定义，所以放到 nextTick 中
-        this.$nextTick(() => {
-          this.setInitialValues()
-        })
-      } catch (e) {
-        Promise.reject(e)
+        if (this.getData) {
+          const data = await this.getData(this)
+          if (data !== undefined) {
+            this.$emit('update:form', assignExists(this.form, data))
+            this.formBak = JSON.stringify(data)
+          }
+        }
+      } finally {
+        this.loading = false
       }
-
-      this.loading = false
     },
     async onSubmit() {
       this.$emit('update:errors', {})
       try {
-        this.submit && await this.submit()
+        this.submit && await this.submit(this)
 
-        this.$message.success(getMessage(this.editMode ? 'updated' : 'created'))
+        this.$message.success(getMessage(this.realEditMode ? 'updated' : 'created'))
 
         if (this.stay || this.disableRedirect) {
           return
         }
 
-        let redirect = this.editMode ? this.updatedRedirect : this.createdRedirect
+        const redirect = this.realEditMode ? this.updatedRedirect : this.createdRedirect
         if (typeof redirect === 'string') {
           this.$router.push(redirect)
         } else if (typeof redirect === 'function') {
           redirect()
         }
       } catch (e) {
-        this.$emit('update:errors', handleValidateErrors(e.response))
-        if (_get(e, 'response.status') !== 422) {
-          Promise.reject(e)
+        const status = _get(e, 'response.status')
+        if (status === 422 || status === 429) {
+          this.$emit('update:errors', handleValidateErrors(e.response))
         }
+
+        throw e
       }
     },
     onReset() {
-      this.$refs.form.resetFields()
+      this.$emit('update:form', jsonParse(this.formBak))
+      this.$emit('update:errors', {})
+    },
+    onEnter(e) {
+      if (
+        this.enterToSubmit &&
+        e.target?.tagName.toLowerCase() === 'input' &&
+        this.$refs.confirm
+      ) {
+        this.$refs.confirm.onAction()
+      }
     },
   },
   watch: {
     $route: {
       handler() {
-        this.$active && this._getData()
+        this.$nextTick(() => {
+          this.$active && this._getData()
+        })
       },
       immediate: true,
     },
@@ -133,119 +163,98 @@ export default {
     if (Array.isArray(defaultSlot)) {
       defaultSlot = defaultSlot.map((formItem) => {
         const options = formItem.componentOptions
+        const props = options.propsData
 
-        // 如果有 helper props，则生成一个新的 FormItem 替换掉原来的
-        let { helper, label } = options.propsData
-        if (helper) {
-          helper = helper.replace(/\n/g, '<br>')
-          const labelSlot = h('template', {
-            slot: 'label',
-          }, [
-            (<span>{label}</span>),
-            (
-              <el-tooltip
-                effect="dark"
-                placement="top-start"
-                popper-class={`form-helper-popper ${this.miniWidth ? 'mini-width' : ''}`}
-              >
-                <div slot="content" domPropsInnerHTML={helper}/>
-                <i class="ml-1 el-icon-question helper"/>
-              </el-tooltip>
-            ),
-          ])
-          return h('el-form-item', {
-            props: options.propsData,
-          }, [labelSlot, ...options.children])
-        } else {
-          return formItem
+        const error = this.errors[props.prop]
+        if (error) {
+          options.propsData.help = error
+          options.propsData.validateStatus = 'error'
         }
+
+        if (this.realEditMode && hasOwnProperty(props, 'requiredWhenEdit')) {
+          props.required = true
+        }
+
+        if (!this.realEditMode && hasOwnProperty(props, 'requiredWhenCreate')) {
+          props.required = true
+        }
+
+        return formItem
       })
     }
 
     const stayCheckbox = !this.disableStay && (
-      <el-checkbox
-        vModel={this.stay}
-        title="表单提交后，留在此页"
+      <a-tooltip placement="topRight">
+        <span slot="title">表单提交后，留在此页</span>
+        <a-checkbox class="stay" vModel={this.stay}>留在此页</a-checkbox>
+      </a-tooltip>
+    )
+
+    // 如果没有指定布局，并且是在弹框中，则默认为 vertical
+    if (this.inDialog && !hasOwnProperty(this.$attrs, 'layout')) {
+      this.$attrs.layout = 'vertical'
+    }
+
+    const colSpan = this.$attrs.layout === 'vertical'
+      ? {}
+      : {
+        labelCol: Object.assign({ span: 5 }, this.$attrs['label-col']),
+        wrapperCol: Object.assign({ span: 19 }, this.$attrs['wrapper-col']),
+      }
+
+    const footerSlot = this.$slots.footer || (this.footer && (
+      <lz-form-item
+        wrapperCol={{
+          offset: this.tinyWidth ? 0 : (colSpan?.labelCol?.span || 0),
+          span: colSpan?.wrapperCol?.span || 24,
+        }}
+        class="actions"
       >
-        留在此页
-      </el-checkbox>
-    )
-
-    const footerSlot = this.$slots.footer || (
-      <el-form-item class="footer">
-        <loading-action type="primary" action={this.onSubmit}>{this.submitText}</loading-action>
-        <el-button vOn:click={this.onReset}>重置</el-button>
+        <loading-action ref="confirm" type="primary" action={this.onSubmit}>{this.submitText}</loading-action>
+        <a-button class="ml-1" vOn:click={this.onReset}>重置</a-button>
         {this.$slots.footerAppend}
-        <flex-spacer/>
+        <div class="flex-spacer"/>
         {stayCheckbox}
-      </el-form-item>
-    )
+      </lz-form-item>
+    ))
 
-    // 用 jsx，ElForm 组件的 model props 传不进去，，，
-    return h('el-form', {
-      props: {
-        model: this.form,
-        errors: this.errors,
-        labelPosition: this.realLabelPosition,
-        ...this.$attrs,
-      },
-      on: {
-        ...this.$listeners,
-      },
-      class: {
-        'in-dialog': this.inDialog,
-      },
-      style: {
-        width: this.inDialog ? 'auto' : '800px',
-      },
-      directives: [
-        {
-          name: 'loading',
-          value: this.loading,
-        },
-      ],
-      ref: 'form',
-    }, [defaultSlot, footerSlot])
+    return (
+      <a-spin
+        spinning={this.loading}
+        size="large"
+        style={{ width: this.inDialog ? 'auto' : '800px' }}
+      >
+        <a-form
+          ref="form"
+          {...{
+            attrs: Object.assign({}, this.$attrs, colSpan),
+            listeners: this.$listeners,
+          }}
+          class={{ 'in-dialog': this.inDialog }}
+          v-on:keydown_enter_native={this.onEnter}
+        >
+          {[defaultSlot, footerSlot]}
+        </a-form>
+      </a-spin>
+    )
   },
 }
 </script>
 
-<style scoped lang="scss">
-@import '~element-ui/packages/theme-chalk/src/common/var';
-
-.footer {
-  ::v-deep {
-    .el-form-item__content {
-      display: flex;
-    }
+<style scoped lang="less">
+.actions {
+  ::v-deep .ant-form-item-children {
+    display: flex;
   }
+}
+
+.stay {
+  line-height: 32px;
 }
 
 .in-dialog {
-  .footer {
-    text-align: right;
+  .actions {
     margin-bottom: 0;
-  }
-}
-
-.helper {
-  color: $--color-primary;
-  border: 2px solid transparent;
-  border-radius: 50%;
-  transition: border-color .3s;
-
-  &:hover {
-    border-color: $--color-primary-light-1;
-  }
-}
-</style>
-
-<style lang="scss">
-.form-helper-popper {
-  max-width: 400px;
-
-  &.mini-width {
-    max-width: 90%;
   }
 }
 </style>

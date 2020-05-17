@@ -1,67 +1,61 @@
 <template>
-  <el-card>
-    <template #header>
-      <content-header/>
-    </template>
-    <el-row type="flex" justify="center">
-      <lz-form
-        ref="form"
-        :get-data="getData"
-        :submit="onSubmit"
-        :errors.sync="errors"
-        :form.sync="form"
-        :edit-mode="editMode"
-      >
-        <el-form-item label="类型" required prop="type">
-          <el-radio-group v-model="form.type">
-            <el-radio
-              v-for="i of types"
-              :key="i.value"
-              :label="i.value"
-            >
-              {{ i.label }}
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="分类" required prop="category_id">
-          <el-select
-            v-model="form.category_id"
-            placeholder="选择分类"
-            filterable
+  <page-content center>
+    <lz-form
+      :get-data="getData"
+      :submit="onSubmit"
+      :form.sync="form"
+      :errors.sync="errors"
+    >
+      <lz-form-item label="类型" prop="type" required>
+        <a-radio-group v-model="form.type">
+          <a-radio
+            v-for="i of types"
+            :key="i.value"
+            :value="i.value"
           >
-            <el-option
-              v-for="i of cates"
-              :key="i.id"
-              :label="i.name"
-              :value="i.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="名称" required prop="name">
-          <el-input v-model="form.name"/>
-        </el-form-item>
-        <el-form-item label="标识" required prop="slug">
-          <el-input v-model="form.slug"/>
-        </el-form-item>
-        <el-form-item label="简介" prop="desc">
-          <el-input v-model="form.desc" type="textarea"/>
-        </el-form-item>
-        <el-form-item label="选项" prop="options">
-          <type-options v-model="form.options" :type="form.type"/>
-        </el-form-item>
-        <el-form-item label="值" prop="value">
-          <type-input
-            v-model="form.value"
-            :type="form.type"
-            :options="form.options"
-          />
-        </el-form-item>
-        <el-form-item label="验证规则" prop="validation_rules">
-          <el-input v-model="form.validation_rules"/>
-        </el-form-item>
-      </lz-form>
-    </el-row>
-  </el-card>
+            {{ i.label }}
+          </a-radio>
+        </a-radio-group>
+      </lz-form-item>
+      <lz-form-item label="分类" prop="category_id" required>
+        <a-select
+          v-model="form.category_id"
+          option-filter-prop="name"
+          show-search
+        >
+          <a-select-option
+            v-for="i of cates"
+            :key="i.id"
+            :name="i.name"
+          >
+            {{ i.name }}
+          </a-select-option>
+        </a-select>
+      </lz-form-item>
+      <lz-form-item label="名称" prop="name" required>
+        <a-input v-model="form.name"/>
+      </lz-form-item>
+      <lz-form-item label="标识" prop="slug" required>
+        <a-input v-model="form.slug"/>
+      </lz-form-item>
+      <lz-form-item label="简介" prop="desc">
+        <a-input v-model="form.desc" type="textarea"/>
+      </lz-form-item>
+      <lz-form-item label="选项" prop="options">
+        <type-options v-model="form.options" :type="form.type"/>
+      </lz-form-item>
+      <lz-form-item label="值" prop="value">
+        <type-input
+          v-model="form.value"
+          :type="form.type"
+          :options="form.options"
+        />
+      </lz-form-item>
+      <lz-form-item label="验证规则" prop="validation_rules">
+        <a-input v-model="form.validation_rules"/>
+      </lz-form-item>
+    </lz-form>
+  </page-content>
 </template>
 
 <script>
@@ -69,24 +63,25 @@ import LzForm from '@c/LzForm'
 import {
   createConfig,
   editConfig,
-  getConfigCategories, storeConfig, updateConfig,
+  storeConfig,
+  updateConfig,
 } from '@/api/configs'
-import FormHelper from '@c/LzForm/FormHelper'
 import _forIn from 'lodash/forIn'
-import TypeOptions from '@v/configs/TypeOptions'
-import TypeInput from '@v/configs/TypeInput'
+import TypeOptions from './components/TypeOptions'
+import TypeInput from './components/TypeInput'
 import { toInt } from '@/libs/utils'
+import PageContent from '@c/PageContent'
+import LzFormItem from '@c/LzForm/LzFormItem'
 
 export default {
   name: 'Form',
   components: {
+    LzFormItem,
+    PageContent,
     TypeInput,
     TypeOptions,
     LzForm,
   },
-  mixins: [
-    FormHelper,
-  ],
   data() {
     return {
       form: {
@@ -106,11 +101,11 @@ export default {
     }
   },
   methods: {
-    async getData() {
+    async getData($form) {
       let data
 
-      if (this.editMode) {
-        ({ data } = await editConfig(this.resourceId))
+      if ($form.realEditMode) {
+        ({ data } = await editConfig($form.resourceId))
       } else {
         ({ data } = await createConfig())
       }
@@ -128,13 +123,13 @@ export default {
       // 表单中类型，默认选择第一个
       this.form.type = types[0].value
 
-      this.editMode
-        ? this.fillForm(data.data)
-        : this.form.category_id = toInt(this.$route.query.category_id, '')
+      !this.editMode && (this.form.category_id = toInt(this.$route.query.category_id, ''))
+
+      return data.data
     },
-    async onSubmit() {
-      if (this.editMode) {
-        await updateConfig(this.resourceId, this.form)
+    async onSubmit($form) {
+      if ($form.realEditMode) {
+        await updateConfig($form.resourceId, this.form)
       } else {
         await storeConfig(this.form)
       }

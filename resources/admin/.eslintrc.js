@@ -7,6 +7,9 @@ module.exports = {
     'plugin:vue/strongly-recommended',
     '@vue/standard',
   ],
+  globals: {
+    log: 'readonly',
+  },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
@@ -21,7 +24,7 @@ module.exports = {
     ],
     'eqeqeq': ['warn'],
     'no-eval': ['warn'],
-    'vue/require-component-is': 'never',
+    'vue/require-component-is': 0,
     'vue/no-parsing-error': [
       2,
       {

@@ -4,7 +4,7 @@ import Layout from '@c/Layout'
 import pages from '@v/pages'
 import Page404 from '@v/errors/Page404'
 import _debounce from 'lodash/debounce'
-import { Message } from 'element-ui'
+import { message } from 'ant-design-vue'
 import store from '@/store'
 import _get from 'lodash/get'
 import { PERMISSION_PASS_ALL, ROLE_ADMIN, SYSTEM_BASIC } from '@/libs/constants'
@@ -12,8 +12,10 @@ import _intersection from 'lodash/intersection'
 import { isExternal, isInt } from '@/libs/validates'
 import _trimStart from 'lodash/trimStart'
 import _trimEnd from 'lodash/trimEnd'
-import GlobalDialog from '@c/GlobalDialog'
-import router from '@/router'
+import GlobalModal from '@c/GlobalModal'
+import LoadingAction from '@c/LoadingAction'
+import LoginForm from '@c/LoginForm'
+import Space from '@c/Space'
 
 /**
  * 把 laravel 返回的错误消息，处理成只有一条
@@ -188,8 +190,8 @@ export const nestedToSelectOptions = (items, props = {}) => {
  */
 export const assignExists = (target, source, force = false) => {
   const res = {}
-  for (let k of Object.keys(target)) {
-    if (source.hasOwnProperty(k) || force) {
+  for (const k of Object.keys(target)) {
+    if (hasOwnProperty(source, k) || force) {
       res[k] = source[k]
     } else {
       res[k] = target[k]
@@ -234,7 +236,7 @@ export const getMessage = key => {
  * @returns {boolean}
  */
 export const removeFromNested = (items, identify, identifyKey = 'id', childrenKey = 'children') => {
-  for (let i in items) {
+  for (const i in items) {
     const item = items[i]
     if (item[identifyKey] === identify) {
       items.splice(i, 1)
@@ -265,7 +267,7 @@ export const getExt = (filename) => {
 
 const _debounceMsg = () => {
   const t = _debounceMsg.type || 'error'
-  _debounceMsg.msg && (Message[t])(_debounceMsg.msg)
+  _debounceMsg.msg && (message[t])(_debounceMsg.msg)
 }
 
 const debouncedMsg = _debounce(_debounceMsg, 10)
@@ -354,60 +356,40 @@ export function getUrl(path) {
  * 打开登录弹框
  * @return {*}
  */
-export function showLoginDialog() {
-  let vm
-  vm = GlobalDialog.new({
-    title: '登录',
-    width: '350px',
-    customClass: 'login-dialog',
-    closeOnClickModal: false,
-    on: {
-      opened() {
-        vm.$message.error('登录已失效，请重新登录')
+export function showLoginModal() {
+  GlobalModal.new({
+    components: {
+      LoadingAction,
+      LoginForm,
+      Space,
+    },
+    propsData: {
+      title: '登录',
+      width: '350px',
+      bodyStyle: {
+        paddingBottom: '8px',
       },
-    },
-    content(h) {
-      return h('login-form', {
-        nativeOn: {
-          keydown: (e) => {
-            if (e.key === 'Enter') {
-              vm.$refs.submit.onAction()
-            }
-          },
-        },
-        ref: 'form',
-      })
-    },
-    footer: (h) => {
-      return h('div', [
-        // 直接关闭弹框
-        h('el-button', {
-          on: {
-            click() {
-              vm.visible = false
-            },
-          },
-        }, '关闭'),
-        // 前端退出登录
-        h('el-button', {
-          on: {
-            click() {
-              vm.$store.dispatch('frontendLogout')
-            },
-          },
-        }, '退出'),
-        // 登录
-        h('loading-action', {
-          ref: 'submit',
-          props: {
-            type: 'primary',
-            action: async () => {
-              await vm.$refs.form.onSubmit()
-              vm.visible = false
-            },
-          },
-        }, '登录'),
-      ])
+      content(h) {
+        return <login-form ref="form"/>
+      },
+      lzFooter(h) {
+        return (
+          <div>
+            <a-button v-on:click={this.close}>关闭</a-button>
+            <a-button v-on:click={() => {
+              this.$store.dispatch('frontendLogout')
+              this.close()
+            }}>退出
+            </a-button>
+            <loading-action type="primary" action={async () => {
+              await this.$refs.form.onSubmit()
+              this.close()
+            }}>
+              登录
+            </loading-action>
+          </div>
+        )
+      },
     },
   })
 }
@@ -425,4 +407,54 @@ export function arrayWrap(val) {
   } else {
     return [val]
   }
+}
+
+/**
+ * 解析 json，出错时，返回默认值
+ *
+ * @param {string} str
+ * @param {any} defaultValue
+ * @return {any}
+ */
+export function jsonParse(str, defaultValue = undefined) {
+  try {
+    return JSON.parse(str)
+  } catch (e) {
+    return defaultValue
+  }
+}
+
+/**
+ * 从 array 中移除 callback 为真的值，并返回数组
+ *
+ * @param {array} array
+ * @param {function} callback
+ * @return {[]}
+ */
+export function removeWhile(array, callback) {
+  const res = []
+  array.forEach((i) => {
+    !callback(i) && res.push(i)
+  })
+
+  return res
+}
+
+/**
+ * @param {any} obj
+ * @param {string} key
+ * @return {boolean}
+ */
+export function hasOwnProperty(obj, key) {
+  return obj === undefined ? false : Object.prototype.hasOwnProperty.call(obj, key)
+}
+
+/**
+ * 批量引入
+ *
+ * @param requireContext
+ * @return {*}
+ */
+export function requireAll(requireContext) {
+  return requireContext.keys().map(requireContext)
 }

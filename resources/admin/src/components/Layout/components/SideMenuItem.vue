@@ -1,48 +1,29 @@
-<template>
-  <div v-if="hasChildren" :class="{ collapse: collapse && topLevel }">
-    <el-submenu v-if="hasChildren" v-show="filtered" :index="routeName">
-      <template #title>
-        <svg-icon v-if="topLevel" class="el-icon-menu" :icon-class="icon"/>
-        <span>{{ menu.title }}</span>
-      </template>
-      <template v-for="subMenu of menu.children">
-        <side-menu-item
-          ref="children"
-          :q="q"
-          v-if="subMenu.menu"
-          :menu="subMenu"
-          :key="subMenu.id"
-          :level="level + 1"
-          :collapse="collapse"
-        />
-      </template>
-    </el-submenu>
-  </div>
-  <a v-else-if="isExternal" :href="path" target="_blank">
-    <el-menu-item v-show="filtered" :index="routeName">
-      <svg-icon v-if="topLevel" class="el-icon-menu" :icon-class="icon"/>
-      <template #title>{{ menu.title }}</template>
-    </el-menu-item>
-  </a>
-  <router-link v-else :to="path">
-    <el-menu-item v-show="filtered" :index="routeName">
-      <svg-icon v-if="topLevel" class="el-icon-menu" :icon-class="icon"/>
-      <template #title>{{ menu.title }}</template>
-    </el-menu-item>
-  </router-link>
-</template>
-
 <script>
 import {
   arrayWrap,
-  hasChildren,
+  hasChildren as uHasChildren,
   makeRouteName,
   startSlash,
 } from '@/libs/utils'
 import icons from '@/icons'
-import { isExternal } from '@/libs/validates'
+import { isExternal as vIsExternal } from '@/libs/validates'
+
+/**
+ * 是否没有被过滤掉
+ *
+ * @param {{}} menu
+ * @param {string} q
+ *
+ * @return {boolean}
+ */
+const checkNotFiltered = (menu, q) => {
+  return !q ||
+    (menu.title.indexOf(q) !== -1) ||
+    arrayWrap(menu.children).some((i) => checkNotFiltered(i, q))
+}
 
 export default {
+  functional: true,
   name: 'SideMenuItem',
   props: {
     menu: Object,
@@ -53,60 +34,68 @@ export default {
     },
     collapse: Boolean,
   },
-  computed: {
-    filtered() {
-      return !this.q ||
-        (this.menu.title.indexOf(this.q) !== -1) ||
-        // 用渲染函数写的，在子元素只有一个时，children 不是数组，，，所以，包裹一下
-        (this.$refs.children && arrayWrap(this.$refs.children).some((i) => i.filtered))
-    },
-    hasChildren() {
-      return hasChildren(this.menu)
-    },
-    routeName() {
-      return makeRouteName(this.menu.id)
-    },
-    icon() {
-      return this.validIcon ? this.menu.icon : 'cog-fill'
-    },
-    validIcon() {
-      const { icon } = this.menu
-      return icon && (icons.indexOf(icon) !== -1)
-    },
-    topLevel() {
-      return this.level === 1
-    },
-    path() {
-      const { path } = this.menu
-      if (this.isExternal) {
-        return path
-      } else {
-        return path ? startSlash(path) : ''
-      }
-    },
-    isExternal() {
-      return isExternal(this.menu.path)
-    },
+  render(h, context) {
+    const { props: { menu, level, q } } = context
+
+    const notFiltered = checkNotFiltered(menu, q)
+    const hasChildren = uHasChildren(menu)
+    const routeName = makeRouteName(menu.id)
+    const validIcon = icons.indexOf(menu.icon) !== -1
+    const icon = validIcon ? menu.icon : 'cog-fill'
+    const topLevel = level === 1
+    const isExternal = vIsExternal(menu.path)
+    const rawPath = menu.path
+    const path = isExternal
+      ? rawPath
+      : rawPath ? startSlash(rawPath) : ''
+
+    const svgNode = topLevel
+      ? (
+        <i class="anticon anticon-desktop">
+          <svg-icon iconClass={icon}/>
+        </i>
+      )
+      : null
+    const titleNodes = [svgNode, <span>{menu.title}</span>]
+
+    if (hasChildren) {
+      const childrenNodes = menu.children.map((sub) => sub.menu
+        ? (
+          <side-menu-item
+            key={menu.id}
+            menu={sub}
+            q={q}
+            level={level + 1}
+          />
+        )
+        : null,
+      )
+
+      return (
+        <a-sub-menu v-show={notFiltered} key={routeName}>
+          <span slot="title">{titleNodes}</span>
+          {childrenNodes}
+        </a-sub-menu>
+      )
+    } else if (isExternal) {
+      return (
+        <a-menu-item v-show={notFiltered} key={routeName}>
+          <a href={path} target="_blank">{titleNodes}</a>
+        </a-menu-item>
+      )
+    } else {
+      return (
+        <a-menu-item v-show={notFiltered} key={routeName}>
+          <router-link to={path}>{titleNodes}</router-link>
+        </a-menu-item>
+      )
+    }
   },
 }
 </script>
 
-<style scoped lang="scss">
-a {
-  text-decoration: none;
-}
-
-.collapse {
-  ::v-deep {
-    .el-submenu__title {
-      span {
-        overflow: hidden;
-        visibility: hidden;
-        display: inline-block;
-        width: 0;
-        height: 0;
-      }
-    }
-  }
+<style scoped lang="less">
+.anticon {
+  vertical-align: initial;
 }
 </style>

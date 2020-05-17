@@ -26,8 +26,8 @@ export default new Vuex.Store({
   },
   state: {
     miniWidth: window.innerWidth <= 768,
+    tinyWidth: window.innerWidth <= 575,
     include: [],
-    cache: {},
     /**
      * 通过 path，query 来对比过后匹配到的菜单的菜单链
      */
@@ -36,6 +36,9 @@ export default new Vuex.Store({
   mutations: {
     SET_MINI_WIDTH(state, payload) {
       state.miniWidth = payload
+    },
+    SET_TINY_WIDTH(state, payload) {
+      state.tinyWidth = payload
     },
     ADD_INCLUDE(state, name) {
       if (cachedKeys[name]) {
@@ -47,9 +50,6 @@ export default new Vuex.Store({
     },
     SET_MATCHED_MENUS_CHAIN(state, menus) {
       state.matchedMenusChain = menus
-    },
-    ADD_CACHE(state, { name, vnode }) {
-      state.cache[name] = vnode
     },
   },
   getters: {

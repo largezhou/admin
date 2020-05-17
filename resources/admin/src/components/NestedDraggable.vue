@@ -14,7 +14,7 @@
           class="expand-icon"
           :class="{ expanded: isExpanded(el[dataKey]) }"
         >
-          <i class=" el-icon-arrow-right"/>
+          <a-icon type="right"/>
         </div>
         <slot :data="el"/>
       </div>
@@ -37,7 +37,7 @@
 import Draggable from 'vuedraggable'
 import { hasChildren } from '@/libs/utils'
 import _omit from 'lodash/omit'
-import Emitter from 'element-ui/lib/mixins/emitter'
+import Emitter from '@c/mixins/Emitter'
 
 const EXPAND_ALL_EVENT_KEY = 'nested-draggable.expand-all'
 const COLLAPSE_ALL_EVENT_KEY = 'nested-draggable.collapse-all'
@@ -54,7 +54,6 @@ export default {
   data() {
     return {
       expanded: [],
-      collapseComponent: 'el-collapse-transition',
     }
   },
   props: {
@@ -127,8 +126,8 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-@import '~element-ui/packages/theme-chalk/src/common/var';
+<style scoped lang="less">
+@import "~@/styles/vars";
 
 .item-wrapper {
   max-width: 100%;
@@ -140,11 +139,12 @@ export default {
   display: flex;
   padding: 0 15px 0 5px;
   align-items: center;
-  border: $--table-border;
+  border: @border-base;
   transition: background-color .25s ease;
+  margin-bottom: 8px;
 
   &:hover {
-    background-color: $--background-color-base;
+    background-color: @blue-1;
   }
 }
 
@@ -153,12 +153,12 @@ export default {
 }
 
 .sortable-ghost {
-  background-color: $--color-primary-light-8;
+  background-color: @blue-1;
+  border: 2px dashed @primary-color;
 }
 
 .expand-icon {
   cursor: pointer;
-  color: $--icon-color;
   padding: 5px;
 }
 

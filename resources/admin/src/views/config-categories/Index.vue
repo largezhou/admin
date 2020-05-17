@@ -1,106 +1,115 @@
 <template>
-  <el-card>
-    <template #header>
-      <content-header/>
-    </template>
-
-    <el-button-group class="mb-3">
+  <page-content>
+    <space class="my-1">
       <search-form :fields="search"/>
-      <el-button @click="createDialog = true">添加</el-button>
-    </el-button-group>
+      <a-button @click="createDialog = true">添加</a-button>
+    </space>
 
-    <el-table :data="cates" resource="config-categories">
-      <el-table-column prop="id" label="ID" width="60"/>
-      <el-table-column prop="name" label="名称" min-width="180">
-        <template #default="{ row }">
-          <input-edit
-            :id="row.id"
+    <a-table
+      row-key="id"
+      :data-source="cates"
+      bordered
+      :scroll="{ x: 950 }"
+      :pagination="false"
+    >
+      <a-table-column title="ID" data-index="id" :width="60"/>
+      <a-table-column title="名称">
+        <template #default="record">
+          <quick-edit
+            :id="record.id"
             field="name"
             :update="updateConfigCategory"
-            v-model="row.name"
+            v-model="record.name"
           />
         </template>
-      </el-table-column>
-      <el-table-column prop="slug" label="标识" min-width="150">
-        <template #default="{ row }">
-          <input-edit
-            :id="row.id"
+      </a-table-column>
+      <a-table-column title="标识">
+        <template #default="record">
+          <quick-edit
+            :id="record.id"
             field="slug"
             :update="updateConfigCategory"
-            v-model="row.slug"
+            v-model="record.slug"
           />
         </template>
-      </el-table-column>
-      <el-table-column prop="created_at" label="添加时间" width="160"/>
-      <el-table-column prop="updated_at" label="修改时间" width="160"/>
-      <el-table-column label="操作" width="240">
-        <template #default="{ row }">
-          <el-button-group>
-            <button-link size="small" :to="`/configs/create?category_id=${row.id}`">添加配置</button-link>
-            <button-link size="small" :to="`/configs?category_id=${row.id}`">查看配置</button-link>
-            <row-destroy notice="分类下的所有配置都会被删除"/>
-          </el-button-group>
+      </a-table-column>
+      <a-table-column title="添加时间" data-index="created_at" :width="180"/>
+      <a-table-column title="修改时间" data-index="updated_at" :width="180"/>
+      <a-table-column title="操作" :width="200">
+        <template #default="record">
+          <space>
+            <router-link :to="`/configs/create?category_id=${record.id}`">添加配置</router-link>
+            <router-link :to="`/configs?category_id=${record.id}`">查看配置</router-link>
+            <lz-popconfirm :confirm="destroyConfigCategory(record.id)">
+              <a class="error-color" href="javascript:void(0);">删除</a>
+            </lz-popconfirm>
+          </space>
         </template>
-      </el-table-column>
-    </el-table>
-    <div class="card-footer">
-      <pagination :page="page"/>
-    </div>
+      </a-table-column>
+    </a-table>
+    <lz-pagination :page="page"/>
 
-    <el-dialog
+    <a-modal
       title="添加分类"
-      :visible.sync="createDialog"
+      v-model="createDialog"
+      :footer="null"
       width="400px"
-      append-to-body
     >
       <lz-form
-        style="width: auto;"
         ref="form"
-        :submit="onStoreCategory"
-        :errors.sync="errors"
-        :form.sync="form"
-        label-position="top"
-        in-dialog
         disable-redirect
-        disable-stay
+        :form.sync="form"
+        :errors.sync="errors"
+        :submit="onStoreCategory"
+        in-dialog
+        layout="vertical"
       >
-        <el-form-item label="名称" required prop="name">
-          <el-input v-model="form.name" autofocus/>
-        </el-form-item>
-        <el-form-item label="标识" required prop="slug">
-          <el-input v-model="form.slug"/>
-        </el-form-item>
+        <lz-form-item label="名称" required prop="name">
+          <a-input v-model="form.name" focus/>
+        </lz-form-item>
+        <lz-form-item label="标识" required prop="slug">
+          <a-input v-model="form.slug"/>
+        </lz-form-item>
       </lz-form>
-    </el-dialog>
-  </el-card>
+    </a-modal>
+  </page-content>
 </template>
 
 <script>
-import SearchForm from '@c/SearchForm'
-import Pagination from '@c/Pagination'
 import {
   getConfigCategories,
   storeConfigCategory,
   updateConfigCategory,
+  destroyConfigCategory,
 } from '@/api/configs'
-import ButtonLink from '@c/ButtonLink'
-import { getMessage } from '@/libs/utils'
-import InputEdit from '@c/quick-edit/InputEdit'
-import LzForm from '@c/LzForm'
-import RowDestroy from '@c/LzTable/RowDestroy'
+import Space from '@c/Space'
+import LzPagination from '@c/LzPagination'
+import PageContent from '@c/PageContent'
+import SearchForm from '@c/SearchForm'
+import LzPopconfirm from '@c/LzPopconfirm'
+import { removeWhile } from '@/libs/utils'
+import LzForm from '@c/LzForm/index'
+import LzFormItem from '@c/LzForm/LzFormItem'
+import QuickEdit from '@c/QuickEdit'
 
 export default {
   name: 'Index',
+  scroll: true,
   components: {
-    RowDestroy,
-    InputEdit,
-    ButtonLink,
-    SearchForm,
-    Pagination,
+    QuickEdit,
+    LzFormItem,
     LzForm,
+    LzPopconfirm,
+    PageContent,
+    LzPagination,
+    Space,
+    SearchForm,
   },
   data() {
     return {
+      cates: [],
+      page: null,
+
       search: [
         {
           field: 'name',
@@ -112,9 +121,6 @@ export default {
         },
       ],
 
-      cates: [],
-      page: null,
-
       createDialog: false,
 
       form: {
@@ -125,11 +131,22 @@ export default {
     }
   },
   methods: {
-    async onStoreCategory() {
+    destroyConfigCategory(id) {
+      return async () => {
+        await destroyConfigCategory(id)
+        this.cates = removeWhile(this.cates, (i) => i.id === id)
+      }
+    },
+    async onStoreCategory($form) {
       const { data } = await storeConfigCategory(this.form)
 
-      this.createDialog = false
       this.cates.unshift(data)
+
+      if ($form.stay) {
+        $form.onReset()
+      } else {
+        this.createDialog = false
+      }
     },
     updateConfigCategory,
   },
@@ -139,15 +156,14 @@ export default {
         const { data: { data, meta } } = await getConfigCategories(newVal.query)
         this.cates = data
         this.page = meta
+
+        this.$scrollResolve()
       },
       immediate: true,
     },
     createDialog(newVal) {
       if (!newVal) {
-        this.form = {
-          name: '',
-          slug: '',
-        }
+        this.$refs.form.onReset()
       }
     },
   },

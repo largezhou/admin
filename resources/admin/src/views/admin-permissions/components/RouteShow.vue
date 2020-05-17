@@ -1,13 +1,14 @@
 <template>
   <div>
     <div class="mb-1" v-for="(item, index) of httpRoute" :key="index">
-      <el-tag
+      <a-tag
+        color="blue"
         class="mr-1"
         v-for="i of item.method"
         :key="i"
       >
         {{ i }}
-      </el-tag>
+      </a-tag>
       <code>{{ '/admin-api' + item.path }}</code>
     </div>
   </div>

@@ -3,10 +3,14 @@
 </template>
 
 <script>
-import Request from '@/plugins/request'
+import Request from '@/axios/request'
+import LoadingAction from '@c/LoadingAction'
 
 export default {
   name: 'ResetSystem',
+  components: {
+    LoadingAction,
+  },
   methods: {
     async onReset() {
       if (confirm('确认重置？')) {

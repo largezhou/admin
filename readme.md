@@ -1,24 +1,19 @@
-## 感（bao）谢（ming）
+## 感谢
 
-非非非常感谢以下两个项目供我参（chao）考（xi）！！！
+感谢以下两个项目供我参考
 
 - [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)
 - [laravel-admin](https://github.com/z-song/laravel-admin)
 
-项目里部分代码是直接照搬上面两个项目的，有的会有少许调整。
-有的文件里写了，有的没写，反正如果看到代码很眼熟，没错，那就是 “抄” 来的。
-
-还有极少的其他开源项目的代码，，，就不一一贴出来了，，，
-
 ## 简介
 
-一个带角色权限控制的后台起始项目，前后端分离，`Vue` + `Laravel`。
+一个带角色权限控制的后台起始项目，前后端分离，`Vue(antd)` + `PHP(Laravel)`
 
-角色权限部分用的 `laravel-admin` 中的方案和代码，可以说是很成熟的方案了吧，，，
+角色权限部分用的 `laravel-admin` 中的方案
 
 还附赠了两个功能：
 
-- 文件管理器，可以统一管理后台的文件上传和选择，，经过又拍云测试，可以无缝切换本地存储和云存储
+- 文件管理器，可以统一管理后台的文件上传和选择
 - 配置管理
 
 ## DEMO
@@ -59,7 +54,7 @@ location /admin-dev/ {
 
 # Laravel
 location / {
-    try_files $uri $uri/ /index.php$is_args$args;
+    try_files $uri $uri/ /index.php?$query_string;
 }
 ```
 

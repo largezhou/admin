@@ -1,37 +1,27 @@
 <template>
-  <el-card>
-    <template #header>
-      <content-header/>
-    </template>
-    <el-row type="flex" justify="center">
-      <system-media/>
-    </el-row>
-  </el-card>
+  <page-content center>
+    <system-media/>
+  </page-content>
 </template>
 
 <script>
+import PageContent from '@c/PageContent'
 import SystemMedia from '@c/SystemMedia'
 
 export default {
   name: 'Index',
   components: {
+    PageContent,
     SystemMedia,
   },
 }
 </script>
 
-<style scoped lang="scss">
-@import '~element-ui/packages/theme-chalk/src/common/var';
+<style scoped lang="less">
+@import "~@/styles/vars";
 
-::v-deep {
-  .el-card__body {
-    padding: 0;
-  }
-
-  .system-media {
-    width: 825px;
-    border: 1px solid $--color-info-light;
-    margin: 20px;
-  }
+.system-media {
+  width: 800px;
+  margin: 16px;
 }
 </style>

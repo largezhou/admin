@@ -1,59 +1,48 @@
 <template>
-  <el-card class="vue-routers-index">
-    <template #header>
-      <content-header/>
-    </template>
-
-    <el-row type="flex" justify="center">
-      <div style="overflow-x: auto;">
-        <el-button-group class="mb-3">
-          <el-button @click="onExpand">展开</el-button>
-          <el-button @click="onCollapse">收起</el-button>
-          <loading-action :action="onSaveOrder">保存</loading-action>
-          <el-button class="ml-1 pa-0">
-            <el-upload
-              action=""
-              :show-file-list="false"
-              :http-request="importVueRouters"
-              :before-upload="confirmImport"
-            >
-              <el-button style="border: none;">导入</el-button>
-            </el-upload>
-          </el-button>
-          <el-button @click="onExport">导出</el-button>
-        </el-button-group>
-        <nested-draggable
-          ref="routers"
-          :expand-keys="defaultExpanded"
-          class="vue-routers"
-          :list="vueRouters"
-          handle=".drag-zone"
+  <page-content center>
+    <div style="overflow-x: auto;">
+      <space class="my-1 header-actions">
+        <a-button @click="onExpand">展开</a-button>
+        <a-button @click="onCollapse">收起</a-button>
+        <loading-action :action="onSaveOrder">保存</loading-action>
+        <a-button @click="onReset">重置</a-button>
+        <a-upload
+          name="file"
+          :custom-request="importVueRouters"
+          :show-upload-list="false"
+          :before-upload="confirmImport"
         >
-          <template #default="{ data }">
-            <div class="drag-zone">
-              <span class="id mr-1">{{ data.id }}</span>
-              <svg-icon :icon-class="data.icon || ''" class="mr-1"/>
-              <span>{{ data.title }}</span>
-              <span class="ml-2 path">{{ data.path }}</span>
-            </div>
-            <flex-spacer/>
-            <collapse-button-group min-width="166px">
-              <button-link size="small" :to="`/vue-routers/create?parent_id=${data.id}`">添加</button-link>
-              <button-link size="small" :to="`/vue-routers/${data.id}/edit`">编辑</button-link>
-              <pop-confirm
-                type="danger"
-                size="small"
-                :confirm="onDestroy(data)"
-                notice="所有子路由都会被删除！！！"
-              >
-                删除
-              </pop-confirm>
-            </collapse-button-group>
-          </template>
-        </nested-draggable>
-      </div>
-    </el-row>
-  </el-card>
+          <a-button>导入</a-button>
+        </a-upload>
+        <a-button @click="onExport">导出</a-button>
+      </space>
+
+      <nested-draggable
+        ref="routers"
+        :expand-keys="defaultExpanded"
+        class="vue-routers"
+        :list="vueRouters"
+        handle=".drag"
+      >
+        <template #default="{ data }">
+          <div class="item-wrap">
+            <span class="id mr-1 drag">{{ data.id }}</span>
+            <svg-icon :icon-class="data.icon || ''" class="mr-1"/>
+            <span>{{ data.title }}</span>
+            <span class="ml-2 path">{{ data.path }}</span>
+          </div>
+          <div class="flex-spacer"/>
+          <space style="min-width: 100px;">
+            <router-link :to="`/vue-routers/create?parent_id=${data.id}`">添加</router-link>
+            <router-link :to="`/vue-routers/${data.id}/edit`">编辑</router-link>
+            <lz-popconfirm :confirm="onDestroy(data)" title="所有子路由都会被删除！！！">
+              <a class="error-color" href="javascript:void(0);">删除</a>
+            </lz-popconfirm>
+          </space>
+        </template>
+      </nested-draggable>
+    </div>
+  </page-content>
 </template>
 
 <script>
@@ -63,26 +52,31 @@ import {
   updateVueRouters,
   importVueRouters,
 } from '@/api/vue-routers'
-import PopConfirm from '@c/PopConfirm'
-import { getMessage, hasChildren, removeFromNested } from '@/libs/utils'
+import LzPopconfirm from '@c/LzPopconfirm'
+import {
+  getMessage,
+  hasChildren,
+  removeFromNested,
+} from '@/libs/utils'
 import NestedDraggable from '@c/NestedDraggable'
-import FlexSpacer from '@c/FlexSpacer'
-import CollapseButtonGroup from '@c/CollapseButtonGroup'
-import ButtonLink from '@c/ButtonLink'
+import Space from '@c/Space'
+import PageContent from '@c/PageContent'
+import LoadingAction from '@c/LoadingAction'
 
 export default {
   name: 'Index',
+  scroll: true,
   components: {
-    ButtonLink,
-    CollapseButtonGroup,
-    FlexSpacer,
+    Space,
     NestedDraggable,
-    PopConfirm,
+    LzPopconfirm,
+    PageContent,
+    LoadingAction,
   },
   data() {
     return {
       vueRouters: [],
-      visible: false,
+      vueRoutersBak: '',
       // 默认展开第二级路由
       defaultExpanded: [],
     }
@@ -90,11 +84,18 @@ export default {
   created() {
     this.getVueRouters()
   },
+  activated() {
+    // 缓存的页面，由于不会执行 created 方法，所以滚动行为，放在该钩子里
+    this.$scrollResolve()
+  },
   methods: {
     async getVueRouters() {
       const { data } = await getVueRouters()
       this.vueRouters = data
+      this.vueRoutersBak = JSON.stringify(this.vueRouters)
       this.defaultExpanded = this.vueRouters.filter(i => hasChildren(i)).map(i => i.id)
+
+      this.$scrollResolve()
     },
     onDestroy(row) {
       return async () => {
@@ -116,7 +117,7 @@ export default {
      * @returns {Array}
      */
     getVueRouterStruct(vueRouters = this.vueRouters) {
-      let struct = []
+      const struct = []
       vueRouters.forEach((i) => {
         struct.push({
           id: i.id,
@@ -152,19 +153,29 @@ export default {
 
       const { data } = await importVueRouters(fd)
       this.vueRouters = data
+      this.$message.success(getMessage('updated'))
     },
-    confirmImport() {
-      return this.$confirm('是否替换所有路由配置？', '提示', {
-        confirmButtonText: '替换',
-        type: 'warning',
+    confirmImport(file) {
+      return new Promise((resolve, reject) => {
+        this.$confirm({
+          title: '提示',
+          content: '是否替换所有路由配置？',
+          onOk() {
+            resolve()
+          },
+        })
       })
+    },
+    onReset() {
+      this.vueRouters = JSON.parse(this.vueRoutersBak)
+      this.$message.info('已重置修改，记得保存')
     },
   },
 }
 </script>
 
-<style scoped lang="scss">
-@import '~element-ui/packages/theme-chalk/src/common/var';
+<style scoped lang="less">
+@import "~@/styles/vars";
 
 .vue-routers {
   width: 800px;
@@ -176,15 +187,23 @@ export default {
     font-weight: bolder;
   }
 
-  .path {
-    color: $--color-primary;
+  .drag {
+    cursor: move;
   }
 
-  .drag-zone {
-    cursor: move;
+  .path {
+    color: @primary-color;
+  }
+
+  .item-wrap {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
+}
+
+.header-actions {
+  width: 100%;
+  overflow-x: auto;
 }
 </style>

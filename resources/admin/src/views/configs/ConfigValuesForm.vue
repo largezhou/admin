@@ -1,20 +1,17 @@
 <template>
-  <el-card class="create">
-    <template #header>
-      <content-header/>
-    </template>
-    <el-row type="flex" justify="center">
-      <configs-form/>
-    </el-row>
-  </el-card>
+  <page-content center>
+    <configs-form/>
+  </page-content>
 </template>
 
 <script>
-import ConfigsForm from '@v/configs/ConfigsForm'
+import ConfigsForm from './components/ConfigsForm'
+import PageContent from '@c/PageContent'
 
 export default {
   name: 'ConfigValuesForm',
   components: {
+    PageContent,
     ConfigsForm,
   },
 }

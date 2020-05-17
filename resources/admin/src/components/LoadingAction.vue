@@ -1,17 +1,3 @@
-<template>
-  <component
-    :is="comp"
-    :type="type"
-    v-bind="$attrs"
-    v-on="$listeners"
-    @click="onAction"
-    :loading="actionLoading || loading"
-    :disabled="disabled"
-  >
-    <slot/>
-  </component>
-</template>
-
 <script>
 export default {
   name: 'LoadingAction',
@@ -32,7 +18,7 @@ export default {
      */
     comp: {
       type: String,
-      default: 'el-button',
+      default: 'a-button',
     },
     /**
      * 这个 type props 是为了兼容 Button 组件中，type 是用来设置颜色的
@@ -50,6 +36,12 @@ export default {
       type: [String, Number],
       default: 500,
     },
+    disableTextWhenLoading: Boolean,
+  },
+  computed: {
+    readLoading() {
+      return this.loading || this.actionLoading
+    },
   },
   beforeDestroy() {
     this.clearRecoverDisabledTimeout()
@@ -63,10 +55,9 @@ export default {
       try {
         await this.action()
         this.handleDisableOnSuccess()
-      } catch (e) {
-        Promise.reject(e)
+      } finally {
+        this.actionLoading = false
       }
-      this.actionLoading = false
     },
     handleDisableOnSuccess() {
       if (this.disableOnSuccess > 0) {
@@ -80,6 +71,29 @@ export default {
     clearRecoverDisabledTimeout() {
       this.recoverDisabledTimeout && clearTimeout(this.recoverDisabledTimeout)
     },
+  },
+  watch: {
+    actionLoading(newVal) {
+      this.$emit('action-loading', newVal)
+    },
+  },
+  render(h) {
+    return (
+      <this.comp
+        type={this.type}
+        {...{
+          attrs: this.$attrs,
+          listeners: this.$listeners,
+        }}
+        v-on:click={this.onAction}
+        loading={this.readLoading}
+        disabled={this.disabled}
+      >
+        {(!this.disableTextWhenLoading || !this.readLoading)
+          ? this.$slots.default
+          : null}
+      </this.comp>
+    )
   },
 }
 </script>

@@ -74,20 +74,20 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-@import '~element-ui/packages/theme-chalk/src/common/var';
+<style scoped lang="less">
+@import "~@/styles/vars";
 
 .file-wrapper {
   display: flex;
   flex-wrap: wrap;
 
   .file-preview {
-    border: 3px solid $--color-info-light;
+    border: 3px @border-style-base @border-color-base;
     cursor: pointer;
     border-radius: 0;
 
     &.selected {
-      border-color: $--color-primary;
+      border-color: @primary-color;
       border-style: dashed;
     }
   }

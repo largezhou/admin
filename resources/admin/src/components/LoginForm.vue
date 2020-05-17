@@ -1,34 +1,42 @@
 <template>
-  <el-form :model="form" label-width="0">
-    <el-form-item :error="errors.username">
-      <el-input v-model="form.username" placeholder="账号" autofocus>
-        <svg-icon slot="prepend" icon-class="user"/>
-      </el-input>
-    </el-form-item>
-    <el-form-item :error="errors.password">
-      <el-input v-model="form.password" placeholder="密码" type="password">
-        <svg-icon slot="prepend" icon-class="password"/>
-      </el-input>
-    </el-form-item>
-    <el-form-item>
-      <loading-action
-        class="login-btn w-100"
-        type="danger"
-        plain
-        :action="onResetSystem"
+  <lz-form
+    :form.sync="form"
+    :errors.sync="errors"
+    in-dialog
+    :footer="false"
+  >
+    <lz-form-item prop="username">
+      <a-input
+        ref="username"
+        v-model="form.username"
+        placeholder="帐号"
       >
-        重置系统
-      </loading-action>
-    </el-form-item>
-  </el-form>
+        <svg-icon slot="prefix" icon-class="user"/>
+      </a-input>
+    </lz-form-item>
+    <lz-form-item prop="password">
+      <a-input
+        type="password"
+        v-model="form.password"
+        placeholder="密码"
+      >
+        <svg-icon slot="prefix" icon-class="password"/>
+      </a-input>
+    </lz-form-item>
+  </lz-form>
 </template>
 
 <script>
 import { getMessage } from '@/libs/utils'
-import Request from '@/plugins/request'
+import LzForm from '@c/LzForm/index'
+import LzFormItem from '@c/LzForm/LzFormItem'
 
 export default {
   name: 'LoginForm',
+  components: {
+    LzFormItem,
+    LzForm,
+  },
   data: () => ({
     form: {
       username: '',
@@ -36,25 +44,14 @@ export default {
     },
     errors: {},
   }),
+  mounted() {
+    this.$refs.username.focus()
+  },
   methods: {
     async onSubmit() {
       await this.$store.dispatch('login', this)
       this.$message.success(getMessage('loggedIn'))
     },
-    async onResetSystem() {
-      if (confirm('确认重置？')) {
-        await Request.post('/demo/reset-system')
-        this.$message.success('已重置，admin 密码为 000000')
-      }
-    },
   },
 }
 </script>
-
-<style scoped lang="scss">
-::v-deep {
-  .el-input-group__prepend {
-    padding: 0 12px;
-  }
-}
-</style>

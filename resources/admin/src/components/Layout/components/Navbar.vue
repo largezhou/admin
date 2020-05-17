@@ -1,81 +1,59 @@
 <template>
-  <el-header class="header">
-    <navbar-items>
-      <hamburger :is-active="opened" @toggle="$store.dispatch('toggleOpened')"/>
-      <refresh/>
-      <to-test/>
-      <reset-system/>
-    </navbar-items>
-    <navbar-items v-if="!miniWidth">
-      <breadcrumb/>
-    </navbar-items>
-    <flex-spacer/>
-    <navbar-items>
-      <a
-        class="el-button el-button--default"
-        target="_blank"
-        href="https://github.com/largezhou/admin"
-        style="font-weight: bolder; text-decoration: none;"
-      >GITHUB</a>
-      <el-dropdown trigger="click">
-        <div class="avatar flex-box">
-          <img
-            v-if="avatar"
-            :src="avatar"
-            :alt="user.name"
-            :title="user.name"
-          >
-          <span class="username" v-else>{{ user.name }}</span>
-          <i class="el-icon-arrow-down el-icon--right"/>
-        </div>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item class="button-item">
-            <button-link :to="{ name: 'editMyProfile' }">个人资料</button-link>
-          </el-dropdown-item>
-          <el-dropdown-item class="button-item">
-            <el-button type="default" @click="onLogout">退出</el-button>
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
-    </navbar-items>
-  </el-header>
+  <div class="header">
+    <a-button @click.stop="$store.dispatch('toggleOpened')">
+      <a-icon :type="collapsed ? 'menu-unfold' : 'menu-fold'"/>
+    </a-button>
+    <refresh/>
+    <reset-system/>
+    <div class="flex-spacer"/>
+    <a
+      class="px-3"
+      target="_blank"
+      href="https://github.com/largezhou/admin"
+      style="font-weight: bolder; text-decoration: none;"
+    >GITHUB</a>
+    <a-dropdown
+      :trigger="['click']"
+      placement="bottomRight"
+      class="mr-2"
+    >
+      <a class="ant-dropdown-link" @click="e => e.preventDefault()">
+        <img
+          v-if="avatar"
+          class="avatar"
+          :src="avatar"
+          :alt="user.name"
+          :title="user.name"
+        >
+        <span v-else>{{ user.name }}</span>
+        <a-icon type="down"/>
+      </a>
+      <a-menu slot="overlay">
+        <a-menu-item>
+          <router-link :to="{ name: 'editMyProfile' }">个人资料</router-link>
+        </a-menu-item>
+        <a-menu-divider/>
+        <a-menu-item @click="onLogout">退出登录</a-menu-item>
+      </a-menu>
+    </a-dropdown>
+  </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import Hamburger from './Hamburger'
-import NavbarItems from '@c/Layout/components/NavbarItems'
-import Refresh from '@c/Refresh'
-import ToTest from '@c/ToTest'
-import FlexSpacer from '@c/FlexSpacer'
-import Breadcrumb from '@c/Layout/components/Breadcrumb'
-import ResetSystem from '@c/ResetSystem'
-import ButtonLink from '@c/ButtonLink'
 import { getUrl } from '@/libs/utils'
+import Refresh from '@c/Refresh'
+import ResetSystem from '@c/ResetSystem'
 
 export default {
   name: 'Navbar',
-  components: {
-    ResetSystem,
-    ButtonLink,
-    Breadcrumb,
-    FlexSpacer,
-    ToTest,
-    Refresh,
-    NavbarItems,
-    Hamburger,
-  },
+  components: { ResetSystem, Refresh },
   computed: {
-    opened() {
-      return this.$store.state.sideMenu.opened
-    },
     ...mapState({
-      user: (state) => state.users.user,
       miniWidth: (state) => state.miniWidth,
+      collapsed: (state) => !state.sideMenu.opened,
+      user: (state) => state.users.user,
     }),
-    homeName() {
-      return this.$store.getters.homeName
-    },
     avatar() {
       return this.user.avatar && getUrl(this.user.avatar)
     },
@@ -88,31 +66,27 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-@import '~element-ui/packages/theme-chalk/src/common/var';
+<style scoped lang="less">
+@import "~@/styles/vars";
+
+button {
+  line-height: 64px;
+  height: 100%;
+  border: none;
+  border-radius: 0;
+  padding: 0 24px;
+  font-size: 16px;
+}
 
 .header {
-  overflow: hidden;
-  z-index: 1;
-  background: #fff;
-  box-shadow: $--box-shadow-light;
-  padding: 0;
   display: flex;
+  background: #fff;
+  align-items: center;
 }
 
 .avatar {
-  color: $--color-primary;
-  cursor: pointer;
-  height: 100%;
-
-  img {
-    border-radius: $--border-radius-base;
-    max-width: 40px;
-    max-height: 40px;
-  }
-}
-
-.username {
-  white-space: nowrap;
+  border-radius: @border-radius-base;
+  max-width: 40px;
+  max-height: 40px;
 }
 </style>

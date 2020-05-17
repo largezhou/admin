@@ -1,106 +1,82 @@
 <template>
-  <div>
-    <el-input
+  <div class="category">
+    <a-input
       class="filter-input mb-1"
       :class="{ 'w-100': miniWidth }"
       placeholder="搜索分类"
-      size="small"
       v-model="q"
     />
-    <el-button-group class="category-actions mb-2" :class="{ 'w-100': miniWidth }">
-      <loading-action size="mini" :action="getCategories">刷新</loading-action>
-      <el-button size="mini" @click="onOpenDialog(false)">添加</el-button>
-      <el-button
+    <a-button-group class="category-actions mb-2" :class="{ 'w-100': miniWidth }">
+      <loading-action :action="getCategories" disable-text-when-loading>刷新</loading-action>
+      <a-button @click="onOpenDialog(false)">添加</a-button>
+      <a-button :disabled="currentId <= 0" @click="onOpenDialog(true)">编辑</a-button>
+      <lz-popconfirm
         :disabled="currentId <= 0"
-        size="mini"
-        @click="onOpenDialog(true)"
-      >
-        编辑
-      </el-button>
-      <pop-confirm
-        :disabled="currentId <= 0"
-        size="mini"
-        type="danger"
+        :overlay-style="{ width: '200px' }"
         :confirm="onDestroyCategory"
-        notice="所有子孙分类也将被删除!分类下的文件会被移动到“无分类”下。确认删除？"
+        title="所有子孙分类也将被删除!分类下的文件会被移动到“无分类”下。确认删除？"
       >
-        删除
-      </pop-confirm>
-    </el-button-group>
-    <el-scrollbar v-loading="loading" class="scroll-wrapper">
-      <div class="side-tree">
-        <el-tree
-          :expand-on-click-node="false"
-          :data="categories"
-          :props="treeOptions"
-          default-expand-all
-          :filter-node-method="filter"
-          ref="tree"
-          :indent="8"
-          node-key="id"
-          current-node-key="1"
-          highlight-current
-          @current-change="onCurrentChange"
-          draggable
-          :allow-drag="allowDrag"
-          :allow-drop="allowDrop"
-          @node-drop="onNodeDrop"
-        />
-        <div/>
-      </div>
-    </el-scrollbar>
+        <a-button type="danger" :disabled="currentId <= 0">删除</a-button>
+      </lz-popconfirm>
+    </a-button-group>
+    <a-spin class="categories" :spinning="loading">
+      <a-tree
+        v-if="this.categories.length"
+        :tree-data="categories"
+        :replace-fields="treeOptions"
+        default-expand-all
+        :selected-keys="[currentId]"
+        block-node
+        @select="onSelect"
+        draggable
+        @drop="onDrop"
+        :expanded-keys="expandedKeys"
+        :auto-expand-parent="autoExpandParent"
+        :filter-tree-node="onFilter"
+        @expand="onExpand"
+      />
+    </a-spin>
 
-    <el-dialog
+    <a-modal
       :title="editMode ? '编辑分类' : '添加分类'"
-      :visible.sync="dialog"
+      v-model="dialog"
+      :footer="null"
       width="400px"
-      @keydown.enter.native="$refs.saveConfirm.onAction"
-      append-to-body
     >
-      <el-form :model="form" label-position="top">
-        <el-form-item :error="errors.parent_id" label="父级">
-          <el-select
+      <lz-form
+        disable-redirect
+        :form.sync="form"
+        :errors.sync="errors"
+        :submit="onSave"
+        in-dialog
+        layout="vertical"
+        enter-to-submit
+        :edit-mode="editMode"
+      >
+        <lz-form-item label="父级" prop="parent_id">
+          <a-select
             v-model="form.parent_id"
-            filterable
-            clearable
+            show-search
+            option-filter-prop="title"
+            option-label-prop="title"
           >
-            <el-option
+            <a-select-option
               v-for="i of cateOptions"
               :key="i.id"
-              :label="i.title"
-              :value="i.id"
+              :title="i.title"
             >
-              <span>{{ i.text }}</span>
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item :error="errors.name" required label="名称">
-          <el-input
-            v-model="form.name"
-            autocomplete="off"
-            autofocus
-          />
-        </el-form-item>
-        <el-form-item :error="errors.folder" class="mb-0" label="文件夹">
-          <el-input
-            v-model="form.folder"
-            autocomplete="off"
-            autofocus
-            placeholder="只能包含字母和数字，不区分大小写"
-          />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialog = false">取消</el-button>
-        <loading-action
-          ref="saveConfirm"
-          type="primary"
-          :action="onSave"
-        >
-          确定
-        </loading-action>
-      </div>
-    </el-dialog>
+              {{ i.text }}
+            </a-select-option>
+          </a-select>
+        </lz-form-item>
+        <lz-form-item label="名称" required prop="name">
+          <a-input v-model="form.name" focus/>
+        </lz-form-item>
+        <lz-form-item label="文件夹" prop="folder">
+          <a-input v-model="form.folder"/>
+        </lz-form-item>
+      </lz-form>
+    </a-modal>
   </div>
 </template>
 
@@ -112,24 +88,50 @@ import {
   updateCategory,
 } from '@/api/system-media'
 import _get from 'lodash/get'
-import PopConfirm from '@c/PopConfirm'
+import LzPopconfirm from '@c/LzPopconfirm'
 import {
-  getMessage, nestedToSelectOptions,
+  getMessage,
+  nestedToSelectOptions,
+  removeFromNested,
 } from '@/libs/utils'
+import LoadingAction from '@c/LoadingAction'
+import LzForm from '@c/LzForm/index'
+import LzFormItem from '@c/LzForm/LzFormItem'
+
+const getParentKey = (id, tree) => {
+  let parentKey
+  for (let i = 0; i < tree.length; i++) {
+    const node = tree[i]
+    if (node.children) {
+      if (node.children.some(item => item.id === id)) {
+        parentKey = node.id
+      } else if (getParentKey(id, node.children)) {
+        parentKey = getParentKey(id, node.children)
+      }
+    }
+  }
+  return parentKey
+}
 
 export default {
   name: 'Category',
   components: {
-    PopConfirm,
+    LzPopconfirm,
+    LoadingAction,
+    LzForm,
+    LzFormItem,
   },
   data() {
     return {
       treeOptions: {
         children: 'children',
-        label: 'name',
+        title: 'name',
+        key: 'id',
       },
 
       q: '', // 分类筛选
+      expandedKeys: [],
+      autoExpandParent: true,
 
       categories: [],
       loading: false,
@@ -162,9 +164,26 @@ export default {
         title: 'name',
       })
     },
+    flattenCategories() {
+      const flatten = []
+      const loop = (items) => {
+        items.forEach((i) => {
+          flatten.push({
+            id: i.id,
+            name: i.name,
+          })
+          loop(i.children || [])
+        })
+      }
+
+      loop(this.categories)
+
+      return flatten
+    },
   },
-  created() {
-    this.getCategories()
+  async created() {
+    await this.getCategories()
+    this.initSelected()
   },
   methods: {
     async getCategories() {
@@ -184,17 +203,12 @@ export default {
           },
           ...data,
         ]
-
-        await this.$nextTick()
-
-        this.initSelected()
       } finally {
         this.loading = false
       }
     },
     async initSelected() {
       await this.$nextTick()
-      this.$refs.tree.setCurrentKey(-1)
       this.current = this.categories[0]
     },
     onOpenDialog(editMode = true) {
@@ -226,52 +240,11 @@ export default {
 
       this.initSelected()
 
-      this.$refs.tree.remove(id)
+      removeFromNested(this.categories, id)
     },
-    filter(value, category) {
-      if (!value) {
-        return true
-      }
-      return category.name.indexOf(value) !== -1
-    },
-    onCurrentChange(category) {
-      this.current = category
-    },
-    allowDrag({ data }) {
-      return data.id > 0
-    },
-    allowDrop({ data: source }, { data: target }, type) {
-      // 不能拖放到 所有 和 无分类 下
-      if (target.id <= 0) {
-        return false
-      }
-      // 如果目标没有父级，则可以拖放到其前后（相当于变为一级分类）或内部
-      if (target.parent_id === 0) {
-        return true
-      }
-      // 同级之间，只能拖放到其内部，不能拖放到前后（相当于拖放排序）
-      if ((source.parent_id === target.parent_id) && (type !== 'inner')) {
-        return false
-      }
-
-      return true
-    },
-    async onNodeDrop({ data: source }, { data: target }, type) {
-      // 目标分类 id
-      let id = 0
-      if (type === 'inner') { // 如果是放到目标内部，则 parent_id 为目标 id
-        id = target.id
-      } else { // 否则，拖放到目标的前后，则 parent_id 为目标的 parent_id（与目标同级）
-        id = target.parent_id
-      }
-
-      try {
-        await this.updateCategory(source, { parent_id: id }, true)
-      } catch (e) {
-        // 如果更新失败，则要恢复层次结构
-        const tree = this.$refs.tree
-        tree.remove(source)
-        tree.append(source, source.parent_id)
+    onSelect(selectedKeys, e) {
+      if (selectedKeys.length) {
+        this.current = e.node.dataRef
       }
     },
     async updateCategory(category, data, showValidationMsg = true) {
@@ -280,46 +253,92 @@ export default {
           showValidationMsg,
           validationForm: showValidationMsg ? null : this,
         })
-      this.$message.success(getMessage('updated'))
 
       category.name = res.data.name
       category.parent_id = res.data.parent_id
     },
-    async onSave() {
+    async onSave($form) {
       if (!this.canSave) {
         return
       }
 
-      const tree = this.$refs.tree
-      const newParentId = this.form.parent_id
-
-      this.errors = {}
       if (this.editMode) {
-        const oldParentId = this.current.parent_id
         await this.updateCategory(this.current, this.form, false)
-        // 如果编辑后，父级分类改了，则要移动分类
-        if (oldParentId !== newParentId) {
-          tree.remove(this.current)
-          tree.append(this.current, newParentId)
-        }
       } else {
-        const { data } = await storeCategory(this.form)
-          .setConfig({ validationForm: this })
-
-        // 手动先加一个 children 字段，不然后面给该节点添加子节点时，
-        // el-tree 组件自动加的 children 属性，没有响应式
-        data.children = []
-        tree.append(data, newParentId)
-
-        this.$message.success(getMessage('created'))
+        await storeCategory(this.form).setConfig({ validationForm: this })
       }
 
-      this.dialog = false
+      if ($form.stay) {
+        $form.onReset()
+      } else {
+        this.dialog = false
+      }
+
+      this.getCategories()
+    },
+    onDrop({ dragNode, node, dropToGap }) {
+      const source = dragNode.dataRef
+      const target = node.dataRef
+
+      if (source.id <= 0 || target.id <= 0) {
+        return
+      }
+
+      // 同级之间，只能拖放到其内部，不能拖放到前后（相当于拖放排序）
+      if ((source.parent_id === target.parent_id) && dropToGap) {
+        return
+      }
+
+      // 拖放到自己的父级内，相当于没拖动
+      if (source.parent_id === target.id && !dropToGap) {
+        return
+      }
+
+      this.dropped(source, target, dropToGap)
+    },
+    async dropped(source, target, dropToGap) {
+      // 父级分类 id
+      let id = 0
+      // 如果拖动到间隙，则与目标同级
+      if (dropToGap) {
+        id = target.parent_id
+      } else {
+        id = target.id
+      }
+
+      await this.updateCategory(source, { parent_id: id }, true)
+      // 直接重新请求数据，省事，，，
+      this.getCategories()
+    },
+    onFilter(node) {
+      return this.q && node.title.indexOf(this.q) > -1
+    },
+    onExpand(expandedKeys) {
+      this.expandedKeys = expandedKeys
+      this.autoExpandParent = false
+    },
+    setExpandedKeys() {
+      this.expandedKeys = this.flattenCategories
+        .map((item) => {
+          if (item.name.indexOf(this.q) > -1) {
+            return getParentKey(item.id, this.categories)
+          }
+          return null
+        })
+        .filter((item, i, self) => item && self.indexOf(item) === i)
+
+      this.autoExpandParent = true
     },
   },
   watch: {
-    q(val) {
-      this.$refs.tree.filter(val)
+    q: {
+      handler() {
+        this.setExpandedKeys()
+      },
+      immediate: true,
+    },
+    flattenCategories() {
+      this.setExpandedKeys()
     },
     current: {
       handler(newVal) {
@@ -347,36 +366,28 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-.filter-input,
-.category-actions {
-  width: 185px;
-}
-
+<style scoped lang="less">
 .category-actions {
   display: flex;
 
-  > .el-button {
+  > * {
     width: 25%;
-    flex-grow: 1;
-    padding: 7px 0;
+    padding: 0;
+  }
+
+  > span button {
+    width: 100%;
+    padding: 0;
   }
 }
 
-.side-tree {
-  min-width: calc(100% - 15px);
-  padding: 0 15px 15px 0;
-  display: inline-block;
+.category {
+  display: flex;
+  flex-direction: column;
 }
 
-::v-deep {
-  .scroll-wrapper {
-    height: calc(100% - 60px);
-  }
-
-  .el-tree-node__content {
-    height: 30px;
-  }
+.categories {
+  overflow: auto;
+  flex: 1;
 }
-
 </style>

@@ -1,10 +1,12 @@
 <script>
+import Space from '@c/Space'
+
 export default {
   name: 'SearchForm',
+  components: { Space },
   data() {
     return {
       form: {},
-      show: false,
     }
   },
   computed: {
@@ -25,9 +27,10 @@ export default {
       type: Boolean,
       default: true,
     },
-  },
-  created() {
-    this.initFormShow()
+    maxWidth: {
+      type: String,
+      default: '700px',
+    },
   },
   methods: {
     async onSubmit() {
@@ -65,14 +68,6 @@ export default {
       this.form = {}
       this.onSubmit()
     },
-    initFormShow() {
-      this.fields.some(i => {
-        if (this.$route.query[i.field]) {
-          this.show = true
-          return true
-        }
-      })
-    },
     setFormValueFromQuery() {
       const query = this.$route.query
       this.fields.forEach(i => {
@@ -93,96 +88,83 @@ export default {
 
   render(h) {
     return (
-      <el-button type={this.anyQuery ? 'primary' : ''} class="search-button">
-        <el-popover
-          placement="bottom-start"
-          trigger="click"
-          popper-class="search-form-popover"
-        >
-          <el-form
-            class="pb-3"
-            inline
-            vOn:keydown_enter_native_prevent={this.onSubmit}
+      <a-popover
+        trigger="click"
+        placement="bottomLeft"
+        overlay-style={{ padding: '10px', maxWidth: this.maxWidth }}
+      >
+        <template slot="content">
+          <a-form
+            layout="inline"
+            v-on:keydown_enter_native_prevent={this.onSubmit}
           >
             {
               this.fields.map((item) => {
                 let c
                 switch (item.type) {
-                  case 'el-select':
+                  case 'select':
                     c = (
-                      <el-select
+                      <a-select
+                        default-valut={this.form[item.field]}
                         v-model={this.form[item.field]}
                         placeholder={item.label}
-                        filterable
-                        clearable
+                        allow-clear
+                        show-search
                       >
                         {
                           item.options.map((i) => {
-                            const valueField = item.valueField || 'id'
-                            const labelField = item.labelField || 'name'
-                            return (
-                              <el-option
-                                key={i[valueField]}
-                                label={i[labelField]}
-                                value={String(i[valueField])}
-                              />
-                            )
+                            const value = String(i[item.valueField || 'id'])
+                            const text = i[item.labelField || 'name']
+                            return (<a-select-option value={value}>{text}</a-select-option>)
                           })
                         }
-                      </el-select>
+                      </a-select>
                     )
                     break
+                  case 'input':
                   default: // 默认是 input
                     c = (
-                      <el-input
+                      <a-input
                         v-model={this.form[item.field]}
                         placeholder={item.label}
-                        clearable
+                        allow-clear
                       />
                     )
                 }
 
                 return (
-                  <el-form-item key={item.field}>{c}</el-form-item>
+                  <a-form-item key={item.field}>{c}</a-form-item>
                 )
               })
             }
-
-            <el-form-item class="actions">
-              <el-button type="primary" vOn:click={this.onSubmit}>查询</el-button>
-              <el-button vOn:click={this.onReset}>重置</el-button>
-            </el-form-item>
-          </el-form>
-          <span class="trigger" slot="reference"/>
-        </el-popover>
-        筛选
-      </el-button>
+            <a-form-item class="actions">
+              <space>
+                <a-button type="primary" vOn:click={this.onSubmit}>搜索</a-button>
+                <a-button vOn:click={this.onReset}>重置</a-button>
+              </space>
+            </a-form-item>
+          </a-form>
+        </template>
+        <a-button type={this.anyQuery ? 'primary' : ''}>搜索</a-button>
+      </a-popover>
     )
   },
 }
 </script>
 
-<style scoped lang="scss">
-.search-button {
-  position: relative;
-}
-
+<style scoped lang="less">
 .actions {
   display: block;
   margin-bottom: 0;
 }
 
-.trigger {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
+.ant-form-item {
+  width: 200px;
 }
-</style>
 
-<style>
-.search-form-popover {
-  max-width: 90%;
+::v-deep {
+  .ant-form-item-control-wrapper {
+    width: 100%;
+  }
 }
 </style>

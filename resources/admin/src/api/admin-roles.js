@@ -1,4 +1,4 @@
-import Request from '@/plugins/request'
+import Request from '@/axios/request'
 
 export function getAdminRoles(params = {}) {
   return Request.get('admin-roles', { params })

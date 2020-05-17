@@ -1,97 +1,82 @@
 <template>
-  <el-card>
-    <template #header>
-      <content-header/>
-    </template>
-    <el-row type="flex" justify="center">
-      <lz-form
-        ref="form"
-        :get-data="getData"
-        :submit="onSubmit"
-        :errors.sync="errors"
-        :form.sync="form"
-        :edit-mode="editMode"
-      >
-        <el-form-item label="账号" required prop="username">
-          <el-input v-model="form.username"/>
-        </el-form-item>
-        <el-form-item label="姓名" required prop="name">
-          <el-input v-model="form.name"/>
-        </el-form-item>
-        <el-form-item label="头像" prop="avatar">
-          <file-picker
-            v-model="form.avatar"
-            ext="jpg,gif,png,jpeg"
-          />
-        </el-form-item>
-        <el-form-item label="密码" :required="!editMode" prop="password">
-          <el-input
-            v-model="form.password"
-            type="password"
-            autocomplete="new-password"
-          />
-        </el-form-item>
-        <el-form-item label="确认密码" :required="!editMode" prop="password_confirmation">
-          <el-input
-            v-model="form.password_confirmation"
-            type="password"
-            autocomplete="new-password"
-          />
-        </el-form-item>
-        <el-form-item label="角色" prop="roles">
-          <el-select
-            v-model="form.roles"
-            multiple
-            placeholder="选择角色"
-            filterable
-            clearable
+  <page-content center>
+    <lz-form
+      :get-data="getData"
+      :submit="onSubmit"
+      :form.sync="form"
+      :errors.sync="errors"
+    >
+      <lz-form-item label="帐号" required prop="username">
+        <a-input v-model="form.username"/>
+      </lz-form-item>
+      <lz-form-item label="姓名" required prop="name">
+        <a-input v-model="form.name"/>
+      </lz-form-item>
+      <lz-form-item label="头像" prop="avatar">
+        <file-picker v-model="form.avatar" ext="jpg,gif,png,jpeg"/>
+      </lz-form-item>
+      <lz-form-item label="密码" required-when-create prop="password">
+        <a-input v-model="form.password" type="password"/>
+      </lz-form-item>
+      <lz-form-item label="确认密码" required-when-create prop="password_confirmation">
+        <a-input v-model="form.password_confirmation" type="password"/>
+      </lz-form-item>
+      <lz-form-item label="角色" prop="roles">
+        <a-select
+          v-model="form.roles"
+          mode="multiple"
+          option-filter-prop="name"
+          allow-clear
+        >
+          <a-select-option
+            v-for="i of roles"
+            :key="i.id"
+            :name="i.name"
           >
-            <el-option
-              v-for="i of roles"
-              :key="i.id"
-              :label="i.name"
-              :value="i.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="权限" prop="permissions">
-          <el-select
-            v-model="form.permissions"
-            multiple
-            placeholder="选择权限"
-            filterable
-            clearable
+            {{ i.name }}
+          </a-select-option>
+        </a-select>
+      </lz-form-item>
+      <lz-form-item label="权限" prop="permissions">
+        <a-select
+          v-model="form.permissions"
+          mode="multiple"
+          option-filter-prop="name"
+          allow-clear
+        >
+          <a-select-option
+            v-for="i of permissions"
+            :key="i.id"
+            :name="i.name"
           >
-            <el-option
-              v-for="i of permissions"
-              :key="i.id"
-              :label="i.name"
-              :value="i.id"
-            />
-          </el-select>
-        </el-form-item>
-      </lz-form>
-    </el-row>
-  </el-card>
+            {{ i.name }}
+          </a-select-option>
+        </a-select>
+      </lz-form-item>
+    </lz-form>
+  </page-content>
 </template>
 
 <script>
+import {
+  createAdminUser,
+  editAdminUser,
+  storeAdminUser,
+  updateAdminUser,
+} from '@/api/admin-users'
 import LzForm from '@c/LzForm'
-import { createAdminUser, editAdminUser, storeAdminUser, updateAdminUser } from '@/api/admin-users'
-import { getAdminRoles } from '@/api/admin-roles'
-import { getAdminPerms } from '@/api/admin-perms'
-import FormHelper from '@c/LzForm/FormHelper'
-import FilePicker from '@c/FilePicker'
+import LzFormItem from '@c/LzForm/LzFormItem'
+import PageContent from '@c/PageContent'
+import FilePicker from '@c/LzForm/FilePicker'
 
 export default {
   name: 'Form',
   components: {
     FilePicker,
+    PageContent,
     LzForm,
+    LzFormItem,
   },
-  mixins: [
-    FormHelper,
-  ],
   data() {
     return {
       form: {
@@ -109,25 +94,26 @@ export default {
     }
   },
   methods: {
-    async onSubmit() {
-      if (this.editMode) {
-        await updateAdminUser(this.resourceId, this.form)
-      } else {
-        await storeAdminUser(this.form)
-      }
-    },
-    async getData() {
+    async getData($form) {
       let data
 
-      if (this.editMode) {
-        ({ data } = await editAdminUser(this.resourceId))
-        this.fillForm(data.data)
+      if ($form.realEditMode) {
+        ({ data } = await editAdminUser($form.resourceId))
       } else {
         ({ data } = await createAdminUser())
       }
 
       this.roles = data.roles
       this.permissions = data.permissions
+
+      return data.data
+    },
+    async onSubmit($form) {
+      if ($form.realEditMode) {
+        await updateAdminUser($form.resourceId, this.form)
+      } else {
+        await storeAdminUser(this.form)
+      }
     },
   },
 }

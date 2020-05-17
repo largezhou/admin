@@ -1,15 +1,10 @@
 <template>
-  <el-breadcrumb class="breadcrumb">
-    <transition-group name="breadcrumb">
-      <el-breadcrumb-item
-        v-for="i of breadCrumb"
-        :key="i.id"
-        :to="i.path"
-      >
-        {{ i.title }}
-      </el-breadcrumb-item>
-    </transition-group>
-  </el-breadcrumb>
+  <a-breadcrumb>
+    <a-breadcrumb-item v-for="i of breadCrumb" :key="i.id">
+      <router-link v-if="i.path" :to="i.path">{{ i.title }}</router-link>
+      <span v-else>{{ i.title }}</span>
+    </a-breadcrumb-item>
+  </a-breadcrumb>
 </template>
 
 <script>
@@ -53,7 +48,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="less">
 /* breadcrumb transition */
 .breadcrumb-enter-active,
 .breadcrumb-leave-active {
@@ -72,11 +67,5 @@ export default {
 
 .breadcrumb-leave-active {
   position: absolute;
-}
-
-::v-deep {
-  .el-breadcrumb__item {
-    padding: 2px 0;
-  }
 }
 </style>

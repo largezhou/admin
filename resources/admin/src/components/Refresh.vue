@@ -1,17 +1,21 @@
 <template>
-  <el-button class="refresh" @click="onRefresh">
-    <i class="el-icon-refresh-right"/>
-  </el-button>
+  <a-button @click.stop="onRefresh">
+    <a-icon type="reload"/>
+  </a-button>
 </template>
 
 <script>
+import { removeCacheByName } from '@c/LzKeepAlive'
+import _last from 'lodash/last'
+
 export default {
   name: 'Refresh',
   methods: {
     onRefresh() {
-      const r = this.$route
+      removeCacheByName(_last(this.$route.matched)?.components?.default?.name)
+
       this.$router.replace({
-        path: r.fullPath,
+        path: this.$route.fullPath,
         query: {
           _refresh: Date.now(),
         },
@@ -20,9 +24,3 @@ export default {
   },
 }
 </script>
-
-<style scoped lang="scss">
-.refresh {
-  font-size: 20px !important;
-}
-</style>
