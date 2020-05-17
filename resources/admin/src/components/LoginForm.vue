@@ -1,23 +1,42 @@
 <template>
-  <el-form :model="form" label-width="0">
-    <el-form-item :error="errors.username">
-      <el-input v-model="form.username" placeholder="账号" autofocus>
-        <svg-icon slot="prepend" icon-class="user"/>
-      </el-input>
-    </el-form-item>
-    <el-form-item :error="errors.password">
-      <el-input v-model="form.password" placeholder="密码" type="password">
-        <svg-icon slot="prepend" icon-class="password"/>
-      </el-input>
-    </el-form-item>
-  </el-form>
+  <lz-form
+    :form.sync="form"
+    :errors.sync="errors"
+    in-dialog
+    :footer="false"
+  >
+    <lz-form-item prop="username">
+      <a-input
+        ref="username"
+        v-model="form.username"
+        placeholder="帐号"
+      >
+        <svg-icon slot="prefix" icon-class="user"/>
+      </a-input>
+    </lz-form-item>
+    <lz-form-item prop="password">
+      <a-input
+        type="password"
+        v-model="form.password"
+        placeholder="密码"
+      >
+        <svg-icon slot="prefix" icon-class="password"/>
+      </a-input>
+    </lz-form-item>
+  </lz-form>
 </template>
 
 <script>
 import { getMessage } from '@/libs/utils'
+import LzForm from '@c/LzForm/index'
+import LzFormItem from '@c/LzForm/LzFormItem'
 
 export default {
   name: 'LoginForm',
+  components: {
+    LzFormItem,
+    LzForm,
+  },
   data: () => ({
     form: {
       username: '',
@@ -25,6 +44,9 @@ export default {
     },
     errors: {},
   }),
+  mounted() {
+    this.$refs.username.focus()
+  },
   methods: {
     async onSubmit() {
       await this.$store.dispatch('login', this)
@@ -33,11 +55,3 @@ export default {
   },
 }
 </script>
-
-<style scoped lang="scss">
-::v-deep {
-  .el-input-group__prepend {
-    padding: 0 12px;
-  }
-}
-</style>

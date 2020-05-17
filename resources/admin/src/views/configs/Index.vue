@@ -1,102 +1,109 @@
 <template>
-  <el-card>
-    <template #header>
-      <content-header/>
-    </template>
-
-    <el-button-group class="mb-3">
+  <page-content>
+    <space class="my-1">
       <search-form :fields="search"/>
-    </el-button-group>
+    </space>
 
-    <el-table :data="configs" resource="configs">
-      <el-table-column prop="id" label="ID" width="60"/>
-      <el-table-column prop="category.name" label="分类" width="180"/>
-      <el-table-column prop="name" label="名称" width="180">
-        <template #default="{ row }">
-          <input-edit
-            :id="row.id"
+    <a-table
+      row-key="id"
+      :data-source="configs"
+      bordered
+      :scroll="{ x: 1600 }"
+      :pagination="false"
+      table-layout="fixed"
+    >
+      <a-table-column title="ID" data-index="id" :width="60"/>
+      <a-table-column title="分类" data-index="category.name" :width="150"/>
+
+      <a-table-column title="名称" :width="150">
+        <template #default="record">
+          <quick-edit
+            :id="record.id"
             field="name"
             :update="updateConfig"
-            v-model="row.name"
+            v-model="record.name"
           />
         </template>
-      </el-table-column>
-      <el-table-column prop="slug" label="标识" width="150">
-        <template #default="{ row }">
-          <input-edit
-            :id="row.id"
+      </a-table-column>
+      <a-table-column title="标识" :width="150">
+        <template #default="record">
+          <quick-edit
+            :id="record.id"
             field="slug"
             :update="updateConfig"
-            v-model="row.slug"
+            v-model="record.slug"
           />
         </template>
-      </el-table-column>
-      <el-table-column prop="type_text" label="类型" width="100"/>
-      <el-table-column prop="value" label="值" min-width="300">
-        <template #default="{ row }">
-          <div v-if="row.type === CONFIG_TYPES.FILE" style="display: flex; overflow-x: auto">
-            <template v-if="Array.isArray(row.value)">
-              <file-preview
-                v-for="(item, index) of row.value"
-                :key="index"
-                :file="item"
-              />
-            </template>
-            <file-preview v-else-if="row.value" :file="row.value"/>
+      </a-table-column>
+      <a-table-column title="类型" data-index="type_text" :width="100"/>
+      <a-table-column title="值">
+        <template #default="record">
+          <div v-if="record.type === CONFIG_TYPES.FILE" style="display: flex; overflow-x: auto">
+            <file-preview
+              v-for="(item, index) of arrayWrap(record.value)"
+              :key="index"
+              :file="item"
+            />
           </div>
-          <json-show v-else :json="row.value"/>
+          <span v-else>{{ record.value }}</span>
         </template>
-      </el-table-column>
-      <el-table-column prop="created_at" label="添加时间" width="160"/>
-      <el-table-column prop="updated_at" label="修改时间" width="160"/>
-      <el-table-column label="操作" width="140">
-        <template #default="scoped">
-          <el-button-group>
-            <row-to-edit/>
-            <row-destroy/>
-          </el-button-group>
+      </a-table-column>
+      <a-table-column title="添加时间" data-index="created_at" :width="180"/>
+      <a-table-column title="修改时间" data-index="updated_at" :width="180"/>
+      <a-table-column title="操作" :width="100">
+        <template #default="record">
+          <space>
+            <router-link :to="`/configs/${record.id}/edit`">编辑</router-link>
+            <lz-popconfirm :confirm="destroyConfig(record.id)">
+              <a class="error-color" href="javascript:void(0);">删除</a>
+            </lz-popconfirm>
+          </space>
         </template>
-      </el-table-column>
-    </el-table>
-    <div class="card-footer">
-      <pagination :page="page"/>
-    </div>
-  </el-card>
+      </a-table-column>
+    </a-table>
+    <lz-pagination :page="page"/>
+  </page-content>
 </template>
 
 <script>
-import SearchForm from '@c/SearchForm'
 import {
   getConfigCategories,
   getConfigs,
   updateConfig,
+  destroyConfig,
 } from '@/api/configs'
-import Pagination from '@c/Pagination'
-import InputEdit from '@c/quick-edit/InputEdit'
-import RowDestroy from '@c/LzTable/RowDestroy'
-import RowToEdit from '@c/LzTable/RowToEdit'
-import JsonShow from '@c/JsonShow'
-import { mapConstants } from '@/libs/constants'
+import Space from '@c/Space'
+import LzPagination from '@c/LzPagination'
+import PageContent from '@c/PageContent'
+import SearchForm from '@c/SearchForm'
+import LzPopconfirm from '@c/LzPopconfirm'
+import { arrayWrap, removeWhile } from '@/libs/utils'
+import QuickEdit from '@c/QuickEdit'
 import FilePreview from '@c/FilePreview'
+import { mapConstants } from '@/libs/constants'
 
 export default {
   name: 'Index',
+  scroll: true,
   components: {
-    JsonShow,
-    RowToEdit,
+    QuickEdit,
+    LzPopconfirm,
+    PageContent,
+    LzPagination,
+    Space,
     SearchForm,
-    Pagination,
-    InputEdit,
-    RowDestroy,
     FilePreview,
   },
   data() {
     return {
+      configs: [],
+      page: null,
+
       search: [
         {
           field: 'category_id',
           label: '分类',
-          type: 'el-select',
+          type: 'select',
           options: [],
           labelField: 'name', // 默认为 name
           valueField: 'id', // 默认为 id
@@ -110,9 +117,6 @@ export default {
           label: '标识',
         },
       ],
-
-      configs: [],
-      page: null,
     }
   },
   computed: {
@@ -122,6 +126,13 @@ export default {
     this.getConfigCategories()
   },
   methods: {
+    arrayWrap,
+    destroyConfig(id) {
+      return async () => {
+        await destroyConfig(id)
+        this.configs = removeWhile(this.configs, (i) => i.id === id)
+      }
+    },
     updateConfig,
     async getConfigCategories() {
       const { data } = await getConfigCategories({ all: 1 })
@@ -134,6 +145,8 @@ export default {
         const { data: { data, meta } } = await getConfigs(newVal.query)
         this.configs = data
         this.page = meta
+
+        this.$scrollResolve()
       },
       immediate: true,
     },

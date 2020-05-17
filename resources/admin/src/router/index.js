@@ -1,33 +1,37 @@
 import Vue from 'vue'
-import Router from 'vue-router'
-import routes from '@/router/routes'
-import { loggedIn, removeLoggedIn } from '@/libs/token'
-import store from '@/store'
+import VueRouter from 'vue-router'
+import routes from './routes'
 import _get from 'lodash/get'
-import { cancelAllRequest } from '@/plugins/request'
-
+import _last from 'lodash/last'
+import store from '@/store'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { SYSTEM_BASIC } from '@/libs/constants'
+import { loggedIn, removeLoggedIn } from '@/libs/token'
+import { cancelAllRequest } from '@/axios/request'
 
+Vue.use(VueRouter)
+Vue.prototype.$scrollResolve = () => {}
 NProgress.configure({ showSpinner: false })
 
-Vue.use(Router)
-
-let scrollEl
-const setWindowPageOffset = () => {
-  scrollEl = scrollEl || document.querySelector('#main')
-  scrollEl && (window.pageYOffset = scrollEl.scrollTop)
-}
-
-const router = new Router({
+const router = new VueRouter({
   mode: 'history',
   base: process.env.NODE_ENV === 'development' ? 'admin-dev' : 'admin',
   routes,
   scrollBehavior(to, from, savedPosition) {
-    if (savedPosition && scrollEl) {
-      scrollEl.scrollTop = savedPosition.y
-    }
+    const delayScroll = _last(to.matched)?.components?.default?.scroll
+
+    const pos = savedPosition || { x: 0, y: 0 }
+
+    return delayScroll
+      ? new Promise((resolve) => {
+        Vue.prototype.$scrollResolve = () => {
+          Vue.nextTick(() => {
+            resolve(pos)
+          })
+        }
+      })
+      : pos
   },
 })
 
@@ -62,10 +66,34 @@ const renameComponent = async (to) => {
   }
 }
 
+/**
+ * 处理刷新页面的情况
+ *
+ * 刷新页面, 往 query 中加入 _refresh 当前时间戳
+ * 然后立马用原页面 replace 掉
+ *
+ * @param to
+ * @param next
+ * @return {boolean}
+ */
+const handleRefresh = (to, next) => {
+  if (to.query._refresh !== undefined) {
+    const query = {
+      ...to.query,
+    }
+    delete query._refresh
+    next()
+    router.replace({
+      path: to.path,
+      query,
+    })
+    return true
+  }
+
+  return false
+}
+
 router.beforeEach(async (to, from, next) => {
-  // 设置 window.pageYOffset 的值，为滚动行为提供滚动的位置
-  // 如果有其他影响可去掉
-  setWindowPageOffset()
   cancelAllRequest('页面切换，取消请求')
 
   await renameComponent(to)

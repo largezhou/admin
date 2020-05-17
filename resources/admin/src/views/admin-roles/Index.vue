@@ -1,62 +1,65 @@
 <template>
-  <el-card>
-    <template #header>
-      <content-header/>
-    </template>
-
-    <el-button-group class="mb-3">
+  <page-content>
+    <space class="my-1">
       <search-form :fields="search"/>
-    </el-button-group>
+    </space>
 
-    <el-table :data="roles" resource="admin-roles">
-      <el-table-column prop="id" label="ID" width="60"/>
-      <el-table-column prop="name" label="名称" width="150"/>
-      <el-table-column prop="slug" label="标识" width="150"/>
-      <el-table-column label="权限" min-width="400">
-        <template #default="{ row }">
-          <el-tag
-            v-for="i of row.permissions"
-            :key="i"
-            class="mr-1"
-          >
-            {{ i }}
-          </el-tag>
+    <a-table
+      row-key="id"
+      :data-source="roles"
+      bordered
+      :scroll="{ x: 1200 }"
+      :pagination="false"
+    >
+      <a-table-column title="ID" data-index="id" :width="60"/>
+      <a-table-column title="名称" data-index="name" :width="150"/>
+      <a-table-column title="标识" data-index="slug" :width="150"/>
+      <a-table-column title="权限">
+        <template #default="record">
+          <a-tag v-for="i of record.permissions" color="blue" :key="i">{{ i }}</a-tag>
         </template>
-      </el-table-column>
-      <el-table-column prop="created_at" label="添加时间" width="180"/>
-      <el-table-column prop="updated_at" label="修改时间" width="180"/>
-      <el-table-column label="操作" width="150">
-        <template #default="{ row, $index }">
-          <el-button-group>
-            <row-to-edit/>
-            <row-destroy/>
-          </el-button-group>
+      </a-table-column>
+      <a-table-column title="添加时间" data-index="created_at" :width="180"/>
+      <a-table-column title="修改时间" data-index="updated_at" :width="180"/>
+      <a-table-column title="操作" :width="100">
+        <template #default="record">
+          <space>
+            <router-link :to="`/admin-roles/${record.id}/edit`">编辑</router-link>
+            <lz-popconfirm :confirm="destroyAdminRole(record.id)">
+              <a class="error-color" href="javascript:void(0);">删除</a>
+            </lz-popconfirm>
+          </space>
         </template>
-      </el-table-column>
-    </el-table>
-    <div class="card-footer">
-      <pagination :page="page"/>
-    </div>
-  </el-card>
+      </a-table-column>
+    </a-table>
+    <lz-pagination :page="page"/>
+  </page-content>
 </template>
 
 <script>
+import { getAdminRoles, destroyAdminRole } from '@/api/admin-roles'
+import Space from '@c/Space'
+import LzPagination from '@c/LzPagination'
+import PageContent from '@c/PageContent'
 import SearchForm from '@c/SearchForm'
-import { getAdminRoles } from '@/api/admin-roles'
-import Pagination from '@c/Pagination'
-import RowDestroy from '@c/LzTable/RowDestroy'
-import RowToEdit from '@c/LzTable/RowToEdit'
+import LzPopconfirm from '@c/LzPopconfirm'
+import { removeWhile } from '@/libs/utils'
 
 export default {
   name: 'Index',
+  scroll: true,
   components: {
-    RowToEdit,
-    RowDestroy,
+    LzPopconfirm,
+    PageContent,
+    LzPagination,
+    Space,
     SearchForm,
-    Pagination,
   },
   data() {
     return {
+      roles: [],
+      page: null,
+
       search: [
         {
           field: 'id',
@@ -75,9 +78,15 @@ export default {
           label: '权限',
         },
       ],
-      roles: [],
-      page: null,
     }
+  },
+  methods: {
+    destroyAdminRole(id) {
+      return async () => {
+        await destroyAdminRole(id)
+        this.roles = removeWhile(this.roles, (i) => i.id === id)
+      }
+    },
   },
   watch: {
     $route: {
@@ -85,6 +94,8 @@ export default {
         const { data: { data, meta } } = await getAdminRoles(newVal.query)
         this.roles = data
         this.page = meta
+
+        this.$scrollResolve()
       },
       immediate: true,
     },

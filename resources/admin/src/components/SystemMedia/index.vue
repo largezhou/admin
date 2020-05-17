@@ -1,145 +1,144 @@
 <template>
-  <el-card class="system-media" :class="{ 'mini-width': miniWidth }" shadow="never">
-    <el-container class="body">
-      <el-aside v-if="!miniWidth" class="aside" width="221px">
-        <category
-          class="h-100"
-          ref="category"
-          @select="onCategorySelect"
-          @categories-change="onCategoriesChange"
-        />
-      </el-aside>
-
-      <el-dialog
-        class="categories-dialog"
-        title="选择分类"
-        :visible.sync="categoriesDialog"
-        width="90%"
-        append-to-body
+  <div
+    class="system-media"
+    :class="{
+      'mini-width': miniWidth,
+      'tiny-width': tinyWidth,
+    }"
+  >
+    <div class="sider" v-if="!miniWidth">
+      <category
+        class="h-100"
+        ref="category"
+        @select="onCategorySelect"
+        @categories-change="onCategoriesChange"
+      />
+    </div>
+    <div class="content">
+      <div class="header">
+        <space>
+          <a-button v-if="miniWidth" @click="categoriesDialog = true">选择分类</a-button>
+          <loading-action :action="onReloadMedia">刷新</loading-action>
+          <a-button :disabled="!anySelected" @click="movingDialog = true">移动</a-button>
+          <a-button
+            :type="multiple ? 'primary' : ''"
+            v-if="defaultMultiple === undefined"
+            @click="multiple = !multiple"
+          >
+            多选
+          </a-button>
+          <lz-popconfirm
+            title="物理文件也有可能会被删除！确认删除？"
+            type="danger"
+            :disabled="!anySelected"
+            :confirm="onDestroyMedia"
+          >
+            <a-button type="danger" :disabled="!anySelected">删除</a-button>
+          </lz-popconfirm>
+        </space>
+      </div>
+      <a-spin
+        class="files"
+        :class="{ 'files-empty': media.length === 0 }"
+        :spinning="mediaLoading || uploading"
+        :tip="uploadingText"
       >
-        <category
-          v-if="miniWidth"
-          class="h-100"
-          ref="category"
-          @select="onCategorySelect"
-          @categories-change="onCategoriesChange"
+        <files
+          ref="media"
+          :media="media"
+          :multiple="multiple"
+          :selected.sync="selected"
+          :ext="defaultExt"
         />
-      </el-dialog>
+        <a-empty v-show="media.length === 0 && !mediaLoading"/>
+      </a-spin>
+      <div class="footer">
+        <space>
+          <a-upload
+            ref="upload"
+            :custom-request="storeMedia"
+            :before-upload="beforeUpload"
+            :show-upload-list="false"
+            :disabled="currentCategoryId <= 0"
+            multiple
+            :accept="'.' + (defaultExt ? defaultExt : '').replace(/,/g, ',.')"
+            @change="onUploadChange"
+          >
+            <a-button
+              :disabled="currentCategoryId <= 0"
+              :title="currentCategoryId <= 0 ? '请先选择分类' : ''"
+            >
+              上传
+            </a-button>
+          </a-upload>
+          <a-button
+            :disabled="!anySelected"
+            @click="clearSelected"
+          >
+            清空 {{ this.selectedCount ? `(${this.selectedCount})` : '' }}
+          </a-button>
+          <a-button
+            :disabled="!!defaultExt"
+            @click="onOpenExtDialog"
+            :title="ext"
+            :type="ext ? 'primary' : null"
+          >
+            {{ ext ? '已筛选' : '筛选' }}
+          </a-button>
+          <slot name="actions" v-bind="getThis"/>
+        </space>
+        <div class="flex-spacer"/>
+        <lz-pagination
+          style="height: auto;"
+          :page="page"
+          :auto-push="false"
+          :show-quick-jumper="false"
+          :show-size-changer="false"
+          hide-on-single-page
+          simple
+          @current-change="onPageChange"
+        />
+      </div>
+    </div>
 
-      <el-container>
-        <el-header>
-          <collapse-button-group>
-            <loading-action :action="onReloadMedia">刷新</loading-action>
-            <el-button :disabled="!anySelected" @click="movingDialog = true">移动</el-button>
-            <!-- 没有设置默认多选时，就可以切换多选，switch 组件放这里，样式懒得调 -->
-            <el-button
-              :type="multiple ? 'primary' : ''"
-              v-if="defaultMultiple === undefined"
-              @click="multiple = !multiple"
-            >
-              多选
-            </el-button>
-            <pop-confirm
-              notice="物理文件也有可能会被删除！确认删除？"
-              type="danger"
-              :disabled="!anySelected"
-              :confirm="onDestroyMedia"
-            >
-              删除
-            </pop-confirm>
-          </collapse-button-group>
-          <el-button v-if="miniWidth" class="ml-1" @click="categoriesDialog = true">选择分类</el-button>
-        </el-header>
-
-        <el-main
-          v-loading="mediaLoading || uploading"
-          :element-loading-text="uploadingText"
-        >
-          <div class="h-100">
-            <el-scrollbar class="h-100">
-              <files
-                ref="media"
-                :media="media"
-                :multiple="multiple"
-                :selected.sync="selected"
-                :ext="defaultExt"
-              />
-            </el-scrollbar>
-          </div>
-        </el-main>
-        <el-footer class="footer">
-          <collapse-button-group class="footer-actions">
-            <el-button :disabled="currentCategoryId <= 0" @click="onClickUpload">上传</el-button>
-            <el-button
-              :disabled="!anySelected"
-              @click="clearSelected"
-            >
-              清空 {{ this.selectedCount ? `(${this.selectedCount})` : '' }}
-            </el-button>
-            <el-button
-              :disabled="!!defaultExt"
-              @click="onOpenExtDialog"
-              :title="ext"
-            >
-              {{ ext ? '已筛选' : '筛选' }}
-            </el-button>
-            <slot name="actions" v-bind="getThis"/>
-          </collapse-button-group>
-          <flex-spacer/>
-          <pagination
-            :page="page"
-            layout="total, pager"
-            :auto-push="false"
-            @current-change="onPageChange"
-            :pager-count="5"
-            hide-on-single-page
-          />
-        </el-footer>
-      </el-container>
-    </el-container>
-
-    <el-dialog
+    <a-modal
       v-if="!defaultExt"
       title="筛选类型"
-      :visible.sync="extDialog"
+      v-model="extDialog"
       width="400px"
-      @keydown.enter.native="onExtFilter"
-      append-to-body
+      @ok="onExtFilter"
     >
-      <el-input
-        autofocus
+      <a-input
         v-model="extTemp"
-        autocomplete="off"
-        placeholder="多个之间用英文逗号隔开"
+        @keydown.enter="onExtFilter"
+        focus
+        allow-clear
       />
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="extDialog = false">取消</el-button>
-        <el-button type="primary" @click="onExtFilter">确定</el-button>
-      </div>
-    </el-dialog>
+    </a-modal>
 
-    <el-dialog
+    <a-modal
       title="移动文件"
-      :visible.sync="movingDialog"
+      v-model="movingDialog"
       width="400px"
-      append-to-body
     >
-      <el-select
+      <a-select
+        class="w-100"
         v-model="movingTarget"
-        filterable
-        placeholder="请选择目标分类"
+        show-search
+        option-filter-prop="title"
+        option-label-prop="title"
       >
-        <el-option
+        <a-select-option
           v-for="i of categoriesSelectOptions"
           :key="i.id"
-          :label="i.title"
-          :value="i.id"
+          :title="i.title"
         >
-          <span>{{ i.text }}</span>
-        </el-option>
-      </el-select>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="movingDialog = false">取消</el-button>
+          {{ i.text }}
+        </a-select-option>
+      </a-select>
+
+      <template #footer>
+        <a-button @click="movingDialog = false">取消</a-button>
         <loading-action
           type="primary"
           :action="onMove"
@@ -147,26 +146,27 @@
         >
           移动
         </loading-action>
-      </div>
-    </el-dialog>
+      </template>
+    </a-modal>
 
-    <el-upload
-      :disabled="currentCategoryId <= 0"
-      ref="upload"
-      style="display: none"
-      multiple
-      action="#"
-      :http-request="storeMedia"
-      :show-file-list="false"
-      :on-change="onUploadChange"
-      :before-upload="beforeUpload"
-      :accept="'.' + (defaultExt ? defaultExt : '').replace(/,/g, ',.')"
-    />
-  </el-card>
+    <a-modal
+      v-if="miniWidth"
+      title="选择分类"
+      v-model="categoriesDialog"
+      :footer="null"
+    >
+      <category
+        class="h-100"
+        ref="category"
+        @select="onCategorySelect"
+        @categories-change="onCategoriesChange"
+      />
+    </a-modal>
+  </div>
 </template>
 
 <script>
-import PopConfirm from '@c/PopConfirm'
+import LzPopconfirm from '@c/LzPopconfirm'
 import {
   batchDestroyMedia,
   batchUpdateMedia,
@@ -175,8 +175,7 @@ import {
   storeMedia,
 } from '@/api/system-media'
 import _get from 'lodash/get'
-import FlexSpacer from '@c/FlexSpacer'
-import Pagination from '@c/Pagination'
+import LzPagination from '@c/LzPagination'
 import {
   debounceMsg,
   getExt,
@@ -186,17 +185,18 @@ import {
 import _differenceBy from 'lodash/differenceBy'
 import Category from './Category'
 import Files from '@c/SystemMedia/Files'
-import CollapseButtonGroup from '@c/CollapseButtonGroup'
+import Space from '@c/Space'
+import LoadingAction from '@c/LoadingAction'
 
 export default {
   name: 'SystemMedia',
   components: {
-    CollapseButtonGroup,
+    Space,
     Files,
     Category,
-    Pagination,
-    FlexSpacer,
-    PopConfirm,
+    LzPagination,
+    LzPopconfirm,
+    LoadingAction,
   },
   data() {
     return {
@@ -255,6 +255,9 @@ export default {
     },
     miniWidth() {
       return this.$store.state.miniWidth
+    },
+    tinyWidth() {
+      return this.$store.state.tinyWidth
     },
     anySelected() {
       return this.selectedCount > 0
@@ -385,28 +388,29 @@ export default {
     onCategoriesChange(categories) {
       this.categories = categories
     },
-    onClickUpload() {
-      const t = _get(this.$refs, 'upload.$refs.upload-inner')
-      t && t.handleClick()
-    },
-    async storeMedia({ file }) {
+    async storeMedia({ file, onSuccess, onError }) {
       const id = this.currentCategoryId
 
       if (id <= 0) {
         return
       }
-      const { data } = await storeMedia(id, file)
-        .setConfig({ showValidationMsg: true })
-      // 如果上传完后，没有切换分类，或者是所有分类
-      // 则把数据怼到当前的文件列表前面
-      if (id === this.currentCategoryId || this.currentCategoryId === -1) {
-        this.media.unshift(data)
+      let res
+      try {
+        res = await storeMedia(id, file).setConfig({ showValidationMsg: true })
+        onSuccess(res, null)
+        // 如果上传完后，没有切换分类，或者是所有分类
+        // 则把数据怼到当前的文件列表前面
+        if (id === this.currentCategoryId || this.currentCategoryId === -1) {
+          this.media.unshift(res.data)
+        }
+      } catch (e) {
+        onError(e, res)
       }
     },
-    onUploadChange(file, fileList) {
-      if (file.status === 'success') { // 上传成功一个
+    onUploadChange({ file }) {
+      if (file.status === 'done') { // 上传成功一个
         this.uploadSuccess++
-      } else if (file.status === 'fail') { // 上传失败一个
+      } else if (file.status === 'error') { // 上传失败一个
         this.uploadFail++
       }
 
@@ -415,12 +419,12 @@ export default {
         this.uploadCount &&
         (this.uploadSuccess + this.uploadFail === this.uploadCount)
       ) {
-        this.$msgbox({
+        this.$info({
           title: '上传完成',
-          message: `上传成功 (${this.uploadSuccess})，失败 (${this.uploadFail})，无效 (${this.uploadInvalid})`,
+          content: `上传成功 (${this.uploadSuccess})，失败 (${this.uploadFail})，无效 (${this.uploadInvalid})`,
         })
 
-        this.$refs.upload.clearFiles()
+        this.$refs.upload.sFileList = []
         this.uploading = false
         this.uploadCount = 0
         this.uploadFail = 0
@@ -486,77 +490,76 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-@import '~element-ui/packages/theme-chalk/src/common/var';
+<style scoped lang="less">
+@import "~@/styles/vars";
 
-$border: 1px solid $--color-info-light;
-$padding-width: 15px;
+@padding: 16px;
 
 .system-media {
-  border: none;
-  border-radius: 0;
-}
-
-.aside {
-  border-right: $border;
-  padding: $padding-width 0 $padding-width 20px;
-  overflow: hidden;
-}
-
-.body {
+  min-width: 0;
   height: 550px;
+  display: flex;
+  border: @border-base;
+  border-radius: @border-radius-base;
 }
 
-.el-header,
-.el-footer {
+.sider {
+  width: 220px;
+  padding: @padding;
+  border-right: @border-base;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.header, .footer {
+  padding: @padding;
+  overflow-x: auto;
+  width: 100%;
+  min-height: 65px;
+}
+
+.header {
+  border-bottom: @border-base;
+}
+
+.footer {
+  border-top: @border-base;
   display: flex;
   align-items: center;
-  padding-top: $padding-width;
-  padding-bottom: $padding-width;
-  height: auto !important;
 }
 
-.el-header {
-  border-bottom: $border;
+.files {
+  flex: 1;
+  padding: @padding;
+  overflow: auto;
 }
 
-.el-footer {
-  border-top: $border;
-}
-
-::v-deep {
-  .el-scrollbar__wrap {
-    height: calc(100% + 17px);
-  }
-
-  .el-card__body {
-    padding: 0;
-  }
-
-  .el-icon-more {
-    display: none;
-  }
-}
-
-.categories-dialog {
+.files-empty {
   ::v-deep {
-    .el-dialog__body {
-      height: 400px;
+    .ant-spin-container {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 }
 
-.mini-width {
+.tiny-width {
   .footer {
     flex-direction: column-reverse;
-
-    & > * {
-      align-self: flex-start;
-    }
+    align-items: flex-start;
   }
 
-  .footer-actions {
-    margin-top: 10px;
+  ::v-deep {
+    .pagination {
+      margin-bottom: 8px !important;
+    }
   }
 }
 </style>

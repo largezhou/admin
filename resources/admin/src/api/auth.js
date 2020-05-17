@@ -1,4 +1,4 @@
-import Request from '@/plugins/request'
+import Request from '@/axios/request'
 
 export function login(data) {
   return Request.post('auth/login', data)

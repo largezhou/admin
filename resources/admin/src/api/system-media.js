@@ -1,4 +1,4 @@
-import Request from '@/plugins/request'
+import Request from '@/axios/request'
 
 export function getCategories(params = {}) {
   return Request.get('system-media-categories', {

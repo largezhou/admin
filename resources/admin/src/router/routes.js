@@ -1,54 +1,8 @@
-import Layout from '@c/Layout'
 import Page404 from '@v/errors/Page404'
-import Test from '@v/Test'
 import { randomChars } from '@/libs/utils'
+import Layout from '@c/Layout'
 
 const randomPath = '/' + randomChars()
-
-export const pageNotFoundRoute = {
-  path: '/',
-  component: Layout,
-  children: [
-    {
-      path: '*',
-      meta: {
-        title: '页面没有找到',
-      },
-      component: Page404,
-    },
-  ],
-}
-
-/**
- * 后置路由，会添加到后端路由的后面
- */
-export const appendRoutes = [
-  {
-    path: randomPath,
-    component: Layout,
-    children: [
-      {
-        path: '/configs/:categorySlug',
-        name: 'updateConfigForm',
-        component: () => import('@v/configs/ConfigValuesForm'),
-      },
-    ],
-  },
-  pageNotFoundRoute,
-]
-
-if (process.env.NODE_ENV === 'development') {
-  appendRoutes.unshift({
-    path: '/test/test',
-    component: Layout,
-    children: [
-      {
-        path: '/',
-        component: Test,
-      },
-    ],
-  })
-}
 
 /**
  * 前置路由，会添加到后端路由前面
@@ -76,4 +30,30 @@ export default [
       },
     ],
   },
+]
+
+export const pageNotFoundRoute = {
+  path: '*',
+  meta: {
+    title: '页面没有找到',
+  },
+  component: Page404,
+}
+
+/**
+ * 后置路由，会添加到后端路由的后面
+ */
+export const appendRoutes = [
+  {
+    path: randomPath,
+    component: Layout,
+    children: [
+      {
+        path: '/configs/:categorySlug',
+        name: 'updateConfigForm',
+        component: () => import('@v/configs/ConfigValuesForm'),
+      },
+    ],
+  },
+  pageNotFoundRoute,
 ]

@@ -1,27 +1,33 @@
 <template>
   <div class="login">
-    <div class="login-wrap">
-      <el-card>
-        <template #header>
-          <span>{{ appName }}</span>
-        </template>
-        <login-form @keydown.enter.native="$refs.submit.onAction" ref="form"/>
-        <loading-action
-          ref="submit"
-          class="login-btn"
-          type="primary"
-          :action="onLogin"
-        >
-          登录
-        </loading-action>
-      </el-card>
-    </div>
+    <a-card class="login-card" :title="appName">
+      <login-form
+        ref="form"
+        @keydown.enter.native="$refs.login.onAction"
+      />
+      <loading-action
+        ref="login"
+        type="primary"
+        class="w-100"
+        :action="onLogin"
+        disable-on-success="2000"
+      >
+        <span>登录</span>
+      </loading-action>
+    </a-card>
   </div>
 </template>
 
 <script>
+import LoginForm from '@c/LoginForm'
+import LoadingAction from '@c/LoadingAction'
+
 export default {
   name: 'Login',
+  components: {
+    LoadingAction,
+    LoginForm,
+  },
   computed: {
     appName() {
       return this.$store.getters.appName
@@ -30,31 +36,20 @@ export default {
   methods: {
     async onLogin() {
       await this.$refs.form.onSubmit()
-      this.$router.push(this.$route.query.redirect || '/')
+      this.$router.push(this.$route.query.redirect || '/index')
     },
   },
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="less">
 .login {
-  width: 100%;
-  height: 100%;
+  height: 100vh;
+  display: flex;
 }
 
-.login-wrap {
-  width: 350px;
-  margin: auto;
-  padding-top: 30vh;
-}
-
-.login-btn {
-  width: 100%;
-}
-
-::v-deep {
-  .el-card__header {
-    text-align: center;
-  }
+.login-card {
+  width: 300px;
+  margin: 30vh auto auto auto;
 }
 </style>

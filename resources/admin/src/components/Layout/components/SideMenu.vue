@@ -1,58 +1,47 @@
 <template>
-  <el-menu
-    ref="menu"
-    :default-active="activeName"
-    :class="{ 'mini-width': miniWidth }"
-    background-color="#304156"
-    text-color="#bfcbd9"
-    class="side-menu"
-    :collapse="collapse"
-    v-click-outside="onCollapse"
+  <a-menu
+    :selected-keys="activeNames"
+    :open-keys.sync="openedMenus"
+    mode="inline"
+    theme="dark"
   >
-    <side-menu-title class="px-2 pt-2" :collapse="collapse"/>
-    <div class="pa-2">
-      <el-input v-model="q" placeholder="搜索菜单"/>
-    </div>
     <template v-for="menu of menus">
       <side-menu-item
+        :key="menu.id"
+        :menu="menu"
         :q="q"
         v-if="menu.menu"
-        :menu="menu"
-        :key="menu.id"
-        :collapse="collapse"
       />
     </template>
-  </el-menu>
+  </a-menu>
 </template>
 
 <script>
-import SideMenuTitle from './SideMenuTitle'
 import { hasChildren, makeRouteName } from '@/libs/utils'
 import { mapState } from 'vuex'
 import _trimEnd from 'lodash/trimEnd'
 import _forIn from 'lodash/forIn'
-import SideMenuItem from '@c/Layout/components/SideMenuItem'
+import SideMenuItem from './SideMenuItem'
 
 export default {
   name: 'SideMenu',
   components: {
     SideMenuItem,
-    SideMenuTitle,
   },
   data() {
     return {
+      openedMenusBak: [],
       openedMenus: [],
-      q: '',
       menus: this.$store.state.vueRouters.vueRouters,
     }
   },
   props: {
-    collapse: Boolean,
+    q: String,
   },
   computed: {
-    activeName() {
-      return this.activeNames[this.activeNames.length - 1] || null
-    },
+    ...mapState({
+      collapsed: (state) => !state.sideMenu.opened,
+    }),
     activeNames() {
       return this.matchedMenu
         ? this.matchedMenusChain.map((i) => makeRouteName(i.id))
@@ -166,34 +155,26 @@ export default {
       },
       immediate: true,
     },
+    activeNames: {
+      handler(newVal) {
+        if (this.collapsed) {
+          return
+        }
+        this.openedMenus = Array.from(new Set(this.openedMenus.concat(...newVal)))
+      },
+      immediate: true,
+    },
+    collapsed: {
+      async handler(newVal) {
+        await this.$nextTick()
+        if (newVal) {
+          [this.openedMenusBak, this.openedMenus] = [this.openedMenus, []]
+        } else {
+          this.openedMenus = [...this.activeNames]
+        }
+      },
+      immediate: true,
+    },
   },
 }
 </script>
-
-<style scoped lang="scss">
-.side-menu {
-  border: none;
-  height: 100%;
-}
-
-.side-menu:not(.el-menu--collapse) {
-  width: 220px;
-}
-
-.mini-width {
-  position: fixed;
-  z-index: 2001; // 比 页面的 loading 层高一点
-  left: 0;
-  top: 0;
-  bottom: 0;
-  overflow-y: auto;
-
-  &.el-menu--collapse {
-    width: 0;
-
-    > * {
-      display: none;
-    }
-  }
-}
-</style>

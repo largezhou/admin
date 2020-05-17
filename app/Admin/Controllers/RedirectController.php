@@ -27,14 +27,4 @@ class RedirectController extends Controller
     {
         return $this->getIndex('admin', true);
     }
-
-    public function antd()
-    {
-        return $this->getIndex('antd');
-    }
-
-    public function antdDev()
-    {
-        return $this->getIndex('antd', true);
-    }
 }

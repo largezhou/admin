@@ -1,4 +1,4 @@
-import Request from '@/plugins/request'
+import Request from '@/axios/request'
 
 export function getVueRouters() {
   return Request.get('configs/vue-routers')
@@ -50,4 +50,8 @@ export function updateConfigValues(categorySlug, data) {
 
 export function getConfigsValueByCategorySlug(categorySlug) {
   return Request.get(`configs/${categorySlug}/values`)
+}
+
+export function destroyConfig(id) {
+  return Request.delete(`configs/${id}`)
 }
