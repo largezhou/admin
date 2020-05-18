@@ -1,3 +1,0 @@
-  'dummy-resources': () => import('@v/dummy-resources/Index'),
-  'dummy-resources/create': () => import('@v/dummy-resources/Form'),
-  'dummy-resources/:id(\\d+)/edit': () => import('@v/dummy-resources/Form'),
