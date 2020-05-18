@@ -1,11 +1,11 @@
-import Request from '@/plugins/request'
+import Request from '@/axios/request'
 
 export function getPluralDummyResource(params) {
   return Request.get('dummy-resources', { params })
 }
 
 export function createDummyResource() {
-  return Request.get(`dummy-resources/create`)
+  return Request.get('dummy-resources/create')
 }
 
 export function storeDummyResource(data) {

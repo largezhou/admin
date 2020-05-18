@@ -1,47 +1,56 @@
 <template>
-  <el-card>
-    <template #header>
-      <content-header/>
-    </template>
-
-    <el-button-group class="mb-3">
+  <page-content>
+    <space class="my-1">
       <search-form :fields="search"/>
-    </el-button-group>
+    </space>
 
-    <el-table :data="dummyResources" resource="dummy-resources">
-      <el-table-column prop="id" label="ID" width="60"/>
-      <el-table-column prop="field_name" label="字段名"/>
-      <el-table-column prop="created_at" label="添加时间" width="180"/>
-      <el-table-column prop="updated_at" label="修改时间" width="180"/>
-      <el-table-column label="操作" width="150">
-        <template #default="{ row, $index }">
-          <el-button-group>
-            <row-to-edit/>
-            <row-destroy/>
-          </el-button-group>
+    <a-table
+      row-key="id"
+      :data-source="dummyResources"
+      bordered
+      :scroll="{ x: 600 }"
+      :pagination="false"
+    >
+      <a-table-column title="ID" data-index="id" :width="60"/>
+      <a-table-column title="字段名" data-index="field_name"/>
+      <a-table-column title="添加时间" data-index="created_at" :width="180"/>
+      <a-table-column title="修改时间" data-index="updated_at" :width="180"/>
+      <a-table-column title="操作" :width="100">
+        <template #default="record">
+          <space>
+            <router-link :to="`/dummy-resources/${record.id}/edit`">编辑</router-link>
+            <lz-popconfirm :confirm="destroyDummyResource(record.id)">
+              <a class="error-color" href="javascript:void(0);">删除</a>
+            </lz-popconfirm>
+          </space>
         </template>
-      </el-table-column>
-    </el-table>
-    <div class="card-footer">
-      <pagination :page="page"/>
-    </div>
-  </el-card>
+      </a-table-column>
+    </a-table>
+    <lz-pagination :page="page"/>
+  </page-content>
 </template>
 
 <script>
+import LzPagination from '@c/LzPagination'
+import LzPopconfirm from '@c/LzPopconfirm'
+import PageContent from '@c/PageContent'
 import SearchForm from '@c/SearchForm'
-import Pagination from '@c/Pagination'
-import { getPluralDummyResource } from '@/api/dummy-resources'
-import RowDestroy from '@c/LzTable/RowDestroy'
-import RowToEdit from '@c/LzTable/RowToEdit'
+import Space from '@c/Space'
+import {
+  destroyDummyResource,
+  getPluralDummyResource,
+} from '@/api/dummy-resources'
+import { removeWhile } from '@/libs/utils'
 
 export default {
   name: 'Index',
+  scroll: true,
   components: {
-    RowToEdit,
-    RowDestroy,
+    LzPopconfirm,
+    PageContent,
+    LzPagination,
+    Space,
     SearchForm,
-    Pagination,
   },
   data() {
     return {
@@ -59,12 +68,22 @@ export default {
       page: null,
     }
   },
+  methods: {
+    destroyDummyResource(id) {
+      return async () => {
+        await destroyDummyResource(id)
+        this.dummyResources = removeWhile(this.dummyResources, (i) => i.id === id)
+      }
+    },
+  },
   watch: {
     $route: {
       async handler(newVal) {
         const { data: { data, meta } } = await getPluralDummyResource(newVal.query)
         this.dummyResources = data
         this.page = meta
+
+        this.$scrollResolve()
       },
       immediate: true,
     },
