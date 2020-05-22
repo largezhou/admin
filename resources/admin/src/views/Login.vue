@@ -10,15 +10,18 @@
         ref="form"
         @keydown.enter.native="$refs.login.onAction"
       />
-      <loading-action
-        ref="login"
-        type="primary"
-        class="w-100"
-        :action="onLogin"
-        disable-on-success="2000"
-      >
-        <span>登录</span>
-      </loading-action>
+      <space direction="vertical" class="w-100">
+        <reset-system class="w-100"/>
+        <loading-action
+          ref="login"
+          type="primary"
+          class="w-100"
+          :action="onLogin"
+          disable-on-success="2000"
+        >
+          <span>登录</span>
+        </loading-action>
+      </space>
     </a-card>
   </div>
 </template>
@@ -27,10 +30,14 @@
 import LoginForm from '@c/LoginForm'
 import LoadingAction from '@c/LoadingAction'
 import { getUrl } from '@/libs/utils'
+import Space from '@c/Space'
+import ResetSystem from '@c/ResetSystem'
 
 export default {
   name: 'Login',
   components: {
+    ResetSystem,
+    Space,
     LoadingAction,
     LoginForm,
   },
@@ -75,7 +82,7 @@ export default {
 
 .login-card {
   width: 300px;
-  margin: 30vh auto auto auto;
+  margin: 20vh auto auto auto;
 }
 
 .accounts {
