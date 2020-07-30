@@ -140,7 +140,7 @@ export default class Request {
 
   /**
    * @param {string} method
-   * @param {IArguments} args
+   * @param {any} args
    */
   constructor(method, args) {
     this.method = method
@@ -166,7 +166,7 @@ export default class Request {
   }
 
   /**
-   * @param {AxiosRequestConfig} config
+   * @param {defaultConfig} config
    * @return {Request}
    */
   setConfig(config) {
@@ -176,7 +176,7 @@ export default class Request {
 
   /**
    * @param {string} url
-   * @param {AxiosRequestConfig} [config]
+   * @param {any} [config]
    * @return {Request}
    */
   static get(url, config) {
@@ -185,7 +185,7 @@ export default class Request {
 
   /**
    * @param {string} url
-   * @param {AxiosRequestConfig} [config]
+   * @param {any} [config]
    * @return {Request}
    */
   static delete(url, config) {
@@ -194,8 +194,8 @@ export default class Request {
 
   /**
    * @param {string} url
-   * @param {*} [data]
-   * @param {AxiosRequestConfig} [config]
+   * @param {any} [data]
+   * @param {any} [config]
    * @return {Request}
    */
   static post(url, data, config) {
@@ -204,8 +204,8 @@ export default class Request {
 
   /**
    * @param {string} url
-   * @param {*} [data]
-   * @param {AxiosRequestConfig} [config]
+   * @param {any} [data]
+   * @param {any} [config]
    * @return {Request}
    */
   static put(url, data, config) {
@@ -214,8 +214,8 @@ export default class Request {
 
   /**
    * @param {string} url
-   * @param {*} [data]
-   * @param {AxiosRequestConfig} [config]
+   * @param {any} [data]
+   * @param {any} [config]
    * @return {Request}
    */
   static patch(url, data, config) {

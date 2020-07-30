@@ -19,27 +19,32 @@ class ResourceMakeCommand extends GeneratorCommand
         {--model= : 指定模型}
         {--test : 生成控制器测试类}
     ';
+
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = '添加一个资源，包含各种相关文件';
+
     protected $types = [
         'model', 'filter', 'request', 'resource', 'controller', 'test',
     ];
+
     /**
      * 当前正在生成的类型
      *
      * @var string
      */
     protected $nowType;
+
     /**
      * 各类型对应的完整的类名
      *
      * @var array
      */
     protected $classes = [];
+
     protected $frontendTypePathMap = [
         'api' => 'api/dummy-resources.js',
         'index' => 'views/dummy-resources/Index.vue',
@@ -171,27 +176,32 @@ class ResourceMakeCommand extends GeneratorCommand
             'dummyResources' => $pluralDummyResource,
         ];
 
-        foreach (['api', 'index', 'form'] as $type) {
+        foreach (['api', 'index', 'form', 'routes'] as $type) {
             $content = $this->files->get(__DIR__."/stubs/frontend/{$type}.stub");
             foreach ($replaces as $search => $replace) {
                 $content = str_replace($search, $replace, $content);
             }
-            $relativePath = str_replace('dummy-resources', $pluralKebabDummyResource, $this->frontendTypePathMap[$type]);
-            $path = $this->laravel['path.resources'].
-                '/admin/src/'.$relativePath;
 
-            if (
-                !$this->option('force') &&
-                $this->files->exists($path)
-            ) {
-                $this->error($relativePath.' 已存在');
-                return 0;
+            if ($type == 'routes') {
+                $this->info('路由配置：');
+                $this->line($content);
+            } else {
+                $relativePath = str_replace('dummy-resources', $pluralKebabDummyResource, $this->frontendTypePathMap[$type]);
+                $path = $this->laravel['path.resources'].'/admin/src/'.$relativePath;
+
+                if (
+                    !$this->option('force') &&
+                    $this->files->exists($path)
+                ) {
+                    $this->error($relativePath.' 已存在');
+                    return 0;
+                }
+
+                $this->makeDirectory($path);
+                $this->files->put($path, $content);
+
+                $this->info($relativePath.' 创建成功');
             }
-
-            $this->makeDirectory($path);
-            $this->files->put($path, $content);
-
-            $this->info($relativePath.' 创建成功');
         }
 
         return 1;

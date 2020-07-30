@@ -1,43 +1,36 @@
 <template>
-  <el-card>
-    <template #header>
-      <content-header/>
-    </template>
-    <el-row type="flex" justify="center">
-      <lz-form
-        ref="form"
-        :get-data="getData"
-        :submit="onSubmit"
-        :form.sync="form"
-        :errors.sync="errors"
-        :edit-mode="editMode"
-      >
-        <el-form-item label="字段名" required prop="field_name">
-          <el-input v-model="form.field_name"/>
-        </el-form-item>
-      </lz-form>
-    </el-row>
-  </el-card>
+  <page-content type="flex" justify="center">
+    <lz-form
+      :get-data="getData"
+      :submit="onSubmit"
+      :form.sync="form"
+      :errors.sync="errors"
+    >
+      <lz-form-item label="字段名" required prop="field_name">
+        <a-input v-model="form.field_name"/>
+      </lz-form-item>
+    </lz-form>
+  </page-content>
 </template>
 
 <script>
 import LzForm from '@c/LzForm'
+import LzFormItem from '@c/LzForm/LzFormItem'
+import PageContent from '@c/PageContent'
 import {
-  editDummyResource,
-  updateDummyResource,
-  storeDummyResource,
   createDummyResource,
+  editDummyResource,
+  storeDummyResource,
+  updateDummyResource,
 } from '@/api/dummy-resources'
-import FormHelper from '@c/LzForm/FormHelper'
 
 export default {
   name: 'Form',
   components: {
     LzForm,
+    LzFormItem,
+    PageContent,
   },
-  mixins: [
-    FormHelper,
-  ],
   data() {
     return {
       form: {
@@ -47,19 +40,20 @@ export default {
     }
   },
   methods: {
-    async getData() {
+    async getData($form) {
       let data
 
-      if (this.editMode) {
-        ({ data } = await editDummyResource(this.resourceId))
-        this.fillForm(data)
+      if ($form.realEditMode) {
+        ({ data } = await editDummyResource($form.resourceId))
       } else {
         ({ data } = await createDummyResource())
       }
+
+      return data
     },
-    async onSubmit() {
-      if (this.editMode) {
-        await updateDummyResource(this.resourceId, this.form)
+    async onSubmit($form) {
+      if ($form.realEditMode) {
+        await updateDummyResource($form.resourceId, this.form)
       } else {
         await storeDummyResource(this.form)
       }
@@ -67,6 +61,3 @@ export default {
   },
 }
 </script>
-
-<style scoped lang="scss">
-</style>
