@@ -221,4 +221,12 @@ export default class Request {
   static patch(url, data, config) {
     return new Request('patch', arguments)
   }
+
+  /**
+   * @param config
+   * @return {Request}
+   */
+  static request(config) {
+    return new Request('request', arguments)
+  }
 }

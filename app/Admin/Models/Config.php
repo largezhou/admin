@@ -26,7 +26,7 @@ class Config extends Model
     protected $casts = [
         'category_id' => 'integer',
         'options' => 'array',
-        'value' => 'array',
+        'value' => 'json',
     ];
 
     public function getTypeTextAttribute()
@@ -75,5 +75,10 @@ class Config extends Model
         });
 
         return $configs->pluck('value', 'slug');
+    }
+
+    public static function getConfigValue(string $slug, $default = null)
+    {
+        return static::query()->where('slug', $slug)->value('value') ?? $default;
     }
 }

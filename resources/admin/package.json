@@ -7,7 +7,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "watch": "vue-cli-service build --mode development --watch",
-    "svgo": "svgo -f resources/admin/src/icons/svg --config=resources/admin/src/icons/svgo.yml"
+    "svgo": "svgo -f src/icons/svg --config=src/icons/svgo.yml"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.3.0",

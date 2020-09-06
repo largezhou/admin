@@ -19,12 +19,14 @@ class AdminInitCommand extends Command
      * @var string
      */
     protected $signature = 'admin:init';
+
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = '初始化基础路由配置，超级管理员角色和权限';
+
     public static $initConfirmTip = '初始化操作，会清空路由、管理员、角色和权限表，以及相关关联表数据。是否确认？';
 
     /**
@@ -145,6 +147,14 @@ class AdminInitCommand extends Command
             [1, Config::TYPE_FILE, '系统 LOGO', 'app_logo', '{"max":1,"ext":"jpg,png,jpeg"}', null, 'nullable|string'],
             [1, Config::TYPE_OTHER, '首页路由', 'home_route', null, json_encode('1'), 'required|exists:vue_routers,id'],
             [1, Config::TYPE_INPUT, 'CDN 域名', 'cdn_domain', null, json_encode('/'), 'required|string'],
+            [
+                1, Config::TYPE_SINGLE_SELECT, '后台登录验证码', 'cdn_domain',
+                json_encode([
+                    'options' => [1 => '开启', 0 => '关闭'],
+                    'type' => 'input',
+                ]),
+                json_encode('1'), 'required|string',
+            ],
         ];
         $configs = $this->combineInserts(
             ['category_id', 'type', 'name', 'slug', 'options', 'value', 'validation_rules'],

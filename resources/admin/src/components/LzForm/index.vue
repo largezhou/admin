@@ -162,6 +162,10 @@ export default {
     let defaultSlot = this.$slots.default
     if (Array.isArray(defaultSlot)) {
       defaultSlot = defaultSlot.map((formItem) => {
+        if (formItem.isComment) {
+          return formItem
+        }
+
         const options = formItem.componentOptions
         const props = options.propsData
 
