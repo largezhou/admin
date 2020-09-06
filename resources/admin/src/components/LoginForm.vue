@@ -26,6 +26,7 @@
     <lz-form-item v-if="loginCaptcha" prop="captcha">
       <space>
         <a-input
+          ref="captchaInput"
           v-model="form.captcha"
           placeholder="验证码"
         >
@@ -83,12 +84,29 @@ export default {
         await this.$store.dispatch('login', this)
         this.$message.success(getMessage('loggedIn'))
       } catch (e) {
-        this.$refs.captcha.reload()
+        this.focusWhenError(e)
+        this.$refs.captcha?.reload()
         throw e
       }
     },
     async getCaptchaConfig(captcha) {
       this.form.key = captcha.key
+    },
+    focusWhenError(e) {
+      if (e?.response.status !== 422) {
+        return
+      }
+
+      const errors = e.response.data.errors
+
+      // 如果只是验证码错了，则聚焦验证码
+      // 否则聚焦用户名
+      if (Object.keys(errors).length === 1 && errors.captcha) {
+        this.$refs.captchaInput?.focus()
+        this.$refs.captchaInput?.$refs.input.select()
+      } else {
+        this.$refs.username.focus()
+      }
     },
   },
 }

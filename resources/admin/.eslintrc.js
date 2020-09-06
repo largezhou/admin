@@ -48,6 +48,7 @@ module.exports = {
     ],
     'vue/singleline-html-element-content-newline': 'off',
     'vue/require-default-prop': 'off',
+    'no-unused-expressions': 'off',
   },
   parserOptions: {
     parser: 'babel-eslint',
