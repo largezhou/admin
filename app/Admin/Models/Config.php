@@ -2,10 +2,10 @@
 
 namespace App\Admin\Models;
 
+use App\Admin\Casts\Json;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
-use function Composer\Autoload\includeFile;
 
 class Config extends Model
 {
@@ -33,8 +33,8 @@ class Config extends Model
 
     protected $casts = [
         'category_id' => 'integer',
-        'options' => 'array',
-        'value' => 'json',
+        'options' => Json::class,
+        'value' => Json::class,
     ];
 
     public function getTypeTextAttribute()
@@ -69,10 +69,10 @@ class Config extends Model
     }
 
     /**
-     * @param Config[]|\Illuminate\Database\Eloquent\Collection $configs
+     * @param Config[]|\Illuminate\Support\Collection $configs
      * @param array $inputs slug => value 键值对
      *
-     * @return Config[]|\Illuminate\Database\Eloquent\Collection
+     * @return Config[]|\Illuminate\Support\Collection
      */
     public static function updateValues($configs, $inputs)
     {
