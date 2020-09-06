@@ -63,10 +63,10 @@ export default {
       this.$router.push(this.$route.query.redirect || '/index')
     },
     fillAccount(account) {
-      this.$refs.form.form = {
+      this.$refs.form.form = Object.assign({}, this.$refs.form.form, {
         username: account,
         password: '000000',
-      }
+      })
     },
   },
 }
