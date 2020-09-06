@@ -11,9 +11,10 @@
         "php": "^7.2.5",
         "fideloper/proxy": "^4.2",
         "guzzlehttp/guzzle": "^6.3",
-        "laravel/framework": "^7.22.4",
+        "laravel/framework": "^7.25.0",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.0",
+        "mews/captcha": "^3.1",
         "overtrue/laravel-lang": "^3.0"
     },
     "require-dev": {

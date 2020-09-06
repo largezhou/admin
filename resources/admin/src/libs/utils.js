@@ -458,3 +458,28 @@ export function hasOwnProperty(obj, key) {
 export function requireAll(requireContext) {
   return requireContext.keys().map(requireContext)
 }
+
+/**
+ * 判断一些，类似 "1"、"0"、"true"、"false" 的布尔值
+ *
+ * @param val
+ * @return {boolean|*}
+ */
+export function stringBool(val) {
+  const map = {
+    0: false,
+    1: true,
+    false: false,
+    true: true,
+  }
+
+  if (typeof val === 'boolean') {
+    return val
+  }
+
+  if (Object.prototype.hasOwnProperty.call(map, val)) {
+    return map[val]
+  }
+
+  return Boolean(val)
+}

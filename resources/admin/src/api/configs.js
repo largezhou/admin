@@ -55,3 +55,18 @@ export function getConfigsValueByCategorySlug(categorySlug) {
 export function destroyConfig(id) {
   return Request.delete(`configs/${id}`)
 }
+
+/**
+ * @param {string} config 后台的验证码配置
+ * @return {Request}
+ */
+export function getCaptchaConfig(config = 'default') {
+  return Request.request({
+    url: `captcha/api/${config}`,
+    baseURL: '/',
+  })
+}
+
+export function cacheConfig() {
+  return Request.post('configs/cache')
+}

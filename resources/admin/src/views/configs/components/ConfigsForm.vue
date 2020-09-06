@@ -22,6 +22,9 @@
         :options="i.options"
       />
     </lz-form-item>
+    <template #footer-append>
+      <a-checkbox v-model="cache">更新缓存</a-checkbox>
+    </template>
   </lz-form>
 </template>
 
@@ -29,11 +32,14 @@
 import LzForm from '@c/LzForm'
 import LzFormItem from '@c/LzForm/LzFormItem'
 import {
+  cacheConfig,
   getConfigsByCategorySlug,
   updateConfigValues,
 } from '@/api/configs'
 import TypeInput from './TypeInput'
-import { mapConstants, SYSTEM_BASIC } from '@/libs/constants'
+import { CACHE_AFTER_UPDATE_CONFIG, mapConstants, SYSTEM_BASIC } from '@/libs/constants'
+import { stringBool } from '@/libs/utils'
+import { axios } from '@/axios/request'
 
 export default {
   name: 'ConfigsForm',
@@ -47,6 +53,7 @@ export default {
       form: {},
       errors: {},
       configs: [],
+      cache: stringBool(localStorage.getItem(CACHE_AFTER_UPDATE_CONFIG)),
     }
   },
   computed: {
@@ -75,6 +82,15 @@ export default {
           value: data,
         })
       }
+
+      if (this.cache) {
+        await cacheConfig()
+      }
+    },
+  },
+  watch: {
+    cache(newVal) {
+      localStorage.setItem(CACHE_AFTER_UPDATE_CONFIG, newVal)
     },
   },
 }

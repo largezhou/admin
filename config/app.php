@@ -178,6 +178,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         App\Admin\AdminServiceProvider::class,
+        Mews\Captcha\CaptchaServiceProvider::class,
 
     ],
 

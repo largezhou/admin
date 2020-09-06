@@ -59,8 +59,12 @@ export const SYSTEM_BASIC = {
   APP_LOGO_SLUG: 'app_logo',
   HOME_ROUTE_SLUG: 'home_route',
   CDN_DOMAIN_SLUG: 'cdn_domain',
+  ADMIN_LOGIN_CAPTCHA_SLUG: 'admin_login_captcha',
 
   DEFAULT_APP_NAME: '管理后台',
   DEFAULT_HOME_ROUTE: '1',
   DEFAULT_CDN_DOMAIN: '/',
+  DEFAULT_ADMIN_LOGIN_CAPTCHA: '1',
 }
+
+export const CACHE_AFTER_UPDATE_CONFIG = 'cache-after-update-config'

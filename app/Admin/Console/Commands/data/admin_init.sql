@@ -180,6 +180,7 @@ INSERT INTO `configs` VALUES (2, 1, 'file', '系统 LOGO', 'app_logo', NULL, '{\
 INSERT INTO `configs` VALUES (3, 1, 'file', '登录背景图', 'login_background', NULL, '{\"max\":1,\"ext\":\"jpg,png,jpeg\"}', NULL, 'nullable|string', '2020-04-06 23:15:45', '2020-04-06 23:15:45');
 INSERT INTO `configs` VALUES (4, 1, 'other', '首页路由', 'home_route', NULL, NULL, '\"1\"', 'required|exists:vue_routers,id', '2020-04-06 23:15:45', '2020-04-06 23:15:45');
 INSERT INTO `configs` VALUES (5, 1, 'input', 'CDN 域名', 'cdn_domain', NULL, NULL, '\"\\/\"', 'required|string', '2020-04-06 23:15:45', '2020-04-06 23:15:45');
+INSERT INTO `configs` VALUES (6, 1, 'single_select', '后台登录验证码', 'admin_login_captcha', NULL, '{\"options\":\"1=>\\u5f00\\u542f\\n0=>\\u5173\\u95ed\",\"type\":\"input\"}', '\"1\"', 'required|string', '2020-09-06 19:46:50', '2020-09-06 19:46:50');
 
 -- ----------------------------
 -- Table structure for vue_router_role

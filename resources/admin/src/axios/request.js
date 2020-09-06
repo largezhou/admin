@@ -148,21 +148,17 @@ export default class Request {
   }
 
   then(resolve, reject) {
-    try {
-      const configPos = (this.methodsWithData.indexOf(this.method) !== -1) ? 2 : 1
+    const configPos = (this.methodsWithData.indexOf(this.method) !== -1) ? 2 : 1
 
-      const args = this.args
-      args[configPos] = Object.assign(
-        {},
-        args[configPos],
-        this.defaultConfig,
-        this.config,
-      )
+    const args = this.args
+    args[configPos] = Object.assign(
+      {},
+      args[configPos],
+      this.defaultConfig,
+      this.config,
+    )
 
-      resolve(axios[this.method](...args))
-    } catch (e) {
-      reject(e)
-    }
+    axios[this.method](...args).then(resolve, reject)
   }
 
   /**
@@ -220,5 +216,13 @@ export default class Request {
    */
   static patch(url, data, config) {
     return new Request('patch', arguments)
+  }
+
+  /**
+   * @param config
+   * @return {Request}
+   */
+  static request(config) {
+    return new Request('request', arguments)
   }
 }

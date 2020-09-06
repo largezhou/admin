@@ -39,11 +39,18 @@ Route::prefix('admin-api')
 
             Route::resource('config-categories', 'ConfigCategoryController')->except(['show', 'create']);
 
+            // 清除并缓存配置
+            Route::post('configs/cache', 'ConfigController@cache')->name('configs.cache');
+            // 获取后台路由配置，会做权限筛选，用来生成前端菜单和路由
             Route::get('configs/vue-routers', 'ConfigController@vueRouters')->name('configs.vue-routers');
+            // 配置的增删改差
             Route::resource('configs', 'ConfigController')->except(['show']);
+            // 通过分类名获取配置列表，用在用户在后台配置时，生成配置表单
             Route::get('configs/{category_slug}', 'ConfigController@getByCategorySlug')->name('configs.by-category-slug');
+            // 通过分类名获取配置的键值对，用在前端获取配置键值对，比如系统首次请求，获取后台名称，是否需要验证码等配置
             Route::get('configs/{category_slug}/values', 'ConfigController@getValuesByCategorySlug')
                 ->name('configs.values.by-category-slug');
+            // 用户在后台更新配置
             Route::put('configs/{category_slug}/values', 'ConfigController@updateValues')
                 ->name('configs.update-values');
 

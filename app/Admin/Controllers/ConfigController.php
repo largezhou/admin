@@ -10,6 +10,7 @@ use App\Admin\Models\Config;
 use App\Admin\Models\ConfigCategory;
 use App\Admin\Models\VueRouter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 class ConfigController extends Controller
 {
@@ -88,7 +89,12 @@ class ConfigController extends Controller
 
     public function getValuesByCategorySlug(string $categorySlug)
     {
-        $slugValueMap = Config::getByCategorySlug($categorySlug, true);
-        return $this->ok($slugValueMap);
+        return $this->ok(config(Config::CONFIG_KEY.'.'.$categorySlug), []);
+    }
+
+    public function cache()
+    {
+        Artisan::call('admin:cache-config');
+        return $this->noContent();
     }
 }
