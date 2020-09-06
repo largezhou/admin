@@ -9,10 +9,12 @@ import {
 } from '@/libs/utils'
 import LoadingAction from '@c/LoadingAction'
 import LzFormItem from './LzFormItem'
+import Space from '@c/Space'
 
 export default {
   name: 'LzForm',
   components: {
+    Space,
     LoadingAction,
     LzFormItem,
   },
@@ -214,9 +216,11 @@ export default {
         }}
         class="actions"
       >
-        <loading-action ref="confirm" type="primary" action={this.onSubmit}>{this.submitText}</loading-action>
-        <a-button class="ml-1" vOn:click={this.onReset}>重置</a-button>
-        {this.$slots.footerAppend}
+        <space>
+          <loading-action ref="confirm" type="primary" action={this.onSubmit}>{this.submitText}</loading-action>
+          <a-button vOn:click={this.onReset}>重置</a-button>
+          {this.$slots['footer-append']}
+        </space>
         <div class="flex-spacer"/>
         {stayCheckbox}
       </lz-form-item>

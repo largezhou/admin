@@ -43,7 +43,7 @@ class LoginController extends Controller
             'password' => 'required|string',
         ];
 
-        if (Config::getConfigValue('admin_login_captcha', '1') === '1') {
+        if (config('admin.system_basic.admin_login_captcha', '1') === '1') {
             $rules['captcha'] = 'required|captcha_api:'.$request->input('key');
         }
 

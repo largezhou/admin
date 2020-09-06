@@ -3,6 +3,7 @@
     <space class="my-1">
       <search-form :fields="search"/>
       <a-button @click="createDialog = true">添加</a-button>
+      <cache-config/>
     </space>
 
     <a-table
@@ -91,11 +92,13 @@ import { removeWhile } from '@/libs/utils'
 import LzForm from '@c/LzForm/index'
 import LzFormItem from '@c/LzForm/LzFormItem'
 import QuickEdit from '@c/QuickEdit'
+import CacheConfig from '@v/configs/components/CacheConfig'
 
 export default {
   name: 'Index',
   scroll: true,
   components: {
+    CacheConfig,
     QuickEdit,
     LzFormItem,
     LzForm,

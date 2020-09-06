@@ -2,6 +2,7 @@
 
 namespace App\Admin;
 
+use App\Admin\Models\Config;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -25,6 +26,7 @@ class AdminServiceProvider extends ServiceProvider
     protected $commands = [
         Console\Commands\AdminInitCommand::class,
         Console\Commands\ResourceMakeCommand::class,
+        Console\Commands\CacheConfig::class,
     ];
 
     /**
@@ -44,6 +46,8 @@ class AdminServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Config::loadToConfig();
+
         foreach ($this->middlewareMap as $key => $middleware) {
             app('router')->aliasMiddleware($key, $middleware);
         }

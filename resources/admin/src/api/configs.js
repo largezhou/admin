@@ -62,7 +62,11 @@ export function destroyConfig(id) {
  */
 export function getCaptchaConfig(config = 'default') {
   return Request.request({
-    url: `/captcha/api/${config}`,
+    url: `captcha/api/${config}`,
     baseURL: '/',
   })
+}
+
+export function cacheConfig() {
+  return Request.post('configs/cache')
 }

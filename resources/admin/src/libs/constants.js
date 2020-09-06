@@ -66,3 +66,5 @@ export const SYSTEM_BASIC = {
   DEFAULT_CDN_DOMAIN: '/',
   DEFAULT_ADMIN_LOGIN_CAPTCHA: '1',
 }
+
+export const CACHE_AFTER_UPDATE_CONFIG = 'cache-after-update-config'

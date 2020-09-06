@@ -148,9 +148,9 @@ class AdminInitCommand extends Command
             [1, Config::TYPE_OTHER, '首页路由', 'home_route', null, json_encode('1'), 'required|exists:vue_routers,id'],
             [1, Config::TYPE_INPUT, 'CDN 域名', 'cdn_domain', null, json_encode('/'), 'required|string'],
             [
-                1, Config::TYPE_SINGLE_SELECT, '后台登录验证码', 'cdn_domain',
+                1, Config::TYPE_SINGLE_SELECT, '后台登录验证码', 'admin_login_captcha',
                 json_encode([
-                    'options' => [1 => '开启', 0 => '关闭'],
+                    'options' => "1=>开启\n0=>关闭",
                     'type' => 'input',
                 ]),
                 json_encode('1'), 'required|string',

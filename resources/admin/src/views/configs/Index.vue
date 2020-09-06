@@ -2,6 +2,7 @@
   <page-content>
     <space class="my-1">
       <search-form :fields="search"/>
+      <cache-config/>
     </space>
 
     <a-table
@@ -81,11 +82,13 @@ import { arrayWrap, removeWhile } from '@/libs/utils'
 import QuickEdit from '@c/QuickEdit'
 import FilePreview from '@c/FilePreview'
 import { mapConstants } from '@/libs/constants'
+import CacheConfig from '@v/configs/components/CacheConfig'
 
 export default {
   name: 'Index',
   scroll: true,
   components: {
+    CacheConfig,
     QuickEdit,
     LzPopconfirm,
     PageContent,
