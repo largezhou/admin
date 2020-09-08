@@ -1,10 +1,10 @@
 <template>
-  <a-breadcrumb>
+  <transition-group class="ant-breadcrumb" tag="div" name="breadcrumb">
     <a-breadcrumb-item v-for="i of breadCrumb" :key="i.id">
       <router-link v-if="i.path" :to="i.path">{{ i.title }}</router-link>
       <span v-else>{{ i.title }}</span>
     </a-breadcrumb-item>
-  </a-breadcrumb>
+  </transition-group>
 </template>
 
 <script>
@@ -30,8 +30,10 @@ export default {
           .map((i) => ({
             id: i.meta.id || randomChars(), // 某些固定配置的路由，没有 ID，比如个人资料编辑页
             title: i.meta.title,
+            path: i.path,
           }))
 
+      // 前面加上 “首页” 路由
       if (
         (m.length === 0) ||
         (m[m.length - 1].id !== this.homeRoute.meta.id)
@@ -41,6 +43,9 @@ export default {
           path: this.homeRoute.path,
         })
       }
+
+      // 去掉最后一个面包屑的链接
+      m[m.length - 1].path = null
 
       return m
     },

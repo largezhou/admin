@@ -45,72 +45,67 @@ export const buildRoutes = (routers, homeName, level = 0) => {
   let homeRoute = null
   const handle = (routers, homeName, level = 0) => {
     const routes = []
-    routers.forEach((i) => {
-      i.path = i.path || ''
+    routers.forEach((routerData) => {
+      routerData.path = routerData.path || ''
 
       // 以 '/' 开头，会匹配到其他存在的路由
       // 是完整的链接，则会直接打开链接
       // 所以不需要生成路由
       if (
-        (i.path.indexOf('/') === 0 && !hasChildren(i)) ||
-        isExternal(i.path)
+        (routerData.path.startsWith('/') && !hasChildren(routerData)) ||
+        isExternal(routerData.path)
       ) {
         return
       }
 
-      let r = {
-        path: i.path ? `/${i.path}` : '',
-        name: makeRouteName(i.id),
+      let path = routerData.path
+      if (path) {
+        path = path.startsWith('/') ? path : `/${routerData.path}`
+      }
+      let route = {
+        path,
+        name: makeRouteName(routerData.id),
+        component: pages[routerData.path] || Page404,
         meta: {
-          title: i.title,
-          cache: !!i.cache,
-          isMenu: !!i.menu,
-          id: i.id,
+          title: routerData.title,
+          cache: !!routerData.cache,
+          isMenu: !!routerData.menu,
+          id: routerData.id,
         },
       }
 
-      if (hasChildren(i)) {
-        r.children = handle(i.children || [], homeName, level + 1)
+      if (hasChildren(routerData)) {
+        route.children = handle(routerData.children || [], homeName, level + 1)
       }
 
       // 父路由
-      if (hasChildren(i)) {
-        // 如果子路由都是本站链接，则有可能有子路由配置，但是没有有效的子路由的情况
-        if (r.children.length) {
-          // 跳转到他第一个子路由
-          r.redirect = r.children[0].path
-        }
+      if (hasChildren(routerData)) {
         // 使用过渡组件
-        r.component = ParentView
-        // 如果没有 path，则随机 path 避免匹配根路径
-        r.path = r.path || ('/' + randomChars())
-      } else {
-        // 如果 path 是以 / 开头的，则表示是本站的链接，会自动匹配其他路由
-        if (i.path.indexOf('/') === 0) {
-          r.path = r.path.slice(1)
-          r.component = null
-        } else {
-          r.component = pages[i.path] || Page404
+        route.component = ParentView
+        // 如果子路由都是本站链接，则有可能有子路由配置，但是没有有效的子路由的情况
+        if (route.children.length) {
+          // 跳转到他第一个子路由
+          route.path = route.children[0].path
         }
       }
 
-      if (r.name === homeName) {
-        homeRoute = r
+      if (route.name === homeName) {
+        homeRoute = route
       }
 
       // 顶级的路由，用 Layout 组件包裹
       if (level === 0) {
-        r = {
+        route = {
           path: '/',
           component: Layout,
-          children: [r],
+          children: [route],
         }
         if (homeName) {
-          r.redirect = { name: homeName }
+          route.redirect = { name: homeName }
         }
-        routes.push(r)
+        routes.push(route)
       } else {
-        routes.push(r)
+        routes.push(route)
       }
     })
     return routes
@@ -473,11 +468,7 @@ export function stringBool(val) {
     true: true,
   }
 
-  if (typeof val === 'boolean') {
-    return val
-  }
-
-  if (Object.prototype.hasOwnProperty.call(map, val)) {
+  if (hasOwnProperty(map, val)) {
     return map[val]
   }
 
