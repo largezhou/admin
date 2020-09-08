@@ -30,7 +30,7 @@ export default {
   methods: {
     renderLabel() {
       const vnode = Form.Item.methods.renderLabel.bind(this)(...arguments)
-      if (this.tip) {
+      if (vnode && this.tip) {
         vnode.componentOptions.children.push((
           <a-tooltip placement="topLeft" class="ml-1">
             <span slot="title" domPropsInnerHTML={this.tip.replace(/\n/g, '<br>')}/>
