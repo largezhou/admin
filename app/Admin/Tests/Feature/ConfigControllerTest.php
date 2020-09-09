@@ -365,6 +365,7 @@ class ConfigControllerTest extends AdminTestCase
 
             'value' => 'uploads/test/logo.png',
         ]);
+        $this->reloadAdminConfig();
 
         $res = $this->get(route('admin.configs.values.by-category-slug', [
             'category_slug' => 'slug',

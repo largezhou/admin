@@ -41,10 +41,7 @@ class LoginControllerTest extends AdminTestCase
         ])->assertStatus(201);
 
         // 不需要验证码
-        factory(Config::class, 1)->create([
-            'slug' => 'admin_login_captcha',
-            'value' => json_encode('0'),
-        ]);
+        config(['admin.system_basic.admin_login_captcha' => '0']);
 
         $this->post($url, [
             'username' => 'admin',

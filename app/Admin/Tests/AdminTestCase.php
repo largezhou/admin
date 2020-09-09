@@ -4,6 +4,7 @@ namespace App\Admin\Tests;
 
 use App\Admin\Middleware\AdminPermission;
 use App\Admin\Models\AdminUser;
+use App\Admin\Models\Config;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -89,5 +90,11 @@ abstract class AdminTestCase extends TestCase
         } else {
             return DB::table($table)->orderByDesc('id')->value('id');
         }
+    }
+
+    protected function reloadAdminConfig()
+    {
+        Config::clearConfigCache();
+        Config::loadToConfig();
     }
 }
