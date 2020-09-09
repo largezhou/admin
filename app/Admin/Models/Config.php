@@ -2,10 +2,11 @@
 
 namespace App\Admin\Models;
 
+use App\Admin\Casts\Json;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
-use function Composer\Autoload\includeFile;
+use Throwable;
 
 class Config extends Model
 {
@@ -33,8 +34,8 @@ class Config extends Model
 
     protected $casts = [
         'category_id' => 'integer',
-        'options' => 'array',
-        'value' => 'json',
+        'options' => Json::class,
+        'value' => Json::class,
     ];
 
     public function getTypeTextAttribute()
@@ -69,10 +70,10 @@ class Config extends Model
     }
 
     /**
-     * @param Config[]|\Illuminate\Database\Eloquent\Collection $configs
+     * @param Config[]|\Illuminate\Support\Collection $configs
      * @param array $inputs slug => value 键值对
      *
-     * @return Config[]|\Illuminate\Database\Eloquent\Collection
+     * @return Config[]|\Illuminate\Support\Collection
      */
     public static function updateValues($configs, $inputs)
     {
@@ -92,18 +93,26 @@ class Config extends Model
 
     protected static function getConfigGroupsFromDB(): array
     {
-        return ConfigCategory::query()
-            ->select(['id', 'slug'])
-            ->with('configs:category_id,slug,value')
-            ->get()
-            ->map(function (ConfigCategory $category) {
-                return [
-                    'slug' => $category->slug,
-                    'configs' => $category->configs->pluck('value', 'slug')->toArray(),
-                ];
-            })
-            ->pluck('configs', 'slug')
-            ->toArray();
+        // 避免刚安装系统时，还没有数据库的情况
+        try {
+            $groups = ConfigCategory::query()
+                ->select(['id', 'slug'])
+                ->with('configs:category_id,slug,value')
+                ->get()
+                ->map(function (ConfigCategory $category) {
+                    return [
+                        'slug' => $category->slug,
+                        'configs' => $category->configs->pluck('value', 'slug')->toArray(),
+                    ];
+                })
+                ->pluck('configs', 'slug')
+                ->toArray();
+        } catch (Throwable $e) {
+            report($e);
+            $groups = [];
+        }
+
+        return $groups;
     }
 
     /**
