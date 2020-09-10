@@ -55,7 +55,6 @@ class AdminServiceProvider extends ServiceProvider
             app('router')->middlewareGroup($key, $middleware);
         }
 
-        Route::namespace('App\Admin\Controllers')
-            ->group(base_path('routes/admin.php'));
+        Route::group([], base_path('routes/admin.php'));
     }
 }

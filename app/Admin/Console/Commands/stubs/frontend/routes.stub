@@ -1,6 +1,6 @@
 // Laravel 路由
-Route::resource('dummy-resources', 'DummyResourceController');
+Route::resource('dummy-resources', C\DummyResourceController::class);
 // Vue 路由
-dummy-resources: () => import('@v/dummy-resources/Index'),
+'dummy-resources': () => import('@v/dummy-resources/Index'),
 'dummy-resources/create': () => import('@v/dummy-resources/Form'),
 'dummy-resources/:id(\\d+)/edit': () => import('@v/dummy-resources/Form'),
