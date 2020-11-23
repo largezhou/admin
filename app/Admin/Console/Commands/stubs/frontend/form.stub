@@ -1,5 +1,5 @@
 <template>
-  <page-content type="flex" justify="center">
+  <page-content center>
     <lz-form
       :get-data="getData"
       :submit="onSubmit"
