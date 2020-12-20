@@ -161,17 +161,23 @@ class ResourceMakeCommand extends GeneratorCommand
 
     protected function makeFrontend()
     {
-        $name = trim($this->argument('name'));
+        $name = str_replace('\\', '/', trim($this->argument('name')));
+        $ucNamePieces = array_map(function ($p) {
+            return Str::ucfirst(Str::camel($p));
+        }, explode('/', $name));
 
-        $dummyResource = Str::camel($name);
-        $ucDummyResource = Str::ucfirst($dummyResource);
-        $pluralDummyResource = Str::plural($dummyResource);
-        $ucPluralDummyResource = Str::ucfirst($pluralDummyResource);
-        $pluralKebabDummyResource = Str::plural(Str::kebab($name));
+        $noSlashName = implode('', $ucNamePieces);
+        $ucDummyResourceWithSlash = implode('\\', $ucNamePieces);
+
+        $PluralDummyResource = Str::plural($noSlashName);
+        $pluralKebabDummyResource = Str::plural($name);
+        $ucDummyResource = $noSlashName;
+        $pluralDummyResource = lcfirst($noSlashName);
 
         $replaces = [
-            'PluralDummyResource' => $ucPluralDummyResource,
+            'PluralDummyResource' => $PluralDummyResource,
             'dummy-resources' => $pluralKebabDummyResource,
+            'DummyResourceWithSlash' => $ucDummyResourceWithSlash,
             'DummyResource' => $ucDummyResource,
             'dummyResources' => $pluralDummyResource,
         ];
@@ -205,5 +211,15 @@ class ResourceMakeCommand extends GeneratorCommand
         }
 
         return 1;
+    }
+
+    protected function qualifyClass($name)
+    {
+        // 带有目录层级的，这里全部大写头字母
+        $name = implode('\\', array_map(function ($p) {
+            return Str::ucfirst($p);
+        }, explode('\\', $name)));
+
+        return parent::qualifyClass($name);
     }
 }

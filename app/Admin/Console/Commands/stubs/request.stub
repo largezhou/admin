@@ -2,6 +2,7 @@
 
 namespace DummyNamespace;
 
+use App\Admin\Requests\FormRequest;
 use Illuminate\Support\Arr;
 
 class DummyClass extends FormRequest

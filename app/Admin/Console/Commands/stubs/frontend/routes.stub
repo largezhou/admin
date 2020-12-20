@@ -1,5 +1,6 @@
 // Laravel 路由
-Route::resource('dummy-resources', C\DummyResourceController::class);
+Route::resource('dummy-resources', C\DummyResourceWithSlashController::class);
+
 // Vue 路由
 'dummy-resources': () => import('@v/dummy-resources/Index'),
 'dummy-resources/create': () => import('@v/dummy-resources/Form'),
