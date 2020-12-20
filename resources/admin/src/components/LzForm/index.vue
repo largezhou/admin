@@ -48,7 +48,8 @@ export default {
       type: [String, Function],
       default() {
         const p = this.$route.path.split('/')
-        return '/' + (p[p.length - 2] || '')
+        p.pop()
+        return p.join('/')
       },
     },
     updatedRedirect: {

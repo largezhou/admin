@@ -2,6 +2,8 @@
 
 namespace DummyNamespace;
 
+use App\Admin\Resources\JsonResource;
+
 class DummyClass extends JsonResource
 {
     public function toArray($request)

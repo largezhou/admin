@@ -2,6 +2,7 @@
 
 namespace DummyNamespace;
 
+use App\Admin\Controllers\Controller;
 use NamespacedDummyFilter;
 use NamespacedDummyModel;
 use NamespacedDummyRequest;
