@@ -24,7 +24,7 @@ export default {
     breadCrumb() {
       // 如果是匹配了菜单，则用匹配的菜单来显示面包屑导航
       const m = this.matchedMenusChain.length
-        ? this.matchedMenusChain
+        ? [...this.matchedMenusChain]
         : this.$route.matched
           .filter((i) => i.name) // 一些过渡中间件，没有 name，也没有 meta 属性
           .map((i) => ({
