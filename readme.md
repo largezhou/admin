@@ -42,7 +42,7 @@
 - `php artisan key:generate`
 - `php artisan migrate`
 - `php artisan admin:init`
-- `cd resources/admin && yarn && yarn prod`
+- `cd resources/admin && yarn && yarn build`
 
 ## nginx 配置
 
