@@ -11,7 +11,7 @@ if (config('app.env') == 'local') {
 Route::get('/admin/{path?}', [C\RedirectController::class, 'index'])->where('path', '.*')->name('redirect.index');
 Route::get('/admin-dev/{path?}', [C\RedirectController::class, 'indexDev'])->where('path', '.*')->name('redirect.index-dev');
 
-Route::post('/admin-api/demo/reset-system', 'DemoController@resetSystem');
+Route::post('/admin-api/demo/reset-system', [C\DemoController::class, 'resetSystem']);
 
 Route::prefix('admin-api')
     ->middleware('admin')
