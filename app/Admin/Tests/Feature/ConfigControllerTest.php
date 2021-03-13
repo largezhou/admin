@@ -47,7 +47,7 @@ class ConfigControllerTest extends AdminTestCase
      */
     protected function prepareVueRouters()
     {
-        $ids = factory(VueRouter::class, 5)->create()->pluck('id');
+        $ids = VueRouter::factory(5)->create()->pluck('id');
         VueRouter::find($ids[1])->children()->save(VueRouter::find($ids[2]));
         VueRouter::find($ids[3])->children()->save(VueRouter::find($ids[4]));
 
@@ -69,11 +69,11 @@ class ConfigControllerTest extends AdminTestCase
 
         // 绑定角色
         VueRouter::find($ids[0])->roles()->create(
-            factory(AdminRole::class)->create(['slug' => 'role-router-1'])->toArray()
+            AdminRole::factory()->create(['slug' => 'role-router-1'])->toArray()
         );
         // 子菜单绑定权限
         VueRouter::find($ids[2])->update([
-            'permission' => factory(AdminPermission::class)->create(['slug' => 'perm-router-3'])->slug,
+            'permission' => AdminPermission::factory()->create(['slug' => 'perm-router-3'])->slug,
         ]);
         $res = $this->getConfig('vue-routers');
         $res->assertStatus(200)
@@ -95,7 +95,7 @@ class ConfigControllerTest extends AdminTestCase
 
     public function testDestroy()
     {
-        factory(Config::class)->create();
+        Config::factory()->create();
 
         $res = $this->destroyResource(1);
         $res->assertStatus(204);
@@ -105,7 +105,7 @@ class ConfigControllerTest extends AdminTestCase
 
     public function testEdit()
     {
-        $id = factory(Config::class)->create()->id;
+        $id = Config::factory()->create()->id;
 
         $res = $this->editResource($id);
         $res->assertStatus(200);
@@ -113,8 +113,8 @@ class ConfigControllerTest extends AdminTestCase
 
     public function testUpdate()
     {
-        $categoryId = factory(ConfigCategory::class)->create()->id;
-        $configId = factory(Config::class)->create([
+        $categoryId = ConfigCategory::factory()->create()->id;
+        $configId = Config::factory()->create([
             'name' => 'name',
             'slug' => 'slug',
             'type' => Config::TYPE_INPUT,
@@ -157,9 +157,9 @@ class ConfigControllerTest extends AdminTestCase
 
     public function testIndex()
     {
-        factory(ConfigCategory::class, 2)->create()
+        ConfigCategory::factory(2)->create()
             ->each(function (ConfigCategory $cate) {
-                $cate->configs()->createMany(factory(Config::class, 2)->make()->toArray());
+                $cate->configs()->createMany(Config::factory(2)->make()->toArray());
             });
 
         $res = $this->getResources();
@@ -169,8 +169,8 @@ class ConfigControllerTest extends AdminTestCase
 
     public function testStoreValidation()
     {
-        factory(ConfigCategory::class)->create();
-        factory(Config::class)->create([
+        ConfigCategory::factory()->create();
+        Config::factory()->create([
             'name' => 'name',
             'slug' => 'slug',
         ]);
@@ -298,9 +298,9 @@ class ConfigControllerTest extends AdminTestCase
 
     public function testStore()
     {
-        $categoryId = factory(ConfigCategory::class)->create()->id;
+        $categoryId = ConfigCategory::factory()->create()->id;
 
-        $inputs = factory(Config::class)->make()->toArray();
+        $inputs = Config::factory()->make()->toArray();
         $inputs['category_id'] = $categoryId;
 
         $res = $this->storeResource($inputs);
@@ -314,8 +314,8 @@ class ConfigControllerTest extends AdminTestCase
 
     public function testGetByCategorySlug()
     {
-        $category = factory(ConfigCategory::class)->create();
-        factory(Config::class, 2)->create(['category_id' => $category->id]);
+        $category = ConfigCategory::factory()->create();
+        Config::factory(2)->create(['category_id' => $category->id]);
 
         $res = $this->get(route('admin.configs.by-category-slug', [
             'category_slug' => $category->slug,
@@ -332,8 +332,8 @@ class ConfigControllerTest extends AdminTestCase
 
     public function testUpdateValues()
     {
-        $category = factory(ConfigCategory::class)->create();
-        factory(Config::class)->create([
+        $category = ConfigCategory::factory()->create();
+        Config::factory()->create([
             'slug' => 'field',
             'validation_rules' => 'required|max:20',
             'category_id' => $category->id,
@@ -357,8 +357,8 @@ class ConfigControllerTest extends AdminTestCase
 
     public function testGetValuesByCategorySlug()
     {
-        $category = factory(ConfigCategory::class)->create(['slug' => 'slug']);
-        factory(Config::class)->create([
+        $category = ConfigCategory::factory()->create(['slug' => 'slug']);
+        Config::factory()->create([
             'slug' => 'field',
             'type' => Config::TYPE_FILE,
             'category_id' => $category->id,
@@ -378,7 +378,7 @@ class ConfigControllerTest extends AdminTestCase
 
     public function testCreate()
     {
-        factory(ConfigCategory::class)->create(['slug' => 'slug']);
+        ConfigCategory::factory()->create(['slug' => 'slug']);
 
         $res = $this->createResource();
         $res->assertStatus(200)

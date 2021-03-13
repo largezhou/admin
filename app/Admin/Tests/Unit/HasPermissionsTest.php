@@ -16,19 +16,19 @@ class HasPermissionsTest extends AdminTestCase
     public function testMethods()
     {
         /** @var AdminUser $user */
-        $user = factory(AdminUser::class)->create();
+        $user = AdminUser::factory()->create();
 
-        $role1 = factory(AdminRole::class)->create(['slug' => 'role_1']);
-        $perm1 = factory(AdminPermission::class)->create(['slug' => 'perm_1']);
+        $role1 = AdminRole::factory()->create(['slug' => 'role_1']);
+        $perm1 = AdminPermission::factory()->create(['slug' => 'perm_1']);
         $role1->permissions()->attach($perm1->id);
         $user->roles()->attach($role1->id);
 
-        $role2 = factory(AdminRole::class)->create(['slug' => 'role_2']);
+        $role2 = AdminRole::factory()->create(['slug' => 'role_2']);
 
-        $perm2 = factory(AdminPermission::class)->create(['slug' => 'perm_2']);
+        $perm2 = AdminPermission::factory()->create(['slug' => 'perm_2']);
         $user->permissions()->attach($perm2->id);
 
-        $perm3 = factory(AdminPermission::class)->create(['slug' => 'perm_3']);
+        $perm3 = AdminPermission::factory()->create(['slug' => 'perm_3']);
 
         // allPermissions
         $allPerms = $user->allPermissions()->pluck('slug')->all();
@@ -52,7 +52,7 @@ class HasPermissionsTest extends AdminTestCase
         $this->assertFalse($user->visible([$role2]));
 
         // administrator
-        $admin = factory(AdminRole::class)->create(['slug' => 'administrator']);
+        $admin = AdminRole::factory()->create(['slug' => 'administrator']);
         $user->roles()->attach($admin->id);
         $user->setRelation('roles', $user->roles()->get());
         $this->assertTrue($user->can('perm_3'));

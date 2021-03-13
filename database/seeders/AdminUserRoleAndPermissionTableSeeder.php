@@ -1,8 +1,11 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Admin\Models\AdminPermission;
 use App\Admin\Models\AdminRole;
 use App\Admin\Models\AdminUser;
+use Faker\Generator;
 use Illuminate\Database\Seeder;
 
 class AdminUserRoleAndPermissionTableSeeder extends Seeder
@@ -27,12 +30,13 @@ class AdminUserRoleAndPermissionTableSeeder extends Seeder
         }
 
         $perms = AdminPermission::pluck('id');
+
         if ($perms->isEmpty()) {
             $this->call(AdminPermissionsTableSeeder::class);
             $perms = AdminPermission::pluck('id');
         }
 
-        $faker = app(Faker\Generator::class);
+        $faker = app(Generator::class);
         $users->each(function (AdminUser $user) use ($faker, $roles) {
             $user->roles()
                 ->attach($faker->randomElements($roles, $faker->numberBetween(0, 5)));

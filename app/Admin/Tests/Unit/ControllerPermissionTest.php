@@ -58,10 +58,10 @@ class ControllerPermissionTest extends AdminTestCase
     protected function bindRole($role = [], $permissions = [])
     {
         $permissions = array_map(function ($attributes) {
-            return factory(AdminPermission::class)->create($attributes);
+            return AdminPermission::factory()->create($attributes);
         }, $permissions);
 
-        $role = factory(AdminRole::class)->create($role);
+        $role = AdminRole::factory()->create($role);
         $role->permissions()->attach(collect($permissions)->pluck('id'));
 
         $this->user->roles()->attach($role->id);
@@ -69,7 +69,7 @@ class ControllerPermissionTest extends AdminTestCase
 
     protected function bindPermission($attributes = [])
     {
-        $this->user->permissions()->create(factory(AdminPermission::class)->create($attributes)->toArray());
+        $this->user->permissions()->create(AdminPermission::factory()->create($attributes)->toArray());
     }
 
     public function testNoPermission()

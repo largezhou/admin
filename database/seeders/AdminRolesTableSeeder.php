@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Admin\Models\AdminRole;
 use Illuminate\Database\Seeder;
 
@@ -12,6 +14,6 @@ class AdminRolesTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(AdminRole::class, 20)->create();
+        AdminRole::factory(20)->create();
     }
 }

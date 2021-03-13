@@ -40,6 +40,7 @@ class AdminInitCommand extends Command
             $this->createVueRouters();
             $this->createUserRolePermission();
             $this->createDefaultConfigs();
+            $this->call(CacheConfig::class);
             $this->info('初始化完成，管理员为：admin，密码为：000000');
             return 1;
         } else {

@@ -42,7 +42,7 @@ class ResourceMakeCommandTest extends AdminTestCase
         foreach ($files as $file) {
             $this->assertFileExists($this->storage->path($file));
         }
-        $this->assertFileNotExists($this->storage->path('app/Admin/Tests/Feature/AdminBannerControllerTest.php'));
+        $this->assertFileDoesNotExist($this->storage->path('app/Admin/Tests/Feature/AdminBannerControllerTest.php'));
 
         $controllerContent = file_get_contents($this->storage->path('app/Admin/Controllers/AdminBannerController.php'));
 

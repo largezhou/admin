@@ -30,7 +30,7 @@
 
 ## DEMO
 
-[http://admin-demo.largezhou.cn/admin](http://admin-demo.largezhou.cn/admin)
+[http://admin-demo.largezhou.com/admin](http://admin-demo.largezhou.cn/admin)
 
 ## 安装
 
