@@ -34,9 +34,9 @@ class AdminUserControllerTest extends AdminTestCase
     {
         $user = $user ?? $this->user;
 
-        $permission1 = factory(AdminPermission::class)->create(['slug' => 'perm1'])->id;
-        $permission2 = factory(AdminPermission::class)->create(['slug' => 'perm2'])->id;
-        $role = factory(AdminRole::class)->create(['slug' => 'role']);
+        $permission1 = AdminPermission::factory()->create(['slug' => 'perm1'])->id;
+        $permission2 = AdminPermission::factory()->create(['slug' => 'perm2'])->id;
+        $role = AdminRole::factory()->create(['slug' => 'role']);
         $role->permissions()->attach($permission1);
         $user->roles()->attach($role->id);
         $user->permissions()->attach($permission2);
@@ -102,9 +102,9 @@ class AdminUserControllerTest extends AdminTestCase
 
     public function testIndex()
     {
-        factory(AdminUser::class, 20)->create();
-        $permissions = factory(AdminPermission::class, 20)->create();
-        $roles = factory(AdminRole::class, 10)->create();
+        AdminUser::factory(20)->create();
+        $permissions = AdminPermission::factory(20)->create();
+        $roles = AdminRole::factory(10)->create();
 
         $this->user->roles()->attach($roles->take(3)->pluck('id'));
         $this->user->permissions()->attach($permissions->take(3)->pluck('id'));
@@ -181,11 +181,11 @@ class AdminUserControllerTest extends AdminTestCase
 
     public function testStore()
     {
-        $roles = factory(AdminRole::class, 5)->create();
-        $permissions = factory(AdminPermission::class, 5)->create();
+        $roles = AdminRole::factory(5)->create();
+        $permissions = AdminPermission::factory(5)->create();
         $pw = '000000';
 
-        $userInputs = factory(AdminUser::class)->make([
+        $userInputs = AdminUser::factory()->make([
             'password' => $pw,
         ])->toArray();
 
@@ -216,8 +216,8 @@ class AdminUserControllerTest extends AdminTestCase
 
     public function testShow()
     {
-        $this->user->roles()->attach(factory(AdminRole::class, 3)->create()->pluck('id'));
-        $this->user->permissions()->attach(factory(AdminPermission::class, 3)->create()->pluck('id'));
+        $this->user->roles()->attach(AdminRole::factory(3)->create()->pluck('id'));
+        $this->user->permissions()->attach(AdminPermission::factory(3)->create()->pluck('id'));
 
         $res = $this->getResource($this->user->id);
         $res->assertStatus(200)
@@ -237,14 +237,14 @@ class AdminUserControllerTest extends AdminTestCase
         $this->user->save();
 
         $this->user->roles()
-            ->createMany(factory(AdminRole::class, 3)->make()->toArray());
+            ->createMany(AdminRole::factory(3)->make()->toArray());
         $oldRoleId = $this->getLastInsertId('admin_roles');
         $this->user->permissions()
-            ->createMany(factory(AdminPermission::class, 3)->make()->toArray());
+            ->createMany(AdminPermission::factory(3)->make()->toArray());
         $oldPermissionId = $this->getLastInsertId('admin_permissions');
 
-        $newRoles = factory(AdminRole::class, 3)->create()->pluck('id')->toArray();
-        $newPerms = factory(AdminPermission::class, 3)->create()->pluck('id')->toArray();
+        $newRoles = AdminRole::factory(3)->create()->pluck('id')->toArray();
+        $newPerms = AdminPermission::factory(3)->create()->pluck('id')->toArray();
 
         $userId = $this->user->id;
         $pw = 'new password';
@@ -307,8 +307,8 @@ class AdminUserControllerTest extends AdminTestCase
 
     public function testDestroy()
     {
-        $this->user->roles()->createMany(factory(AdminRole::class, 1)->make()->toArray());
-        $this->user->permissions()->createMany(factory(AdminPermission::class, 1)->make()->toArray());
+        $this->user->roles()->createMany(AdminRole::factory(1)->make()->toArray());
+        $this->user->permissions()->createMany(AdminPermission::factory(1)->make()->toArray());
 
         $userId = $this->user->id;
         $res = $this->destroyResource($userId);
@@ -321,8 +321,8 @@ class AdminUserControllerTest extends AdminTestCase
 
     public function testEdit()
     {
-        $this->user->roles()->attach($roleIds = factory(AdminRole::class, 3)->create()->pluck('id'));
-        $this->user->permissions()->attach(factory(AdminPermission::class, 3)->create()->pluck('id'));
+        $this->user->roles()->attach($roleIds = AdminRole::factory(3)->create()->pluck('id'));
+        $this->user->permissions()->attach(AdminPermission::factory(3)->create()->pluck('id'));
 
         $res = $this->editResource($this->user->id);
         $res->assertStatus(200)
@@ -331,8 +331,8 @@ class AdminUserControllerTest extends AdminTestCase
 
     public function testCreate()
     {
-        factory(AdminRole::class)->create(['name' => 'role']);
-        factory(AdminPermission::class)->create(['slug' => 'permission']);
+        AdminRole::factory()->create(['name' => 'role']);
+        AdminPermission::factory()->create(['slug' => 'permission']);
 
         $res = $this->createResource();
         $res->assertStatus(200)

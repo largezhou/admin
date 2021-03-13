@@ -35,8 +35,8 @@ class AdminPermissionControllerTest extends AdminTestCase
         $res->assertStatus(422)
             ->assertJsonValidationErrors(['name', 'slug', 'http_method', 'http_path']);
 
-        factory(AdminPermission::class)->create(['slug' => 'slug']);
-        factory(AdminPermission::class)->create(['name' => 'name']);
+        AdminPermission::factory()->create(['slug' => 'slug']);
+        AdminPermission::factory()->create(['name' => 'name']);
         // name slug unique
         // http_method.* in
         $res = $this->storeResource([
@@ -51,11 +51,11 @@ class AdminPermissionControllerTest extends AdminTestCase
     public function testStore()
     {
         /** @var AdminPermission $model */
-        $model = factory(AdminPermission::class)->make();
+        $model = AdminPermission::factory()->make();
         $this->assertStore($model);
 
         // http_method 和 http_path 为空
-        $model = factory(AdminPermission::class)->make([
+        $model = AdminPermission::factory()->make([
             'http_method' => null,
             'http_path' => null,
         ]);
@@ -74,7 +74,7 @@ class AdminPermissionControllerTest extends AdminTestCase
 
     public function testIndex()
     {
-        factory(AdminPermission::class, 20)->create();
+        AdminPermission::factory(20)->create();
 
         $res = $this->getResources();
         $res->assertStatus(200)
@@ -82,7 +82,7 @@ class AdminPermissionControllerTest extends AdminTestCase
             ->assertJsonFragment(['last_page' => 2]);
 
         // 筛选
-        $id = factory(AdminPermission::class)->create([
+        $id = AdminPermission::factory()->create([
             'http_path' => 'path/to/query',
             'slug' => 'slug query',
             'name' => 'name query',
@@ -118,7 +118,7 @@ class AdminPermissionControllerTest extends AdminTestCase
         $res = $this->editResource(99999);
         $res->assertStatus(404);
 
-        $id = factory(AdminPermission::class)->create()->id;
+        $id = AdminPermission::factory()->create()->id;
         $res = $this->editResource($id);
         $res->assertStatus(200)
             ->assertJsonFragment(['id' => $id]);
@@ -127,9 +127,9 @@ class AdminPermissionControllerTest extends AdminTestCase
     public function testUpdate()
     {
         // id = 1
-        $id1 = factory(AdminPermission::class)->create()->id;
+        $id1 = AdminPermission::factory()->create()->id;
         // id = 2
-        $id2 = factory(AdminPermission::class)->create([
+        $id2 = AdminPermission::factory()->create([
             'name' => 'name',
             'slug' => 'slug',
         ])->id;
@@ -154,7 +154,7 @@ class AdminPermissionControllerTest extends AdminTestCase
 
     public function testDestroy()
     {
-        $id = factory(AdminPermission::class)->create()->id;
+        $id = AdminPermission::factory()->create()->id;
 
         $res = $this->destroyResource($id);
         $res->assertStatus(204);

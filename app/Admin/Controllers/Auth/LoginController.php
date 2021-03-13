@@ -3,7 +3,6 @@
 namespace App\Admin\Controllers\Auth;
 
 use App\Admin\Controllers\Controller;
-use App\Admin\Models\Config;
 use App\Admin\Utils\Admin;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;

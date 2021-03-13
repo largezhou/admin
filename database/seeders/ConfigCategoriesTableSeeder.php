@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Admin\Models\ConfigCategory;
 use Illuminate\Database\Seeder;
 
@@ -12,6 +14,6 @@ class ConfigCategoriesTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(ConfigCategory::class, 10)->create();
+        ConfigCategory::factory(10)->create();
     }
 }

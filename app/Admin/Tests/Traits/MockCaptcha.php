@@ -2,20 +2,17 @@
 
 namespace App\Admin\Tests\Traits;
 
-use Mockery;
+use Illuminate\Foundation\Testing\Concerns\InteractsWithContainer;
+use Mockery\MockInterface;
 
 trait MockCaptcha
 {
-    public function mockCaptcha(bool $result, string $captcha, string $key)
+    use InteractsWithContainer;
+
+    public function mockCaptcha(bool $result)
     {
-        $this->app->bind('captcha', function ($app) use ($captcha, $key, $result) {
-            $mockCaptcha = Mockery::mock(\Mews\Captcha\Captcha::class);
-
-            $mockCaptcha->allows()
-                ->check_api($captcha, $key)
-                ->andReturn($result);
-
-            return $mockCaptcha;
+        $this->mock('captcha', function (MockInterface $mock) use ($result) {
+            $mock->shouldReceive('check_api')->andReturn($result);
         });
     }
 }

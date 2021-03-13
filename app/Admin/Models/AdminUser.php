@@ -4,6 +4,7 @@ namespace App\Admin\Models;
 
 use App\Admin\Traits\ModelHelpers;
 use App\Admin\Utils\HasPermissions;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -12,6 +13,7 @@ class AdminUser extends Authenticatable
     use HasPermissions;
     use Notifiable;
     use ModelHelpers;
+    use HasFactory;
 
     protected $fillable = ['username', 'password', 'name', 'avatar'];
 

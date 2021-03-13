@@ -1,5 +1,9 @@
 <?php
 
+namespace Database\Seeders;
+
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -11,6 +15,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        // \App\Models\User::factory(10)->create();
+
         $this->call(AdminUsersTableSeeder::class);
         $this->call(AdminPermissionsTableSeeder::class);
         $this->call(AdminRolesTableSeeder::class);
@@ -18,5 +24,7 @@ class DatabaseSeeder extends Seeder
         $this->call(AdminUserRoleAndPermissionTableSeeder::class);
         $this->call(SystemMediaCategoriesTableSeeder::class);
         $this->call(SystemMediaTableSeeder::class);
+        $this->call(ConfigCategoriesTableSeeder::class);
+        $this->call(ConfigsTableSeeder::class);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Admin\Tests\Feature;
 use App\Admin\Models\AdminPermission;
 use App\Admin\Models\AdminRole;
 use App\Admin\Models\VueRouter;
+use Database\Seeders\VueRoutersTableSeeder;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Admin\Tests\AdminTestCase;
@@ -63,7 +64,7 @@ class VueRouterControllerTest extends AdminTestCase
         ]);
         $res->assertJsonValidationErrors(['order']);
 
-        factory(VueRouter::class)->create();
+        VueRouter::factory()->create();
         // parent_id exists
         $res = $this->storeResource([
             'parent_id' => 999,
@@ -73,10 +74,10 @@ class VueRouterControllerTest extends AdminTestCase
 
     public function testStore()
     {
-        $routerId1 = factory(VueRouter::class)->create()->id;
-        $permissionId = factory(AdminPermission::class)->create(['slug' => 'slug'])->id;
-        $roleId = factory(AdminRole::class)->create()->id;
-        $inputs = factory(VueRouter::class)->make([
+        $routerId1 = VueRouter::factory()->create()->id;
+        $permissionId = AdminPermission::factory()->create(['slug' => 'slug'])->id;
+        $roleId = AdminRole::factory()->create()->id;
+        $inputs = VueRouter::factory()->make([
             'parent_id' => $routerId1,
             'path' => 'no/start/slash',
             'permission' => 'slug',
@@ -111,8 +112,8 @@ class VueRouterControllerTest extends AdminTestCase
 
     public function testUpdate()
     {
-        $routerIds = factory(VueRouter::class, 2)->create()->pluck('id');
-        $roleIds = factory(AdminRole::class, 2)->create()->pluck('id');
+        $routerIds = VueRouter::factory(2)->create()->pluck('id');
+        $roleIds = AdminRole::factory(2)->create()->pluck('id');
         VueRouter::find($routerIds[1])->roles()->attach($roleIds[0]);
 
         $inputs = [
@@ -145,7 +146,7 @@ class VueRouterControllerTest extends AdminTestCase
 
     public function testEdit()
     {
-        $router = factory(VueRouter::class)->create()->toArray();
+        $router = VueRouter::factory()->create()->toArray();
         $res = $this->editResource($router['id']);
         $res->assertStatus(200)
             ->assertJsonFragment($router);
@@ -153,7 +154,7 @@ class VueRouterControllerTest extends AdminTestCase
 
     public function testIndex()
     {
-        app(\VueRoutersTableSeeder::class)->run();
+        app(VueRoutersTableSeeder::class)->run();
         // 手动查出 3 级嵌套菜单
         $vueRouter = VueRouter::with([
             'children',
@@ -181,7 +182,7 @@ class VueRouterControllerTest extends AdminTestCase
     {
         $this->destroyResource(999)->assertStatus(404);
 
-        app(\VueRoutersTableSeeder::class)->run();
+        app(VueRoutersTableSeeder::class)->run();
         $vueRouter = VueRouter::with(['children', 'children.children'])->find(2);
 
         $this->destroyResource($vueRouter->id)->assertStatus(204);
@@ -195,7 +196,7 @@ class VueRouterControllerTest extends AdminTestCase
 
     public function testBatchUpdateOrder()
     {
-        $ids = factory(VueRouter::class, 3)->create()->pluck('id');
+        $ids = VueRouter::factory(3)->create()->pluck('id');
 
         $res = $this->put($this->route('vue-routers.batch.update'), [
             '_order' => [
@@ -219,9 +220,9 @@ class VueRouterControllerTest extends AdminTestCase
 
     public function testCreate()
     {
-        factory(VueRouter::class)->create(['title' => 'title'])->id;
-        factory(AdminPermission::class)->create(['slug' => 'permission'])->id;
-        factory(AdminRole::class)->create(['name' => 'role'])->id;
+        VueRouter::factory()->create(['title' => 'title'])->id;
+        AdminPermission::factory()->create(['slug' => 'permission'])->id;
+        AdminRole::factory()->create(['name' => 'role'])->id;
 
         $res = $this->createResource();
         $res->assertStatus(200)
@@ -246,11 +247,11 @@ class VueRouterControllerTest extends AdminTestCase
         $res = $this->post($url, ['file' => UploadedFile::fake()->create('tree.json', 10)]);
         $res->assertStatus(400);
 
-        $item1 = factory(VueRouter::class)->make(['id' => 1]);
-        $item2 = factory(VueRouter::class)->make([
+        $item1 = VueRouter::factory()->make(['id' => 1]);
+        $item2 = VueRouter::factory()->make([
             'id' => 2,
             'children' => [
-                factory(VueRouter::class)->make(['id' => 3, 'parent_id' => 2]),
+                VueRouter::factory()->make(['id' => 3, 'parent_id' => 2]),
             ],
         ]);
 
