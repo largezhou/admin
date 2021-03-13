@@ -2,12 +2,6 @@
 
 namespace App\Admin\Console\Commands;
 
-use App\Admin\Models\AdminPermission;
-use App\Admin\Models\AdminRole;
-use App\Admin\Models\AdminUser;
-use App\Admin\Models\Config;
-use App\Admin\Models\ConfigCategory;
-use App\Admin\Models\VueRouter;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -41,6 +35,7 @@ class AdminInitCommand extends Command
     {
         if ($this->option('force') || $this->confirm(static::$initConfirmTip)) {
             $this->initDemo();
+            $this->call(CacheConfig::class);
             $this->info('初始化完成，管理员为：admin，密码为：000000');
             return 1;
         } else {

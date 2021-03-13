@@ -117,13 +117,13 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
 
     public function testUpdate()
     {
-        $id1 = factory(SystemMediaCategory::class)->create(['name' => '分类'])->id;
-        $id2 = factory(SystemMediaCategory::class)
+        $id1 = SystemMediaCategory::factory()->create(['name' => '分类'])->id;
+        $id2 = SystemMediaCategory::factory()
             ->create([
                 'name' => '分类', // 不同父级分类下的同名分类
                 'parent_id' => $id1,
             ])->id;
-        $id3 = factory(SystemMediaCategory::class)
+        $id3 = SystemMediaCategory::factory()
             ->create([
                 'name' => '又一个分类',
                 'parent_id' => $id1,
@@ -160,7 +160,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
 
     public function testEdit()
     {
-        $id = factory(SystemMediaCategory::class)
+        $id = SystemMediaCategory::factory()
             ->create([
                 'name' => 'level 0-1',
                 'folder' => 'user/avatars',
@@ -179,7 +179,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
     public function testDestroy()
     {
         $this->createNestedData();
-        factory(SystemMedia::class)->create(['category_id' => 3]);
+        SystemMedia::factory()->create(['category_id' => 3]);
 
         $res = $this->destroyResource(1);
         $res->assertStatus(204);
@@ -260,7 +260,7 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
     public function testStoreSystemMedia()
     {
         $folder = 'users/avatars';
-        $categoryId = factory(SystemMediaCategory::class)
+        $categoryId = SystemMediaCategory::factory()
             ->create(['folder' => $folder])
             ->id;
 
@@ -302,15 +302,15 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
 
     public function testSystemMediaIndex()
     {
-        factory(SystemMediaCategory::class)
+        SystemMediaCategory::factory()
             ->create()
             ->media()
             ->createMany([
-                factory(SystemMedia::class)->make([
+                SystemMedia::factory()->make([
                     'filename' => 'avatar.jpg',
                     'ext' => 'jpg',
                 ])->toArray(),
-                factory(SystemMedia::class)->make([
+                SystemMedia::factory()->make([
                     'filename' => 'funny.gif',
                     'ext' => 'gif',
                 ])->toArray(),
@@ -318,10 +318,10 @@ class SystemMediaCategoryControllerTest extends AdminTestCase
         $categoryId1 = $this->getLastInsertId('system_media_categories');
 
         // 其他分类的图片
-        factory(SystemMediaCategory::class)
+        SystemMediaCategory::factory()
             ->create()
             ->media()
-            ->createMany(factory(SystemMedia::class, 2)->make(['ext' => 'jpg'])->toArray());
+            ->createMany(SystemMedia::factory(2)->make(['ext' => 'jpg'])->toArray());
 
         // ext in 筛选
         $res = $this->systemMediaIndex([

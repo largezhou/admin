@@ -26,7 +26,7 @@ class SystemMediaControllerTest extends AdminTestCase
 
     public function testDestroy()
     {
-        $categoryId = factory(SystemMediaCategory::class)
+        $categoryId = SystemMediaCategory::factory()
             ->create([
                 'folder' => 'tests',
             ])
@@ -45,7 +45,7 @@ class SystemMediaControllerTest extends AdminTestCase
         $path = Controller::UPLOAD_FOLDER_PREFIX.'/tests/'.md5_file($file).'.jpg';
         $this->assertTrue($this->storage->exists($path));
         // 复制一条记录
-        $mediaId2 = factory(SystemMedia::class)
+        $mediaId2 = SystemMedia::factory()
             ->create(tap(SystemMedia::first())->makeHidden(['id'])->toArray())
             ->id;
 
@@ -69,7 +69,7 @@ class SystemMediaControllerTest extends AdminTestCase
 
     public function testEdit()
     {
-        $media = factory(SystemMedia::class)->create();
+        $media = SystemMedia::factory()->create();
         $id = $media->id;
 
         $res = $this->editResource($id);
@@ -82,8 +82,8 @@ class SystemMediaControllerTest extends AdminTestCase
 
     public function testUpdate()
     {
-        $categoryId = factory(SystemMediaCategory::class)->create()->id;
-        $mediaId = factory(SystemMedia::class)->create()->id;
+        $categoryId = SystemMediaCategory::factory()->create()->id;
+        $mediaId = SystemMedia::factory()->create()->id;
 
         // category_id exists
         $res = $this->updateResource($mediaId, [
@@ -104,8 +104,8 @@ class SystemMediaControllerTest extends AdminTestCase
 
     public function testBatchUpdate()
     {
-        $categoryId = factory(SystemMediaCategory::class)->create()->id;
-        $mediaIds = factory(SystemMedia::class, 2)->create()->pluck('id')->toArray();
+        $categoryId = SystemMediaCategory::factory()->create()->id;
+        $mediaIds = SystemMedia::factory(2)->create()->pluck('id')->toArray();
 
         $res = $this->put(route('admin.system-media.batch.update'), [
             'category_id' => $categoryId,
@@ -125,7 +125,7 @@ class SystemMediaControllerTest extends AdminTestCase
 
     public function testBatchDestroy()
     {
-        factory(SystemMedia::class, 2)->create();
+        SystemMedia::factory(2)->create();
 
         $res = $this->delete(route('admin.system-media.batch.destroy'), [
             'id' => [1, 2],

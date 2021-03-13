@@ -33,7 +33,7 @@ abstract class AdminTestCase extends TestCase
 
     protected function login(AdminUser $user = null)
     {
-        $user = $user ?: factory(AdminUser::class)->create(['username' => 'admin']);
+        $user = $user ?: AdminUser::factory()->create(['username' => 'admin']);
         $this->actingAs($user, 'admin');
 
         $this->user = $user;

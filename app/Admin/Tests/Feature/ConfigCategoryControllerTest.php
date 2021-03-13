@@ -44,7 +44,7 @@ class ConfigCategoryControllerTest extends AdminTestCase
         $res->assertStatus(422)
             ->assertJsonValidationErrors(['name']);
 
-        factory(ConfigCategory::class)->create(['name' => 'name']);
+        ConfigCategory::factory()->create(['name' => 'name']);
         // name unique
         $res = $this->storeResource([
             'name' => 'name',
@@ -77,7 +77,7 @@ class ConfigCategoryControllerTest extends AdminTestCase
 
     public function testUpdate()
     {
-        $id = factory(ConfigCategory::class)->create(['name' => 'name'])->id;
+        $id = ConfigCategory::factory()->create(['name' => 'name'])->id;
         $res = $this->updateResource($id, [
             'name' => 'name',
         ]);
@@ -97,9 +97,9 @@ class ConfigCategoryControllerTest extends AdminTestCase
 
     public function testDestroy()
     {
-        $categoryId1 = factory(ConfigCategory::class)->create()->id;
-        $categoryId2 = factory(ConfigCategory::class)->create()->id;
-        $configId = factory(Config::class)->make(['category_id' => $categoryId2])->id;
+        $categoryId1 = ConfigCategory::factory()->create()->id;
+        $categoryId2 = ConfigCategory::factory()->create()->id;
+        $configId = Config::factory()->make(['category_id' => $categoryId2])->id;
 
         // 关联删除
         $res = $this->destroyResource($categoryId2);
@@ -120,7 +120,7 @@ class ConfigCategoryControllerTest extends AdminTestCase
 
     public function testIndex()
     {
-        ConfigCategory::insert(factory(ConfigCategory::class, 20)->make()->toArray());
+        ConfigCategory::insert(ConfigCategory::factory(20)->make()->toArray());
         ConfigCategory::first()->update(['name' => 'test query name']);
         ConfigCategory::offset(1)->first()->update(['name' => 'test query name 2']);
 

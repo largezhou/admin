@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Admin\Models\AdminPermission;
 use Illuminate\Database\Seeder;
 
@@ -12,6 +14,6 @@ class AdminPermissionsTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(AdminPermission::class, 20)->create();
+        AdminPermission::factory(20)->create();
     }
 }

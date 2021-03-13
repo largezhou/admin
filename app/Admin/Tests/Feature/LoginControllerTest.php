@@ -16,7 +16,7 @@ class LoginControllerTest extends AdminTestCase
 
     public function testLogin()
     {
-        factory(AdminUser::class, 1)->create([
+        AdminUser::factory(1)->create([
             'username' => 'admin',
             'password' => bcrypt('000000'),
         ]);
@@ -24,7 +24,7 @@ class LoginControllerTest extends AdminTestCase
         $url = route('admin.login');
 
         // 需要验证码
-        $this->mockCaptcha(false, 'wrong', 'some key');
+        $this->mockCaptcha(false);
         $this->post($url, [
             'username' => 'admin',
             'password' => '000000',
@@ -32,7 +32,7 @@ class LoginControllerTest extends AdminTestCase
             'key' => 'some key',
         ])->assertStatus(422);
 
-        $this->mockCaptcha(true, '1234', 'some key');
+        $this->mockCaptcha(true);
         $this->post($url, [
             'username' => 'admin',
             'password' => '000000',

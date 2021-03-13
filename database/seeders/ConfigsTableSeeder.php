@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Admin\Models\ConfigCategory;
 use App\Admin\Models\Config;
 use Illuminate\Database\Seeder;
@@ -20,7 +22,7 @@ class ConfigsTableSeeder extends Seeder
         }
 
         $cates->each(function (ConfigCategory $cate) {
-            $cate->configs()->createMany(factory(Config::class, 2)->make()->toArray());
+            $cate->configs()->createMany(Config::factory(2)->make()->toArray());
         });
     }
 }

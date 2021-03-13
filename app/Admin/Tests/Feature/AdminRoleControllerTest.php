@@ -4,6 +4,7 @@ namespace App\Admin\Tests\Feature;
 
 use App\Admin\Models\AdminPermission;
 use App\Admin\Models\AdminRole;
+use Database\Seeders\AdminRolePermissionTableSeeder;
 use Illuminate\Support\Arr;
 use App\Admin\Tests\AdminTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -34,11 +35,11 @@ class AdminRoleControllerTest extends AdminTestCase
         ]);
         $res->assertJsonValidationErrors(['name', 'slug', 'permissions']);
 
-        factory(AdminRole::class)->create([
+        AdminRole::factory()->create([
             'name' => 'name',
             'slug' => 'slug',
         ]);
-        factory(AdminPermission::class)->create();
+        AdminPermission::factory()->create();
         // name, slug unique
         // permissions.* exists
         $res = $this->storeResource([
@@ -63,7 +64,7 @@ class AdminRoleControllerTest extends AdminTestCase
             'name' => 'name1',
             'slug' => 'slug2',
         ];
-        $permissionId = factory(AdminPermission::class)->create()->id;
+        $permissionId = AdminPermission::factory()->create()->id;
         $res = $this->storeResource($inputs + [
                 'permissions' => [$permissionId],
             ]);
@@ -82,8 +83,8 @@ class AdminRoleControllerTest extends AdminTestCase
      */
     protected function createRole()
     {
-        $role = factory(AdminRole::class)->create();
-        $permissionId = factory(AdminPermission::class)->create()->id;
+        $role = AdminRole::factory()->create();
+        $permissionId = AdminPermission::factory()->create()->id;
 
         $role->permissions()->attach($permissionId);
 
@@ -155,9 +156,9 @@ class AdminRoleControllerTest extends AdminTestCase
 
     public function testIndex()
     {
-        factory(AdminRole::class, 20);
-        factory(AdminPermission::class, 5);
-        app(\AdminRolePermissionTableSeeder::class)->run();
+        AdminRole::factory(20)->create();
+        AdminPermission::factory(5)->create();
+        app(AdminRolePermissionTableSeeder::class)->run();
         $res = $this->getResources();
         $res->assertStatus(200)
             ->assertJsonCount(15, 'data')
@@ -165,13 +166,13 @@ class AdminRoleControllerTest extends AdminTestCase
             ->assertJsonCount(AdminRole::orderByDesc('id')->first()->permissions->count(), 'data.0.permissions');
 
         // 测试筛选
-        factory(AdminRole::class)
+        AdminRole::factory()
             ->create([
                 'name' => 'role name query',
                 'slug' => 'role slug query',
             ])
             ->permissions()
-            ->create(factory(AdminPermission::class)->create(['name' => 'perm name query'])->toArray());
+            ->create(AdminPermission::factory()->create(['name' => 'perm name query'])->toArray());
         $res = $this->getResources([
             'id' => $this->getLastInsertId('admin_roles'),
             'name' => 'role name',
@@ -188,7 +189,7 @@ class AdminRoleControllerTest extends AdminTestCase
 
     public function testCreate()
     {
-        factory(AdminPermission::class)->create(['name' => 'name']);
+        AdminPermission::factory()->create(['name' => 'name']);
 
         $res = $this->createResource();
         $res->assertStatus(200)

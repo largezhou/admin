@@ -42,13 +42,17 @@ class ResourceMakeCommandTest extends AdminTestCase
         foreach ($files as $file) {
             $this->assertFileExists($this->storage->path($file));
         }
-        $this->assertFileNotExists($this->storage->path('app/Admin/Tests/Feature/AdminBannerControllerTest.php'));
+        $this->assertFileDoesNotExist($this->storage->path('app/Admin/Tests/Feature/AdminBannerControllerTest.php'));
 
         $controllerContent = file_get_contents($this->storage->path('app/Admin/Controllers/AdminBannerController.php'));
 
         $this->assertEquals(substr_count($controllerContent, 'AdminBannerResource'), 5);
         $this->assertEquals(substr_count($controllerContent, 'AdminBannerRequest'), 3);
         $this->assertEquals(substr_count($controllerContent, 'AdminBannerFilter'), 2);
+
+        $feApiContent = file_get_contents($this->storage->path('resources/admin/src/api/admin-banners.js'));
+        $this->assertEquals(substr_count($feApiContent, 'getAdminBanners'), 1);
+        $this->assertEquals(substr_count($feApiContent, 'AdminBanner'), 6);
     }
 
     public function testSpecifyModelAndWithTest()
@@ -92,5 +96,30 @@ class ResourceMakeCommandTest extends AdminTestCase
                 '--force' => true,
             ])
             ->assertExitCode(1);
+    }
+
+    public function testMakeWithFolder()
+    {
+        $this
+            ->artisan('admin:make-resource', [
+                'name' => 'api/admin/admin-banner',
+                '--test' => true,
+            ])
+            ->assertExitCode(1);
+
+        $files = [
+            'app/Admin/Models/Api/Admin/AdminBanner.php',
+            'app/Admin/Filters/Api/Admin/AdminBannerFilter.php',
+            'app/Admin/Requests/Api/Admin/AdminBannerRequest.php',
+            'app/Admin/Resources/Api/Admin/AdminBannerResource.php',
+            'app/Admin/Controllers/Api/Admin/AdminBannerController.php',
+            'resources/admin/src/api/api/admin/admin-banners.js',
+            'resources/admin/src/views/api/admin/admin-banners/Index.vue',
+            'resources/admin/src/views/api/admin/admin-banners/Form.vue',
+        ];
+
+        foreach ($files as $file) {
+            $this->assertFileExists($this->storage->path($file));
+        }
     }
 }
