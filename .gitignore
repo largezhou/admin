@@ -18,3 +18,5 @@ _ide_helper_models.php
 /public/admin-dev
 /public/uploads
 /public/vendor/telescope
+composer.lock
+yarn.lock
