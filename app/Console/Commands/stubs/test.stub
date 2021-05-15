@@ -1,0 +1,29 @@
+<?php
+
+namespace DummyNamespace;
+
+use NamespacedDummyModel;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\Admin\AdminTestCase;
+use Tests\Admin\Traits\RequestActions;
+
+class DummyClass extends AdminTestCase
+{
+    use RefreshDatabase;
+    use RequestActions;
+    use WithFaker;
+
+    protected $resourceName = 'dummy-resource-name';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->login();
+    }
+
+    public function testOk()
+    {
+        $this->assertTrue(true);
+    }
+}

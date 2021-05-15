@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Admin\Models\ConfigCategory;
-use App\Admin\Models\Config;
+use App\Models\ConfigCategory;
+use App\Models\Config;
 use Illuminate\Database\Seeder;
 
 class ConfigsTableSeeder extends Seeder

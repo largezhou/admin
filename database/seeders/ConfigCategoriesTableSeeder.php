@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Admin\Models\ConfigCategory;
+use App\Models\ConfigCategory;
 use Illuminate\Database\Seeder;
 
 class ConfigCategoriesTableSeeder extends Seeder

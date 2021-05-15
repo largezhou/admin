@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Admin\Models\SystemMedia;
-use App\Admin\Models\SystemMediaCategory;
+use App\Models\SystemMedia;
+use App\Models\SystemMediaCategory;
 use Faker\Generator;
 use Illuminate\Database\Seeder;
 
