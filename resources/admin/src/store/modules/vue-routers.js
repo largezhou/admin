@@ -36,8 +36,8 @@ export default {
       const { SLUG, HOME_ROUTE_SLUG, DEFAULT_HOME_ROUTE } = SYSTEM_BASIC
       const homeRouteId = getters.getConfig(`${SLUG}.${HOME_ROUTE_SLUG}`, DEFAULT_HOME_ROUTE)
       const { routes, homeRoute } = buildRoutes(data, makeRouteName(homeRouteId))
-      router.addRoutes(routes)
-      router.addRoutes(appendRoutes)
+      routes.forEach((r) => router.addRoute(r))
+      appendRoutes.forEach((r) => router.addRoute(r))
       commit('SET_HOME_ROUTE', homeRoute)
     },
   },
