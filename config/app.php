@@ -177,7 +177,7 @@ return [
         // App\Providers\TelescopeServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-        App\Admin\AdminServiceProvider::class,
+        App\Providers\AdminServiceProvider::class,
         Mews\Captcha\CaptchaServiceProvider::class,
 
     ],

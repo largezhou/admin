@@ -114,7 +114,8 @@ router.beforeEach(async (to, from, next) => {
         // 如果之前没有路由配置，则获取完路由配置后，要重新定位到要去的路由
         // 因为路由配置已经变了
         if (!vueRoutersLoaded) {
-          router.replace(to)
+          next(to)
+          // router.replace(to)
         } else {
           next()
         }

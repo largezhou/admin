@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Admin\Models\SystemMediaCategory;
+use App\Models\SystemMediaCategory;
 use Illuminate\Database\Seeder;
 
 class SystemMediaCategoriesTableSeeder extends Seeder

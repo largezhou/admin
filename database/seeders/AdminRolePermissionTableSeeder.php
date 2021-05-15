@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Admin\Models\AdminPermission;
-use App\Admin\Models\AdminRole;
+use App\Models\AdminPermission;
+use App\Models\AdminRole;
 use Faker\Generator;
 use Illuminate\Database\Seeder;
 

@@ -1,6 +1,6 @@
 <?php
 
-use App\Admin\Controllers as C;
+use App\Http\Controllers\Admin as C;
 use Illuminate\Support\Facades\Route;
 
 if (config('app.env') == 'local') {
