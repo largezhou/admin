@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import routes from './routes'
 import _get from 'lodash/get'
 import _last from 'lodash/last'
+import _trim from 'lodash/trim'
 import store from '@/store'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
@@ -35,12 +36,16 @@ const router = new VueRouter({
   },
 })
 
-const loginRoute = to => ({
-  name: 'login',
-  query: {
-    redirect: to.path,
-  },
-})
+const loginRoute = to => {
+  const query = {}
+  if (_trim(to.path, '/')) {
+    query.redirect = to.path
+  }
+  return {
+    name: 'login',
+    query,
+  }
+}
 
 /**
  * 在组件被解析前，修改组件的名字为：组件名 + 路由数据库 id，
@@ -113,12 +118,7 @@ router.beforeEach(async (to, from, next) => {
 
         // 如果之前没有路由配置，则获取完路由配置后，要重新定位到要去的路由
         // 因为路由配置已经变了
-        if (!vueRoutersLoaded) {
-          next(to)
-          // router.replace(to)
-        } else {
-          next()
-        }
+        !vueRoutersLoaded ? next(to) : next()
       } catch ({ response: res }) {
         if (res && res.status === 401) {
           removeLoggedIn()

@@ -14,8 +14,29 @@ export default {
       },
     },
   },
+  methods: {
+    isNodeNotVisible(vnode) {
+      if (vnode.isComment) {
+        return true
+      }
+
+      const directives = vnode.data?.directives || []
+      let vShow
+      let vIf
+      directives.forEach((d) => {
+        if (d.name === 'if') {
+          vIf = d.value
+        }
+        if (d.name === 'show') {
+          vShow = d.value
+        }
+      })
+
+      return (vShow && !vShow.value) || (vIf && !vIf.value)
+    },
+  },
   render(h) {
-    const slots = this.$slots.default || []
+    const slots = (this.$slots.default || []).filter((item) => !this.isNodeNotVisible(item))
     const l = slots.length
     const wrappedSlots = slots.map((item, index) => {
       const marginSide = this.direction === 'horizontal' ? 'marginRight' : 'marginBottom'

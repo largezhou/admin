@@ -21,6 +21,7 @@
 <script>
 import LoginForm from '@c/LoginForm'
 import LoadingAction from '@c/LoadingAction'
+import Router from 'vue-router'
 
 export default {
   name: 'Login',
@@ -36,7 +37,13 @@ export default {
   methods: {
     async onLogin() {
       await this.$refs.form.onSubmit()
-      this.$router.push(this.$route.query.redirect || '/index')
+      this.$router
+        .push(this.$route.query.redirect || '/')
+        .catch((e) => {
+          if (!Router.isNavigationFailure(e)) {
+            Promise.reject(e)
+          }
+        })
     },
   },
 }
