@@ -11,7 +11,7 @@
     aria-hidden="true"
     v-on="$listeners"
   >
-    <use :xlink:href="iconName"/>
+    <use :href="iconName"/>
   </svg>
 </template>
 
