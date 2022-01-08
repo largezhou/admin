@@ -17,7 +17,7 @@
     "@vue/cli-service": "~4.3.0",
     "@vue/eslint-config-standard": "^5.1.2",
     "ant-design-vue": "^1.5.2",
-    "axios": "^0.19.2",
+    "axios": ">=0.21.2",
     "babel-eslint": "^10.1.0",
     "core-js": "^3.6.4",
     "eslint": "^6.7.2",
